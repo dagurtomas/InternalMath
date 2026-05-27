@@ -57,8 +57,8 @@ lake build InternalMath.LambdaCalculus.Model
 lake build InternalMath.SCT.Model
 ```
 
-The SCT build currently emits expected warnings about temporary admitted declarations,
-structural-equivalence generation, and placeholder `sorry`s in the model skeleton.
+The SCT build currently emits expected warnings about admitted InternalLean declarations and
+placeholder `sorry`s in the model skeleton.
 
 ## Repository layout
 

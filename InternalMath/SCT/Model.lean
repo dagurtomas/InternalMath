@@ -64,6 +64,7 @@ def sctModel.{u} : SCTModel.{u} where
   HasLimitsOfShape := sorry
   HasColimitsOfShape := sorry
   StronglySurjective := sorry
+  FiberwiseCatEquiv := sorry
   DirectedUnivalenceWitness := sorry
   UniverseWitness := sorry
   SmallWitness := sorry
@@ -182,6 +183,7 @@ def sctModel.{u} : SCTModel.{u} where
   segalUnit := sorry
   segalCounit := sorry
   isoCat := sorry
+  isoProjection := sorry
   rezkEquiv := sorry
   groupoidOfAnima := sorry
   animaOfGroupoid := sorry
@@ -190,6 +192,8 @@ def sctModel.{u} : SCTModel.{u} where
   animaOfGroupoidEquiv := sorry
   coreIncl := sorry
   coreLift := sorry
+  coreLiftBeta := sorry
+  coreLiftUniq := sorry
   mapAnimaCoreEquiv := sorry
   intervalCoreEndpointEquiv := sorry
   subobjectAnima := sorry
@@ -200,8 +204,14 @@ def sctModel.{u} : SCTModel.{u} where
   subcategoryIncl := sorry
   fullSubcategory := sorry
   fullSubcategoryIncl := sorry
+  fullSubcategoryInclWitness := sorry
+  fullSubcategoryCoreEquiv := sorry
+  fullSubcategoryAllObjectsEquiv := sorry
   localizationCat := sorry
   invertingFunctorCat := sorry
+  invertingFunctorIncl := sorry
+  invertingFunctorSubcategoryWitness := sorry
+  invertingFunctorTargetGroupoidEquiv := sorry
   localizationFunctor := sorry
   localizationUniversalEquiv := sorry
   dependentProductOverCat := sorry
@@ -343,7 +353,6 @@ def sctModel.{u} : SCTModel.{u} where
   anima_cat_is_anima := sorry
   equiv_to_anima_is_anima := sorry
   sigma_anima_indexed_is_anima := sorry
-  groupoid_is_anima_cat := sorry
   geometric_realization_is_anima := sorry
   InitialObjectWitness := sorry
   TerminalObjectWitness := sorry

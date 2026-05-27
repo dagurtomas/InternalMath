@@ -52,8 +52,6 @@ target in view while the full model is developed.
 The SCT files currently emit warnings about:
 
 - admitted InternalLean declarations in `Spec.lean`;
-- temporary admitted-definition fields in the generated `SCTModel`;
-- skipped fields in generated structural-equivalence helpers;
 - `sorry` placeholders in the model skeleton.
 
 These warnings are known SCT/model debt. The current sanity check is that `SSet.QCat.{u}` and the

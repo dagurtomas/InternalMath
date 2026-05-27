@@ -788,19 +788,17 @@ extend_type_theory SCT where
   syntax_abbrev NatTrans (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D) :=
     Obj (natTransCat C D F G)
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
+  /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
+  model_section Chapter1
+
   /-- Regard a natural isomorphism as a natural transformation.
   Book target: Axioms A.1'/A.2', viewing a natural isomorphism as a natural transformation.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Define by forgetting the inverse/coherence data once natural
-  transformations are fully internal. -/
-  def natIsoToNatTrans (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D)
-    (α : NatIso C D F G) : NatTrans C D F G := sorry
-
-end SCT
+  Since `NatIso` is primitive at this stage of the interface, its underlying natural transformation
+  is primitive projection data rather than a theorem-shaped admission. -/
+  lf_opaque natIsoToNatTrans (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D)
+    (α : NatIso C D F G) : NatTrans C D F G
 
 extend_type_theory SCT where
 
@@ -1089,25 +1087,17 @@ extend_type_theory SCT where
       (sourceObj C (identityMorphism C (targetObj C f))) (targetObj C f)
       (identityMorphismSourceCompat C (targetObj C f))
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
+  /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
+  model_section Chapter1
 
   /-- Category of isomorphisms in `C`, used by Rezk completeness; Axiom F.
-  Book target: Definition 1.8.2, the category `Iso(C)` of invertible morphisms.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct from the Rezk/isomorphism pullback presentation rather than
-  postulating it. -/
-  def isoCat (C : SCat) : SCat := sorry
+  Book target: Definition 1.8.2, the category `Iso(C)` of invertible morphisms. -/
+  lf_opaque isoCat (C : SCat) : SCat
   /-- Projection from an isomorphism to its underlying arrow; Definition 1.8.2.
-  Book target: Definition 1.8.2, the category `Iso(C)` of invertible morphisms.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct from the Rezk/isomorphism pullback presentation rather than
-  postulating it. -/
-  def isoProjection (C : SCat) : Functor (isoCat C) (funCat intervalCat C) := sorry
-
-end SCT
+  Book target: Definition 1.8.2, the category `Iso(C)` of invertible morphisms. -/
+  lf_opaque isoProjection (C : SCat) : Functor (isoCat C) (funCat intervalCat C)
 
 extend_type_theory SCT where
 
@@ -1257,18 +1247,14 @@ internal_defs where
 
 end SCT
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
+  model_section Chapter2
+
   /-- Lift an anima-parametrized object through the groupoid core; Axiom G.
-  Book target: Axiom G, universal property of the groupoid core for anima-indexed sources.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive using the groupoid/anima equivalence supplied by Axiom G. -/
-  def coreLift (A : Anima) (C : SCat) (F : Functor (animaCat A) C) :
-    Functor (animaCat A) (coreCat C) := sorry
-
-end SCT
+  Book target: Axiom G, universal property of the groupoid core for anima-indexed sources. -/
+  lf_opaque coreLift (A : Anima) (C : SCat) (F : Functor (animaCat A) C) :
+    Functor (animaCat A) (coreCat C)
 
 extend_type_theory SCT where
 
@@ -1286,27 +1272,21 @@ extend_type_theory SCT where
           (catEquivBackward G (animaCat (animaOfGroupoid G gG))
             (groupoid_anima_equiv G gG)) F))
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
+  model_section Chapter2
+
   /-- β comparison for the core lift; Axiom G.
-  Book target: Axiom G, universal property of the groupoid core for anima-indexed sources.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive using the groupoid/anima equivalence supplied by Axiom G. -/
-  def coreLiftBeta (A : Anima) (C : SCat) (F : Functor (animaCat A) C) :
+  Book target: Axiom G, universal property of the groupoid core for anima-indexed sources. -/
+  lf_opaque coreLiftBeta (A : Anima) (C : SCat) (F : Functor (animaCat A) C) :
     NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C
-      (coreLift A C F) (coreIncl C)) F := sorry
+      (coreLift A C F) (coreIncl C)) F
   /-- Uniqueness of core lifts from anima-parametrized objects; Axiom G.
-  Book target: Axiom G, universal property of the groupoid core for anima-indexed sources.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive using the groupoid/anima equivalence supplied by Axiom G. -/
-  def coreLiftUniq (A : Anima) (C : SCat) (F : Functor (animaCat A) C)
+  Book target: Axiom G, universal property of the groupoid core for anima-indexed sources. -/
+  lf_opaque coreLiftUniq (A : Anima) (C : SCat) (F : Functor (animaCat A) C)
     (K : Functor (animaCat A) (coreCat C))
     (β : NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C K
-      (coreIncl C)) F) : NatIso (animaCat A) (coreCat C) K (coreLift A C F) := sorry
-
-end SCT
+      (coreIncl C)) F) : NatIso (animaCat A) (coreCat C) K (coreLift A C F)
 
 extend_type_theory SCT where
 
@@ -1499,19 +1479,17 @@ extend_type_theory SCT where
       intervalCoreEndpointEquiv
   /-- Three-point category used for the core of `[2]`.  Book context: Chapter 2 of the SCT book. -/
   lf_def threePointCat : SCat := coprodCat terminalCat (coprodCat terminalCat terminalCat)
-  /-- A groupoid category is an anima-category.
-  Book target: Axiom G, identifying groupoids with anima.
-  Status: remaining T-shaped model-facing rule.  To make this book-faithful, derive the rule from
-  `animaOfGroupoid`, `groupoidOfAnima`, and the equivalence/invariance data rather than asking
-  model providers for a separate proof. -/
-  rule groupoid_is_anima_cat (C : SCat) (g : GroupoidWitness C) where
-    conclusion : isAnimaCat C
 
 
 namespace SCT
 
 /- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
 internal_defs where
+  /-- A groupoid category is an anima-category.
+  Book target: Axiom G, identifying groupoids with anima.
+  This is derived from the groupoid/anima comparison and invariance under equivalence. -/
+  def groupoid_is_anima_cat (C : SCat) (g : GroupoidWitness C) : isAnimaCat C :=
+    equiv_to_anima_is_anima C (animaOfGroupoid C g) (groupoid_anima_equiv C g)
   /-- The core of `[2]` is equivalent to three points.
   Book target: Axiom G.1 and Definition 3.6.14/Lemma 3.6.15, the core of `[2]` has three endpoint
   objects.
@@ -1680,47 +1658,30 @@ extend_type_theory SCT where
     (W : MorphismCollection C) (F : Functor D C) : Type u
   syntax_sort_role PreservesMorphismCollection : side_structure
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
+  model_section Chapter3
+
   /-- Full subcategory determined by an object collection; Axiom H.
-  Book target: §3.1, full subcategories determined by object collections.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct from Axiom H applied to all morphisms between the chosen
-  objects. -/
-  def fullSubcategory (C : SCat) (P : ObjectCollection C) : SCat := sorry
+  Book target: §3.1, full subcategories determined by object collections. -/
+  lf_opaque fullSubcategory (C : SCat) (P : ObjectCollection C) : SCat
   /-- Inclusion of a full subcategory; Axiom H.
-  Book target: §3.1, full subcategories determined by object collections.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct from Axiom H applied to all morphisms between the chosen
-  objects. -/
-  def fullSubcategoryIncl (C : SCat) (P : ObjectCollection C) :
-    Functor (fullSubcategory C P) C := sorry
+  Book target: §3.1, full subcategories determined by object collections. -/
+  lf_opaque fullSubcategoryIncl (C : SCat) (P : ObjectCollection C) :
+    Functor (fullSubcategory C P) C
   /-- The full-subcategory inclusion is a subcategory; Axiom H.
-  Book target: §3.1, full subcategories determined by object collections.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct from Axiom H applied to all morphisms between the chosen
-  objects. -/
-  def fullSubcategoryInclWitness (C : SCat) (P : ObjectCollection C) :
-    SubcategoryWitness (fullSubcategory C P) C (fullSubcategoryIncl C P) := sorry
+  Book target: §3.1, full subcategories determined by object collections. -/
+  lf_opaque fullSubcategoryInclWitness (C : SCat) (P : ObjectCollection C) :
+    SubcategoryWitness (fullSubcategory C P) C (fullSubcategoryIncl C P)
   /-- The core of a full subcategory is the specified object collection.
-  Book target: §3.1, full subcategories determined by object collections.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct from Axiom H applied to all morphisms between the chosen
-  objects. -/
-  def fullSubcategoryCoreEquiv (C : SCat) (P : ObjectCollection C) :
-    CatEquiv (coreCat (fullSubcategory C P)) (objectCollectionCat C P) := sorry
+  Book target: §3.1, full subcategories determined by object collections. -/
+  lf_opaque fullSubcategoryCoreEquiv (C : SCat) (P : ObjectCollection C) :
+    CatEquiv (coreCat (fullSubcategory C P)) (objectCollectionCat C P)
   /-- The full subcategory spanned by all objects is equivalent to the ambient category.
-  Book target: §3.1, full subcategories determined by object collections.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct from Axiom H applied to all morphisms between the chosen
-  objects. -/
-  def fullSubcategoryAllObjectsEquiv (C : SCat) (P : ObjectCollection C)
+  Book target: §3.1, full subcategories determined by object collections. -/
+  lf_opaque fullSubcategoryAllObjectsEquiv (C : SCat) (P : ObjectCollection C)
     (hAll : CatEquiv (objectCollectionCat C P) (coreCat C)) :
-      CatEquiv (fullSubcategory C P) C := sorry
-
-end SCT
+      CatEquiv (fullSubcategory C P) C
 
 extend_type_theory SCT where
 
@@ -1789,42 +1750,28 @@ extend_type_theory SCT where
   /-- Localization at a morphism collection; Axiom I. -/
   lf_opaque localizationCat (C : SCat) (W : MorphismCollection C) : SCat
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
+  model_section Chapter3
+
   /-- Full subcategory of functors that invert a morphism collection; Definition 3.3.2.
-  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Build as a full subcategory of the functor category and prove the
-  groupoid-target equivalence. -/
-  def invertingFunctorCat (C : SCat) (D : SCat) (W : MorphismCollection C) : SCat := sorry
+  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms. -/
+  lf_opaque invertingFunctorCat (C : SCat) (D : SCat) (W : MorphismCollection C) : SCat
   /-- Inclusion of inverting functors into the ordinary functor category.
-  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Build as a full subcategory of the functor category and prove the
-  groupoid-target equivalence. -/
-  def invertingFunctorIncl (C : SCat) (D : SCat) (W : MorphismCollection C) :
-    Functor (invertingFunctorCat C D W) (funCat C D) := sorry
+  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms. -/
+  lf_opaque invertingFunctorIncl (C : SCat) (D : SCat) (W : MorphismCollection C) :
+    Functor (invertingFunctorCat C D W) (funCat C D)
   /-- The inverting-functor inclusion is a full subcategory.
-  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Build as a full subcategory of the functor category and prove the
-  groupoid-target equivalence. -/
-  def invertingFunctorSubcategoryWitness (C : SCat) (D : SCat)
+  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms. -/
+  lf_opaque invertingFunctorSubcategoryWitness (C : SCat) (D : SCat)
     (W : MorphismCollection C) :
       SubcategoryWitness (invertingFunctorCat C D W) (funCat C D)
-        (invertingFunctorIncl C D W) := sorry
+        (invertingFunctorIncl C D W)
   /-- If the target is a groupoid, every functor inverts the selected morphisms.
-  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Build as a full subcategory of the functor category and prove the
-  groupoid-target equivalence. -/
-  def invertingFunctorTargetGroupoidEquiv (C : SCat) (D : SCat)
+  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms. -/
+  lf_opaque invertingFunctorTargetGroupoidEquiv (C : SCat) (D : SCat)
     (W : MorphismCollection C) (gD : GroupoidWitness D) :
-    CatEquiv (invertingFunctorCat C D W) (funCat C D) := sorry
-
-end SCT
+    CatEquiv (invertingFunctorCat C D W) (funCat C D)
 
 extend_type_theory SCT where
 
@@ -3316,6 +3263,12 @@ extend_type_theory SCT where
   lf_def fundamentalTheoremEquiv : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
       FullyFaithful C D F ⇒ StronglySurjective C D F ⇒ CatEquiv C D :=
     fun C D F ff surj => fundamental_theorem_equiv C D F ff surj
+  /-- Evidence that a functor over a base is an equivalence on each fiber.
+  Book target: Theorem 6.4.9, the fiberwise criterion for equivalences of cocartesian fibrations.
+  -/
+  syntax_sort FiberwiseCatEquiv (E : SCat) (B : SCat) (p : Functor E B)
+    (E' : SCat) (p' : Functor E' B) (F : Functor E E') : Type u
+  syntax_sort_role FiberwiseCatEquiv : side_structure
 
 namespace SCT
 
@@ -3337,14 +3290,14 @@ internal_defs where
   Book target: §6.3, equivalences are fully faithful and strongly surjective.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
   To make this book-faithful: Derive from the packaged equivalence data and the core map. -/
-  def equivalenceFullyFaithful (C : SCat) (D : SCat) (F : Functor C D)
-    (e : CatEquiv C D) : FullyFaithful C D F := sorry
+  def equivalenceFullyFaithful (C : SCat) (D : SCat) (e : CatEquiv C D) :
+    FullyFaithful C D (catEquivForward C D e) := sorry
   /-- Equivalences are strongly surjective; Chapter 6.
   Book target: §6.3, equivalences are fully faithful and strongly surjective.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
   To make this book-faithful: Derive from the packaged equivalence data and the core map. -/
-  def equivalenceStronglySurjective (C : SCat) (D : SCat) (F : Functor C D)
-    (e : CatEquiv C D) : StronglySurjective C D F := sorry
+  def equivalenceStronglySurjective (C : SCat) (D : SCat) (e : CatEquiv C D) :
+    StronglySurjective C D (catEquivForward C D e) := sorry
 
 end SCT
 
@@ -3370,8 +3323,8 @@ internal_defs where
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
     (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
-    (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F) :
-    CatEquiv E E' := sorry
+    (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F)
+    (fiberwise : FiberwiseCatEquiv E B p E' p' F) : CatEquiv E E' := sorry
   /-- Fully faithful functors induce fully faithful functors on functor categories by
   postcomposition.
   Book target: §6.4, postcomposition with a fully faithful functor is fully faithful.
