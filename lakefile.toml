@@ -1,0 +1,20 @@
+name = "InternalMath"
+version = "0.1.0"
+defaultTargets = ["internalmath"]
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.30.0-rc2"
+
+[[require]]
+name = "InternalLean"
+git = "https://github.com/dagurtomas/InternalLean.git"
+rev = "main"
+
+[[lean_lib]]
+name = "InternalMath"
+
+[[lean_exe]]
+name = "internalmath"
+root = "Main"
