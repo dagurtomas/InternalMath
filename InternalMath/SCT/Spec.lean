@@ -2033,8 +2033,11 @@ extend_type_theory SCT where
       (i : Functor A C) ⇒ SubcategoryWitness A C i ⇒ SubcategoryArrowEmbedding A C i :=
     fun A C i h => fst h
 
-  /-- Subobjects of an anima; used for Axiom H morphism and object collections. -/
-  syntax_sort AnimaSubobject (A : Anima) : Type (u+1)
+  /-- Subobjects of an anima, represented by a domain anima, an inclusion, and embedding evidence;
+  Definition 3.1.6. -/
+  syntax_abbrev AnimaSubobject (A : Anima) :=
+    Σ B : Anima, Σ i : Functor (animaCat B) (animaCat A),
+      Embedding (animaCat B) (animaCat A) i
 
 namespace SCT
 
@@ -2085,14 +2088,20 @@ extend_type_theory SCT where
 
   model_section Chapter3
 
-  /-- Domain anima of a subobject; Axiom H. -/
-  lf_opaque subobjectAnima (A : Anima) (P : AnimaSubobject A) : Anima
-  /-- Inclusion functor of an anima subobject; Axiom H. -/
-  lf_opaque subobjectIncl (A : Anima) (P : AnimaSubobject A) :
-    Functor (animaCat (subobjectAnima A P)) (animaCat A)
-  /-- Subobject inclusions are embeddings; Axiom H. -/
-  lf_opaque subobjectInclEmbedding (A : Anima) (P : AnimaSubobject A) :
-    Embedding (animaCat (subobjectAnima A P)) (animaCat A) (subobjectIncl A P)
+  /-- Domain anima of a subobject; Definition 3.1.6. -/
+  lf_def subobjectAnima : (A : Anima) ⇒ AnimaSubobject A ⇒ Anima :=
+    fun A P => fst P
+  /-- Inclusion functor of an anima subobject; Definition 3.1.6. -/
+  lf_def subobjectIncl : (A : Anima) ⇒ (P : AnimaSubobject A) ⇒
+      Functor (animaCat (subobjectAnima A P)) (animaCat A) :=
+    fun A P => fst (snd P)
+  /-- Subobject inclusions are embeddings; Definition 3.1.6. -/
+  lf_def subobjectInclEmbedding : (A : Anima) ⇒ (P : AnimaSubobject A) ⇒
+      Embedding (animaCat (subobjectAnima A P)) (animaCat A) (subobjectIncl A P) :=
+    fun A P => snd (snd P)
+  /-- The total subobject of an anima, represented by the identity inclusion.
+  Status: temporary model-facing constructor until the identity embedding proof is checked. -/
+  lf_opaque totalAnimaSubobject (A : Anima) : AnimaSubobject A
   /-- The anima of morphisms of `C`, namely the core of `Fun([1], C)`; Axiom H. -/
   lf_def morphismAnima : SCat ⇒ Anima := fun C => coreAnima (funCat intervalCat C)
   /-- A morphism collection is a subobject of the anima of morphisms; Axiom H. -/
@@ -2146,37 +2155,89 @@ extend_type_theory SCT where
   syntax_sort closedUnderComposition (C : SCat) (W : MorphismCollection C) : Type u
   syntax_sort_role closedUnderComposition : side_structure
 
-  /-- The collection of all morphisms; Axiom H and Axiom J. -/
-  lf_opaque allMorphisms (C : SCat) : MorphismCollection C
-  /-- The collection of all morphisms contains identities.
-  Book target: Axiom H and Definition 3.1.6, where the all-morphisms collection is a closed
-  morphism collection.
-  Status: remaining T-shaped model-facing evidence field.  To make this book-faithful, prove it from
-  the definition of `allMorphisms` instead of exposing a separate model obligation. -/
-  lf_opaque all_morphisms_contains_identities (C : SCat) :
-    containsIdentities C (allMorphisms C)
-  /-- The collection of all morphisms is closed under composition.
-  Book target: Axiom H and Definition 3.1.6, where the all-morphisms collection is a closed
-  morphism collection.
-  Status: remaining T-shaped model-facing evidence field.  To make this book-faithful, prove it from
-  the definition of `allMorphisms` and Segal composition rather than exposing a separate model
-  obligation. -/
-  lf_opaque all_morphisms_closed (C : SCat) :
-    closedUnderComposition C (allMorphisms C)
+  /-- The collection of all morphisms; Example 3.1.7. -/
+  lf_def allMorphisms : (C : SCat) ⇒ MorphismCollection C :=
+    fun C => totalAnimaSubobject (morphismAnima C)
 
-  /-- Subcategory determined by a morphism collection; Axiom H. -/
-  lf_opaque subcategory (C : SCat) (W : MorphismCollection C) : SCat
-  /-- Inclusion of a subcategory; Axiom H. -/
-  lf_opaque subcategoryIncl (C : SCat) (W : MorphismCollection C) :
-    Functor (subcategory C W) C
-  /-- The generated subcategory inclusion is a subcategory; Axiom H. -/
-  lf_opaque subcategoryInclWitness (C : SCat) (W : MorphismCollection C)
-    (ids : containsIdentities C W) (comp : closedUnderComposition C W) :
-    SubcategoryWitness (subcategory C W) C (subcategoryIncl C W)
-  /-- Evidence that a functor's morphisms factor through a chosen collection; Axiom H. -/
+  /-- Evidence that a functor's morphisms factor through a chosen collection; Definition 3.1.14.
+  -/
   syntax_sort PreservesMorphismCollection (D : SCat) (C : SCat)
     (W : MorphismCollection C) (F : Functor D C) : Type u
   syntax_sort_role PreservesMorphismCollection : side_structure
+
+  /-- Source-shaped universal package for Axiom H.  For a closed morphism collection it stores the
+  generated category, its inclusion, the evidence that the inclusion preserves the selected
+  morphisms, and the universal lift with β comparison and uniqueness. -/
+  lf_opaque subcategoryPackage (C : SCat) (W : MorphismCollection C)
+    (ids : containsIdentities C W) (comp : closedUnderComposition C W) :
+    Σ S : SCat,
+      Σ i : Functor S C,
+        Σ pres : PreservesMorphismCollection S C W i,
+          (D : SCat) → (F : Functor D C) →
+            (h : PreservesMorphismCollection D C W F) →
+              Σ K : Functor D S,
+                Σ β : NatIso D C (compFunctor D S C K i) F,
+                  (L : Functor D S) →
+                    NatIso D C (compFunctor D S C L i) F → NatIso D S L K
+  /-- Subcategory determined by a closed morphism collection; Axiom H. -/
+  lf_def subcategory : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      containsIdentities C W ⇒ closedUnderComposition C W ⇒ SCat :=
+    fun C W ids comp => fst (subcategoryPackage C W ids comp)
+  /-- Inclusion of the subcategory generated by a closed morphism collection; Axiom H. -/
+  lf_def subcategoryIncl : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      (ids : containsIdentities C W) ⇒ (comp : closedUnderComposition C W) ⇒
+        Functor (subcategory C W ids comp) C :=
+    fun C W ids comp => fst (snd (subcategoryPackage C W ids comp))
+  /-- The generated subcategory inclusion preserves the defining morphism collection; Axiom H(1).
+  -/
+  lf_def subcategoryInclPreserves : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      (ids : containsIdentities C W) ⇒ (comp : closedUnderComposition C W) ⇒
+        PreservesMorphismCollection (subcategory C W ids comp) C W
+          (subcategoryIncl C W ids comp) :=
+    fun C W ids comp => fst (snd (snd (subcategoryPackage C W ids comp)))
+
+namespace SCT
+
+/- Corollary 3.1.11 is admitted temporarily while kept out of the model interface. -/
+internal_defs where
+  /-- The total morphism collection contains identities.
+  Book target: Example 3.1.7.
+  Status: temporary sorry-admitted theorem-shaped evidence; not a model field. -/
+  def all_morphisms_contains_identities (C : SCat) :
+    containsIdentities C (allMorphisms C) := sorry
+  /-- The total morphism collection is closed under composition.
+  Book target: Example 3.1.7.
+  Status: temporary sorry-admitted theorem-shaped evidence; not a model field. -/
+  def all_morphisms_closed (C : SCat) :
+    closedUnderComposition C (allMorphisms C) := sorry
+  /-- The generated subcategory satisfies Definition 3.1.2(1).
+  Book target: Corollary 3.1.11.
+  Status: temporary sorry-admitted component of `subcategoryInclWitness`. -/
+  def subcategoryInclArrowEmbedding (C : SCat) (W : MorphismCollection C)
+    (ids : containsIdentities C W) (comp : closedUnderComposition C W) :
+      SubcategoryArrowEmbedding (subcategory C W ids comp) C (subcategoryIncl C W ids comp) :=
+    sorry
+  /-- The generated subcategory satisfies Definition 3.1.2(2) for a fixed test category.
+  Book target: Corollary 3.1.11.
+  Status: temporary sorry-admitted component of `subcategoryInclWitness`. -/
+  def subcategoryInclPullbackSquare (C : SCat) (W : MorphismCollection C)
+    (ids : containsIdentities C W) (comp : closedUnderComposition C W) (X : SCat) :
+      SubcategoryPullbackSquare (subcategory C W ids comp) C
+        (subcategoryIncl C W ids comp) X :=
+    sorry
+
+end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter3
+
+  /-- The generated subcategory inclusion is a subcategory; Corollary 3.1.11. -/
+  lf_def subcategoryInclWitness : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      (ids : containsIdentities C W) ⇒ (comp : closedUnderComposition C W) ⇒
+        SubcategoryWitness (subcategory C W ids comp) C (subcategoryIncl C W ids comp) :=
+    fun C W ids comp => ⟨subcategoryInclArrowEmbedding C W ids comp,
+      fun X => subcategoryInclPullbackSquare C W ids comp X⟩
 
 extend_type_theory SCT where
 
@@ -2196,11 +2257,13 @@ extend_type_theory SCT where
   /-- Full subcategory determined by an object collection; Definition 3.1.6. -/
   lf_def fullSubcategory : (C : SCat) ⇒ ObjectCollection C ⇒ SCat :=
     fun C P => subcategory C (fullSubcategoryMorphismCollection C P)
+      (fullSubcategoryMorphismContainsIdentities C P) (fullSubcategoryMorphismClosed C P)
   /-- Inclusion of a full subcategory; Definition 3.1.6. -/
   lf_def fullSubcategoryIncl : (C : SCat) ⇒ (P : ObjectCollection C) ⇒
       Functor (fullSubcategory C P) C :=
     fun C P => subcategoryIncl C (fullSubcategoryMorphismCollection C P)
-  /-- The full-subcategory inclusion is a subcategory, by construction from Axiom H. -/
+      (fullSubcategoryMorphismContainsIdentities C P) (fullSubcategoryMorphismClosed C P)
+  /-- The full-subcategory inclusion is a subcategory, by Corollary 3.1.11. -/
   lf_def fullSubcategoryInclWitness : (C : SCat) ⇒ (P : ObjectCollection C) ⇒
       SubcategoryWitness (fullSubcategory C P) C (fullSubcategoryIncl C P) :=
     fun C P => subcategoryInclWitness C (fullSubcategoryMorphismCollection C P)
@@ -2283,45 +2346,33 @@ extend_type_theory SCT where
 
   model_section Chapter3
 
-
-namespace SCT
-
-/- Theorem-shaped declaration admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- The generated subcategory inclusion preserves the defining morphism collection.
-  Book target: Axiom H(1), the first universal property of the subcategory generated by a closed
-  morphism collection.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  -/
-  def subcategoryInclPreserves (C : SCat) (W : MorphismCollection C) :
-    PreservesMorphismCollection (subcategory C W) C W (subcategoryIncl C W) := sorry
-
-end SCT
-
-extend_type_theory SCT where
-
-  model_section Chapter3
-
   /-- Universal lift through a subcategory; Axiom H. -/
-  lf_opaque subcategoryLift (D : SCat) (C : SCat) (W : MorphismCollection C)
-    (ids : containsIdentities C W) (comp : closedUnderComposition C W)
-    (F : Functor D C) (h : PreservesMorphismCollection D C W F) :
-    Functor D (subcategory C W)
+  lf_def subcategoryLift : (D : SCat) ⇒ (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      (ids : containsIdentities C W) ⇒ (comp : closedUnderComposition C W) ⇒
+      (F : Functor D C) ⇒ PreservesMorphismCollection D C W F ⇒
+        Functor D (subcategory C W ids comp) :=
+    fun D C W ids comp F h =>
+      fst ((snd (snd (snd (subcategoryPackage C W ids comp)))) D F h)
   /-- β comparison for the subcategory lift; Axiom H. -/
-  lf_opaque subcategoryLiftBeta (D : SCat) (C : SCat) (W : MorphismCollection C)
-    (ids : containsIdentities C W) (comp : closedUnderComposition C W)
-    (F : Functor D C) (h : PreservesMorphismCollection D C W F) :
-    NatIso D C
-      (compFunctor D (subcategory C W) C
-        (subcategoryLift D C W ids comp F h) (subcategoryIncl C W))
-      F
+  lf_def subcategoryLiftBeta : (D : SCat) ⇒ (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      (ids : containsIdentities C W) ⇒ (comp : closedUnderComposition C W) ⇒
+      (F : Functor D C) ⇒ (h : PreservesMorphismCollection D C W F) ⇒
+        NatIso D C
+          (compFunctor D (subcategory C W ids comp) C
+            (subcategoryLift D C W ids comp F h) (subcategoryIncl C W ids comp))
+          F :=
+    fun D C W ids comp F h =>
+      fst (snd ((snd (snd (snd (subcategoryPackage C W ids comp)))) D F h))
   /-- Uniqueness of subcategory lifts over `C`; Axiom H. -/
-  lf_opaque subcategoryLiftUniq (D : SCat) (C : SCat) (W : MorphismCollection C)
-    (ids : containsIdentities C W) (comp : closedUnderComposition C W)
-    (F : Functor D C) (h : PreservesMorphismCollection D C W F)
-    (K : Functor D (subcategory C W))
-    (β : NatIso D C (compFunctor D (subcategory C W) C K (subcategoryIncl C W)) F) :
-    NatIso D (subcategory C W) K (subcategoryLift D C W ids comp F h)
+  lf_def subcategoryLiftUniq : (D : SCat) ⇒ (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      (ids : containsIdentities C W) ⇒ (comp : closedUnderComposition C W) ⇒
+      (F : Functor D C) ⇒ (h : PreservesMorphismCollection D C W F) ⇒
+      (K : Functor D (subcategory C W ids comp)) ⇒
+      (β : NatIso D C
+        (compFunctor D (subcategory C W ids comp) C K (subcategoryIncl C W ids comp)) F) ⇒
+        NatIso D (subcategory C W ids comp) K (subcategoryLift D C W ids comp F h) :=
+    fun D C W ids comp F h K β =>
+      snd (snd ((snd (snd (snd (subcategoryPackage C W ids comp)))) D F h)) K β
   /-- Evidence that a functor lands in a chosen object collection; Axiom H. -/
   syntax_sort LandsInObjectCollection (D : SCat) (C : SCat)
     (P : ObjectCollection C) (F : Functor D C) : Type u
@@ -4333,7 +4384,8 @@ extend_type_theory SCT where
   /-- Subcategories of small categories are small; Definition 7.4.5 (Cat4). -/
   lf_opaque smallSubcategory (U : SCat) (C : SCat)
     (W : AnimaSubobject (morphismAnima C))
-    (hC : SmallWitness U C) : SmallWitness U (subcategory C W)
+    (ids : containsIdentities C W) (comp : closedUnderComposition C W)
+    (hC : SmallWitness U C) : SmallWitness U (subcategory C W ids comp)
   /-- Localizations of small categories are small; Definition 7.4.5 (Cat7). -/
   lf_opaque smallLocalization (U : SCat) (C : SCat)
     (W : AnimaSubobject (morphismAnima C))

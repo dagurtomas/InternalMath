@@ -32,7 +32,6 @@ def sctModel.{u} : SCTModel.{u} where
   AnimaIndexedCat := sorry
   InvertibleMorphismData := sorry
   GroupoidWitness := sorry
-  AnimaSubobject := sorry
   ExponentiableFunctor := sorry
   ContextCat := sorry
   ContextFunctor := sorry
@@ -211,12 +210,8 @@ def sctModel.{u} : SCTModel.{u} where
   coprodGroupoid := sorry
   pullbackGroupoid := sorry
   initialGroupoid := sorry
-  subobjectAnima := sorry
-  subobjectIncl := sorry
-  subobjectInclEmbedding := sorry
-  allMorphisms := sorry
-  subcategory := sorry
-  subcategoryIncl := sorry
+  totalAnimaSubobject := sorry
+  subcategoryPackage := sorry
   fullSubcategoryMorphismCollection := sorry
   fullSubcategoryMorphismContainsIdentities := sorry
   fullSubcategoryMorphismClosed := sorry
@@ -440,12 +435,6 @@ def sctModel.{u} : SCTModel.{u} where
   sigmaAnimaIndexedPair := sorry
   intervalZeroInitialHomContractible := sorry
   intervalOneTerminalHomContractible := sorry
-  all_morphisms_contains_identities := sorry
-  all_morphisms_closed := sorry
-  subcategoryInclWitness := sorry
-  subcategoryLift := sorry
-  subcategoryLiftBeta := sorry
-  subcategoryLiftUniq := sorry
   landsInObjectCollectionPreservesFull := sorry
   localizationInverts := sorry
   objectwiseNatIsoComponent := sorry
