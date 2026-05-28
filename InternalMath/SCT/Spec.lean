@@ -3304,21 +3304,16 @@ extend_type_theory SCT where
             (objectPairFunctor C D F) (arrowEndpointFunctor D)) :=
     fun C D F ff => ff
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Arrow-map formulation of full faithfulness as a comparison into the endpoint pullback.
-  Book target: §6.2, arrow-map characterization of fully faithful functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the endpoint-pullback comparison and show it matches mapping
-  groupoids. -/
-  def arrowMapFunctor (C : SCat) (D : SCat) (F : Functor C D) :
+  model_section Chapter6
+
+  /-- Arrow-map formulation of full faithfulness as a comparison into the endpoint pullback;
+  source-facing §6.2 data until postcomposition endpoint compatibility is internal. -/
+  lf_opaque arrowMapFunctor (C : SCat) (D : SCat) (F : Functor C D) :
     Functor (funCat intervalCat C)
       (pullbackCat (prodCat C C) (funCat intervalCat D) (prodCat D D)
-        (objectPairFunctor C D F) (arrowEndpointFunctor D)) := sorry
-
-end SCT
+        (objectPairFunctor C D F) (arrowEndpointFunctor D))
 
 extend_type_theory SCT where
 
@@ -3332,26 +3327,18 @@ extend_type_theory SCT where
         (coreIncl C) (coreFunctor C D F) F (coreIncl D) :=
     fun C D F cons => cons
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Fully faithful functors are conservative; Proposition 6.2.8.
-  Book target: Proposition 6.2.8, fully faithful functors are conservative.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove using the arrow-map characterization and invertible morphisms.
-  -/
-  def fullyFaithfulConservative (C : SCat) (D : SCat) (F : Functor C D)
-    (ff : FullyFaithful C D F) : Conservative C D F := sorry
-  /-- Conservative functors reflect invertible morphisms.
-  Book target: §6.2, conservative functors reflect invertible morphisms.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Unpack the conservative/core-pullback criterion. -/
-  def conservativeReflectsIso (C : SCat) (D : SCat) (F : Functor C D)
+  model_section Chapter6
+
+  /-- Fully faithful functors are conservative; source-facing Proposition 6.2.8 data until
+  invertible-arrow and core-pullback proofs are internal. -/
+  lf_opaque fullyFaithfulConservative (C : SCat) (D : SCat) (F : Functor C D)
+    (ff : FullyFaithful C D F) : Conservative C D F
+  /-- Conservative functors reflect invertible morphisms; source-facing §6.2 data. -/
+  lf_opaque conservativeReflectsIso (C : SCat) (D : SCat) (F : Functor C D)
     (cons : Conservative C D F) (f : Functor intervalCat C)
-    (hf : InvertibleMorphism D (compFunctor intervalCat C D f F)) : InvertibleMorphism C f := sorry
-
-end SCT
+    (hf : InvertibleMorphism D (compFunctor intervalCat C D f F)) : InvertibleMorphism C f
 
 extend_type_theory SCT where
 
@@ -3361,20 +3348,15 @@ extend_type_theory SCT where
   lf_opaque stronglySurjectivePreimage (C : SCat) (D : SCat) (F : Functor C D)
     (surj : StronglySurjective C D F) (y : Obj D) : Obj C
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- A retraction makes a functor conservative.
-  Book target: §6.2, retract arguments for conservativity.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove by composing the retraction data with the conservative
-  criterion. -/
-  def conservativeOfRetract (C : SCat) (D : SCat) (F : Functor C D)
+  model_section Chapter6
+
+  /-- A retraction makes a functor conservative; source-facing §6.2 retract data until the
+  conservative/core-pullback proof is internal. -/
+  lf_opaque conservativeOfRetract (C : SCat) (D : SCat) (F : Functor C D)
     (R : Functor D C) (ρ : NatIso C C (compFunctor C D C F R) (idFunctor C)) :
-    Conservative C D F := sorry
-
-end SCT
+    Conservative C D F
 
 extend_type_theory SCT where
 
@@ -3423,19 +3405,14 @@ extend_type_theory SCT where
       (x : Obj A) ⇒ InvertibleMorphism C (natTransComponent A C F G α x) :=
     fun A C F G α h x => h x
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Fully faithful plus strongly surjective gives an equivalence; Chapter 6.
-  Book target: Theorem 6.3.3, fully faithful plus strongly surjective implies equivalence.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the inverse and unit/counit from strong-surjectivity data.
-  -/
-  def fundamental_theorem_equiv (C : SCat) (D : SCat) (F : Functor C D)
-    (ff : FullyFaithful C D F) (surj : StronglySurjective C D F) : CatEquiv C D := sorry
+  model_section Chapter6
 
-end SCT
+  /-- Fully faithful plus strongly surjective gives an equivalence; source-facing Theorem 6.3.3
+  data until the inverse and unit/counit construction is internal. -/
+  lf_opaque fundamental_theorem_equiv (C : SCat) (D : SCat) (F : Functor C D)
+    (ff : FullyFaithful C D F) (surj : StronglySurjective C D F) : CatEquiv C D
 
 extend_type_theory SCT where
 
@@ -3453,73 +3430,46 @@ extend_type_theory SCT where
     (E' : SCat) (p' : Functor E' B) (F : Functor E E') : Type u
   syntax_sort_role FiberwiseCatEquiv : side_structure
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
+  model_section Chapter6
 
-
-
-  /-- Objectwise evidence assembles a natural isomorphism; Theorem 6.2.11.
-  Book target: Theorem 6.2.11, natural transformations are natural isomorphisms iff their components
-  are invertible.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove using objectwise invertibility and the core of the functor
-  category. -/
-  def natIsoOfObjectwise (A : SCat) (C : SCat)
+  /-- Objectwise evidence assembles a natural isomorphism; source-facing Theorem 6.2.11 data until
+  `NatIso` exposes the needed componentwise invertibility construction. -/
+  lf_opaque natIsoOfObjectwise (A : SCat) (C : SCat)
     (F : Functor A C) (G : Functor A C) (α : NatTrans A C F G)
-    (h : ObjectwiseNatIso A C F G α) : NatIso A C F G := sorry
-  /-- Equivalences are fully faithful; Chapter 6.
-  Book target: §6.3, equivalences are fully faithful and strongly surjective.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from the packaged equivalence data and the core map. -/
-  def equivalenceFullyFaithful (C : SCat) (D : SCat) (e : CatEquiv C D) :
-    FullyFaithful C D (catEquivForward C D e) := sorry
-  /-- Equivalences are strongly surjective; Chapter 6.
-  Book target: §6.3, equivalences are fully faithful and strongly surjective.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from the packaged equivalence data and the core map. -/
-  def equivalenceStronglySurjective (C : SCat) (D : SCat) (e : CatEquiv C D) :
-    StronglySurjective C D (catEquivForward C D e) := sorry
+    (h : ObjectwiseNatIso A C F G α) : NatIso A C F G
+  /-- Equivalences are fully faithful; source-facing §6.3 data until derived from packaged
+  equivalence data and the core map. -/
+  lf_opaque equivalenceFullyFaithful (C : SCat) (D : SCat) (e : CatEquiv C D) :
+    FullyFaithful C D (catEquivForward C D e)
+  /-- Equivalences are strongly surjective; source-facing §6.3 data until derived from packaged
+  equivalence data and the core map. -/
+  lf_opaque equivalenceStronglySurjective (C : SCat) (D : SCat) (e : CatEquiv C D) :
+    StronglySurjective C D (catEquivForward C D e)
 
-end SCT
+extend_type_theory SCT where
 
-namespace SCT
+  model_section Chapter6
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- A full subcategory inclusion is an equivalence when it is strongly surjective on objects.
-  Book target: Proposition 6.4.1/6.4.2, full subcategory inclusions that are strongly surjective are
-  equivalences.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Combine full faithfulness of the inclusion with the Fundamental
-  Theorem. -/
-  def fullSubcategoryEquivOfStronglySurjective (C : SCat) (P : ObjectCollection C)
+  /-- A full subcategory inclusion is an equivalence when it is strongly surjective on objects;
+  source-facing Proposition 6.4.1/6.4.2 data. -/
+  lf_opaque fullSubcategoryEquivOfStronglySurjective (C : SCat) (P : ObjectCollection C)
     (ss : StronglySurjective (fullSubcategory C P) C (fullSubcategoryIncl C P)) :
-    CatEquiv (fullSubcategory C P) C := sorry
-  /-- Fiberwise criterion for cocartesian functors to be equivalences.
-  Book target: Theorem 6.4.9, fiberwise criterion for equivalences of cocartesian fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove by applying the Fundamental Theorem fiberwise and using
-  cocartesian transport. -/
-  def cocartesianFunctorFiberwiseEquiv (E : SCat) (B : SCat) (p : Functor E B)
+    CatEquiv (fullSubcategory C P) C
+  /-- Fiberwise criterion for cocartesian functors to be equivalences; source-facing Theorem 6.4.9
+  data until the fiberwise Fundamental Theorem proof is internal. -/
+  lf_opaque cocartesianFunctorFiberwiseEquiv (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
     (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
     (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F)
-    (fiberwise : FiberwiseCatEquiv E B p E' p' F) : CatEquiv E E' := sorry
+    (fiberwise : FiberwiseCatEquiv E B p E' p' F) : CatEquiv E E'
   /-- Fully faithful functors induce fully faithful functors on functor categories by
-  postcomposition.
-  Book target: §6.4, postcomposition with a fully faithful functor is fully faithful.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the objectwise/natural-isomorphism criterion. -/
-  def funCatPostcompFullyFaithful (A : SCat) (C : SCat) (D : SCat)
+  postcomposition; source-facing §6.4 data. -/
+  lf_opaque funCatPostcompFullyFaithful (A : SCat) (C : SCat) (D : SCat)
     (F : Functor C D) (ff : FullyFaithful C D F) :
-    FullyFaithful (funCat A C) (funCat A D) (postcompFunctor A C D F) := sorry
-
-
-
-end SCT
+    FullyFaithful (funCat A C) (funCat A D) (postcompFunctor A C D F)
 
 /-- Chapter 7: universes and directed univalence; Axioms M and N. -/
 extend_type_theory SCT where
