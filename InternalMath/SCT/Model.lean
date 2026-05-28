@@ -325,6 +325,10 @@ def sctModel.{u} : SCTModel.{u} where
   sigmaFunctorPullbackSquare := sorry
   sigmaSecondProjectionPullbackSquare := sorry
   sigmaPreservesPullbackEquiv := sorry
+  contextCategoryCat := sorry
+  contextCategoryObject := sorry
+  overFunctorToContext := sorry
+  contextOverCorrespondence := sorry
   leftAdjointSectionFunctor := sorry
   rightAdjointSectionFunctor := sorry
   directedPullbackCat := sorry

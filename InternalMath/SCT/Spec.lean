@@ -2859,46 +2859,23 @@ extend_type_theory SCT where
       (pullbackCat (sigmaCat Γ C) (sigmaCat Γ D) (sigmaCat Γ E)
         (sigmaFunctor Γ C E F) (sigmaFunctor Γ D E G))
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
+  model_section Chapter4
+
   /-- Category of contextual categories over `Γ`, used to state the context/over-category
-  equivalence.
-  Book target: Proposition 4.2.16, correspondence between categories in context `Γ` and categories
-  over `Γ`.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the equivalence using dependent sums and reindexing. -/
-  def contextCategoryCat (Γ : SCat) : SCat := sorry
-  /-- Object of `contextCategoryCat Γ` corresponding to a contextual category.
-  Book target: Proposition 4.2.16, correspondence between categories in context `Γ` and categories
-  over `Γ`.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the equivalence using dependent sums and reindexing. -/
-  def contextCategoryObject (Γ : SCat) (C : ContextCat Γ) : Obj (contextCategoryCat Γ) := sorry
-
-end SCT
-
-namespace SCT
-
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Contextual category associated to a category over `Γ`.
-  Book target: Proposition 4.2.16, correspondence between categories in context `Γ` and categories
-  over `Γ`.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the equivalence using dependent sums and reindexing. -/
-  def overFunctorToContext (Γ : SCat) (E : SCat) (p : Functor E Γ) : ContextCat Γ := sorry
-  /-- Equivalence between contextual categories over `Γ` and categories over `Γ`.
-  Book target: Proposition 4.2.16, correspondence between categories in context `Γ` and categories
-  over `Γ`.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the equivalence using dependent sums and reindexing. -/
-  def contextOverCorrespondence (Γ : SCat) : CatEquiv (contextCategoryCat Γ) (overCat Γ) := sorry
-
-
-
-end SCT
+  equivalence; source-facing Proposition 4.2.16 data until the category is constructed internally
+  from dependent sums and reindexing. -/
+  lf_opaque contextCategoryCat (Γ : SCat) : SCat
+  /-- Object of `contextCategoryCat Γ` corresponding to a contextual category; source-facing
+  Proposition 4.2.16 data. -/
+  lf_opaque contextCategoryObject (Γ : SCat) (C : ContextCat Γ) : Obj (contextCategoryCat Γ)
+  /-- Contextual category associated to a category over `Γ`; source-facing Proposition 4.2.16
+  data. -/
+  lf_opaque overFunctorToContext (Γ : SCat) (E : SCat) (p : Functor E Γ) : ContextCat Γ
+  /-- Equivalence between contextual categories over `Γ` and categories over `Γ`; source-facing
+  Proposition 4.2.16 data. -/
+  lf_opaque contextOverCorrespondence (Γ : SCat) : CatEquiv (contextCategoryCat Γ) (overCat Γ)
 
 /-- Chapter 5: cartesian and cocartesian fibrations; Axiom L. -/
 extend_type_theory SCT where
