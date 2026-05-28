@@ -4098,30 +4098,17 @@ extend_type_theory SCT where
         (regularSubuniverseIncl U u S iS embS hS))
       iS
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Universe of groupoids inside the universe of categories; Section 7.6.
-  Book target: §7.6, the universe `Grpd` of groupoids and its universal small left fibration.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the groupoid subuniverse of `Cat` and prove Theorem
-  7.6.3/Proposition 7.6.4 as needed. -/
-  def groupoidUniverse : SCat := sorry
-  /-- Universe package for groupoids; Section 7.6.
-  Book target: §7.6, the universe `Grpd` of groupoids and its universal small left fibration.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the groupoid subuniverse of `Cat` and prove Theorem
-  7.6.3/Proposition 7.6.4 as needed. -/
-  def groupoidUniverseWitness : UniverseWitness groupoidUniverse := sorry
-  /-- Cores of small categories are small groupoids.
-  Book target: §7.6, cores of small categories classified in the groupoid universe.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Use the groupoid-core construction and smallness closure. -/
-  def coreSmall (C : SCat) (hC : SmallWitness categoryUniverse C) :
-    SmallWitness groupoidUniverse (coreCat C) := sorry
+  model_section Chapter7
 
-end SCT
+  /-- Universe of groupoids inside the universe of categories; §7.6 source data. -/
+  lf_opaque groupoidUniverse : SCat
+  /-- Universe package for groupoids; §7.6 source data. -/
+  lf_opaque groupoidUniverseWitness : UniverseWitness groupoidUniverse
+  /-- Cores of small categories are small groupoids; §7.6 source data. -/
+  lf_opaque coreSmall (C : SCat) (hC : SmallWitness categoryUniverse C) :
+    SmallWitness groupoidUniverse (coreCat C)
 
 extend_type_theory SCT where
 
@@ -4135,53 +4122,30 @@ extend_type_theory SCT where
     fun C hC => smallClassifyingMap groupoidUniverse groupoidUniverseWitness
       (coreCat C) (coreSmall C hC)
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Inclusion of the groupoid universe into `Cat`; Section 7.6.
-  Book target: §7.6, the universe `Grpd` of groupoids and its universal small left fibration.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the groupoid subuniverse of `Cat` and prove Theorem
-  7.6.3/Proposition 7.6.4 as needed. -/
-  def groupoidUniverseIncl : Functor groupoidUniverse categoryUniverse := sorry
-  /-- The groupoid universe inclusion is an embedding; Section 7.6.
-  Book target: §7.6, the universe `Grpd` of groupoids and its universal small left fibration.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the groupoid subuniverse of `Cat` and prove Theorem
-  7.6.3/Proposition 7.6.4 as needed. -/
-  def groupoidUniverseEmbedding :
-    Embedding groupoidUniverse categoryUniverse groupoidUniverseIncl := sorry
-  /-- The groupoid universe is regular; Section 7.6.
-  Book target: §7.6, the universe `Grpd` of groupoids and its universal small left fibration.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the groupoid subuniverse of `Cat` and prove Theorem
-  7.6.3/Proposition 7.6.4 as needed. -/
-  def groupoidUniverseRegular :
-    RegularUniverseWitness groupoidUniverse groupoidUniverseWitness := sorry
-  /-- The universal family over `Grpd` is a left fibration.
-  Book target: §7.6, the universe `Grpd` of groupoids and its universal small left fibration.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the groupoid subuniverse of `Cat` and prove Theorem
-  7.6.3/Proposition 7.6.4 as needed. -/
-  def groupoidUniverseLeftFibration :
+  model_section Chapter7
+
+  /-- Inclusion of the groupoid universe into `Cat`; §7.6 source data. -/
+  lf_opaque groupoidUniverseIncl : Functor groupoidUniverse categoryUniverse
+  /-- The groupoid universe inclusion is an embedding; §7.6 source data. -/
+  lf_opaque groupoidUniverseEmbedding :
+    Embedding groupoidUniverse categoryUniverse groupoidUniverseIncl
+  /-- The groupoid universe is regular; §7.6 source data. -/
+  lf_opaque groupoidUniverseRegular :
+    RegularUniverseWitness groupoidUniverse groupoidUniverseWitness
+  /-- The universal family over `Grpd` is a left fibration; §7.6 source data. -/
+  lf_opaque groupoidUniverseLeftFibration :
     LeftFibrationWitness (universeTotalCat groupoidUniverse groupoidUniverseWitness)
       groupoidUniverse (universeProjection groupoidUniverse groupoidUniverseWitness)
-      (universeFibration groupoidUniverse groupoidUniverseWitness) := sorry
+      (universeFibration groupoidUniverse groupoidUniverseWitness)
 
-end SCT
+extend_type_theory SCT where
 
-namespace SCT
+  model_section Chapter7
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Primitive anima are small in the groupoid universe; Section 7.6.
-  Book target: §7.6, primitive anima as small groupoids in `Grpd`.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Classify anima via the groupoid universe and Axiom G. -/
-  def animaSmall (A : Anima) : SmallWitness groupoidUniverse (animaCat A) := sorry
-
-end SCT
+  /-- Primitive anima are small in the groupoid universe; §7.6 source data. -/
+  lf_opaque animaSmall (A : Anima) : SmallWitness groupoidUniverse (animaCat A)
 
 extend_type_theory SCT where
 

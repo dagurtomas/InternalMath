@@ -388,6 +388,14 @@ def sctModel.{u} : SCTModel.{u} where
   regularSubuniverseRegular := sorry
   regularSubuniverseLift := sorry
   regularSubuniverseLiftBeta := sorry
+  groupoidUniverse := sorry
+  groupoidUniverseWitness := sorry
+  coreSmall := sorry
+  groupoidUniverseIncl := sorry
+  groupoidUniverseEmbedding := sorry
+  groupoidUniverseRegular := sorry
+  groupoidUniverseLeftFibration := sorry
+  animaSmall := sorry
   directed_univalence_classifies := sorry
   isAnimaCat := sorry
   allFibersAnima := sorry
