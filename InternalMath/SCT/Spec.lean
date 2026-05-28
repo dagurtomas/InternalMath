@@ -2923,12 +2923,22 @@ extend_type_theory SCT where
   syntax_sort IsofibrationWitness (E : SCat) (B : SCat) (p : Functor E B) : Type u
   /-- Chapter 5 fibration vocabulary is the book's isofibration condition. -/
   syntax_abbrev Fibration (E : SCat) (B : SCat) (p : Functor E B) := IsofibrationWitness E B p
-  /-- Cartesian structure on a fibration; Chapter 5 and Axiom L. -/
-  syntax_sort CartesianFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) : Type u
-  /-- Cocartesian structure on a fibration; Chapter 5 and Axiom L. -/
-  syntax_sort CocartesianFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) : Type u
+  /-- A section of a functor that is left adjoint to it.
+  Book context:Chapter 5 of the SCT book. -/
+  syntax_sort LeftAdjointSection (C : SCat) (D : SCat) (p : Functor C D) : Type u
+  /-- A section of a functor that is right adjoint to it.  Book context: Chapter 5 of the SCT book.
+  -/
+  syntax_sort RightAdjointSection (C : SCat) (D : SCat) (p : Functor C D) : Type u
+  /-- Underlying section functor of a left-adjoint-section witness.  Book context: Chapter 5 of the
+  SCT book.
+  -/
+  lf_opaque leftAdjointSectionFunctor (C : SCat) (D : SCat) (p : Functor C D)
+    (s : LeftAdjointSection C D p) : Functor D C
+  /-- Underlying section functor of a right-adjoint-section witness.  Book context: Chapter 5 of the
+  SCT book.
+  -/
+  lf_opaque rightAdjointSectionFunctor (C : SCat) (D : SCat) (p : Functor C D)
+    (s : RightAdjointSection C D p) : Functor D C
 
   /-- Directed/lax pullback of `f : A → C` and `g : B → C`; triples `(a,b,f a → g b)`.  Book
   context: Chapter 5 of the SCT book.
@@ -2957,50 +2967,56 @@ extend_type_theory SCT where
   -/
   lf_opaque directedEval1 (E : SCat) (B : SCat) (p : Functor E B) :
     Functor (funCat intervalCat E) (directedPullbackCat B E B (idFunctor B) p)
+  /-- Cartesian structure on a fibration, represented by a right adjoint section of `directedEval1`.
+  Book context: Chapter 5 of the SCT book.
+  -/
+  syntax_abbrev CartesianFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
+    (fib : Fibration E B p) :=
+    RightAdjointSection (funCat intervalCat E)
+      (directedPullbackCat B E B (idFunctor B) p) (directedEval1 E B p)
+  /-- Cocartesian structure on a fibration, represented by a left adjoint section of
+  `directedEval0`. Book context: Chapter 5 of the SCT book.
+  -/
+  syntax_abbrev CocartesianFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
+    (fib : Fibration E B p) :=
+    LeftAdjointSection (funCat intervalCat E)
+      (directedPullbackCat E B B p (idFunctor B)) (directedEval0 E B p)
   /-- Left-fibration structure; Chapter 5. -/
-  syntax_sort LeftFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) : Type u
+  syntax_abbrev LeftFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
+    (fib : Fibration E B p) :=
+    CatEquiv (funCat intervalCat E) (directedPullbackCat E B B p (idFunctor B))
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Source fibration of a category; Chapter 5 source-fibration construction.
-  Book target: §5.8, source and target maps from the arrow category as cartesian/cocartesian
-  fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the directed-pullback description of source/target
-  evaluation. -/
-  def sourceFibration (C : SCat) : Fibration (funCat intervalCat C) C (sourceFunctor C) := sorry
-  /-- Target fibration of a category; Chapter 5 target-fibration construction.
-  Book target: §5.8, source and target maps from the arrow category as cartesian/cocartesian
-  fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the directed-pullback description of source/target
-  evaluation. -/
-  def targetFibration (C : SCat) : Fibration (funCat intervalCat C) C (targetFunctor C) := sorry
+  model_section Chapter5
 
-end SCT
+  /-- Source fibration of a category; Chapter 5 source-fibration structure data. -/
+  lf_opaque sourceFibration (C : SCat) : Fibration (funCat intervalCat C) C (sourceFunctor C)
+  /-- Target fibration of a category; Chapter 5 target-fibration structure data. -/
+  lf_opaque targetFibration (C : SCat) : Fibration (funCat intervalCat C) C (targetFunctor C)
 
 extend_type_theory SCT where
 
   model_section Chapter5
 
   /-- Right-fibration structure; Chapter 5. -/
-  syntax_sort RightFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) : Type u
+  syntax_abbrev RightFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
+    (fib : Fibration E B p) :=
+    CatEquiv (funCat intervalCat E) (directedPullbackCat B E B (idFunctor B) p)
   /-- Left fibrations are equivalently those with `directedEval0` an equivalence.  Book context:
   Chapter 5 of the SCT book.
   -/
-  lf_opaque leftFibrationEvalEquiv (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (left : LeftFibrationWitness E B p fib) :
-    CatEquiv (funCat intervalCat E) (directedPullbackCat E B B p (idFunctor B))
+  lf_def leftFibrationEvalEquiv : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (fib : Fibration E B p) ⇒ LeftFibrationWitness E B p fib ⇒
+      CatEquiv (funCat intervalCat E) (directedPullbackCat E B B p (idFunctor B)) :=
+    fun E B p fib left => left
   /-- Right fibrations are equivalently those with `directedEval1` an equivalence.  Book context:
   Chapter 5 of the SCT book.
   -/
-  lf_opaque rightFibrationEvalEquiv (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (right : RightFibrationWitness E B p fib) :
-    CatEquiv (funCat intervalCat E) (directedPullbackCat B E B (idFunctor B) p)
+  lf_def rightFibrationEvalEquiv : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (fib : Fibration E B p) ⇒ RightFibrationWitness E B p fib ⇒
+      CatEquiv (funCat intervalCat E) (directedPullbackCat B E B (idFunctor B) p) :=
+    fun E B p fib right => right
   /-- Category of covariant lifts for `directedEval0`, indexed by `(e, α)`.  Book context: Chapter 5
   of the SCT book.
   -/
@@ -3014,58 +3030,33 @@ extend_type_theory SCT where
   /-- Adjunction data between two functors; Chapter 5. -/
   syntax_sort Adjunction (C : SCat) (D : SCat) (L : Functor C D) (R : Functor D C) : Type u
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Source fibration has its canonical cartesian structure; Chapter 5.
-  Book target: §5.8, source and target maps from the arrow category as cartesian/cocartesian
-  fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the directed-pullback description of source/target
-  evaluation. -/
-  def sourceCartesian (C : SCat) :
-      CartesianFibrationWitness (funCat intervalCat C) C (sourceFunctor C)
-        (sourceFibration C) := sorry
-  /-- Target fibration has its canonical cocartesian structure; Chapter 5.
-  Book target: §5.8, source and target maps from the arrow category as cartesian/cocartesian
-  fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the directed-pullback description of source/target
-  evaluation. -/
-  def targetCocartesian (C : SCat) :
+  model_section Chapter5
+
+  /-- Source fibration has its canonical cartesian structure; Chapter 5 structure data. -/
+  lf_opaque sourceCartesian (C : SCat) :
+    CartesianFibrationWitness (funCat intervalCat C) C (sourceFunctor C) (sourceFibration C)
+  /-- Target fibration has its canonical cocartesian structure; Chapter 5 structure data. -/
+  lf_opaque targetCocartesian (C : SCat) :
     CocartesianFibrationWitness (funCat intervalCat C) C (targetFunctor C)
-      (targetFibration C) := sorry
-  /-- Pullback/base-change fibration; Chapter 5.
-  Book target: §5.2/§5.6, stability of (co)cartesian fibrations under base change.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by pulling back the directed-evaluation/adjoint-section data.
-  -/
-  def baseChangeFibration (E : SCat) (B : SCat) (p : Functor E B)
+      (targetFibration C)
+  /-- Pullback/base-change fibration; Chapter 5 stability data. -/
+  lf_opaque baseChangeFibration (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (B' : SCat) (q : Functor B' B) :
-    Fibration (pullbackCat B' E B q p) B' (pullbackPr1 B' E B q p) := sorry
-  /-- Cartesian structure is stable under base change; Chapter 5.
-  Book target: §5.2/§5.6, stability of (co)cartesian fibrations under base change.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by pulling back the directed-evaluation/adjoint-section data.
-  -/
-  def baseChangeCartesian (E : SCat) (B : SCat) (p : Functor E B)
+    Fibration (pullbackCat B' E B q p) B' (pullbackPr1 B' E B q p)
+  /-- Cartesian structure is stable under base change; Chapter 5 stability data. -/
+  lf_opaque baseChangeCartesian (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cart : CartesianFibrationWitness E B p fib)
     (B' : SCat) (q : Functor B' B) :
     CartesianFibrationWitness (pullbackCat B' E B q p) B' (pullbackPr1 B' E B q p)
-      (baseChangeFibration E B p fib B' q) := sorry
-  /-- Cocartesian structure is stable under base change; Chapter 5.
-  Book target: §5.2/§5.6, stability of (co)cartesian fibrations under base change.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by pulling back the directed-evaluation/adjoint-section data.
-  -/
-  def baseChangeCocartesian (E : SCat) (B : SCat) (p : Functor E B)
+      (baseChangeFibration E B p fib B' q)
+  /-- Cocartesian structure is stable under base change; Chapter 5 stability data. -/
+  lf_opaque baseChangeCocartesian (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (B' : SCat) (q : Functor B' B) :
     CocartesianFibrationWitness (pullbackCat B' E B q p) B'
-      (pullbackPr1 B' E B q p) (baseChangeFibration E B p fib B' q) := sorry
-
-end SCT
+      (pullbackPr1 B' E B q p) (baseChangeFibration E B p fib B' q)
 
 extend_type_theory SCT where
 
@@ -3077,26 +3068,22 @@ extend_type_theory SCT where
   /-- Counit natural transformation of an adjunction.  Book context: Chapter 5 of the SCT book. -/
   lf_opaque adjunctionCounit (C : SCat) (D : SCat) (L : Functor C D) (R : Functor D C)
     (adj : Adjunction C D L R) : NatTrans D D (compFunctor D C D R L) (idFunctor D)
-  /-- A section of a functor that is left adjoint to it.
-  Book context:Chapter 5 of the SCT book. -/
-  syntax_sort LeftAdjointSection (C : SCat) (D : SCat) (p : Functor C D) : Type u
-  /-- A section of a functor that is right adjoint to it.  Book context: Chapter 5 of the SCT book.
-  -/
-  syntax_sort RightAdjointSection (C : SCat) (D : SCat) (p : Functor C D) : Type u
   /-- Cocartesian structure supplies a left adjoint section of `directedEval0`.  Book context:
   Chapter 5 of the SCT book.
   -/
-  lf_opaque cocartesianLiftSection (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
-    LeftAdjointSection (funCat intervalCat E) (directedPullbackCat E B B p (idFunctor B))
-      (directedEval0 E B p)
+  lf_def cocartesianLiftSection : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (fib : Fibration E B p) ⇒ (cocart : CocartesianFibrationWitness E B p fib) ⇒
+      LeftAdjointSection (funCat intervalCat E)
+        (directedPullbackCat E B B p (idFunctor B)) (directedEval0 E B p) :=
+    fun E B p fib cocart => cocart
   /-- Cartesian structure supplies a right adjoint section of `directedEval1`.  Book context:
   Chapter 5 of the SCT book.
   -/
-  lf_opaque cartesianLiftSection (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (cart : CartesianFibrationWitness E B p fib) :
-    RightAdjointSection (funCat intervalCat E) (directedPullbackCat B E B (idFunctor B) p)
-      (directedEval1 E B p)
+  lf_def cartesianLiftSection : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (fib : Fibration E B p) ⇒ (cart : CartesianFibrationWitness E B p fib) ⇒
+      RightAdjointSection (funCat intervalCat E)
+        (directedPullbackCat B E B (idFunctor B) p) (directedEval1 E B p) :=
+    fun E B p fib cart => cart
   /-- Cocartesian morphism evidence for a morphism in the total category.
   Book context:Chapter 5 of
   the SCT book.
@@ -3159,18 +3146,23 @@ extend_type_theory SCT where
   syntax_sort FiberwiseInitialWitness (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) : Type u
 
+extend_type_theory SCT where
+
+  model_section Chapter5
+
+  /-- Chosen cocartesian lift functor, the underlying functor of the left adjoint section supplied
+  by cocartesian structure.  Book context: Chapter 5 of the SCT book.
+  -/
+  lf_def cocartesianLiftFunctor : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (fib : Fibration E B p) ⇒ CocartesianFibrationWitness E B p fib ⇒
+      Functor (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E) :=
+    fun E B p fib cocart => leftAdjointSectionFunctor (funCat intervalCat E)
+      (directedPullbackCat E B B p (idFunctor B)) (directedEval0 E B p) cocart
+
 namespace SCT
 
 /- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
 internal_defs where
-  /-- Chosen cocartesian lift functor, the left adjoint section of `directedEval0`.
-  Book target: §5.6, cocartesian transport and Beck-Chevalley criterion for cocartesian functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct from the left-adjoint section and prove the Beck-Chevalley
-  characterization. -/
-  def cocartesianLiftFunctor (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
-    Functor (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E) := sorry
   /-- Map on directed pullbacks induced by a functor over the base.
   Book target: §5.6, cocartesian transport and Beck-Chevalley criterion for cocartesian functors.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
