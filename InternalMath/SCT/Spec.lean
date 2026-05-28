@@ -3277,20 +3277,15 @@ extend_type_theory SCT where
   -/
   lf_opaque pullbackShapeCat : SCat
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Absolute fibrations weaken to contextual fibrations.
-  Book target: §5.7, fibrations in context obtained by weakening absolute fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive using the contextual weakening operation of Axiom K.3. -/
-  def weakenContextFibration (Γ : SCat) (E : SCat) (B : SCat) (p : Functor E B)
+  model_section Chapter5
+
+  /-- Absolute fibrations weaken to contextual fibrations; Chapter 5 contextual-fibration data. -/
+  lf_opaque weakenContextFibration (Γ : SCat) (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) :
     ContextFibration Γ (weakenContextCat Γ E) (weakenContextCat Γ B)
-      (weakenContextFunctor Γ E B p) := sorry
-
-end SCT
+      (weakenContextFunctor Γ E B p)
 
 extend_type_theory SCT where
 
@@ -3320,31 +3315,19 @@ extend_type_theory SCT where
   lf_opaque colimitFunctor (J : SCat) (C : SCat) (h : HasColimitsOfShape J C) :
     Functor (funCat J C) C
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
+  model_section Chapter5
 
-
-
-  /-- A locally cocartesian fibration that is cocartesian.
-  Book target: §5.7, absolute (co)cartesian fibrations are locally (co)cartesian in context.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove by comparing absolute and contextual directed evaluations. -/
-  def locallyCocartesianOfCocartesian (E : SCat) (B : SCat) (p : Functor E B)
+  /-- Absolute cocartesian fibrations are locally cocartesian in context; Chapter 5 structure data.
+  -/
+  lf_opaque locallyCocartesianOfCocartesian (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
-    LocallyCocartesianFibrationWitness E B p fib := sorry
-  /-- A locally cartesian fibration that is cartesian.
-  Book target: §5.7, absolute (co)cartesian fibrations are locally (co)cartesian in context.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove by comparing absolute and contextual directed evaluations. -/
-  def locallyCartesianOfCartesian (E : SCat) (B : SCat) (p : Functor E B)
+    LocallyCocartesianFibrationWitness E B p fib
+  /-- Absolute cartesian fibrations are locally cartesian in context; Chapter 5 structure data. -/
+  lf_opaque locallyCartesianOfCartesian (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cart : CartesianFibrationWitness E B p fib) :
-    LocallyCartesianFibrationWitness E B p fib := sorry
-
-
-
-end SCT
+    LocallyCartesianFibrationWitness E B p fib
 
 /-- Chapter 6: the Fundamental Theorem of category theory. -/
 extend_type_theory SCT where

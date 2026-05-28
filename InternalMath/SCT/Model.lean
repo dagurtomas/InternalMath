@@ -316,8 +316,11 @@ def sctModel.{u} : SCTModel.{u} where
   universalLeftSectionBase := sorry
   universal_right_adjoint_section := sorry
   universalRightSectionBase := sorry
+  weakenContextFibration := sorry
   pullbackShapeCat := sorry
   pushoutShapeCat := sorry
+  locallyCocartesianOfCocartesian := sorry
+  locallyCartesianOfCartesian := sorry
   coneCat := sorry
   coconeCat := sorry
   limitFunctor := sorry
