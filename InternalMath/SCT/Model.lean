@@ -310,6 +310,11 @@ def sctModel.{u} : SCTModel.{u} where
   baseChangeCocartesian := sorry
   lift0Cat := sorry
   lift1Cat := sorry
+  directedPullbackMapOverBase := sorry
+  beckChevalleyTransformation := sorry
+  cocartesianFunctorBeckChevalley := sorry
+  idCocartesianFunctor := sorry
+  compCocartesianFunctor := sorry
   adjunctionUnit := sorry
   adjunctionCounit := sorry
   universal_left_adjoint_section := sorry

@@ -3159,25 +3159,17 @@ extend_type_theory SCT where
     fun E B p fib cocart => leftAdjointSectionFunctor (funCat intervalCat E)
       (directedPullbackCat E B B p (idFunctor B)) (directedEval0 E B p) cocart
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Map on directed pullbacks induced by a functor over the base.
-  Book target: §5.6, cocartesian transport and Beck-Chevalley criterion for cocartesian functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct from the left-adjoint section and prove the Beck-Chevalley
-  characterization. -/
-  def directedPullbackMapOverBase (E : SCat) (B : SCat) (p : Functor E B)
+  model_section Chapter5
+
+  /-- Map on directed pullbacks induced by a functor over the base; Chapter 5 transport data. -/
+  lf_opaque directedPullbackMapOverBase (E : SCat) (B : SCat) (p : Functor E B)
     (E' : SCat) (p' : Functor E' B) (F : Functor E E') :
     Functor (directedPullbackCat E B B p (idFunctor B))
-      (directedPullbackCat E' B B p' (idFunctor B)) := sorry
-  /-- Beck-Chevalley transformation associated to a functor over the base.
-  Book target: §5.6, cocartesian transport and Beck-Chevalley criterion for cocartesian functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct from the left-adjoint section and prove the Beck-Chevalley
-  characterization. -/
-  def beckChevalleyTransformation (E : SCat) (B : SCat) (p : Functor E B)
+      (directedPullbackCat E' B B p' (idFunctor B))
+  /-- Beck-Chevalley transformation associated to a functor over the base; Chapter 5 data. -/
+  lf_opaque beckChevalleyTransformation (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
     (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E') :
@@ -3188,13 +3180,9 @@ internal_defs where
         (cocartesianLiftFunctor E' B p' fib' cocart'))
       (compFunctor (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E)
         (funCat intervalCat E') (cocartesianLiftFunctor E B p fib cocart)
-        (postcompFunctor intervalCat E E' F)) := sorry
-  /-- Invertibility of the Beck-Chevalley transformation defines cocartesian functors.
-  Book target: §5.6, cocartesian transport and Beck-Chevalley criterion for cocartesian functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct from the left-adjoint section and prove the Beck-Chevalley
-  characterization. -/
-  def cocartesianFunctorBeckChevalley (E : SCat) (B : SCat) (p : Functor E B)
+        (postcompFunctor intervalCat E E' F))
+  /-- Cocartesian functor witnesses make the Beck-Chevalley transformation invertible. -/
+  lf_opaque cocartesianFunctorBeckChevalley (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
     (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
@@ -3206,21 +3194,13 @@ internal_defs where
         (cocartesianLiftFunctor E' B p' fib' cocart'))
       (compFunctor (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E)
         (funCat intervalCat E') (cocartesianLiftFunctor E B p fib cocart)
-        (postcompFunctor intervalCat E E' F)) := sorry
-  /-- Identity cocartesian functor; Chapter 5.
-  Book target: §5.6, identity and composition closure for cocartesian functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the Beck-Chevalley criterion and composition of transport.
-  -/
-  def idCocartesianFunctor (E : SCat) (B : SCat) (p : Functor E B)
+        (postcompFunctor intervalCat E E' F))
+  /-- Identity cocartesian functor; Chapter 5 closure data. -/
+  lf_opaque idCocartesianFunctor (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
-    CocartesianFunctorWitness E B p fib cocart E p fib cocart (idFunctor E) := sorry
-  /-- Composition of cocartesian functors; Chapter 5.
-  Book target: §5.6, identity and composition closure for cocartesian functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the Beck-Chevalley criterion and composition of transport.
-  -/
-  def compCocartesianFunctor (E : SCat) (B : SCat) (p : Functor E B)
+    CocartesianFunctorWitness E B p fib cocart E p fib cocart (idFunctor E)
+  /-- Composition of cocartesian functors; Chapter 5 closure data. -/
+  lf_opaque compCocartesianFunctor (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
     (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
@@ -3229,9 +3209,7 @@ internal_defs where
     (cocart'' : CocartesianFibrationWitness E'' B p'' fib'') (G : Functor E' E'')
     (hG : CocartesianFunctorWitness E' B p' fib' cocart' E'' p'' fib'' cocart'' G) :
     CocartesianFunctorWitness E B p fib cocart E'' p'' fib'' cocart''
-      (compFunctor E E' E'' F G) := sorry
-
-end SCT
+      (compFunctor E E' E'' F G)
 
 extend_type_theory SCT where
 
