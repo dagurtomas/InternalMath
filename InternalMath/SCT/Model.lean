@@ -354,8 +354,6 @@ def sctModel.{u} : SCTModel.{u} where
   equiv_to_anima_is_anima := sorry
   sigma_anima_indexed_is_anima := sorry
   geometric_realization_is_anima := sorry
-  InitialObjectWitness := sorry
-  TerminalObjectWitness := sorry
   containsIdentities := sorry
   closedUnderComposition := sorry
   PreservesMorphismCollection := sorry
@@ -366,8 +364,8 @@ def sctModel.{u} : SCTModel.{u} where
   ObjectwiseNatIso := sorry
   animaIndexedFiber := sorry
   sigmaAnimaIndexedPair := sorry
-  intervalZeroInitial := sorry
-  intervalOneTerminal := sorry
+  intervalZeroInitialHomContractible := sorry
+  intervalOneTerminalHomContractible := sorry
   all_morphisms_contains_identities := sorry
   all_morphisms_closed := sorry
   subcategoryInclWitness := sorry

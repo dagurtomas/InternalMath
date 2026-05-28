@@ -165,6 +165,148 @@ declare_type_theory SCT{u} where
     fun C D e => catEquivOfData D C
       (catEquivBackward C D e) (catEquivForward C D e)
       (catEquivCounit C D e) (catEquivUnit C D e)
+  /-- Unit comparison for composition of equivalences, derived from associativity, whiskering, and
+  the two input units.  Book target: §1.1.3, transitivity after Definition 1.1.9. -/
+  lf_def catEquivTransUnit : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
+      (eAB : CatEquiv A B) ⇒ (eBC : CatEquiv B C) ⇒
+      NatIso A A
+        (compFunctor A C A
+          (compFunctor A B C (catEquivForward A B eAB) (catEquivForward B C eBC))
+          (compFunctor C B A (catEquivBackward B C eBC) (catEquivBackward A B eAB)))
+        (idFunctor A) :=
+    fun A B C eAB eBC =>
+      compNatIso A A
+        (compFunctor A C A
+          (compFunctor A B C (catEquivForward A B eAB) (catEquivForward B C eBC))
+          (compFunctor C B A (catEquivBackward B C eBC) (catEquivBackward A B eAB)))
+        (compFunctor A B A (catEquivForward A B eAB)
+          (compFunctor B C A (catEquivForward B C eBC)
+            (compFunctor C B A (catEquivBackward B C eBC) (catEquivBackward A B eAB))))
+        (idFunctor A)
+        (assocFunctor A B C A
+          (catEquivForward A B eAB) (catEquivForward B C eBC)
+          (compFunctor C B A (catEquivBackward B C eBC) (catEquivBackward A B eAB)))
+        (compNatIso A A
+          (compFunctor A B A (catEquivForward A B eAB)
+            (compFunctor B C A (catEquivForward B C eBC)
+              (compFunctor C B A (catEquivBackward B C eBC) (catEquivBackward A B eAB))))
+          (compFunctor A B A (catEquivForward A B eAB)
+            (compFunctor B B A
+              (compFunctor B C B (catEquivForward B C eBC) (catEquivBackward B C eBC))
+              (catEquivBackward A B eAB)))
+          (idFunctor A)
+          (preWhiskerNatIso A B A (catEquivForward A B eAB)
+            (compFunctor B C A (catEquivForward B C eBC)
+              (compFunctor C B A (catEquivBackward B C eBC) (catEquivBackward A B eAB)))
+            (compFunctor B B A
+              (compFunctor B C B (catEquivForward B C eBC) (catEquivBackward B C eBC))
+              (catEquivBackward A B eAB))
+            (assocFunctorInv B C B A
+              (catEquivForward B C eBC) (catEquivBackward B C eBC)
+              (catEquivBackward A B eAB)))
+          (compNatIso A A
+            (compFunctor A B A (catEquivForward A B eAB)
+              (compFunctor B B A
+                (compFunctor B C B (catEquivForward B C eBC) (catEquivBackward B C eBC))
+                (catEquivBackward A B eAB)))
+            (compFunctor A B A (catEquivForward A B eAB)
+              (compFunctor B B A (idFunctor B) (catEquivBackward A B eAB)))
+            (idFunctor A)
+            (preWhiskerNatIso A B A (catEquivForward A B eAB)
+              (compFunctor B B A
+                (compFunctor B C B (catEquivForward B C eBC) (catEquivBackward B C eBC))
+                (catEquivBackward A B eAB))
+              (compFunctor B B A (idFunctor B) (catEquivBackward A B eAB))
+              (postWhiskerNatIso B B A
+                (compFunctor B C B (catEquivForward B C eBC) (catEquivBackward B C eBC))
+                (idFunctor B) (catEquivBackward A B eAB)
+                (catEquivUnit B C eBC)))
+            (compNatIso A A
+              (compFunctor A B A (catEquivForward A B eAB)
+                (compFunctor B B A (idFunctor B) (catEquivBackward A B eAB)))
+              (compFunctor A B A (catEquivForward A B eAB) (catEquivBackward A B eAB))
+              (idFunctor A)
+              (preWhiskerNatIso A B A (catEquivForward A B eAB)
+                (compFunctor B B A (idFunctor B) (catEquivBackward A B eAB))
+                (catEquivBackward A B eAB)
+                (leftUnitor B A (catEquivBackward A B eAB)))
+              (catEquivUnit A B eAB))))
+  /-- Counit comparison for composition of equivalences, derived from associativity, whiskering,
+  and the two input counits.  Book target: §1.1.3, transitivity after Definition 1.1.9. -/
+  lf_def catEquivTransCounit : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
+      (eAB : CatEquiv A B) ⇒ (eBC : CatEquiv B C) ⇒
+      NatIso C C
+        (compFunctor C A C
+          (compFunctor C B A (catEquivBackward B C eBC) (catEquivBackward A B eAB))
+          (compFunctor A B C (catEquivForward A B eAB) (catEquivForward B C eBC)))
+        (idFunctor C) :=
+    fun A B C eAB eBC =>
+      compNatIso C C
+        (compFunctor C A C
+          (compFunctor C B A (catEquivBackward B C eBC) (catEquivBackward A B eAB))
+          (compFunctor A B C (catEquivForward A B eAB) (catEquivForward B C eBC)))
+        (compFunctor C B C (catEquivBackward B C eBC)
+          (compFunctor B A C (catEquivBackward A B eAB)
+            (compFunctor A B C (catEquivForward A B eAB) (catEquivForward B C eBC))))
+        (idFunctor C)
+        (assocFunctor C B A C
+          (catEquivBackward B C eBC) (catEquivBackward A B eAB)
+          (compFunctor A B C (catEquivForward A B eAB) (catEquivForward B C eBC)))
+        (compNatIso C C
+          (compFunctor C B C (catEquivBackward B C eBC)
+            (compFunctor B A C (catEquivBackward A B eAB)
+              (compFunctor A B C (catEquivForward A B eAB) (catEquivForward B C eBC))))
+          (compFunctor C B C (catEquivBackward B C eBC)
+            (compFunctor B B C
+              (compFunctor B A B (catEquivBackward A B eAB) (catEquivForward A B eAB))
+              (catEquivForward B C eBC)))
+          (idFunctor C)
+          (preWhiskerNatIso C B C (catEquivBackward B C eBC)
+            (compFunctor B A C (catEquivBackward A B eAB)
+              (compFunctor A B C (catEquivForward A B eAB) (catEquivForward B C eBC)))
+            (compFunctor B B C
+              (compFunctor B A B (catEquivBackward A B eAB) (catEquivForward A B eAB))
+              (catEquivForward B C eBC))
+            (assocFunctorInv B A B C
+              (catEquivBackward A B eAB) (catEquivForward A B eAB)
+              (catEquivForward B C eBC)))
+          (compNatIso C C
+            (compFunctor C B C (catEquivBackward B C eBC)
+              (compFunctor B B C
+                (compFunctor B A B (catEquivBackward A B eAB) (catEquivForward A B eAB))
+                (catEquivForward B C eBC)))
+            (compFunctor C B C (catEquivBackward B C eBC)
+              (compFunctor B B C (idFunctor B) (catEquivForward B C eBC)))
+            (idFunctor C)
+            (preWhiskerNatIso C B C (catEquivBackward B C eBC)
+              (compFunctor B B C
+                (compFunctor B A B (catEquivBackward A B eAB) (catEquivForward A B eAB))
+                (catEquivForward B C eBC))
+              (compFunctor B B C (idFunctor B) (catEquivForward B C eBC))
+              (postWhiskerNatIso B B C
+                (compFunctor B A B (catEquivBackward A B eAB) (catEquivForward A B eAB))
+                (idFunctor B) (catEquivForward B C eBC)
+                (catEquivCounit A B eAB)))
+            (compNatIso C C
+              (compFunctor C B C (catEquivBackward B C eBC)
+                (compFunctor B B C (idFunctor B) (catEquivForward B C eBC)))
+              (compFunctor C B C (catEquivBackward B C eBC) (catEquivForward B C eBC))
+              (idFunctor C)
+              (preWhiskerNatIso C B C (catEquivBackward B C eBC)
+                (compFunctor B B C (idFunctor B) (catEquivForward B C eBC))
+                (catEquivForward B C eBC)
+                (leftUnitor B C (catEquivForward B C eBC)))
+              (catEquivCounit B C eBC))))
+  /-- Transitivity of category equivalence, packaged from the composed forward/backward functors
+  and the derived unit/counit comparisons.  Book target: §1.1.3 after Definition 1.1.9. -/
+  lf_def catEquivTrans : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
+      CatEquiv A B ⇒ CatEquiv B C ⇒ CatEquiv A C :=
+    fun A B C eAB eBC =>
+      catEquivOfData A C
+        (compFunctor A B C (catEquivForward A B eAB) (catEquivForward B C eBC))
+        (compFunctor C B A (catEquivBackward B C eBC) (catEquivBackward A B eAB))
+        (catEquivTransUnit A B C eAB eBC)
+        (catEquivTransCounit A B C eAB eBC)
   /-- A section of a functor; Definition 1.1.12.  The displayed natural isomorphism is the data. -/
   syntax_abbrev SectionWitness (C : SCat) (D : SCat) (F : Functor C D) (S : Functor D C)
     (σ : NatIso D D (compFunctor D C D S F) (idFunctor D)) :=
@@ -179,6 +321,60 @@ declare_type_theory SCT{u} where
     (i : Functor C D) (r : Functor D C)
     (ρ : NatIso C C (compFunctor C D C i r) (idFunctor C)) :=
     NatIso C C (compFunctor C D C i r) (idFunctor C)
+  /-- Comparison between the displayed retraction and section inverses in Lemma 1.1.13. -/
+  lf_def sectionRetractionBackwardNatIso :
+      (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
+      (S : Functor D C) ⇒
+      (σ : NatIso D D (compFunctor D C D S F) (idFunctor D)) ⇒
+      (R : Functor D C) ⇒
+      (ρ : NatIso C C (compFunctor C D C F R) (idFunctor C)) ⇒
+      SectionWitness C D F S σ ⇒ RetractionWitness C D F R ρ ⇒ NatIso D C R S :=
+    fun C D F S σ R ρ sec ret =>
+      compNatIso D C R (compFunctor D D C (idFunctor D) R) S
+        (invNatIso D C (compFunctor D D C (idFunctor D) R) R (leftUnitor D C R))
+        (compNatIso D C
+          (compFunctor D D C (idFunctor D) R)
+          (compFunctor D D C (compFunctor D C D S F) R)
+          S
+          (postWhiskerNatIso D D C (idFunctor D) (compFunctor D C D S F) R
+            (invNatIso D D (compFunctor D C D S F) (idFunctor D) sec))
+          (compNatIso D C
+            (compFunctor D D C (compFunctor D C D S F) R)
+            (compFunctor D C C S (compFunctor C D C F R))
+            S
+            (assocFunctor D C D C S F R)
+            (compNatIso D C
+              (compFunctor D C C S (compFunctor C D C F R))
+              (compFunctor D C C S (idFunctor C))
+              S
+              (preWhiskerNatIso D C C S
+                (compFunctor C D C F R) (idFunctor C) ret)
+              (rightUnitor D C S))))
+  /-- Counit comparison used to package a section/retraction pair as an equivalence. -/
+  lf_def sectionRetractionCounit :
+      (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
+      (S : Functor D C) ⇒
+      (σ : NatIso D D (compFunctor D C D S F) (idFunctor D)) ⇒
+      (R : Functor D C) ⇒
+      (ρ : NatIso C C (compFunctor C D C F R) (idFunctor C)) ⇒
+      SectionWitness C D F S σ ⇒ RetractionWitness C D F R ρ ⇒
+      NatIso D D (compFunctor D C D R F) (idFunctor D) :=
+    fun C D F S σ R ρ sec ret =>
+      compNatIso D D (compFunctor D C D R F) (compFunctor D C D S F) (idFunctor D)
+        (postWhiskerNatIso D C D R S F
+          (sectionRetractionBackwardNatIso C D F S σ R ρ sec ret))
+        sec
+  /-- Equivalence from a section and retraction; Lemma 1.1.13. -/
+  lf_def catEquivOfSectionRetraction :
+      (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
+      (S : Functor D C) ⇒
+      (σ : NatIso D D (compFunctor D C D S F) (idFunctor D)) ⇒
+      (R : Functor D C) ⇒
+      (ρ : NatIso C C (compFunctor C D C F R) (idFunctor C)) ⇒
+      SectionWitness C D F S σ ⇒ RetractionWitness C D F R ρ ⇒ CatEquiv C D :=
+    fun C D F S σ R ρ sec ret =>
+      catEquivOfData C D F R ret
+        (sectionRetractionCounit C D F S σ R ρ sec ret)
 
   /-- The terminal anima `*`; Axiom B.1. -/
   lf_opaque terminalAnima : Anima
@@ -186,28 +382,6 @@ declare_type_theory SCT{u} where
   lf_def terminalCat : SCat := animaCat terminalAnima
   /-- Absolute objects of a category; Axiom A.2. -/
   syntax_abbrev Obj (C : SCat) := Functor terminalCat C
-
-namespace SCT
-
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Equivalences are closed under composition.
-  Book target: §1.1.3, transitivity of categorical equivalence after Definition 1.1.9.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the packaged equivalence data and functorial coherence. -/
-  def catEquivTrans (A : SCat) (B : SCat) (C : SCat)
-    (eAB : CatEquiv A B) (eBC : CatEquiv B C) : CatEquiv A C := sorry
-  /-- Equivalence from a section and retraction.
-  Book target: Lemma 1.1.13, equivalence from a section and a retraction.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the inverse data from the displayed section/retraction
-  witnesses. -/
-  def catEquivOfSectionRetraction (C : SCat) (D : SCat) (F : Functor C D)
-    (S : Functor D C) (σ : NatIso D D (compFunctor D C D S F) (idFunctor D))
-    (R : Functor D C) (ρ : NatIso C C (compFunctor C D C F R) (idFunctor C))
-    (sec : SectionWitness C D F S σ) (ret : RetractionWitness C D F R ρ) : CatEquiv C D := sorry
-
-end SCT
 
 extend_type_theory SCT where
 
@@ -245,19 +419,6 @@ extend_type_theory SCT where
   lf_def objectFunctorCounit : (C : SCat) ⇒ (F : Functor terminalCat C) ⇒
       NatIso terminalCat C (objectFunctor C (objectOfFunctor C F)) F :=
     fun C F => idNatIso terminalCat C F
-
-  /-- Initial-object witness for an object of a synthetic category.
-  Book target: the initial-object characterization used in §1.2 and later in §5.5.
-  Status: remaining T-shaped model-facing sort.  To make this book-faithful, replace this witness
-  sort by the actual universal/contractible outgoing-hom construction once hom objects and
-  initial-object uniqueness are internal. -/
-  syntax_sort InitialObjectWitness (C : SCat) (x : Obj C) : Type u
-  /-- Terminal-object witness for an object of a synthetic category.
-  Book target: the terminal-object characterization used in §1.2 and later in §5.5.
-  Status: remaining T-shaped model-facing sort.  To make this book-faithful, replace this witness
-  sort by the actual universal/contractible incoming-hom construction once hom objects and
-  terminal-object uniqueness are internal. -/
-  syntax_sort TerminalObjectWitness (C : SCat) (x : Obj C) : Type u
 
   /-- Terminal projection; Axiom B.1. -/
   lf_opaque terminalProjection (C : SCat) : Functor C terminalCat
@@ -591,10 +752,6 @@ extend_type_theory SCT where
   lf_def intervalZeroFunctor : Functor terminalCat intervalCat := intervalZero
   /-- The target endpoint as a functor `* → [1]`; Axiom C.1. -/
   lf_def intervalOneFunctor : Functor terminalCat intervalCat := intervalOne
-  /-- The source endpoint is initial in `[1]`; Axiom C.2. -/
-  lf_opaque intervalZeroInitial : InitialObjectWitness intervalCat intervalZero
-  /-- The target endpoint is terminal in `[1]`; Axiom C.2. -/
-  lf_opaque intervalOneTerminal : TerminalObjectWitness intervalCat intervalOne
   /-- The walking arrow, viewed as an object of `Fun([1],[1])`; Axiom C.1. -/
   lf_def intervalArrow : Functor intervalCat intervalCat := idFunctor intervalCat
   /-- `[0]` is the terminal category; Axiom C.1 and Axiom B.1. -/
@@ -718,35 +875,42 @@ extend_type_theory SCT where
   lf_def objectHomCat : (C : SCat) ⇒ Obj C ⇒ Obj C ⇒ SCat :=
     fun C x y => pullbackCat (objectSourceFiberCat C x) terminalCat C
       (objectSourceFiberTarget C x) y
+  /-- Initial-object witness for an object of a synthetic category.
+  Book target: the initial-object characterization used in §1.2 and later in §5.5. -/
+  syntax_abbrev InitialObjectWitness (C : SCat) (x : Obj C) :=
+    (y : Obj C) → CatEquiv (objectHomCat C x y) terminalCat
+  /-- Terminal-object witness for an object of a synthetic category.
+  Book target: the terminal-object characterization used in §1.2 and later in §5.5. -/
+  syntax_abbrev TerminalObjectWitness (C : SCat) (x : Obj C) :=
+    (y : Obj C) → CatEquiv (objectHomCat C y x) terminalCat
+  /-- Outgoing homs from an initial object are contractible, by projecting its witness. -/
+  lf_def initialObjectHomContractible :
+      (C : SCat) ⇒ (x : Obj C) ⇒ InitialObjectWitness C x ⇒
+      (y : Obj C) ⇒ CatEquiv (objectHomCat C x y) terminalCat :=
+    fun C x h y => h y
+  /-- Incoming homs to a terminal object are contractible, by projecting its witness. -/
+  lf_def terminalObjectHomContractible :
+      (C : SCat) ⇒ (x : Obj C) ⇒ TerminalObjectWitness C x ⇒
+      (y : Obj C) ⇒ CatEquiv (objectHomCat C y x) terminalCat :=
+    fun C x h y => h y
+  /-- Hom-contractibility data for the source endpoint of `[1]`; Axiom C.2. -/
+  lf_opaque intervalZeroInitialHomContractible (y : Obj intervalCat) :
+    CatEquiv (objectHomCat intervalCat intervalZero y) terminalCat
+  /-- The source endpoint is initial in `[1]`; Axiom C.2. -/
+  lf_def intervalZeroInitial : InitialObjectWitness intervalCat intervalZero :=
+    fun y => intervalZeroInitialHomContractible y
+  /-- Hom-contractibility data for the target endpoint of `[1]`; Axiom C.2. -/
+  lf_opaque intervalOneTerminalHomContractible (y : Obj intervalCat) :
+    CatEquiv (objectHomCat intervalCat y intervalOne) terminalCat
+  /-- The target endpoint is terminal in `[1]`; Axiom C.2. -/
+  lf_def intervalOneTerminal : TerminalObjectWitness intervalCat intervalOne :=
+    fun y => intervalOneTerminalHomContractible y
   /-- A functor, viewed as an object of the corresponding functor category.  Book context: Chapter 1
   of the SCT book.
   -/
   lf_def functorObject : (C : SCat) ⇒ (D : SCat) ⇒ Functor C D ⇒ Obj (funCat C D) :=
     fun C D F => curryFunctor terminalCat C D
       (compFunctor (prodCat terminalCat C) C D (prodPr2 terminalCat C) F)
-
-namespace SCT
-
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Outgoing homs from an initial object are contractible.
-  Book target: §1.2 and Axiom C.2, characterization of initial objects by contractible outgoing
-  homs.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from the chosen initial-object witness and hom-category
-  construction. -/
-  def initialObjectHomContractible (C : SCat) (x : Obj C)
-    (h : InitialObjectWitness C x) (y : Obj C) : CatEquiv (objectHomCat C x y) terminalCat := sorry
-  /-- Incoming homs to a terminal object are contractible.
-  Book target: §1.2 and Axiom C.2, characterization of terminal objects by contractible incoming
-  homs.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from the chosen terminal-object witness and hom-category
-  construction. -/
-  def terminalObjectHomContractible (C : SCat) (x : Obj C)
-    (h : TerminalObjectWitness C x) (y : Obj C) : CatEquiv (objectHomCat C y x) terminalCat := sorry
-
-end SCT
 
 extend_type_theory SCT where
 
@@ -1287,6 +1451,216 @@ extend_type_theory SCT where
     (K : Functor (animaCat A) (coreCat C))
     (β : NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C K
       (coreIncl C)) F) : NatIso (animaCat A) (coreCat C) K (coreLift A C F)
+  /-- β comparison for a groupoid-source core lift, derived from the anima-source β rule and the
+  groupoid/anima equivalence.  Book target: Axiom G specialized to groupoid sources. -/
+  lf_def coreLiftFromGroupoidBeta : (G : SCat) ⇒ (C : SCat) ⇒
+      (gG : GroupoidWitness G) ⇒ (F : Functor G C) ⇒
+      NatIso G C
+        (compFunctor G (coreCat C) C (coreLiftFromGroupoid G C gG F) (coreIncl C)) F :=
+    fun G C gG F =>
+      compNatIso G C
+        (compFunctor G (coreCat C) C (coreLiftFromGroupoid G C gG F) (coreIncl C))
+        (compFunctor G (animaCat (animaOfGroupoid G gG)) C
+          (catEquivForward G (animaCat (animaOfGroupoid G gG)) (groupoid_anima_equiv G gG))
+          (compFunctor (animaCat (animaOfGroupoid G gG)) (coreCat C) C
+            (coreLift (animaOfGroupoid G gG) C
+              (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+                (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                  (groupoid_anima_equiv G gG)) F))
+            (coreIncl C)))
+        F
+        (assocFunctor G (animaCat (animaOfGroupoid G gG)) (coreCat C) C
+          (catEquivForward G (animaCat (animaOfGroupoid G gG)) (groupoid_anima_equiv G gG))
+          (coreLift (animaOfGroupoid G gG) C
+            (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+              (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG)) F))
+          (coreIncl C))
+        (compNatIso G C
+          (compFunctor G (animaCat (animaOfGroupoid G gG)) C
+            (catEquivForward G (animaCat (animaOfGroupoid G gG)) (groupoid_anima_equiv G gG))
+            (compFunctor (animaCat (animaOfGroupoid G gG)) (coreCat C) C
+              (coreLift (animaOfGroupoid G gG) C
+                (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+                  (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                    (groupoid_anima_equiv G gG)) F))
+              (coreIncl C)))
+          (compFunctor G (animaCat (animaOfGroupoid G gG)) C
+            (catEquivForward G (animaCat (animaOfGroupoid G gG)) (groupoid_anima_equiv G gG))
+            (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+              (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG)) F))
+          F
+          (preWhiskerNatIso G (animaCat (animaOfGroupoid G gG)) C
+            (catEquivForward G (animaCat (animaOfGroupoid G gG))
+              (groupoid_anima_equiv G gG))
+            (compFunctor (animaCat (animaOfGroupoid G gG)) (coreCat C) C
+              (coreLift (animaOfGroupoid G gG) C
+                (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+                  (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                    (groupoid_anima_equiv G gG)) F))
+              (coreIncl C))
+            (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+              (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG)) F)
+            (coreLiftBeta (animaOfGroupoid G gG) C
+              (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+                (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                  (groupoid_anima_equiv G gG)) F)))
+          (compNatIso G C
+            (compFunctor G (animaCat (animaOfGroupoid G gG)) C
+              (catEquivForward G (animaCat (animaOfGroupoid G gG)) (groupoid_anima_equiv G gG))
+              (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+                (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                  (groupoid_anima_equiv G gG)) F))
+            (compFunctor G G C
+              (compFunctor G (animaCat (animaOfGroupoid G gG)) G
+                (catEquivForward G (animaCat (animaOfGroupoid G gG))
+                  (groupoid_anima_equiv G gG))
+                (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                  (groupoid_anima_equiv G gG)))
+              F)
+            F
+            (assocFunctorInv G (animaCat (animaOfGroupoid G gG)) G C
+              (catEquivForward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG))
+              (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG))
+              F)
+            (compNatIso G C
+              (compFunctor G G C
+                (compFunctor G (animaCat (animaOfGroupoid G gG)) G
+                  (catEquivForward G (animaCat (animaOfGroupoid G gG))
+                    (groupoid_anima_equiv G gG))
+                  (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                    (groupoid_anima_equiv G gG)))
+                F)
+              (compFunctor G G C (idFunctor G) F)
+              F
+              (postWhiskerNatIso G G C
+                (compFunctor G (animaCat (animaOfGroupoid G gG)) G
+                  (catEquivForward G (animaCat (animaOfGroupoid G gG))
+                    (groupoid_anima_equiv G gG))
+                  (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                    (groupoid_anima_equiv G gG)))
+                (idFunctor G) F
+                (catEquivUnit G (animaCat (animaOfGroupoid G gG))
+                  (groupoid_anima_equiv G gG)))
+              (leftUnitor G C F))))
+  /-- Comparison needed to apply anima-source uniqueness to a groupoid-source lift. -/
+  lf_def coreLiftFromGroupoidUniqBeta : (G : SCat) ⇒ (C : SCat) ⇒
+      (gG : GroupoidWitness G) ⇒ (F : Functor G C) ⇒
+      (L : Functor G (coreCat C)) ⇒
+      NatIso G C (compFunctor G (coreCat C) C L (coreIncl C)) F ⇒
+      NatIso (animaCat (animaOfGroupoid G gG)) C
+        (compFunctor (animaCat (animaOfGroupoid G gG)) (coreCat C) C
+          (compFunctor (animaCat (animaOfGroupoid G gG)) G (coreCat C)
+            (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+              (groupoid_anima_equiv G gG)) L)
+          (coreIncl C))
+        (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+          (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+            (groupoid_anima_equiv G gG)) F) :=
+    fun G C gG F L β =>
+      compNatIso (animaCat (animaOfGroupoid G gG)) C
+        (compFunctor (animaCat (animaOfGroupoid G gG)) (coreCat C) C
+          (compFunctor (animaCat (animaOfGroupoid G gG)) G (coreCat C)
+            (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+              (groupoid_anima_equiv G gG)) L)
+          (coreIncl C))
+        (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+          (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+            (groupoid_anima_equiv G gG))
+          (compFunctor G (coreCat C) C L (coreIncl C)))
+        (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+          (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+            (groupoid_anima_equiv G gG)) F)
+        (assocFunctor (animaCat (animaOfGroupoid G gG)) G (coreCat C) C
+          (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+            (groupoid_anima_equiv G gG)) L (coreIncl C))
+        (preWhiskerNatIso (animaCat (animaOfGroupoid G gG)) G C
+          (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+            (groupoid_anima_equiv G gG))
+          (compFunctor G (coreCat C) C L (coreIncl C)) F β)
+  /-- Uniqueness of groupoid-source core lifts, transported through the groupoid/anima
+  equivalence.  Book target: Axiom G specialized to groupoid sources. -/
+  lf_def coreLiftFromGroupoidUniq : (G : SCat) ⇒ (C : SCat) ⇒
+      (gG : GroupoidWitness G) ⇒ (F : Functor G C) ⇒ (L : Functor G (coreCat C)) ⇒
+      (β : NatIso G C (compFunctor G (coreCat C) C L (coreIncl C)) F) ⇒
+      NatIso G (coreCat C) L (coreLiftFromGroupoid G C gG F) :=
+    fun G C gG F L β =>
+      compNatIso G (coreCat C)
+        L
+        (compFunctor G G (coreCat C) (idFunctor G) L)
+        (coreLiftFromGroupoid G C gG F)
+        (invNatIso G (coreCat C) (compFunctor G G (coreCat C) (idFunctor G) L) L
+          (leftUnitor G (coreCat C) L))
+        (compNatIso G (coreCat C)
+          (compFunctor G G (coreCat C) (idFunctor G) L)
+          (compFunctor G G (coreCat C)
+            (compFunctor G (animaCat (animaOfGroupoid G gG)) G
+              (catEquivForward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG))
+              (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG)))
+            L)
+          (coreLiftFromGroupoid G C gG F)
+          (postWhiskerNatIso G G (coreCat C)
+            (idFunctor G)
+            (compFunctor G (animaCat (animaOfGroupoid G gG)) G
+              (catEquivForward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG))
+              (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG)))
+            L
+            (invNatIso G G
+              (compFunctor G (animaCat (animaOfGroupoid G gG)) G
+                (catEquivForward G (animaCat (animaOfGroupoid G gG))
+                  (groupoid_anima_equiv G gG))
+                (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                  (groupoid_anima_equiv G gG)))
+              (idFunctor G)
+              (catEquivUnit G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG))))
+          (compNatIso G (coreCat C)
+            (compFunctor G G (coreCat C)
+              (compFunctor G (animaCat (animaOfGroupoid G gG)) G
+                (catEquivForward G (animaCat (animaOfGroupoid G gG))
+                  (groupoid_anima_equiv G gG))
+                (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                  (groupoid_anima_equiv G gG)))
+              L)
+            (compFunctor G (animaCat (animaOfGroupoid G gG)) (coreCat C)
+              (catEquivForward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG))
+              (compFunctor (animaCat (animaOfGroupoid G gG)) G (coreCat C)
+                (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                  (groupoid_anima_equiv G gG)) L))
+            (coreLiftFromGroupoid G C gG F)
+            (assocFunctor G (animaCat (animaOfGroupoid G gG)) G (coreCat C)
+              (catEquivForward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG))
+              (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG))
+              L)
+            (preWhiskerNatIso G (animaCat (animaOfGroupoid G gG)) (coreCat C)
+              (catEquivForward G (animaCat (animaOfGroupoid G gG))
+                (groupoid_anima_equiv G gG))
+              (compFunctor (animaCat (animaOfGroupoid G gG)) G (coreCat C)
+                (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                  (groupoid_anima_equiv G gG)) L)
+              (coreLift (animaOfGroupoid G gG) C
+                (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+                  (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                    (groupoid_anima_equiv G gG)) F))
+              (coreLiftUniq (animaOfGroupoid G gG) C
+                (compFunctor (animaCat (animaOfGroupoid G gG)) G C
+                  (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                    (groupoid_anima_equiv G gG)) F)
+                (compFunctor (animaCat (animaOfGroupoid G gG)) G (coreCat C)
+                  (catEquivBackward G (animaCat (animaOfGroupoid G gG))
+                    (groupoid_anima_equiv G gG)) L)
+                (coreLiftFromGroupoidUniqBeta G C gG F L β)))))
 
 extend_type_theory SCT where
 
@@ -1299,37 +1673,27 @@ extend_type_theory SCT where
       Functor (coreCat C) (coreCat D) :=
     fun C D F => coreLiftFromGroupoid (coreCat C) D (coreGroupoid C)
       (compFunctor (coreCat C) C D (coreIncl C) F)
+  /-- Lift a natural isomorphism through the core inclusion, using uniqueness of the target lift.
+  Book target: Axiom G specialized to groupoid sources. -/
+  lf_def coreLiftNatIsoFromGroupoid : (G : SCat) ⇒ (C : SCat) ⇒
+      GroupoidWitness G ⇒ (L : Functor G (coreCat C)) ⇒ (M : Functor G (coreCat C)) ⇒
+      NatIso G C (compFunctor G (coreCat C) C L (coreIncl C))
+        (compFunctor G (coreCat C) C M (coreIncl C)) ⇒ NatIso G (coreCat C) L M :=
+    fun G C gG L M α =>
+      compNatIso G (coreCat C) L
+        (coreLiftFromGroupoid G C gG (compFunctor G (coreCat C) C M (coreIncl C))) M
+        (coreLiftFromGroupoidUniq G C gG
+          (compFunctor G (coreCat C) C M (coreIncl C)) L α)
+        (invNatIso G (coreCat C) M
+          (coreLiftFromGroupoid G C gG (compFunctor G (coreCat C) C M (coreIncl C)))
+          (coreLiftFromGroupoidUniq G C gG
+            (compFunctor G (coreCat C) C M (coreIncl C)) M
+            (idNatIso G C (compFunctor G (coreCat C) C M (coreIncl C)))))
 
 namespace SCT
 
 /- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
 internal_defs where
-  /-- β comparison for a groupoid-source core lift.
-  Book target: Axiom G specialized from anima sources to groupoid sources.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove by transporting the core-lift universal property along the
-  groupoid/anima equivalence. -/
-  def coreLiftFromGroupoidBeta (G : SCat) (C : SCat) (gG : GroupoidWitness G)
-    (F : Functor G C) :
-    NatIso G C (compFunctor G (coreCat C) C (coreLiftFromGroupoid G C gG F) (coreIncl C)) F := sorry
-  /-- Uniqueness of groupoid-source core lifts.
-  Book target: Axiom G specialized from anima sources to groupoid sources.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove by transporting the core-lift universal property along the
-  groupoid/anima equivalence. -/
-  def coreLiftFromGroupoidUniq (G : SCat) (C : SCat) (gG : GroupoidWitness G)
-    (F : Functor G C) (L : Functor G (coreCat C))
-    (β : NatIso G C (compFunctor G (coreCat C) C L (coreIncl C)) F) :
-    NatIso G (coreCat C) L (coreLiftFromGroupoid G C gG F) := sorry
-  /-- Lift a natural isomorphism through the core inclusion.
-  Book target: Axiom G specialized from anima sources to groupoid sources.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove by transporting the core-lift universal property along the
-  groupoid/anima equivalence. -/
-  def coreLiftNatIsoFromGroupoid (G : SCat) (C : SCat) (gG : GroupoidWitness G)
-    (L : Functor G (coreCat C)) (M : Functor G (coreCat C))
-    (α : NatIso G C (compFunctor G (coreCat C) C L (coreIncl C))
-      (compFunctor G (coreCat C) C M (coreIncl C))) : NatIso G (coreCat C) L M := sorry
   /-- Higher compatibility of a lifted core natural isomorphism with the original one.
   Book target: Axiom G specialized from anima sources to groupoid sources.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
