@@ -26,7 +26,8 @@ def sctModel.{u} : SCTModel.{u} where
   Anima := ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S)
   SCat := SSet.QCat.{u}
   Functor C D := C ⟶ D
-  NatIso := sorry
+  NatTrans := sorry
+  ObjectwiseNatIsoData := sorry
   CatEquiv := sorry
   AnimaIndexedCat := sorry
   PushoutSquare := sorry
@@ -168,7 +169,7 @@ def sctModel.{u} : SCTModel.{u} where
   simplex2Deg1Beta := sorry
   functorObjectSourceCompat := sorry
   functorObjectTargetCompat := sorry
-  natIsoToNatTrans := sorry
+  natTransObject := sorry
   horizCompIdId := sorry
   horizCompCompComp := sorry
   horizCompLeftId := sorry
@@ -456,5 +457,5 @@ def sctModel.{u} : SCTModel.{u} where
   localizationDesc := sorry
   localizationDescBeta := sorry
   localizationDescUniq := sorry
-  natIsoObjectwiseComponent := sorry
+  objectwiseNatIsoComponent := sorry
   all_fibers_anima_fiber := sorry

@@ -46,18 +46,18 @@ def CCC.lambdaCalculusModel : LambdaCalculusModel where
   idSub X := 𝟙 X
   compSub _ _ _ σ τ := σ ≫ τ
   emptySub Γ := toUnit Γ
-  weakenSub Γ A := fst Γ A
+  weakenSub Γ A := «fst» Γ A
   extendSub _ _ _ σ t := lift σ t
   substTm _ _ _ σ t := σ ≫ t
-  varZero Γ A := snd Γ A
+  varZero Γ A := «snd» Γ A
   ctxObj Γ := Γ
   ctxToSingleton Γ := lift (toUnit Γ) (𝟙 Γ)
-  ctxFromSingleton Γ := snd (𝟙_ C) Γ
+  ctxFromSingleton Γ := «snd» (𝟙_ C) Γ
   unitIntro Γ := toUnit Γ
-  pairTm _ _ _ fst snd := lift fst snd
-  fstTm _ A B pair := pair ≫ fst A B
-  sndTm _ A B pair := pair ≫ snd A B
-  lam Γ A _ body := MonoidalClosed.curry (lift (snd A Γ) (fst A Γ) ≫ body)
+  pairTm _ _ _ fstArg sndArg := lift fstArg sndArg
+  fstTm _ A B pair := pair ≫ «fst» A B
+  sndTm _ A B pair := pair ≫ «snd» A B
+  lam Γ A _ body := MonoidalClosed.curry (lift («snd» A Γ) («fst» A Γ) ≫ body)
   app _ A B fn arg := lift arg fn ≫ (ihom.ev A).app B
   EqTm _ _ t u := PLift (t = u)
   EqSub _ _ σ τ := PLift (σ = τ)
@@ -86,20 +86,20 @@ def CCC.lambdaCalculusModel : LambdaCalculusModel where
   subst_fst _ _ _ _ _ _ := ⟨by simp⟩
   subst_snd _ _ _ _ _ _ := ⟨by simp⟩
   subst_lam Γ Δ A B σ body := ⟨by
-    let body' : A ⊗ Δ ⟶ B := lift (snd A Δ) (fst A Δ) ≫ body
+    let body' : A ⊗ Δ ⟶ B := lift («snd» A Δ) («fst» A Δ) ≫ body
     rw [← MonoidalClosed.curry_natural_left σ body']
     congr 1
     dsimp [body']
-    have h : A ◁ σ ≫ lift (snd A Δ) (fst A Δ) =
-        lift (snd A Γ) (fst A Γ) ≫ lift (fst Γ A ≫ σ) (snd Γ A) := by
+    have h : A ◁ σ ≫ lift («snd» A Δ) («fst» A Δ) =
+        lift («snd» A Γ) («fst» A Γ) ≫ lift («fst» Γ A ≫ σ) («snd» Γ A) := by
       ext <;> simp
     calc
-      A ◁ σ ≫ lift (snd A Δ) (fst A Δ) ≫ body
-          = (A ◁ σ ≫ lift (snd A Δ) (fst A Δ)) ≫ body := by
+      A ◁ σ ≫ lift («snd» A Δ) («fst» A Δ) ≫ body
+          = (A ◁ σ ≫ lift («snd» A Δ) («fst» A Δ)) ≫ body := by
               rw [← Category.assoc]
-      _   = (lift (snd A Γ) (fst A Γ) ≫ lift (fst Γ A ≫ σ) (snd Γ A)) ≫ body := by
+      _   = (lift («snd» A Γ) («fst» A Γ) ≫ lift («fst» Γ A ≫ σ) («snd» Γ A)) ≫ body := by
               exact congrArg (fun f => f ≫ body) h
-      _   = lift (snd A Γ) (fst A Γ) ≫ lift (fst Γ A ≫ σ) (snd Γ A) ≫ body := by
+      _   = lift («snd» A Γ) («fst» A Γ) ≫ lift («fst» Γ A ≫ σ) («snd» Γ A) ≫ body := by
               rw [Category.assoc]⟩
   subst_app _ _ _ _ _ _ _ := ⟨by
     rw [← Category.assoc]
@@ -112,13 +112,13 @@ def CCC.lambdaCalculusModel : LambdaCalculusModel where
   fst_congr _ _ _ _ _ h := ⟨by rw [h.down]⟩
   snd_congr _ _ _ _ _ h := ⟨by rw [h.down]⟩
   beta Γ A B body arg := ⟨by
-    let body' : A ⊗ Γ ⟶ B := lift (snd A Γ) (fst A Γ) ≫ body
+    let body' : A ⊗ Γ ⟶ B := lift («snd» A Γ) («fst» A Γ) ≫ body
     have hpair :
         lift arg (MonoidalClosed.curry body') =
           lift arg (𝟙 Γ) ≫ A ◁ MonoidalClosed.curry body' := by
       ext <;> simp
     have hsubst :
-        lift arg (𝟙 Γ) ≫ (lift (snd A Γ) (fst A Γ) ≫ body) =
+        lift arg (𝟙 Γ) ≫ (lift («snd» A Γ) («fst» A Γ) ≫ body) =
           lift (𝟙 Γ) arg ≫ body := by
       rw [← Category.assoc]
       congr 1
@@ -132,18 +132,19 @@ def CCC.lambdaCalculusModel : LambdaCalculusModel where
               (MonoidalClosed.whiskerLeft_curry_ihom_ev_app A B body')
       _   = lift (𝟙 Γ) arg ≫ body := hsubst⟩
   eta Γ A B fn := ⟨by
-    have hwhisker : A ◁ fn = lift (fst A Γ) (snd A Γ ≫ fn) := by
+    have hwhisker : A ◁ fn = lift («fst» A Γ) («snd» A Γ ≫ fn) := by
       ext <;> simp
     have hcontext :
-        lift (fst A Γ) (snd A Γ ≫ fn) =
-          lift (snd A Γ) (fst A Γ) ≫ lift (snd Γ A) (fst Γ A ≫ fn) := by
+        lift («fst» A Γ) («snd» A Γ ≫ fn) =
+          lift («snd» A Γ) («fst» A Γ) ≫ lift («snd» Γ A) («fst» Γ A ≫ fn) := by
       ext <;> simp
     conv_lhs => rw [← MonoidalClosed.curry_uncurry fn]
     congr 1
     calc MonoidalClosed.uncurry fn
         = A ◁ fn ≫ (ihom.ev A).app B := by rw [MonoidalClosed.uncurry_eq]
-      _ = lift (fst A Γ) (snd A Γ ≫ fn) ≫ (ihom.ev A).app B := by rw [hwhisker]
-      _ = lift (snd A Γ) (fst A Γ) ≫ (lift (snd Γ A) (fst Γ A ≫ fn) ≫ (ihom.ev A).app B) := by
+      _ = lift («fst» A Γ) («snd» A Γ ≫ fn) ≫ (ihom.ev A).app B := by rw [hwhisker]
+      _ = lift («snd» A Γ) («fst» A Γ) ≫
+          (lift («snd» Γ A) («fst» Γ A ≫ fn) ≫ (ihom.ev A).app B) := by
             rw [hcontext, Category.assoc]⟩
   lam_congr _ _ _ _ _ h := ⟨by rw [h.down]⟩
   app_congr _ _ _ _ _ _ _ hfn harg := ⟨by rw [hfn.down, harg.down]⟩
@@ -1169,24 +1170,24 @@ namespace CCC
 def toSyntacticFunctor : C ⥤ (CCC.lambdaCalculusModel C).category where
   obj X := X
   map {X Y} f :=
-    (CCC.lambdaCalculusModel C).homMk (snd (𝟙_ C) X ≫ f)
+    (CCC.lambdaCalculusModel C).homMk («snd» (𝟙_ C) X ≫ f)
   map_id X := by
-    show (CCC.lambdaCalculusModel C).homMk (snd (𝟙_ C) X ≫ 𝟙 X) =
-      (CCC.lambdaCalculusModel C).homMk (snd (𝟙_ C) X)
+    show (CCC.lambdaCalculusModel C).homMk («snd» (𝟙_ C) X ≫ 𝟙 X) =
+      (CCC.lambdaCalculusModel C).homMk («snd» (𝟙_ C) X)
     exact Quotient.sound ⟨⟨by simp⟩⟩
   map_comp {X Y Z} f g := by
     let M := CCC.lambdaCalculusModel C
-    show M.homMk (snd (𝟙_ C) X ≫ (f ≫ g)) =
-      M.homMk (M.homComp X Y Z (snd (𝟙_ C) X ≫ f) (snd (𝟙_ C) Y ≫ g))
+    show M.homMk («snd» (𝟙_ C) X ≫ (f ≫ g)) =
+      M.homMk (M.homComp X Y Z («snd» (𝟙_ C) X ≫ f) («snd» (𝟙_ C) Y ≫ g))
     exact Quotient.sound ⟨⟨by
-      change snd (𝟙_ C) X ≫ (f ≫ g) =
-        lift (toUnit (𝟙_ C ⊗ X)) (snd (𝟙_ C) X ≫ f) ≫ (snd (𝟙_ C) Y ≫ g)
+      change «snd» (𝟙_ C) X ≫ (f ≫ g) =
+        lift (toUnit (𝟙_ C ⊗ X)) («snd» (𝟙_ C) X ≫ f) ≫ («snd» (𝟙_ C) Y ≫ g)
       calc
-        snd (𝟙_ C) X ≫ (f ≫ g) = (snd (𝟙_ C) X ≫ f) ≫ g := by
+        «snd» (𝟙_ C) X ≫ (f ≫ g) = («snd» (𝟙_ C) X ≫ f) ≫ g := by
           rw [Category.assoc]
-        _ = (lift (toUnit (𝟙_ C ⊗ X)) (snd (𝟙_ C) X ≫ f) ≫ snd (𝟙_ C) Y) ≫ g := by
+        _ = (lift (toUnit (𝟙_ C ⊗ X)) («snd» (𝟙_ C) X ≫ f) ≫ «snd» (𝟙_ C) Y) ≫ g := by
           simp
-        _ = lift (toUnit (𝟙_ C ⊗ X)) (snd (𝟙_ C) X ≫ f) ≫ (snd (𝟙_ C) Y ≫ g) := by
+        _ = lift (toUnit (𝟙_ C ⊗ X)) («snd» (𝟙_ C) X ≫ f) ≫ («snd» (𝟙_ C) Y ≫ g) := by
           rw [Category.assoc]
     ⟩⟩
 
@@ -1194,10 +1195,10 @@ instance : (toSyntacticFunctor C).Faithful where
   map_injective := by
     intro X Y f g h
     let M := CCC.lambdaCalculusModel C
-    change M.homMk (snd (𝟙_ C) X ≫ f) = M.homMk (snd (𝟙_ C) X ≫ g) at h
+    change M.homMk («snd» (𝟙_ C) X ≫ f) = M.homMk («snd» (𝟙_ C) X ≫ g) at h
     rw [Quotient.eq] at h
     rcases h with ⟨hEq⟩
-    have hmap : snd (𝟙_ C) X ≫ f = snd (𝟙_ C) X ≫ g := hEq.down
+    have hmap : «snd» (𝟙_ C) X ≫ f = «snd» (𝟙_ C) X ≫ g := hEq.down
     have hpre := congrArg (fun k => (λ_ X).inv ≫ k) hmap
     simpa [← leftUnitor_hom X, Category.assoc] using hpre
 
@@ -1207,9 +1208,9 @@ instance : (toSyntacticFunctor C).Full where
     let M := CCC.lambdaCalculusModel C
     exact Quotient.inductionOn h (fun t => by
       use ((λ_ X).inv ≫ t)
-      change M.homMk (snd (𝟙_ C) X ≫ ((λ_ X).inv ≫ t)) = M.homMk t
+      change M.homMk («snd» (𝟙_ C) X ≫ ((λ_ X).inv ≫ t)) = M.homMk t
       exact Quotient.sound ⟨⟨by
-        change snd (𝟙_ C) X ≫ ((λ_ X).inv ≫ (t : 𝟙_ C ⊗ X ⟶ Y)) = t
+        change «snd» (𝟙_ C) X ≫ ((λ_ X).inv ≫ (t : 𝟙_ C ⊗ X ⟶ Y)) = t
         rw [← leftUnitor_hom X]
         simp
       ⟩⟩)

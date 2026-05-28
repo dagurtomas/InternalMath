@@ -55,8 +55,21 @@ declare_type_theory SCT{u} where
 
   /-- Functors between synthetic categories; Axiom A.1. -/
   syntax_sort Functor (C : SCat) (D : SCat) : Type u
-  /-- Natural-isomorphism/coherence data between parallel functors; Axiom A.1. -/
-  syntax_sort NatIso (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D) : Type u
+  /-- Natural transformations between parallel functors; Axioms A.1' and A.2'. -/
+  syntax_sort NatTrans (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D) : Type u
+  /-- Componentwise invertibility evidence for a natural transformation. -/
+  syntax_sort ObjectwiseNatIsoData (C : SCat) (D : SCat)
+    (F : Functor C D) (G : Functor C D) (α : NatTrans C D F G) : Type u
+  syntax_sort_role ObjectwiseNatIsoData : side_structure
+  /-- Objectwise natural-isomorphism evidence for a natural transformation. -/
+  syntax_abbrev ObjectwiseNatIso (C : SCat) (D : SCat)
+    (F : Functor C D) (G : Functor C D) (α : NatTrans C D F G) :=
+    ObjectwiseNatIsoData C D F G α
+  /-- Natural-isomorphism/coherence data between parallel functors; Axiom A.1.
+  The package exposes its underlying natural transformation and objectwise invertibility witness.
+  -/
+  syntax_abbrev NatIso (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D) :=
+    Σ α : NatTrans C D F G, ObjectwiseNatIso C D F G α
   /-- Category equivalence data; definition after Axiom A.3. -/
   syntax_sort CatEquiv (C : SCat) (D : SCat) : Type u
   /-- The mapping anima `Map(C,D)` whose terms are functors `C → D`; Axiom A.1(4). -/
@@ -969,23 +982,21 @@ extend_type_theory SCT where
   lf_def natTransCat : (C : SCat) ⇒ (D : SCat) ⇒ Functor C D ⇒ Functor C D ⇒ SCat :=
     fun C D F G => pullbackCat (natTransSourceFiberCat C D F) terminalCat (funCat C D)
       (natTransSourceFiberTarget C D F) (functorObject C D G)
-  /-- Natural transformations are objects of the source-shaped natural-transformation category.
-  Book context: Chapter 1 of the SCT book.
+  /-- A natural transformation, viewed as an object of the source-shaped
+  natural-transformation category.  Book context: Chapter 1 of the SCT book.
   -/
-  syntax_abbrev NatTrans (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D) :=
-    Obj (natTransCat C D F G)
+  lf_opaque natTransObject (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D)
+    (α : NatTrans C D F G) : Obj (natTransCat C D F G)
 
 extend_type_theory SCT where
 
   /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
   model_section Chapter1
 
-  /-- Regard a natural isomorphism as a natural transformation.
-  Book target: Axioms A.1'/A.2', viewing a natural isomorphism as a natural transformation.
-  Since `NatIso` is primitive at this stage of the interface, its underlying natural transformation
-  is primitive projection data rather than a theorem-shaped admission. -/
-  lf_opaque natIsoToNatTrans (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D)
-    (α : NatIso C D F G) : NatTrans C D F G
+  /-- Regard a natural isomorphism as its underlying natural transformation. -/
+  lf_def natIsoToNatTrans : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
+      (G : Functor C D) ⇒ NatIso C D F G ⇒ NatTrans C D F G :=
+    fun C D F G α => fst α
 
 extend_type_theory SCT where
 
@@ -997,14 +1008,17 @@ extend_type_theory SCT where
   -/
   syntax_abbrev NatIsoIso (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D)
     (α : NatIso C D F G) (β : NatIso C D F G) :=
-    ObjIso (natTransCat C D F G) (natIsoToNatTrans C D F G α) (natIsoToNatTrans C D F G β)
+    ObjIso (natTransCat C D F G)
+      (natTransObject C D F G (natIsoToNatTrans C D F G α))
+      (natTransObject C D F G (natIsoToNatTrans C D F G β))
   /-- Underlying arrow in the functor category represented by a natural transformation.  Book
   context: Chapter 1 of the SCT book.
   -/
   lf_def natTransUnderlyingArrow : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
       (G : Functor C D) ⇒ NatTrans C D F G ⇒ Functor intervalCat (funCat C D) :=
     fun C D F G α => functorFromObject intervalCat (funCat C D)
-      (compFunctor terminalCat (natTransCat C D F G) (funCat intervalCat (funCat C D)) α
+      (compFunctor terminalCat (natTransCat C D F G) (funCat intervalCat (funCat C D))
+        (natTransObject C D F G α)
         (compFunctor (natTransCat C D F G) (natTransSourceFiberCat C D F)
           (funCat intervalCat (funCat C D))
           (pullbackPr1 (natTransSourceFiberCat C D F) terminalCat (funCat C D)
@@ -1025,7 +1039,7 @@ extend_type_theory SCT where
   lf_def idNatIsoIso : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
       (G : Functor C D) ⇒ (α : NatIso C D F G) ⇒ NatIsoIso C D F G α α :=
     fun C D F G α => idNatIso terminalCat (natTransCat C D F G)
-      (natIsoToNatTrans C D F G α)
+      (natTransObject C D F G (natIsoToNatTrans C D F G α))
   /-- Horizontal composition preserves identity natural isomorphisms; finite A.1'/A.2' coherence.
   Book context: Chapter 1 of the SCT book.
   -/
@@ -3606,28 +3620,30 @@ extend_type_theory SCT where
       (compFunctor (coreCat D) (coreCat C) (coreCat D)
         (stronglySurjectiveSection C D F surj) (coreFunctor C D F))
       (idFunctor (coreCat D))
-  /-- Objectwise natural-isomorphism evidence for a natural transformation: each component is
-  invertible.  Book target: Theorem 6.2.11. -/
-  syntax_abbrev ObjectwiseNatIso (A : SCat) (C : SCat)
-    (F : Functor A C) (G : Functor A C) (α : NatTrans A C F G) :=
-    (x : Obj A) → InvertibleMorphism C (natTransComponent A C F G α x)
-  /-- Componentwise invertibility of a natural isomorphism.  This is the source-facing direction of
-  Theorem 6.2.11 until `NatIso` exposes its underlying componentwise data. -/
-  lf_opaque natIsoObjectwiseComponent (A : SCat) (C : SCat)
-    (F : Functor A C) (G : Functor A C) (α : NatIso A C F G) (x : Obj A) :
-    InvertibleMorphism C
-      (natTransComponent A C F G (natIsoToNatTrans A C F G α) x)
+  /-- Componentwise invertibility stored in objectwise natural-isomorphism evidence. -/
+  lf_opaque objectwiseNatIsoComponent (A : SCat) (C : SCat)
+    (F : Functor A C) (G : Functor A C) (α : NatTrans A C F G)
+    (h : ObjectwiseNatIso A C F G α) (x : Obj A) :
+    InvertibleMorphism C (natTransComponent A C F G α x)
+  /-- Componentwise invertibility of a natural isomorphism, by projecting the public package. -/
+  lf_def natIsoObjectwiseComponent :
+      (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒ (G : Functor A C) ⇒
+      (α : NatIso A C F G) ⇒ (x : Obj A) ⇒
+      InvertibleMorphism C
+        (natTransComponent A C F G (natIsoToNatTrans A C F G α) x) :=
+    fun A C F G α x => objectwiseNatIsoComponent A C F G
+      (natIsoToNatTrans A C F G α) (snd α) x
   /-- Natural isomorphisms give objectwise natural-isomorphism evidence. -/
   lf_def natIsoObjectwise :
       (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒ (G : Functor A C) ⇒
       (α : NatIso A C F G) ⇒ ObjectwiseNatIso A C F G (natIsoToNatTrans A C F G α) :=
-    fun A C F G α x => natIsoObjectwiseComponent A C F G α x
+    fun A C F G α => snd α
   /-- Objectwise evidence says every component morphism is invertible. -/
   lf_def objectwiseNatIsoComponentInvertible :
       (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒ (G : Functor A C) ⇒
       (α : NatTrans A C F G) ⇒ ObjectwiseNatIso A C F G α ⇒
       (x : Obj A) ⇒ InvertibleMorphism C (natTransComponent A C F G α x) :=
-    fun A C F G α h x => h x
+    fun A C F G α h x => objectwiseNatIsoComponent A C F G α h x
 
 namespace SCT
 
@@ -3652,6 +3668,11 @@ extend_type_theory SCT where
   lf_def fundamentalTheoremEquiv : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
       FullyFaithful C D F ⇒ StronglySurjective C D F ⇒ CatEquiv C D :=
     fun C D F ff surj => fundamental_theorem_equiv C D F ff surj
+  /-- Objectwise evidence assembles a natural isomorphism; Theorem 6.2.11. -/
+  lf_def natIsoOfObjectwise : (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒
+      (G : Functor A C) ⇒ (α : NatTrans A C F G) ⇒ ObjectwiseNatIso A C F G α ⇒
+      NatIso A C F G :=
+    fun A C F G α h => ⟨α, h⟩
   /-- Evidence that a functor over a base is an equivalence on each fiber.
   Book target: Theorem 6.4.9, the fiberwise criterion for equivalences of cocartesian fibrations.
   -/
@@ -3666,15 +3687,6 @@ internal_defs where
 
 
 
-  /-- Objectwise evidence assembles a natural isomorphism; Theorem 6.2.11.
-  Book target: Theorem 6.2.11, natural transformations are natural isomorphisms iff their components
-  are invertible.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove using objectwise invertibility and the core of the functor
-  category. -/
-  def natIsoOfObjectwise (A : SCat) (C : SCat)
-    (F : Functor A C) (G : Functor A C) (α : NatTrans A C F G)
-    (h : ObjectwiseNatIso A C F G α) : NatIso A C F G := sorry
   /-- Equivalences are fully faithful; Chapter 6.
   Book target: §6.3, equivalences are fully faithful and strongly surjective.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
@@ -4003,7 +4015,7 @@ extend_type_theory SCT where
       (B : SCat) ⇒ (f : Functor B U) ⇒ (g : Functor B U) ⇒
       ClassifyingTransformation B U f g ⇒ Obj (classifiedCocartesianFunctorCat U u B f g) :=
     fun U u du B f g α => compFunctor terminalCat (natTransCat B U f g)
-      (classifiedCocartesianFunctorCat U u B f g) α
+      (classifiedCocartesianFunctorCat U u B f g) (natTransObject B U f g α)
       (catEquivForward (natTransCat B U f g) (classifiedCocartesianFunctorCat U u B f g)
         (directedUnivalenceMappingEquiv U u du B f g))
   /-- Underlying functor produced from a classifying transformation; Axiom N. -/

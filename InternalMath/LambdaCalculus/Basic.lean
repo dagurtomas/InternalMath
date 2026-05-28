@@ -99,7 +99,7 @@ declare_type_theory LambdaCalculus where
 
   /-- Pairing for product types. -/
   lf_opaque pairTm (Γ : Ctx) (A : Ty) (B : Ty)
-    (fst : Tm Γ A) (snd : Tm Γ B) : Tm Γ (prodTy A B)
+    (fstArg : Tm Γ A) (sndArg : Tm Γ B) : Tm Γ (prodTy A B)
 
   /-- First projection from a product type. -/
   lf_opaque fstTm (Γ : Ctx) (A : Ty) (B : Ty) (pair : Tm Γ (prodTy A B)) : Tm Γ A
@@ -272,10 +272,10 @@ declare_type_theory LambdaCalculus where
 
   /-- Substitution preserves product pairing. -/
   rule subst_pair (Γ : Ctx) (Δ : Ctx) (A : Ty) (B : Ty)
-    (σ : Sub Γ Δ) (fst : Tm Δ A) (snd : Tm Δ B) where
+    (σ : Sub Γ Δ) (fstArg : Tm Δ A) (sndArg : Tm Δ B) where
     conclusion : EqTm Γ (prodTy A B)
-      (substTm Γ Δ (prodTy A B) σ (pairTm Δ A B fst snd))
-      (pairTm Γ A B (substTm Γ Δ A σ fst) (substTm Γ Δ B σ snd))
+      (substTm Γ Δ (prodTy A B) σ (pairTm Δ A B fstArg sndArg))
+      (pairTm Γ A B (substTm Γ Δ A σ fstArg) (substTm Γ Δ B σ sndArg))
 
   /-- Substitution preserves first projections. -/
   rule subst_fst (Γ : Ctx) (Δ : Ctx) (A : Ty) (B : Ty)
@@ -316,12 +316,14 @@ declare_type_theory LambdaCalculus where
   model_section Products
 
   /-- First projection β-rule for products. -/
-  rule prod_beta_fst (Γ : Ctx) (A : Ty) (B : Ty) (fst : Tm Γ A) (snd : Tm Γ B) where
-    conclusion : EqTm Γ A (fstTm Γ A B (pairTm Γ A B fst snd)) fst
+  rule prod_beta_fst (Γ : Ctx) (A : Ty) (B : Ty)
+    (fstArg : Tm Γ A) (sndArg : Tm Γ B) where
+    conclusion : EqTm Γ A (fstTm Γ A B (pairTm Γ A B fstArg sndArg)) fstArg
 
   /-- Second projection β-rule for products. -/
-  rule prod_beta_snd (Γ : Ctx) (A : Ty) (B : Ty) (fst : Tm Γ A) (snd : Tm Γ B) where
-    conclusion : EqTm Γ B (sndTm Γ A B (pairTm Γ A B fst snd)) snd
+  rule prod_beta_snd (Γ : Ctx) (A : Ty) (B : Ty)
+    (fstArg : Tm Γ A) (sndArg : Tm Γ B) where
+    conclusion : EqTm Γ B (sndTm Γ A B (pairTm Γ A B fstArg sndArg)) sndArg
 
   /-- Product η-rule. -/
   rule prod_eta (Γ : Ctx) (A : Ty) (B : Ty) (pair : Tm Γ (prodTy A B)) where

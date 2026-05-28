@@ -5,7 +5,7 @@
    "type": "git",
    "subDir": null,
    "scope": "",
-   "rev": "4b5cb59d55da5eac01dcd01e604465d078bdf166",
+   "rev": "6506a11fb8ef6e97ea29bc530152993574ac4e13",
    "name": "InternalLean",
    "manifestFile": "lake-manifest.json",
    "inputRev": "main",
