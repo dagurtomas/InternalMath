@@ -22,6 +22,8 @@ generate_model_interface SCT as SCTModel
 
 open SCT CategoryTheory
 
+set_option maxRecDepth 20000 in
+
 def sctModel.{u} : SCTModel.{u} where
   Anima := ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S)
   SCat := SSet.QCat.{u}
@@ -211,6 +213,9 @@ def sctModel.{u} : SCTModel.{u} where
   coprodGroupoid := sorry
   pullbackGroupoid := sorry
   initialGroupoid := sorry
+  idSubcategoryWitness := sorry
+  initialSubcategoryWitness := sorry
+  subcategoryWitnessEmbedding := sorry
   subobjectAnima := sorry
   subobjectIncl := sorry
   subobjectInclEmbedding := sorry
@@ -229,8 +234,13 @@ def sctModel.{u} : SCTModel.{u} where
   invertingFunctorTargetGroupoidEquiv := sorry
   localizationFunctor := sorry
   localizationUniversalEquiv := sorry
+  localizationPushoutSquare := sorry
+  overCat := sorry
   dependentProductOverCat := sorry
   dependentProductOverProjection := sorry
+  overPullbackFunctor := sorry
+  dependentProductFunctor := sorry
+  dependentProductBeckChevalley := sorry
   joinCat := sorry
   joinInl := sorry
   joinInr := sorry
@@ -246,6 +256,9 @@ def sctModel.{u} : SCTModel.{u} where
   intervalJoinCounit := sorry
   joinDependentProductCat := sorry
   joinDependentProductEquiv := sorry
+  relativeJoinCat := sorry
+  relativeJoinInl := sorry
+  relativeJoinInr := sorry
   idContextFunctor := sorry
   compContextFunctor := sorry
   idContextNatIso := sorry

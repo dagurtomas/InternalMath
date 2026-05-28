@@ -1934,29 +1934,20 @@ extend_type_theory SCT where
   /-- Subobjects of an anima; used for Axiom H morphism and object collections. -/
   syntax_sort AnimaSubobject (A : Anima) : Type (u+1)
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- The identity functor is a subcategory.
-  Book target: Definition 3.1.2, the book criterion for a replete subcategory.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Verify the defining pullback/embedding condition internally. -/
-  def idSubcategoryWitness (C : SCat) : SubcategoryWitness C C (idFunctor C) := sorry
-  /-- The initial inclusion is a subcategory.
-  Book target: Definition 3.1.2, the book criterion for a replete subcategory.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Verify the defining pullback/embedding condition internally. -/
-  def initialSubcategoryWitness (C : SCat) :
-      SubcategoryWitness initialCat C (initialElim C) := sorry
-  /-- Every subcategory is an embedding.
-  Book target: Definition 3.1.2, the book criterion for a replete subcategory.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Verify the defining pullback/embedding condition internally. -/
-  def subcategoryWitnessEmbedding (A : SCat) (C : SCat) (i : Functor A C)
-    (h : SubcategoryWitness A C i) : Embedding A C i := sorry
+  model_section Chapter3
 
-end SCT
+  /-- The identity functor is a subcategory; source-facing Definition 3.1.2 data until
+  `SubcategoryWitness` is replaced by the book criterion. -/
+  lf_opaque idSubcategoryWitness (C : SCat) : SubcategoryWitness C C (idFunctor C)
+  /-- The initial inclusion is a subcategory; source-facing Definition 3.1.2 data. -/
+  lf_opaque initialSubcategoryWitness (C : SCat) :
+      SubcategoryWitness initialCat C (initialElim C)
+  /-- Every subcategory is an embedding; projection data for the current `SubcategoryWitness`
+  interface. -/
+  lf_opaque subcategoryWitnessEmbedding (A : SCat) (C : SCat) (i : Functor A C)
+    (h : SubcategoryWitness A C i) : Embedding A C i
 
 extend_type_theory SCT where
 
@@ -2240,21 +2231,17 @@ extend_type_theory SCT where
   /-- Geometric realization is localization at all morphisms; Axiom J. -/
   lf_def geometricRealization : SCat ⇒ SCat := fun C => localizationCat C (allMorphisms C)
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Pushout-square presentation of localization.
-  Book target: Remark 3.3.8, localization presented by a pushout square.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from Axiom I and the inverting-functor universal property. -/
-  def localizationPushoutSquare (C : SCat) (W : MorphismCollection C) :
+  model_section Chapter3
+
+  /-- Pushout-square presentation of localization; source-facing Remark 3.3.8 data until the
+  localization universal property is connected to a source-shaped pushout interface. -/
+  lf_opaque localizationPushoutSquare (C : SCat) (W : MorphismCollection C) :
     PushoutSquare (prodCat intervalCat (morphismCollectionCat C W)) C
       (morphismCollectionCat C W) (localizationCat C W)
       (morphismCollectionArrowFunctor C W) (prodPr2 intervalCat (morphismCollectionCat C W))
-      (localizationFunctor C W) (localizationCollectionFunctor C W) := sorry
-
-end SCT
+      (localizationFunctor C W) (localizationCollectionFunctor C W)
 
 extend_type_theory SCT where
 
@@ -2285,17 +2272,13 @@ extend_type_theory SCT where
     (p : Functor E B) (q : Functor F B) (u : Functor E F) :=
     NatIso E B (compFunctor E F B u q) p
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Categories over a base, used for exponentiable functors.
-  Book target: Definition 3.5.4, the over-category `Cat/C` of categories over a base.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct as the appropriate slice/fiber of a functor category. -/
-  def overCat (B : SCat) : SCat := sorry
+  model_section Chapter3
 
-end SCT
+  /-- Categories over a base, used for exponentiable functors; source-facing Definition 3.5.4 data
+  until the over-category is constructed as a slice/fiber. -/
+  lf_opaque overCat (B : SCat) : SCat
 
 extend_type_theory SCT where
 
@@ -2314,39 +2297,27 @@ extend_type_theory SCT where
   /-- Join of synthetic categories; Axioms J.1 and J.2. -/
   lf_opaque joinCat (C : SCat) (D : SCat) : SCat
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Pullback/reindexing functor between over-categories.
-  Book target: Construction 3.5.6, pullback/reindexing, dependent product, and Beck-Chevalley
-  comparison.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from exponentiability of the base functor. -/
-  def overPullbackFunctor (A : SCat) (B : SCat) (u : Functor A B) :
-    Functor (overCat B) (overCat A) := sorry
-  /-- Dependent product functor right adjoint to pullback for an exponentiable functor.
-  Book target: Construction 3.5.6, pullback/reindexing, dependent product, and Beck-Chevalley
-  comparison.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from exponentiability of the base functor. -/
-  def dependentProductFunctor (A : SCat) (B : SCat)
-    (u : Functor A B) (exp : ExponentiableFunctor A B u) : Functor (overCat A) (overCat B) := sorry
-  /-- Beck-Chevalley comparison for dependent products; Construction 3.5.6.
-  Book target: Construction 3.5.6, pullback/reindexing, dependent product, and Beck-Chevalley
-  comparison.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from exponentiability of the base functor. -/
-  def dependentProductBeckChevalley (A : SCat) (B : SCat) (A' : SCat) (B' : SCat)
+  model_section Chapter3
+
+  /-- Pullback/reindexing functor between over-categories; source-facing Construction 3.5.6 data.
+  -/
+  lf_opaque overPullbackFunctor (A : SCat) (B : SCat) (u : Functor A B) :
+    Functor (overCat B) (overCat A)
+  /-- Dependent product functor right adjoint to pullback for an exponentiable functor;
+  source-facing Construction 3.5.6 data. -/
+  lf_opaque dependentProductFunctor (A : SCat) (B : SCat)
+    (u : Functor A B) (exp : ExponentiableFunctor A B u) : Functor (overCat A) (overCat B)
+  /-- Beck-Chevalley comparison for dependent products; source-facing Construction 3.5.6 data. -/
+  lf_opaque dependentProductBeckChevalley (A : SCat) (B : SCat) (A' : SCat) (B' : SCat)
     (u : Functor A B) (u' : Functor A' B') (f : Functor A' A) (g : Functor B' B)
     (exp : ExponentiableFunctor A B u) (exp' : ExponentiableFunctor A' B' u') :
     NatTrans (overCat A) (overCat B')
       (compFunctor (overCat A) (overCat B) (overCat B')
         (dependentProductFunctor A B u exp) (overPullbackFunctor B' B g))
       (compFunctor (overCat A) (overCat A') (overCat B')
-        (overPullbackFunctor A' A f) (dependentProductFunctor A' B' u' exp')) := sorry
-
-end SCT
+        (overPullbackFunctor A' A f) (dependentProductFunctor A' B' u' exp'))
 
 extend_type_theory SCT where
 
@@ -2415,37 +2386,20 @@ extend_type_theory SCT where
   -/
   lf_def simplex3Cat : SCat := joinCat simplex0Cat simplex2Cat
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
+  model_section Chapter3
 
-
-
-
-  /-- Relative join over a common base.
-  Book target: Proposition 3.5.15 and Corollary 3.5.16, relative joins as dependent-product
-  constructions.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Define from dependent products and the ordinary join interface. -/
-  def relativeJoinCat (B : SCat) (C : SCat) (D : SCat)
-    (p : Functor C B) (q : Functor D B) : SCat := sorry
-  /-- Left inclusion into a relative join.
-  Book target: Proposition 3.5.15 and Corollary 3.5.16, relative joins as dependent-product
-  constructions.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Define from dependent products and the ordinary join interface. -/
-  def relativeJoinInl (B : SCat) (C : SCat) (D : SCat)
-    (p : Functor C B) (q : Functor D B) : Functor C (relativeJoinCat B C D p q) := sorry
-  /-- Right inclusion into a relative join.
-  Book target: Proposition 3.5.15 and Corollary 3.5.16, relative joins as dependent-product
-  constructions.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Define from dependent products and the ordinary join interface. -/
-  def relativeJoinInr (B : SCat) (C : SCat) (D : SCat)
-    (p : Functor C B) (q : Functor D B) : Functor D (relativeJoinCat B C D p q) := sorry
-
-end SCT
+  /-- Relative join over a common base; source-facing Proposition 3.5.15/Corollary 3.5.16 data
+  until it is defined from dependent products and ordinary joins. -/
+  lf_opaque relativeJoinCat (B : SCat) (C : SCat) (D : SCat)
+    (p : Functor C B) (q : Functor D B) : SCat
+  /-- Left inclusion into a relative join; source-facing Proposition 3.5.15 data. -/
+  lf_opaque relativeJoinInl (B : SCat) (C : SCat) (D : SCat)
+    (p : Functor C B) (q : Functor D B) : Functor C (relativeJoinCat B C D p q)
+  /-- Right inclusion into a relative join; source-facing Proposition 3.5.15 data. -/
+  lf_opaque relativeJoinInr (B : SCat) (C : SCat) (D : SCat)
+    (p : Functor C B) (q : Functor D B) : Functor D (relativeJoinCat B C D p q)
 
 extend_type_theory SCT where
 
