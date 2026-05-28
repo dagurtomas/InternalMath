@@ -4017,46 +4017,24 @@ extend_type_theory SCT where
   -/
   lf_def catInternalTerminalSmall : SmallWitness categoryUniverse terminalCat := terminalSmall
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- The initial object of internal category theory in `Cat`.
-  Book target: §7.5, initial object of internal category theory in `Cat`.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Classify the small initial category and prove its universal property
-  in `Cat`. -/
-  def catInternalInitial : Obj categoryUniverse := sorry
-  /-- Internal product operation in `Cat`.
-  Book target: Lemma 7.5.5, products and coproducts internal to `Cat`.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Classify external products/coproducts of small categories and prove
-  the internal universal property. -/
-  def catInternalProduct :
-      Functor (prodCat categoryUniverse categoryUniverse) categoryUniverse := sorry
-  /-- Internal coproduct operation in `Cat`.
-  Book target: Lemma 7.5.5, products and coproducts internal to `Cat`.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Classify external products/coproducts of small categories and prove
-  the internal universal property. -/
-  def catInternalCoproduct :
-      Functor (prodCat categoryUniverse categoryUniverse) categoryUniverse := sorry
-  /-- Internal pullback operation in `Cat`, packaged as source-facing theorem data.
-  Book target: §7.5, pullbacks internal to `Cat`.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Classify external pullbacks of small diagrams and prove the internal
-  pullback property. -/
-  def catInternalPullback :
-      Functor (funCat pullbackShapeCat categoryUniverse) categoryUniverse := sorry
-  /-- Internal functor-category/exponential operation in `Cat`.
-  Book target: §7.5 and Remark 7.5.15, functor categories/exponentials internal to `Cat`.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Classify external functor categories and prove the exponential
-  adjunction. -/
-  def catInternalFunctorCategory :
-    Functor (prodCat categoryUniverse categoryUniverse) categoryUniverse := sorry
+  model_section Chapter7
 
-end SCT
+  /-- The initial object of internal category theory in `Cat`; §7.5 source data. -/
+  lf_opaque catInternalInitial : Obj categoryUniverse
+  /-- Internal product operation in `Cat`; Lemma 7.5.5 source data. -/
+  lf_opaque catInternalProduct :
+      Functor (prodCat categoryUniverse categoryUniverse) categoryUniverse
+  /-- Internal coproduct operation in `Cat`; Lemma 7.5.5 source data. -/
+  lf_opaque catInternalCoproduct :
+      Functor (prodCat categoryUniverse categoryUniverse) categoryUniverse
+  /-- Internal pullback operation in `Cat`; §7.5 source data. -/
+  lf_opaque catInternalPullback :
+      Functor (funCat pullbackShapeCat categoryUniverse) categoryUniverse
+  /-- Internal functor-category/exponential operation in `Cat`; §7.5/Remark 7.5.15 source data. -/
+  lf_opaque catInternalFunctorCategory :
+    Functor (prodCat categoryUniverse categoryUniverse) categoryUniverse
 
 extend_type_theory SCT where
 
@@ -4158,52 +4136,31 @@ extend_type_theory SCT where
     fun A => smallClassifyingMap groupoidUniverse groupoidUniverseWitness
       (animaCat A) (animaSmall A)
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Geometric realization of a small category is a small groupoid.
-  Book target: §7.6, geometric realization/fundamental groupoid of a small category.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove smallness of the localization at all morphisms. -/
-  def geometricRealizationSmall (C : SCat) (hC : SmallWitness categoryUniverse C) :
-    SmallWitness groupoidUniverse (geometricRealization C) := sorry
-  /-- Fiberwise localization of a cocartesian fibration.
-  Book target: §7.6, fiberwise localizations of small cocartesian fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct `L_B(E,W)` and prove its fibration/cocartesian structure and
-  universal property. -/
-  def fiberwiseLocalizationTotal (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) : SCat := sorry
-  /-- Projection of the fiberwise localization.
-  Book target: §7.6, fiberwise localizations of small cocartesian fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct `L_B(E,W)` and prove its fibration/cocartesian structure and
-  universal property. -/
-  def fiberwiseLocalizationProjection (E : SCat) (B : SCat) (p : Functor E B)
+  model_section Chapter7
+
+  /-- Geometric realization of a small category is a small groupoid; §7.6 source data. -/
+  lf_opaque geometricRealizationSmall (C : SCat) (hC : SmallWitness categoryUniverse C) :
+    SmallWitness groupoidUniverse (geometricRealization C)
+  /-- Fiberwise localization of a cocartesian fibration; §7.6 source data. -/
+  lf_opaque fiberwiseLocalizationTotal (E : SCat) (B : SCat) (p : Functor E B)
+    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) : SCat
+  /-- Projection of the fiberwise localization; §7.6 source data. -/
+  lf_opaque fiberwiseLocalizationProjection (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
-    Functor (fiberwiseLocalizationTotal E B p fib cocart) B := sorry
-  /-- Fibration structure on the fiberwise localization.
-  Book target: §7.6, fiberwise localizations of small cocartesian fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct `L_B(E,W)` and prove its fibration/cocartesian structure and
-  universal property. -/
-  def fiberwiseLocalizationFibration (E : SCat) (B : SCat) (p : Functor E B)
+    Functor (fiberwiseLocalizationTotal E B p fib cocart) B
+  /-- Fibration structure on the fiberwise localization; §7.6 source data. -/
+  lf_opaque fiberwiseLocalizationFibration (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
     Fibration (fiberwiseLocalizationTotal E B p fib cocart) B
-      (fiberwiseLocalizationProjection E B p fib cocart) := sorry
-  /-- Fiberwise localization remains cocartesian.
-  Book target: §7.6, fiberwise localizations of small cocartesian fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct `L_B(E,W)` and prove its fibration/cocartesian structure and
-  universal property. -/
-  def fiberwiseLocalizationCocartesian (E : SCat) (B : SCat) (p : Functor E B)
+      (fiberwiseLocalizationProjection E B p fib cocart)
+  /-- Fiberwise localization remains cocartesian; §7.6 source data. -/
+  lf_opaque fiberwiseLocalizationCocartesian (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
     CocartesianFibrationWitness (fiberwiseLocalizationTotal E B p fib cocart) B
       (fiberwiseLocalizationProjection E B p fib cocart)
-      (fiberwiseLocalizationFibration E B p fib cocart) := sorry
-
-end SCT
+      (fiberwiseLocalizationFibration E B p fib cocart)
 
 extend_type_theory SCT where
 
@@ -4219,27 +4176,17 @@ extend_type_theory SCT where
     fun A => smallClassifyingEquiv groupoidUniverse groupoidUniverseWitness
       (animaCat A) (animaSmall A)
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Category of small cocartesian fibrations over a base.
-  Book target: Theorem 7.7.8, straightening/unstraightening for small cocartesian fibrations over a
-  base.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct `CoCart(A)` internally and prove the equivalence with
-  `Fun(A,Cat)`. -/
-  def cocartesianFibrationsOverCat (U : SCat) (u : UniverseWitness U) (B : SCat) : SCat := sorry
-  /-- Straightening/unstraightening equivalence over an arbitrary base.
-  Book target: Theorem 7.7.8, straightening/unstraightening for small cocartesian fibrations over a
-  base.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct `CoCart(A)` internally and prove the equivalence with
-  `Fun(A,Cat)`. -/
-  def straighteningUnstraighteningEquiv (U : SCat) (u : UniverseWitness U) (B : SCat) :
-    CatEquiv (cocartesianFibrationsOverCat U u B) (funCat B U) := sorry
+  model_section Chapter7
 
-end SCT
+  /-- Category of small cocartesian fibrations over a base; Theorem 7.7.8 source data. -/
+  lf_opaque cocartesianFibrationsOverCat (U : SCat) (u : UniverseWitness U) (B : SCat) :
+    SCat
+  /-- Straightening/unstraightening equivalence over an arbitrary base; Theorem 7.7.8 source data.
+  -/
+  lf_opaque straighteningUnstraighteningEquiv (U : SCat) (u : UniverseWitness U) (B : SCat) :
+    CatEquiv (cocartesianFibrationsOverCat U u B) (funCat B U)
 
 extend_type_theory SCT where
 
@@ -4278,23 +4225,15 @@ extend_type_theory SCT where
   -/
   syntax_sort ConstructiveRegularUniverseWitness (U : SCat) (u : UniverseWitness U) : Type u
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Universal composable pair of small cocartesian fibrations.
-  Book target: §7.8, universal composable pair of small cocartesian fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the classifier `UΣ` and its universal projections. -/
-  def universalComposablePairCat (U : SCat) (u : UniverseWitness U) : SCat := sorry
-  /-- Projection from the universal composable-pair category.
-  Book target: §7.8, universal composable pair of small cocartesian fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the classifier `UΣ` and its universal projections. -/
-  def universalComposablePairProjection (U : SCat) (u : UniverseWitness U) :
-    Functor (universalComposablePairCat U u) U := sorry
+  model_section Chapter7
 
-end SCT
+  /-- Universal composable pair of small cocartesian fibrations; §7.8 source data. -/
+  lf_opaque universalComposablePairCat (U : SCat) (u : UniverseWitness U) : SCat
+  /-- Projection from the universal composable-pair category; §7.8 source data. -/
+  lf_opaque universalComposablePairProjection (U : SCat) (u : UniverseWitness U) :
+    Functor (universalComposablePairCat U u) U
 
 extend_type_theory SCT where
 
@@ -4305,16 +4244,10 @@ extend_type_theory SCT where
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
     SmallCocartesianFibrationWitness categoryUniverse E B p fib cocart
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Constructive regularity implies regularity.
-  Book target: §7.8, constructive regularity implies regularity for universes.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the classifier of the composite universal composable pair.
-  -/
-  def regularOfConstructiveRegular (U : SCat) (u : UniverseWitness U)
-    (h : ConstructiveRegularUniverseWitness U u) : RegularUniverseWitness U u := sorry
+  model_section Chapter7
 
-end SCT
+  /-- Constructive regularity implies regularity; §7.8 source data. -/
+  lf_opaque regularOfConstructiveRegular (U : SCat) (u : UniverseWitness U)
+    (h : ConstructiveRegularUniverseWitness U u) : RegularUniverseWitness U u
