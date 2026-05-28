@@ -2603,26 +2603,12 @@ extend_type_theory SCT where
   lf_opaque contextProdCat (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ) :
     ContextCat Γ
 
-namespace SCT
-
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Unique map to the contextual terminal category.
-  Book target: Axioms K.2--K.3, terminal/initial constructions transported to contexts.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by weakening the absolute terminal/initial universal
-  properties. -/
-  def contextTerminalProjection (Γ : SCat) (C : ContextCat Γ) :
-    ContextFunctor Γ C (contextTerminalCat Γ) := sorry
-  /-- Unique map out of the contextual initial category.
-  Book target: Axioms K.2--K.3, terminal/initial constructions transported to contexts.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by weakening the absolute terminal/initial universal
-  properties. -/
-  def contextInitialElim (Γ : SCat) (C : ContextCat Γ) :
-    ContextFunctor Γ (contextInitialCat Γ) C := sorry
-
-end SCT
+  /-- Unique map to the contextual terminal category; Axiom K.2 data. -/
+  lf_opaque contextTerminalProjection (Γ : SCat) (C : ContextCat Γ) :
+    ContextFunctor Γ C (contextTerminalCat Γ)
+  /-- Unique map out of the contextual initial category; Axiom K.2 data. -/
+  lf_opaque contextInitialElim (Γ : SCat) (C : ContextCat Γ) :
+    ContextFunctor Γ (contextInitialCat Γ) C
 
 extend_type_theory SCT where
 
@@ -2638,37 +2624,25 @@ extend_type_theory SCT where
   lf_opaque contextCoprodCat (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ) :
     ContextCat Γ
 
-namespace SCT
-
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Contextual product pairing.
-  Book target: Axioms K.2--K.3, contextual products and their β-laws.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by weakening the absolute product universal property. -/
-  def contextProdPair (Γ : SCat) (X : ContextCat Γ) (C : ContextCat Γ) (D : ContextCat Γ)
+  /-- Contextual product pairing; Axiom K.2 data. -/
+  lf_opaque contextProdPair (Γ : SCat) (X : ContextCat Γ)
+    (C : ContextCat Γ) (D : ContextCat Γ)
     (F : ContextFunctor Γ X C) (G : ContextFunctor Γ X D) :
-    ContextFunctor Γ X (contextProdCat Γ C D) := sorry
-  /-- First contextual product β comparison.
-  Book target: Axioms K.2--K.3, contextual products and their β-laws.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by weakening the absolute product universal property. -/
-  def contextProdBeta1 (Γ : SCat) (X : ContextCat Γ) (C : ContextCat Γ) (D : ContextCat Γ)
+    ContextFunctor Γ X (contextProdCat Γ C D)
+  /-- First contextual product β comparison; Axiom K.2 data. -/
+  lf_opaque contextProdBeta1 (Γ : SCat) (X : ContextCat Γ)
+    (C : ContextCat Γ) (D : ContextCat Γ)
     (F : ContextFunctor Γ X C) (G : ContextFunctor Γ X D) :
     ContextNatIso Γ X C
       (compContextFunctor Γ X (contextProdCat Γ C D) C
-        (contextProdPair Γ X C D F G) (contextProdPr1 Γ C D)) F := sorry
-  /-- Second contextual product β comparison.
-  Book target: Axioms K.2--K.3, contextual products and their β-laws.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by weakening the absolute product universal property. -/
-  def contextProdBeta2 (Γ : SCat) (X : ContextCat Γ) (C : ContextCat Γ) (D : ContextCat Γ)
+        (contextProdPair Γ X C D F G) (contextProdPr1 Γ C D)) F
+  /-- Second contextual product β comparison; Axiom K.2 data. -/
+  lf_opaque contextProdBeta2 (Γ : SCat) (X : ContextCat Γ)
+    (C : ContextCat Γ) (D : ContextCat Γ)
     (F : ContextFunctor Γ X C) (G : ContextFunctor Γ X D) :
     ContextNatIso Γ X D
       (compContextFunctor Γ X (contextProdCat Γ C D) D
-        (contextProdPair Γ X C D F G) (contextProdPr2 Γ C D)) G := sorry
-
-end SCT
+        (contextProdPair Γ X C D F G) (contextProdPr2 Γ C D)) G
 
 extend_type_theory SCT where
 
@@ -2685,37 +2659,22 @@ extend_type_theory SCT where
     (C : ContextCat Γ) (D : ContextCat Γ) (E : ContextCat Γ)
     (F : ContextFunctor Γ C E) (G : ContextFunctor Γ D E) : ContextCat Γ
 
-namespace SCT
-
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Contextual coproduct case analysis.
-  Book target: Axioms K.2--K.3, contextual coproducts and their β-laws.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by weakening the absolute coproduct universal property. -/
-  def contextCoprodCase (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ)
+  /-- Contextual coproduct case analysis; Axiom K.2 data. -/
+  lf_opaque contextCoprodCase (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ)
     (X : ContextCat Γ) (F : ContextFunctor Γ C X) (G : ContextFunctor Γ D X) :
-    ContextFunctor Γ (contextCoprodCat Γ C D) X := sorry
-  /-- First contextual coproduct β comparison.
-  Book target: Axioms K.2--K.3, contextual coproducts and their β-laws.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by weakening the absolute coproduct universal property. -/
-  def contextCoprodBeta1 (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ)
+    ContextFunctor Γ (contextCoprodCat Γ C D) X
+  /-- First contextual coproduct β comparison; Axiom K.2 data. -/
+  lf_opaque contextCoprodBeta1 (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ)
     (X : ContextCat Γ) (F : ContextFunctor Γ C X) (G : ContextFunctor Γ D X) :
     ContextNatIso Γ C X
       (compContextFunctor Γ C (contextCoprodCat Γ C D) X
-        (contextCoprodIn1 Γ C D) (contextCoprodCase Γ C D X F G)) F := sorry
-  /-- Second contextual coproduct β comparison.
-  Book target: Axioms K.2--K.3, contextual coproducts and their β-laws.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by weakening the absolute coproduct universal property. -/
-  def contextCoprodBeta2 (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ)
+        (contextCoprodIn1 Γ C D) (contextCoprodCase Γ C D X F G)) F
+  /-- Second contextual coproduct β comparison; Axiom K.2 data. -/
+  lf_opaque contextCoprodBeta2 (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ)
     (X : ContextCat Γ) (F : ContextFunctor Γ C X) (G : ContextFunctor Γ D X) :
     ContextNatIso Γ D X
       (compContextFunctor Γ D (contextCoprodCat Γ C D) X
-        (contextCoprodIn2 Γ C D) (contextCoprodCase Γ C D X F G)) G := sorry
-
-end SCT
+        (contextCoprodIn2 Γ C D) (contextCoprodCase Γ C D X F G)) G
 
 extend_type_theory SCT where
 
@@ -2725,40 +2684,25 @@ extend_type_theory SCT where
   lf_opaque contextFunCat (Γ : SCat) (gΓ : GroupoidalContext Γ)
     (C : ContextCat Γ) (D : ContextCat Γ) : ContextCat Γ
 
-namespace SCT
-
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- First contextual pullback projection.
-  Book target: Axioms K.2--K.3, contextual pullbacks and their comparison square.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by weakening the absolute pullback universal property. -/
-  def contextPullbackPr1 (Γ : SCat)
+  /-- First contextual pullback projection; Axiom K.2 data. -/
+  lf_opaque contextPullbackPr1 (Γ : SCat)
     (C : ContextCat Γ) (D : ContextCat Γ) (E : ContextCat Γ)
     (F : ContextFunctor Γ C E) (G : ContextFunctor Γ D E) :
-    ContextFunctor Γ (contextPullbackCat Γ C D E F G) C := sorry
-  /-- Second contextual pullback projection.
-  Book target: Axioms K.2--K.3, contextual pullbacks and their comparison square.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by weakening the absolute pullback universal property. -/
-  def contextPullbackPr2 (Γ : SCat)
+    ContextFunctor Γ (contextPullbackCat Γ C D E F G) C
+  /-- Second contextual pullback projection; Axiom K.2 data. -/
+  lf_opaque contextPullbackPr2 (Γ : SCat)
     (C : ContextCat Γ) (D : ContextCat Γ) (E : ContextCat Γ)
     (F : ContextFunctor Γ C E) (G : ContextFunctor Γ D E) :
-    ContextFunctor Γ (contextPullbackCat Γ C D E F G) D := sorry
-  /-- Contextual pullback commutativity.
-  Book target: Axioms K.2--K.3, contextual pullbacks and their comparison square.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by weakening the absolute pullback universal property. -/
-  def contextPullbackComm (Γ : SCat)
+    ContextFunctor Γ (contextPullbackCat Γ C D E F G) D
+  /-- Contextual pullback commutativity; Axiom K.2 data. -/
+  lf_opaque contextPullbackComm (Γ : SCat)
     (C : ContextCat Γ) (D : ContextCat Γ) (E : ContextCat Γ)
     (F : ContextFunctor Γ C E) (G : ContextFunctor Γ D E) :
     ContextNatIso Γ (contextPullbackCat Γ C D E F G) E
       (compContextFunctor Γ (contextPullbackCat Γ C D E F G) C E
         (contextPullbackPr1 Γ C D E F G) F)
       (compContextFunctor Γ (contextPullbackCat Γ C D E F G) D E
-        (contextPullbackPr2 Γ C D E F G) G) := sorry
-
-end SCT
+        (contextPullbackPr2 Γ C D E F G) G)
 
 extend_type_theory SCT where
 
