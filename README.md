@@ -36,8 +36,9 @@ project:
 https://drive.google.com/file/d/1lKaq7watGGl3xvjqw9qHjm6SDPFJ2-0o/view
 
 The goals are to implement this type theory, prove that quasicategories form a model, and let users
-reason internally in the type theory from Lean. This is not yet complete. Many theorem-shaped
-declarations are currently admitted, and most model fields are still placeholders.
+reason internally in the type theory from Lean. This is not yet complete. The SCT specification has
+no admitted InternalLean declarations; many theorem packages remain explicit model obligations, and
+most model fields are still placeholders.
 
 See [`Docs/SCT.md`](Docs/SCT.md) for the current status and expected warnings.
 
@@ -57,8 +58,8 @@ lake build InternalMath.LambdaCalculus.Model
 lake build InternalMath.SCT.Model
 ```
 
-The SCT build currently emits expected warnings about admitted InternalLean declarations and
-placeholder `sorry`s in the model skeleton.
+The SCT model build currently emits expected warnings about placeholder `sorry`s in the model
+skeleton.
 
 ## Repository layout
 
