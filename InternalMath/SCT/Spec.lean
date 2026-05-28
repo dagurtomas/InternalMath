@@ -611,6 +611,47 @@ extend_type_theory SCT where
   lf_def fiberProjection : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
       (y : Obj D) ⇒ Functor (fiberCat C D F y) C :=
     fun C D F y => pullbackPr1 C terminalCat D F y
+  /-- Projection from a fiber to the terminal object selecting the basepoint. -/
+  lf_def fiberPointProjection : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
+      (y : Obj D) ⇒ Functor (fiberCat C D F y) terminalCat :=
+    fun C D F y => pullbackPr2 C terminalCat D F y
+  /-- Evidence that a functor between total categories lies over a fixed base. -/
+  syntax_abbrev FunctorOverBase (E : SCat) (B : SCat) (p : Functor E B)
+    (E' : SCat) (p' : Functor E' B) (F : Functor E E') :=
+    NatIso E B (compFunctor E E' B F p') p
+  /-- Compatibility isomorphism used to map fibers along a functor over the base. -/
+  lf_def fiberMapCompat : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (E' : SCat) ⇒ (p' : Functor E' B) ⇒ (F : Functor E E') ⇒
+      FunctorOverBase E B p E' p' F ⇒ (b : Obj B) ⇒
+        NatIso (fiberCat E B p b) B
+          (compFunctor (fiberCat E B p b) E' B
+            (compFunctor (fiberCat E B p b) E E' (fiberProjection E B p b) F) p')
+          (compFunctor (fiberCat E B p b) terminalCat B (fiberPointProjection E B p b) b) :=
+    fun E B p E' p' F hBase b =>
+      compNatIso (fiberCat E B p b) B
+        (compFunctor (fiberCat E B p b) E' B
+          (compFunctor (fiberCat E B p b) E E' (fiberProjection E B p b) F) p')
+        (compFunctor (fiberCat E B p b) E B (fiberProjection E B p b)
+          (compFunctor E E' B F p'))
+        (compFunctor (fiberCat E B p b) terminalCat B (fiberPointProjection E B p b) b)
+        (assocFunctor (fiberCat E B p b) E E' B (fiberProjection E B p b) F p')
+        (compNatIso (fiberCat E B p b) B
+          (compFunctor (fiberCat E B p b) E B (fiberProjection E B p b)
+            (compFunctor E E' B F p'))
+          (compFunctor (fiberCat E B p b) E B (fiberProjection E B p b) p)
+          (compFunctor (fiberCat E B p b) terminalCat B (fiberPointProjection E B p b) b)
+          (preWhiskerNatIso (fiberCat E B p b) E B (fiberProjection E B p b)
+            (compFunctor E E' B F p') p hBase)
+          (pullbackComm E terminalCat B p b))
+  /-- Induced map on fibers for a functor over a fixed base. -/
+  lf_def fiberMap : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (E' : SCat) ⇒ (p' : Functor E' B) ⇒ (F : Functor E E') ⇒
+      FunctorOverBase E B p E' p' F ⇒ (b : Obj B) ⇒
+        Functor (fiberCat E B p b) (fiberCat E' B p' b) :=
+    fun E B p E' p' F hBase b =>
+      pullbackLift (fiberCat E B p b) E' terminalCat B p' b
+        (compFunctor (fiberCat E B p b) E E' (fiberProjection E B p b) F)
+        (fiberPointProjection E B p b) (fiberMapCompat E B p E' p' F hBase b)
   /-- A source-shaped pullback-square predicate for theorem statements, represented by the
   comparison to the pullback object.  Book context: Chapter 1 of the SCT book.
   -/
@@ -3520,6 +3561,24 @@ extend_type_theory SCT where
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
     (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E') : Type u
+  /-- A cocartesian functor lies over the base; source data for the commutative triangle in
+  Theorem 6.4.7. -/
+  lf_opaque cocartesianFunctorOverBase (E : SCat) (B : SCat) (p : Functor E B)
+    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
+    (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
+    (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
+    (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F) :
+    FunctorOverBase E B p E' p' F
+  /-- Fiber map induced by a cocartesian functor over the base. -/
+  lf_def cocartesianFunctorFiberMap : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (fib : Fibration E B p) ⇒ (cocart : CocartesianFibrationWitness E B p fib) ⇒
+      (E' : SCat) ⇒ (p' : Functor E' B) ⇒ (fib' : Fibration E' B p') ⇒
+      (cocart' : CocartesianFibrationWitness E' B p' fib') ⇒ (F : Functor E E') ⇒
+      (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F) ⇒
+      (b : Obj B) ⇒ Functor (fiberCat E B p b) (fiberCat E' B p' b) :=
+    fun E B p fib cocart E' p' fib' cocart' F hF b =>
+      fiberMap E B p E' p' F
+        (cocartesianFunctorOverBase E B p fib cocart E' p' fib' cocart' F hF) b
   /-- Locally cocartesian fibration structure; Chapter 5. -/
   syntax_sort LocallyCocartesianFibrationWitness (E : SCat) (B : SCat)
     (p : Functor E B) (fib : Fibration E B p) : Type u
@@ -3936,12 +3995,39 @@ extend_type_theory SCT where
       (G : Functor A C) ⇒ (α : NatTrans A C F G) ⇒ ObjectwiseNatIso A C F G α ⇒
       NatIso A C F G :=
     fun A C F G α h => ⟨α, h⟩
+  /-- Evidence that the induced map on one fiber is an equivalence. -/
+  syntax_abbrev FiberMapEquiv (E : SCat) (B : SCat) (p : Functor E B)
+    (E' : SCat) (p' : Functor E' B) (F : Functor E E')
+    (hBase : FunctorOverBase E B p E' p' F) (b : Obj B) :=
+    Σ e : CatEquiv (fiberCat E B p b) (fiberCat E' B p' b),
+      NatIso (fiberCat E B p b) (fiberCat E' B p' b)
+        (catEquivForward (fiberCat E B p b) (fiberCat E' B p' b) e)
+        (fiberMap E B p E' p' F hBase b)
   /-- Evidence that a functor over a base is an equivalence on each fiber.
-  Book target: Theorem 6.4.9, the fiberwise criterion for equivalences of cocartesian fibrations.
-  -/
-  syntax_sort FiberwiseCatEquiv (E : SCat) (B : SCat) (p : Functor E B)
-    (E' : SCat) (p' : Functor E' B) (F : Functor E E') : Type u
-  syntax_sort_role FiberwiseCatEquiv : side_structure
+  Book target: Theorem 6.4.7/6.4.9, the fiberwise criterion for equivalences of cocartesian
+  fibrations. -/
+  syntax_abbrev FiberwiseCatEquiv (E : SCat) (B : SCat) (p : Functor E B)
+    (E' : SCat) (p' : Functor E' B) (F : Functor E E')
+    (hBase : FunctorOverBase E B p E' p' F) :=
+    (b : Obj B) → FiberMapEquiv E B p E' p' F hBase b
+  /-- The equivalence on a specified fiber. -/
+  lf_def fiberwiseCatEquivAt : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (E' : SCat) ⇒ (p' : Functor E' B) ⇒ (F : Functor E E') ⇒
+      (hBase : FunctorOverBase E B p E' p' F) ⇒
+      FiberwiseCatEquiv E B p E' p' F hBase ⇒ (b : Obj B) ⇒
+        CatEquiv (fiberCat E B p b) (fiberCat E' B p' b) :=
+    fun E B p E' p' F hBase h b => fst (h b)
+  /-- The chosen fiber equivalence has forward functor the induced fiber map. -/
+  lf_def fiberwiseCatEquivForwardBeta :
+      (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (E' : SCat) ⇒ (p' : Functor E' B) ⇒ (F : Functor E E') ⇒
+      (hBase : FunctorOverBase E B p E' p' F) ⇒
+      (h : FiberwiseCatEquiv E B p E' p' F hBase) ⇒ (b : Obj B) ⇒
+        NatIso (fiberCat E B p b) (fiberCat E' B p' b)
+          (catEquivForward (fiberCat E B p b) (fiberCat E' B p' b)
+            (fiberwiseCatEquivAt E B p E' p' F hBase h b))
+          (fiberMap E B p E' p' F hBase b) :=
+    fun E B p E' p' F hBase h b => snd (h b)
 
 namespace SCT
 
@@ -4029,7 +4115,9 @@ internal_defs where
     (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
     (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
     (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F)
-    (fiberwise : FiberwiseCatEquiv E B p E' p' F) : CatEquiv E E' := sorry
+    (fiberwise : FiberwiseCatEquiv E B p E' p' F
+      (cocartesianFunctorOverBase E B p fib cocart E' p' fib' cocart' F hF)) : CatEquiv E E' :=
+    sorry
   /-- Fully faithful functors induce fully faithful functors on functor categories by
   postcomposition.
   Book target: §6.4, postcomposition with a fully faithful functor is fully faithful.

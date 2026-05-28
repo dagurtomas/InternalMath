@@ -48,6 +48,7 @@ def sctModel.{u} : SCTModel.{u} where
   LeftFibrationWitness := sorry
   RightFibrationWitness := sorry
   CocartesianFunctorWitness := sorry
+  cocartesianFunctorOverBase := sorry
   LocallyCocartesianFibrationWitness := sorry
   LocallyCartesianFibrationWitness := sorry
   CartesianFunctorWitness := sorry
@@ -60,7 +61,6 @@ def sctModel.{u} : SCTModel.{u} where
   ColimitCocone := sorry
   HasLimitsOfShape := sorry
   HasColimitsOfShape := sorry
-  FiberwiseCatEquiv := sorry
   DirectedUnivalenceWitness := sorry
   UniverseWitness := sorry
   SmallWitness := sorry
