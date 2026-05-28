@@ -3517,36 +3517,28 @@ extend_type_theory SCT where
       (compFunctor (coreCat D) (coreCat C) (coreCat D)
         (stronglySurjectiveSection C D F surj) (coreFunctor C D F))
       (idFunctor (coreCat D))
-  /-- Objectwise natural-isomorphism evidence for a natural transformation.  Book context: Chapter 6
-  of the SCT book.
-  -/
-  syntax_sort ObjectwiseNatIso (A : SCat) (C : SCat)
-    (F : Functor A C) (G : Functor A C) (α : NatTrans A C F G) : Type u
-  syntax_sort_role ObjectwiseNatIso : side_structure
-  /-- Natural isomorphisms give objectwise natural-isomorphism evidence.
-  Book target: Theorem 6.2.11, the objectwise criterion for natural transformations.
-  Status: remaining T-shaped model-facing evidence field.  To make this book-faithful, prove the
-  objectwise direction from the internal definition of natural isomorphism. -/
-  lf_opaque natIsoObjectwise (A : SCat) (C : SCat)
-    (F : Functor A C) (G : Functor A C) (α : NatIso A C F G) :
-    ObjectwiseNatIso A C F G (natIsoToNatTrans A C F G α)
-
-namespace SCT
-
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Objectwise evidence says every component morphism is invertible.
-  Book target: Theorem 6.2.11, natural transformations are natural isomorphisms iff their components
-  are invertible.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove using objectwise invertibility and the core of the functor
-  category. -/
-  def objectwiseNatIsoComponentInvertible (A : SCat) (C : SCat)
-    (F : Functor A C) (G : Functor A C) (α : NatTrans A C F G)
-    (h : ObjectwiseNatIso A C F G α) (x : Obj A) :
-    InvertibleMorphism C (natTransComponent A C F G α x) := sorry
-
-end SCT
+  /-- Objectwise natural-isomorphism evidence for a natural transformation: each component is
+  invertible.  Book target: Theorem 6.2.11. -/
+  syntax_abbrev ObjectwiseNatIso (A : SCat) (C : SCat)
+    (F : Functor A C) (G : Functor A C) (α : NatTrans A C F G) :=
+    (x : Obj A) → InvertibleMorphism C (natTransComponent A C F G α x)
+  /-- Componentwise invertibility of a natural isomorphism.  This is the source-facing direction of
+  Theorem 6.2.11 until `NatIso` exposes its underlying componentwise data. -/
+  lf_opaque natIsoObjectwiseComponent (A : SCat) (C : SCat)
+    (F : Functor A C) (G : Functor A C) (α : NatIso A C F G) (x : Obj A) :
+    InvertibleMorphism C
+      (natTransComponent A C F G (natIsoToNatTrans A C F G α) x)
+  /-- Natural isomorphisms give objectwise natural-isomorphism evidence. -/
+  lf_def natIsoObjectwise :
+      (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒ (G : Functor A C) ⇒
+      (α : NatIso A C F G) ⇒ ObjectwiseNatIso A C F G (natIsoToNatTrans A C F G α) :=
+    fun A C F G α x => natIsoObjectwiseComponent A C F G α x
+  /-- Objectwise evidence says every component morphism is invertible. -/
+  lf_def objectwiseNatIsoComponentInvertible :
+      (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒ (G : Functor A C) ⇒
+      (α : NatTrans A C F G) ⇒ ObjectwiseNatIso A C F G α ⇒
+      (x : Obj A) ⇒ InvertibleMorphism C (natTransComponent A C F G α x) :=
+    fun A C F G α h x => h x
 
 namespace SCT
 

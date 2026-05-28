@@ -372,7 +372,6 @@ def sctModel.{u} : SCTModel.{u} where
   InvertsMorphismCollection := sorry
   CocartesianMorphism := sorry
   CartesianMorphism := sorry
-  ObjectwiseNatIso := sorry
   animaIndexedFiber := sorry
   sigmaAnimaIndexedPair := sorry
   intervalZeroInitialHomContractible := sorry
@@ -392,5 +391,5 @@ def sctModel.{u} : SCTModel.{u} where
   localizationDesc := sorry
   localizationDescBeta := sorry
   localizationDescUniq := sorry
-  natIsoObjectwise := sorry
+  natIsoObjectwiseComponent := sorry
   all_fibers_anima_fiber := sorry
