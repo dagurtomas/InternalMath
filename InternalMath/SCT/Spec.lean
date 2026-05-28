@@ -88,16 +88,6 @@ declare_type_theory SCT{u} where
   -/
   lf_opaque sigmaAnimaIndexedProjection (Γ : Anima) (C : AnimaIndexedCat Γ) :
     Functor (sigmaAnimaIndexed Γ C) (animaCat Γ)
-  /-- Side condition saying that all fibers of an anima-indexed family are anima.  Book context:
-  Chapter 1 of the SCT book.
-  -/
-  judgment allFibersAnima (Γ : Anima) (C : AnimaIndexedCat Γ)
-  judgment_role allFibersAnima : side_judgment
-  /-- An anima-indexed sum of anima fibers is an anima; Axiom A.1(3). -/
-  rule sigma_anima_indexed_is_anima (Γ : Anima) (C : AnimaIndexedCat Γ) where
-    premise h : allFibersAnima Γ C
-    conclusion : isAnimaCat (sigmaAnimaIndexed Γ C)
-
   /-- Identity functor; Axiom A.3. -/
   lf_opaque idFunctor (C : SCat) : Functor C C
   /-- Composition of functors; Axiom A.3. -/
@@ -403,21 +393,30 @@ extend_type_theory SCT where
 
   /-- Isomorphisms between absolute objects.  Book context: Chapter 1 of the SCT book. -/
   syntax_abbrev ObjIso (C : SCat) (x : Obj C) (y : Obj C) := NatIso terminalCat C x y
+  /-- Source-shaped evidence that every fiber of an anima-indexed family is an anima: each fiber is
+  presented as equivalent to the underlying category of a primitive anima.  Book context:
+  Axiom A.1(3). -/
+  syntax_abbrev allFibersAnima (Γ : Anima) (C : AnimaIndexedCat Γ) :=
+    (x : Obj (animaCat Γ)) → Σ A : Anima, CatEquiv (animaIndexedFiber Γ C x) (animaCat A)
+  /-- The primitive anima witnessing that a chosen fiber is an anima. -/
+  lf_def allFibersAnimaFiberWitness : (Γ : Anima) ⇒ (C : AnimaIndexedCat Γ) ⇒
+      allFibersAnima Γ C ⇒ (x : Obj (animaCat Γ)) ⇒ Anima :=
+    fun Γ C h x => fst (h x)
+  /-- The equivalence from a chosen fiber to its witnessing primitive anima. -/
+  lf_def allFibersAnimaFiberEquiv : (Γ : Anima) ⇒ (C : AnimaIndexedCat Γ) ⇒
+      (h : allFibersAnima Γ C) ⇒ (x : Obj (animaCat Γ)) ⇒
+      CatEquiv (animaIndexedFiber Γ C x) (animaCat (allFibersAnimaFiberWitness Γ C h x)) :=
+    fun Γ C h x => snd (h x)
+  /-- An anima-indexed sum of anima fibers is an anima; Axiom A.1(3). -/
+  rule sigma_anima_indexed_is_anima (Γ : Anima) (C : AnimaIndexedCat Γ)
+    (h : allFibersAnima Γ C) where
+    conclusion : isAnimaCat (sigmaAnimaIndexed Γ C)
   /-- Pairing constructor for terms of an anima-indexed dependent sum.  Book context: Chapter 1 of
   the SCT book.
   -/
   lf_opaque sigmaAnimaIndexedPair (Γ : Anima) (C : AnimaIndexedCat Γ)
     (x : Obj (animaCat Γ)) (c : Obj (animaIndexedFiber Γ C x)) :
     Obj (sigmaAnimaIndexed Γ C)
-  /-- Fiberwise anima evidence unpacked from the side condition `allFibersAnima`.
-  Book target: Axiom A.1(3), closure of anima-indexed sums of anima fibers.
-  Status: remaining T-shaped model-facing rule.  To make this book-faithful, make
-  `allFibersAnima` expose enough data that this rule is a checked internal theorem rather than a
-  model obligation. -/
-  rule all_fibers_anima_fiber (Γ : Anima) (C : AnimaIndexedCat Γ)
-    (x : Obj (animaCat Γ)) where
-    premise h : allFibersAnima Γ C
-    conclusion : isAnimaCat (animaIndexedFiber Γ C x)
   /-- General terms of `C` in context `Γ`; Axiom A.2. -/
   syntax_abbrev Term (Γ : SCat) (C : SCat) := Functor Γ C
   /-- The universal term of `C`; Definition 1.1.2. -/
@@ -618,14 +617,6 @@ extend_type_theory SCT where
   syntax_abbrev PullbackSquare (A : SCat) (B : SCat) (C : SCat) (D : SCat)
     (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) :=
     CatEquiv A (pullbackCat B C D right bottom)
-  /-- Commutative pushout-square witness, represented by the displayed square data.
-  Book target: pushout squares used throughout Chapter 1, especially Proposition 1.3.3
-  and Axiom J.1.
-  Status: remaining T-shaped model-facing sort.  To make this book-faithful, replace this
-  witness sort by a source-shaped universal property or a checked abbreviation from explicit
-  pushout data. -/
-  syntax_sort PushoutSquare (A : SCat) (B : SCat) (C : SCat) (D : SCat)
-    (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) : Type u
   /-- Embedding evidence for a functor, represented by equivalence with the self-pullback.  Book
   context: Chapter 1 of the SCT book.
   -/
@@ -700,15 +691,30 @@ extend_type_theory SCT where
   /-- Precomposition functor between functor categories; Axiom B.6. -/
   lf_opaque precompFunctor (A : SCat) (B : SCat) (C : SCat) (u : Functor A B) :
     Functor (funCat B C) (funCat A C)
-  /-- Mapping-out universal property associated to a pushout-square witness.  InternalLean cannot
-  yet use this Pi-shaped type directly as an opaque witness result, so the universal property is a
-  projection from the witness sort. -/
-  lf_opaque pushoutSquareMappingEquiv (A : SCat) (B : SCat) (C : SCat) (D : SCat)
-    (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D)
-    (sq : PushoutSquare A B C D top left right bottom) (X : SCat) :
-    CatEquiv (funCat D X)
-      (pullbackCat (funCat B X) (funCat C X) (funCat A X)
-        (precompFunctor A B X top) (precompFunctor A C X left))
+  /-- Source-shaped pushout-square witness: a commutative square plus its mapping-out universal
+  property.  Book target: pushout squares used throughout Chapter 1, especially Proposition 1.3.3
+  and Axiom J.1. -/
+  syntax_abbrev PushoutSquare (A : SCat) (B : SCat) (C : SCat) (D : SCat)
+    (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) :=
+    Σ comm : NatIso A D (compFunctor A B D top right) (compFunctor A C D left bottom),
+      (X : SCat) → CatEquiv (funCat D X)
+        (pullbackCat (funCat B X) (funCat C X) (funCat A X)
+          (precompFunctor A B X top) (precompFunctor A C X left))
+  /-- Commutativity component of a pushout square. -/
+  lf_def pushoutSquareComm : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒
+      (top : Functor A B) ⇒ (left : Functor A C) ⇒ (right : Functor B D) ⇒
+      (bottom : Functor C D) ⇒ PushoutSquare A B C D top left right bottom ⇒
+      NatIso A D (compFunctor A B D top right) (compFunctor A C D left bottom) :=
+    fun A B C D top left right bottom sq => fst sq
+  /-- Mapping-out universal property associated to a pushout-square witness. -/
+  lf_def pushoutSquareMappingEquiv : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
+      (D : SCat) ⇒ (top : Functor A B) ⇒ (left : Functor A C) ⇒
+      (right : Functor B D) ⇒ (bottom : Functor C D) ⇒
+      PushoutSquare A B C D top left right bottom ⇒ (X : SCat) ⇒
+      CatEquiv (funCat D X)
+        (pullbackCat (funCat B X) (funCat C X) (funCat A X)
+          (precompFunctor A B X top) (precompFunctor A C X left)) :=
+    fun A B C D top left right bottom sq X => snd sq X
   /-- Postcomposition functor between functor categories; Axiom B.6. -/
   lf_opaque postcompFunctor (A : SCat) (B : SCat) (C : SCat) (v : Functor B C) :
     Functor (funCat A B) (funCat A C)
@@ -1427,10 +1433,19 @@ extend_type_theory SCT where
 
   model_section Chapter2
 
-  /-- Lift an anima-parametrized object through the groupoid core; Axiom G.
-  Book target: Axiom G, universal property of the groupoid core for anima-indexed sources. -/
-  lf_opaque coreLift (A : Anima) (C : SCat) (F : Functor (animaCat A) C) :
-    Functor (animaCat A) (coreCat C)
+  /-- Source-shaped universal package for lifting anima-indexed objects through the groupoid core;
+  Axiom G.  It stores the lift, its β comparison, and uniqueness from any competing lift. -/
+  lf_opaque coreLiftPackage (A : Anima) (C : SCat) (F : Functor (animaCat A) C) :
+    Σ K : Functor (animaCat A) (coreCat C),
+      Σ β : NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C K
+        (coreIncl C)) F,
+        (L : Functor (animaCat A) (coreCat C)) →
+          NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C L
+            (coreIncl C)) F → NatIso (animaCat A) (coreCat C) L K
+  /-- Lift an anima-parametrized object through the groupoid core; Axiom G. -/
+  lf_def coreLift : (A : Anima) ⇒ (C : SCat) ⇒ Functor (animaCat A) C ⇒
+      Functor (animaCat A) (coreCat C) :=
+    fun A C F => fst (coreLiftPackage A C F)
 
 extend_type_theory SCT where
 
@@ -1452,17 +1467,17 @@ extend_type_theory SCT where
 
   model_section Chapter2
 
-  /-- β comparison for the core lift; Axiom G.
-  Book target: Axiom G, universal property of the groupoid core for anima-indexed sources. -/
-  lf_opaque coreLiftBeta (A : Anima) (C : SCat) (F : Functor (animaCat A) C) :
-    NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C
-      (coreLift A C F) (coreIncl C)) F
-  /-- Uniqueness of core lifts from anima-parametrized objects; Axiom G.
-  Book target: Axiom G, universal property of the groupoid core for anima-indexed sources. -/
-  lf_opaque coreLiftUniq (A : Anima) (C : SCat) (F : Functor (animaCat A) C)
-    (K : Functor (animaCat A) (coreCat C))
-    (β : NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C K
-      (coreIncl C)) F) : NatIso (animaCat A) (coreCat C) K (coreLift A C F)
+  /-- β comparison for the core lift; Axiom G. -/
+  lf_def coreLiftBeta : (A : Anima) ⇒ (C : SCat) ⇒ (F : Functor (animaCat A) C) ⇒
+      NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C
+        (coreLift A C F) (coreIncl C)) F :=
+    fun A C F => fst (snd (coreLiftPackage A C F))
+  /-- Uniqueness of core lifts from anima-parametrized objects; Axiom G. -/
+  lf_def coreLiftUniq : (A : Anima) ⇒ (C : SCat) ⇒ (F : Functor (animaCat A) C) ⇒
+      (K : Functor (animaCat A) (coreCat C)) ⇒
+      NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C K
+        (coreIncl C)) F ⇒ NatIso (animaCat A) (coreCat C) K (coreLift A C F) :=
+    fun A C F K β => snd (snd (coreLiftPackage A C F)) K β
   /-- β comparison for a groupoid-source core lift, derived from the anima-source β rule and the
   groupoid/anima equivalence.  Book target: Axiom G specialized to groupoid sources. -/
   lf_def coreLiftFromGroupoidBeta : (G : SCat) ⇒ (C : SCat) ⇒
@@ -1930,8 +1945,17 @@ extend_type_theory SCT where
   model_section Chapter3
 
 
+  /-- Remaining source-shaped data for the book's replete-subcategory criterion; Definition 3.1.2.
+  The public `SubcategoryWitness` package exposes the embedding consequence separately. -/
+  syntax_sort SubcategoryCriterionData (A : SCat) (C : SCat) (i : Functor A C) : Type u
+  syntax_sort_role SubcategoryCriterionData : side_structure
   /-- A functor satisfying the book's replete subcategory criterion; Definition 3.1.2. -/
-  syntax_sort SubcategoryWitness (A : SCat) (C : SCat) (i : Functor A C) : Type u
+  syntax_abbrev SubcategoryWitness (A : SCat) (C : SCat) (i : Functor A C) :=
+    Σ emb : Embedding A C i, SubcategoryCriterionData A C i
+  /-- Every subcategory is an embedding, by projection from the source-shaped package. -/
+  lf_def subcategoryWitnessEmbedding : (A : SCat) ⇒ (C : SCat) ⇒ (i : Functor A C) ⇒
+      SubcategoryWitness A C i ⇒ Embedding A C i :=
+    fun A C i h => fst h
 
   /-- Subobjects of an anima; used for Axiom H morphism and object collections. -/
   syntax_sort AnimaSubobject (A : Anima) : Type (u+1)
@@ -1940,25 +1964,39 @@ namespace SCT
 
 /- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
 internal_defs where
-  /-- The identity functor is a subcategory.
-  Book target: Definition 3.1.2, the book criterion for a replete subcategory.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Verify the defining pullback/embedding condition internally. -/
-  def idSubcategoryWitness (C : SCat) : SubcategoryWitness C C (idFunctor C) := sorry
-  /-- The initial inclusion is a subcategory.
-  Book target: Definition 3.1.2, the book criterion for a replete subcategory.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Verify the defining pullback/embedding condition internally. -/
-  def initialSubcategoryWitness (C : SCat) :
-      SubcategoryWitness initialCat C (initialElim C) := sorry
-  /-- Every subcategory is an embedding.
-  Book target: Definition 3.1.2, the book criterion for a replete subcategory.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Verify the defining pullback/embedding condition internally. -/
-  def subcategoryWitnessEmbedding (A : SCat) (C : SCat) (i : Functor A C)
-    (h : SubcategoryWitness A C i) : Embedding A C i := sorry
+  /-- The identity functor is an embedding.
+  Book target: Example 3.1.4 and Lemma 3.1.5.
+  Status: temporary sorry-admitted component of `idSubcategoryWitness`. -/
+  def idSubcategoryEmbedding (C : SCat) : Embedding C C (idFunctor C) := sorry
+  /-- The identity functor satisfies the replete-subcategory criterion.
+  Book target: Example 3.1.4.
+  Status: temporary sorry-admitted component of `idSubcategoryWitness`. -/
+  def idSubcategoryCriterionData (C : SCat) :
+      SubcategoryCriterionData C C (idFunctor C) := sorry
+  /-- The initial inclusion is an embedding.
+  Book target: Example 3.1.4 and Lemma 3.1.5.
+  Status: temporary sorry-admitted component of `initialSubcategoryWitness`. -/
+  def initialSubcategoryEmbedding (C : SCat) :
+      Embedding initialCat C (initialElim C) := sorry
+  /-- The initial inclusion satisfies the replete-subcategory criterion.
+  Book target: Example 3.1.4.
+  Status: temporary sorry-admitted component of `initialSubcategoryWitness`. -/
+  def initialSubcategoryCriterionData (C : SCat) :
+      SubcategoryCriterionData initialCat C (initialElim C) := sorry
 
 end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter3
+
+  /-- The identity functor is a subcategory; Example 3.1.4. -/
+  lf_def idSubcategoryWitness : (C : SCat) ⇒ SubcategoryWitness C C (idFunctor C) :=
+    fun C => ⟨idSubcategoryEmbedding C, idSubcategoryCriterionData C⟩
+  /-- The initial inclusion is a subcategory; Example 3.1.4. -/
+  lf_def initialSubcategoryWitness : (C : SCat) ⇒
+      SubcategoryWitness initialCat C (initialElim C) :=
+    fun C => ⟨initialSubcategoryEmbedding C, initialSubcategoryCriterionData C⟩
 
 extend_type_theory SCT where
 
@@ -2310,29 +2348,43 @@ extend_type_theory SCT where
   /-- The localization functor inverts the chosen morphisms; Axiom I. -/
   lf_opaque localizationInverts (C : SCat) (W : MorphismCollection C) :
     InvertsMorphismCollection C (localizationCat C W) W (localizationFunctor C W)
+  /-- Source-shaped localization universal package.  It stores the mapping-category equivalence,
+  descents of inverting functors, their β comparisons, and uniqueness of descents. -/
+  lf_opaque localizationUniversalPackage (C : SCat) (W : MorphismCollection C) (D : SCat) :
+    Σ e : CatEquiv (funCat (localizationCat C W) D) (invertingFunctorCat C D W),
+      (F : Functor C D) → (h : InvertsMorphismCollection C D W F) →
+        Σ K : Functor (localizationCat C W) D,
+          Σ β : NatIso C D (compFunctor C (localizationCat C W) D
+            (localizationFunctor C W) K) F,
+            (L : Functor (localizationCat C W) D) →
+              NatIso C D (compFunctor C (localizationCat C W) D
+                (localizationFunctor C W) L) F → NatIso (localizationCat C W) D L K
   /-- Descend a functor that inverts the localized morphisms; Axiom I. -/
-  lf_opaque localizationDesc (C : SCat) (W : MorphismCollection C) (D : SCat)
-    (F : Functor C D) (h : InvertsMorphismCollection C D W F) :
-    Functor (localizationCat C W) D
+  lf_def localizationDesc : (C : SCat) ⇒ (W : MorphismCollection C) ⇒ (D : SCat) ⇒
+      (F : Functor C D) ⇒ InvertsMorphismCollection C D W F ⇒
+      Functor (localizationCat C W) D :=
+    fun C W D F h => fst (snd (localizationUniversalPackage C W D) F h)
   /-- β comparison for localization descent; Axiom I. -/
-  lf_opaque localizationDescBeta (C : SCat) (W : MorphismCollection C) (D : SCat)
-    (F : Functor C D) (h : InvertsMorphismCollection C D W F) :
-    NatIso C D
-      (compFunctor C (localizationCat C W) D
-        (localizationFunctor C W) (localizationDesc C W D F h))
-      F
+  lf_def localizationDescBeta : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      (D : SCat) ⇒ (F : Functor C D) ⇒ (h : InvertsMorphismCollection C D W F) ⇒
+      NatIso C D
+        (compFunctor C (localizationCat C W) D
+          (localizationFunctor C W) (localizationDesc C W D F h)) F :=
+    fun C W D F h => fst (snd (snd (localizationUniversalPackage C W D) F h))
   /-- Uniqueness of localization descents; Axiom I. -/
-  lf_opaque localizationDescUniq (C : SCat) (W : MorphismCollection C) (D : SCat)
-    (F : Functor C D) (h : InvertsMorphismCollection C D W F)
-    (K : Functor (localizationCat C W) D)
-    (β : NatIso C D (compFunctor C (localizationCat C W) D
-      (localizationFunctor C W) K) F) :
-    NatIso (localizationCat C W) D K (localizationDesc C W D F h)
+  lf_def localizationDescUniq : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      (D : SCat) ⇒ (F : Functor C D) ⇒ (h : InvertsMorphismCollection C D W F) ⇒
+      (K : Functor (localizationCat C W) D) ⇒
+      NatIso C D (compFunctor C (localizationCat C W) D
+        (localizationFunctor C W) K) F ⇒
+      NatIso (localizationCat C W) D K (localizationDesc C W D F h) :=
+    fun C W D F h K β => snd (snd (snd (localizationUniversalPackage C W D) F h)) K β
   /-- Universal equivalence `Fun(C[W^{-1}],D) ≃ Fun^W(C,D)` for localizations.  Book context:
   Chapter 3 of the SCT book.
   -/
-  lf_opaque localizationUniversalEquiv (C : SCat) (W : MorphismCollection C) (D : SCat) :
-    CatEquiv (funCat (localizationCat C W) D) (invertingFunctorCat C D W)
+  lf_def localizationUniversalEquiv : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      (D : SCat) ⇒ CatEquiv (funCat (localizationCat C W) D) (invertingFunctorCat C D W) :=
+    fun C W D => fst (localizationUniversalPackage C W D)
   /-- Selected morphisms as interval-shaped arrows in `C`.  Book context: Chapter 3 of the SCT book.
   -/
   lf_def morphismCollectionArrowObject : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
@@ -2374,17 +2426,68 @@ namespace SCT
 
 /- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
 internal_defs where
-  /-- Pushout-square presentation of localization.
-  Book target: Remark 3.3.8, localization presented by a pushout square.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from Axiom I and the inverting-functor universal property. -/
-  def localizationPushoutSquare (C : SCat) (W : MorphismCollection C) :
-    PushoutSquare (prodCat intervalCat (morphismCollectionCat C W)) C
-      (morphismCollectionCat C W) (localizationCat C W)
-      (morphismCollectionArrowFunctor C W) (prodPr2 intervalCat (morphismCollectionCat C W))
-      (localizationFunctor C W) (localizationCollectionFunctor C W) := sorry
+  /-- Commutativity natural transformation for the localization pushout square.
+  Book target: Remark 3.3.8.
+  Status: temporary sorry-admitted component of `localizationPushoutSquare`. -/
+  def localizationPushoutSquareNatTrans (C : SCat) (W : MorphismCollection C) :
+    NatTrans (prodCat intervalCat (morphismCollectionCat C W)) (localizationCat C W)
+      (compFunctor (prodCat intervalCat (morphismCollectionCat C W)) C (localizationCat C W)
+        (morphismCollectionArrowFunctor C W) (localizationFunctor C W))
+      (compFunctor (prodCat intervalCat (morphismCollectionCat C W))
+        (morphismCollectionCat C W) (localizationCat C W)
+        (prodPr2 intervalCat (morphismCollectionCat C W))
+        (localizationCollectionFunctor C W)) := sorry
+  /-- Objectwise invertibility for the localization pushout-square commutativity transformation.
+  Book target: Remark 3.3.8.
+  Status: temporary sorry-admitted component of `localizationPushoutSquare`. -/
+  def localizationPushoutSquareObjectwise (C : SCat) (W : MorphismCollection C) :
+    ObjectwiseNatIso (prodCat intervalCat (morphismCollectionCat C W)) (localizationCat C W)
+      (compFunctor (prodCat intervalCat (morphismCollectionCat C W)) C (localizationCat C W)
+        (morphismCollectionArrowFunctor C W) (localizationFunctor C W))
+      (compFunctor (prodCat intervalCat (morphismCollectionCat C W))
+        (morphismCollectionCat C W) (localizationCat C W)
+        (prodPr2 intervalCat (morphismCollectionCat C W))
+        (localizationCollectionFunctor C W))
+      (localizationPushoutSquareNatTrans C W) := sorry
+  /-- Mapping-out equivalence for the localization pushout square.
+  Book target: Remark 3.3.8.
+  Status: temporary sorry-admitted component of `localizationPushoutSquare`. -/
+  def localizationPushoutSquareMappingEquivAt (C : SCat) (W : MorphismCollection C)
+    (X : SCat) :
+    CatEquiv (funCat (localizationCat C W) X)
+      (pullbackCat (funCat C X) (funCat (morphismCollectionCat C W) X)
+        (funCat (prodCat intervalCat (morphismCollectionCat C W)) X)
+        (precompFunctor (prodCat intervalCat (morphismCollectionCat C W)) C X
+          (morphismCollectionArrowFunctor C W))
+        (precompFunctor (prodCat intervalCat (morphismCollectionCat C W))
+          (morphismCollectionCat C W) X (prodPr2 intervalCat (morphismCollectionCat C W)))) :=
+    sorry
 
 end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter3
+
+  /-- Commutativity component of the localization pushout square. -/
+  lf_def localizationPushoutSquareComm : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      NatIso (prodCat intervalCat (morphismCollectionCat C W)) (localizationCat C W)
+        (compFunctor (prodCat intervalCat (morphismCollectionCat C W)) C (localizationCat C W)
+          (morphismCollectionArrowFunctor C W) (localizationFunctor C W))
+        (compFunctor (prodCat intervalCat (morphismCollectionCat C W))
+          (morphismCollectionCat C W) (localizationCat C W)
+          (prodPr2 intervalCat (morphismCollectionCat C W))
+          (localizationCollectionFunctor C W)) :=
+    fun C W => ⟨localizationPushoutSquareNatTrans C W,
+      localizationPushoutSquareObjectwise C W⟩
+  /-- Pushout-square presentation of localization; Remark 3.3.8. -/
+  lf_def localizationPushoutSquare : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      PushoutSquare (prodCat intervalCat (morphismCollectionCat C W)) C
+        (morphismCollectionCat C W) (localizationCat C W)
+        (morphismCollectionArrowFunctor C W) (prodPr2 intervalCat (morphismCollectionCat C W))
+        (localizationFunctor C W) (localizationCollectionFunctor C W) :=
+    fun C W => ⟨localizationPushoutSquareComm C W,
+      fun X => localizationPushoutSquareMappingEquivAt C W X⟩
 
 extend_type_theory SCT where
 

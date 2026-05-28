@@ -30,10 +30,9 @@ def sctModel.{u} : SCTModel.{u} where
   ObjectwiseNatIsoData := sorry
   CatEquiv := sorry
   AnimaIndexedCat := sorry
-  PushoutSquare := sorry
   InvertibleMorphismData := sorry
   GroupoidWitness := sorry
-  SubcategoryWitness := sorry
+  SubcategoryCriterionData := sorry
   AnimaSubobject := sorry
   ExponentiableFunctor := sorry
   ContextCat := sorry
@@ -135,7 +134,6 @@ def sctModel.{u} : SCTModel.{u} where
   coprodDisjointCounit := sorry
   funCat := sorry
   precompFunctor := sorry
-  pushoutSquareMappingEquiv := sorry
   postcompFunctor := sorry
   evalFunctor := sorry
   curryFunctor := sorry
@@ -203,9 +201,7 @@ def sctModel.{u} : SCTModel.{u} where
   animaOfGroupoidEquiv := sorry
   coreIncl := sorry
   coreInclEmbedding := sorry
-  coreLift := sorry
-  coreLiftBeta := sorry
-  coreLiftUniq := sorry
+  coreLiftPackage := sorry
   coreLiftNatIsoFromGroupoidBeta := sorry
   mapAnimaCoreEquiv := sorry
   funCatTargetGroupoid := sorry
@@ -229,7 +225,7 @@ def sctModel.{u} : SCTModel.{u} where
   localizationCat := sorry
   invertingFunctorObjects := sorry
   localizationFunctor := sorry
-  localizationUniversalEquiv := sorry
+  localizationUniversalPackage := sorry
   dependentProductOverCat := sorry
   dependentProductOverProjection := sorry
   joinCat := sorry
@@ -431,7 +427,6 @@ def sctModel.{u} : SCTModel.{u} where
   directed_univalence_classifies := sorry
   regularOfConstructiveRegular := sorry
   isAnimaCat := sorry
-  allFibersAnima := sorry
   anima_cat_is_anima := sorry
   equiv_to_anima_is_anima := sorry
   sigma_anima_indexed_is_anima := sorry
@@ -454,8 +449,4 @@ def sctModel.{u} : SCTModel.{u} where
   subcategoryLiftUniq := sorry
   landsInObjectCollectionPreservesFull := sorry
   localizationInverts := sorry
-  localizationDesc := sorry
-  localizationDescBeta := sorry
-  localizationDescUniq := sorry
   objectwiseNatIsoComponent := sorry
-  all_fibers_anima_fiber := sorry
