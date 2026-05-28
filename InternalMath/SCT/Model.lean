@@ -209,9 +209,7 @@ def sctModel.{u} : SCTModel.{u} where
   initialGroupoid := sorry
   totalAnimaSubobject := sorry
   subcategoryPackage := sorry
-  fullSubcategoryMorphismCollection := sorry
-  fullSubcategoryMorphismContainsIdentities := sorry
-  fullSubcategoryMorphismClosed := sorry
+  fullSubcategoryMorphismPackage := sorry
   invertibleMorphismObjects := sorry
   localizationCat := sorry
   invertingFunctorObjects := sorry
@@ -427,6 +425,5 @@ def sctModel.{u} : SCTModel.{u} where
   sigmaAnimaIndexedPair := sorry
   intervalZeroInitialHomContractible := sorry
   intervalOneTerminalHomContractible := sorry
-  landsInObjectCollectionPreservesFull := sorry
   localizationInverts := sorry
   objectwiseNatIsoComponent := sorry
