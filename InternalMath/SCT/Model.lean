@@ -32,7 +32,6 @@ def sctModel.{u} : SCTModel.{u} where
   AnimaIndexedCat := sorry
   InvertibleMorphismData := sorry
   GroupoidWitness := sorry
-  SubcategoryCriterionData := sorry
   AnimaSubobject := sorry
   ExponentiableFunctor := sorry
   ContextCat := sorry
