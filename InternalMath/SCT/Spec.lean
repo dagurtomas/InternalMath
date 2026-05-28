@@ -3724,8 +3724,13 @@ extend_type_theory SCT where
   -/
   syntax_abbrev Conservative (C : SCat) (D : SCat) (F : Functor C D) :=
     PullbackSquare (coreCat C) C (coreCat D) D (coreIncl C) (coreFunctor C D F) F (coreIncl D)
-  /-- Strongly-surjective functors; Chapter 6 Fundamental Theorem. -/
-  syntax_sort StronglySurjective (C : SCat) (D : SCat) (F : Functor C D) : Type u
+  /-- Strongly-surjective functors, represented by a section of the induced map on cores;
+  Definition 6.3.1. -/
+  syntax_abbrev StronglySurjective (C : SCat) (D : SCat) (F : Functor C D) :=
+    Σ s : Functor (coreCat D) (coreCat C),
+      NatIso (coreCat D) (coreCat D)
+        (compFunctor (coreCat D) (coreCat C) (coreCat D) s (coreFunctor C D F))
+        (idFunctor (coreCat D))
 
 namespace SCT
 
@@ -3810,13 +3815,35 @@ internal_defs where
 
 end SCT
 
-extend_type_theory SCT where
+namespace SCT
 
-  model_section Chapter6
+/- Objectwise consequences of Definition 6.3.1 are admitted temporarily while kept out of the model
+interface. -/
+internal_defs where
+  /-- Chosen preimage object for strong surjectivity.
+  Book target: Remark 6.3.2, derived from Definition 6.3.1.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def stronglySurjectivePreimage (C : SCat) (D : SCat) (F : Functor C D)
+    (surj : StronglySurjective C D F) (y : Obj D) : Obj C := sorry
+  /-- Underlying natural transformation for the objectwise comparison from a chosen preimage.
+  Book target: Remark 6.3.2, derived from Definition 6.3.1.
+  Status: temporary sorry-admitted component of `stronglySurjectiveBeta`. -/
+  def stronglySurjectiveBetaNatTrans (C : SCat) (D : SCat) (F : Functor C D)
+    (surj : StronglySurjective C D F) (y : Obj D) :
+    NatTrans terminalCat D
+      (compFunctor terminalCat C D (stronglySurjectivePreimage C D F surj y) F) y :=
+    sorry
+  /-- Objectwise invertibility for the objectwise comparison from a chosen preimage.
+  Book target: Remark 6.3.2, derived from Definition 6.3.1.
+  Status: temporary sorry-admitted component of `stronglySurjectiveBeta`. -/
+  def stronglySurjectiveBetaObjectwise (C : SCat) (D : SCat) (F : Functor C D)
+    (surj : StronglySurjective C D F) (y : Obj D) :
+    ObjectwiseNatIso terminalCat D
+      (compFunctor terminalCat C D (stronglySurjectivePreimage C D F surj y) F) y
+      (stronglySurjectiveBetaNatTrans C D F surj y) :=
+    sorry
 
-  /-- Chosen preimage object for strong surjectivity; Definition 6.3.1. -/
-  lf_opaque stronglySurjectivePreimage (C : SCat) (D : SCat) (F : Functor C D)
-    (surj : StronglySurjective C D F) (y : Obj D) : Obj C
+end SCT
 
 namespace SCT
 
@@ -3837,26 +3864,25 @@ extend_type_theory SCT where
 
   model_section Chapter6
 
-  /-- Comparison from the chosen preimage to the target object; Definition 6.3.1. -/
-  lf_opaque stronglySurjectiveBeta (C : SCat) (D : SCat) (F : Functor C D)
-    (surj : StronglySurjective C D F) (y : Obj D) :
-    NatIso terminalCat D
-      (compFunctor terminalCat C D (stronglySurjectivePreimage C D F surj y) F) y
-  /-- Strong surjectivity as a section of the induced map on cores.  Book context: Chapter 6 of the
-  SCT book.
-  -/
-  lf_opaque stronglySurjectiveSection (C : SCat) (D : SCat) (F : Functor C D)
-    (surj : StronglySurjective C D F) : Functor (coreCat D) (coreCat C)
-  /-- The chosen section of `F^≃` is a section up to natural isomorphism.
-  Book context:Chapter 6 of
-  the SCT book.
-  -/
-  lf_opaque stronglySurjectiveSectionBeta (C : SCat) (D : SCat) (F : Functor C D)
-    (surj : StronglySurjective C D F) :
-    NatIso (coreCat D) (coreCat D)
-      (compFunctor (coreCat D) (coreCat C) (coreCat D)
-        (stronglySurjectiveSection C D F surj) (coreFunctor C D F))
-      (idFunctor (coreCat D))
+  /-- Comparison from the chosen preimage to the target object; Remark 6.3.2. -/
+  lf_def stronglySurjectiveBeta : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
+      (surj : StronglySurjective C D F) ⇒ (y : Obj D) ⇒
+        NatIso terminalCat D
+          (compFunctor terminalCat C D (stronglySurjectivePreimage C D F surj y) F) y :=
+    fun C D F surj y => ⟨stronglySurjectiveBetaNatTrans C D F surj y,
+      stronglySurjectiveBetaObjectwise C D F surj y⟩
+  /-- Strong surjectivity as a section of the induced map on cores; Definition 6.3.1. -/
+  lf_def stronglySurjectiveSection : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
+      StronglySurjective C D F ⇒ Functor (coreCat D) (coreCat C) :=
+    fun C D F surj => fst surj
+  /-- The chosen section of `F^≃` is a section up to natural isomorphism; Definition 6.3.1. -/
+  lf_def stronglySurjectiveSectionBeta : (C : SCat) ⇒ (D : SCat) ⇒
+      (F : Functor C D) ⇒ (surj : StronglySurjective C D F) ⇒
+        NatIso (coreCat D) (coreCat D)
+          (compFunctor (coreCat D) (coreCat C) (coreCat D)
+            (stronglySurjectiveSection C D F surj) (coreFunctor C D F))
+          (idFunctor (coreCat D)) :=
+    fun C D F surj => snd surj
   /-- Componentwise invertibility stored in objectwise natural-isomorphism evidence. -/
   lf_opaque objectwiseNatIsoComponent (A : SCat) (C : SCat)
     (F : Functor A C) (G : Functor A C) (α : NatTrans A C F G)
@@ -3930,14 +3956,55 @@ internal_defs where
   To make this book-faithful: Derive from the packaged equivalence data and the core map. -/
   def equivalenceFullyFaithful (C : SCat) (D : SCat) (e : CatEquiv C D) :
     FullyFaithful C D (catEquivForward C D e) := sorry
-  /-- Equivalences are strongly surjective; Chapter 6.
-  Book target: §6.3, equivalences are fully faithful and strongly surjective.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from the packaged equivalence data and the core map. -/
-  def equivalenceStronglySurjective (C : SCat) (D : SCat) (e : CatEquiv C D) :
-    StronglySurjective C D (catEquivForward C D e) := sorry
+  /-- Section on cores induced by an equivalence.
+  Book target: §6.3, equivalences are strongly surjective.
+  Status: temporary sorry-admitted component of `equivalenceStronglySurjective`. -/
+  def equivalenceStronglySurjectiveSection (C : SCat) (D : SCat) (e : CatEquiv C D) :
+    Functor (coreCat D) (coreCat C) := sorry
+  /-- Underlying natural transformation for the section-on-cores comparison induced by an
+  equivalence.
+  Book target: §6.3, equivalences are strongly surjective.
+  Status: temporary sorry-admitted component of `equivalenceStronglySurjectiveSectionBeta`. -/
+  def equivalenceStronglySurjectiveSectionBetaNatTrans (C : SCat) (D : SCat)
+    (e : CatEquiv C D) :
+    NatTrans (coreCat D) (coreCat D)
+      (compFunctor (coreCat D) (coreCat C) (coreCat D)
+        (equivalenceStronglySurjectiveSection C D e)
+        (coreFunctor C D (catEquivForward C D e)))
+      (idFunctor (coreCat D)) := sorry
+  /-- Objectwise invertibility for the section-on-cores comparison induced by an equivalence.
+  Book target: §6.3, equivalences are strongly surjective.
+  Status: temporary sorry-admitted component of `equivalenceStronglySurjectiveSectionBeta`. -/
+  def equivalenceStronglySurjectiveSectionBetaObjectwise (C : SCat) (D : SCat)
+    (e : CatEquiv C D) :
+    ObjectwiseNatIso (coreCat D) (coreCat D)
+      (compFunctor (coreCat D) (coreCat C) (coreCat D)
+        (equivalenceStronglySurjectiveSection C D e)
+        (coreFunctor C D (catEquivForward C D e)))
+      (idFunctor (coreCat D))
+      (equivalenceStronglySurjectiveSectionBetaNatTrans C D e) := sorry
 
 end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter6
+
+  /-- Section-on-cores comparison induced by an equivalence. -/
+  lf_def equivalenceStronglySurjectiveSectionBeta : (C : SCat) ⇒ (D : SCat) ⇒
+      (e : CatEquiv C D) ⇒
+        NatIso (coreCat D) (coreCat D)
+          (compFunctor (coreCat D) (coreCat C) (coreCat D)
+            (equivalenceStronglySurjectiveSection C D e)
+            (coreFunctor C D (catEquivForward C D e)))
+          (idFunctor (coreCat D)) :=
+    fun C D e => ⟨equivalenceStronglySurjectiveSectionBetaNatTrans C D e,
+      equivalenceStronglySurjectiveSectionBetaObjectwise C D e⟩
+  /-- Equivalences are strongly surjective; Chapter 6. -/
+  lf_def equivalenceStronglySurjective : (C : SCat) ⇒ (D : SCat) ⇒
+      (e : CatEquiv C D) ⇒ StronglySurjective C D (catEquivForward C D e) :=
+    fun C D e => ⟨equivalenceStronglySurjectiveSection C D e,
+      equivalenceStronglySurjectiveSectionBeta C D e⟩
 
 namespace SCT
 

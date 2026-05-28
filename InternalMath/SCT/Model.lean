@@ -60,7 +60,6 @@ def sctModel.{u} : SCTModel.{u} where
   ColimitCocone := sorry
   HasLimitsOfShape := sorry
   HasColimitsOfShape := sorry
-  StronglySurjective := sorry
   FiberwiseCatEquiv := sorry
   DirectedUnivalenceWitness := sorry
   UniverseWitness := sorry
@@ -345,10 +344,6 @@ def sctModel.{u} : SCTModel.{u} where
   limitFunctor := sorry
   colimitFunctor := sorry
   postcompEndpointFunctorCompat := sorry
-  stronglySurjectivePreimage := sorry
-  stronglySurjectiveBeta := sorry
-  stronglySurjectiveSection := sorry
-  stronglySurjectiveSectionBeta := sorry
   isCocartesianFunctorCat := sorry
   cocartesianFunctorCat := sorry
   cocartesianFunctorCatIncl := sorry
