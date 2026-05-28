@@ -69,7 +69,7 @@ declare_type_theory SCT{u} where
   The package exposes its underlying natural transformation and objectwise invertibility witness.
   -/
   syntax_abbrev NatIso (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D) :=
-    Σ α : NatTrans C D F G, ObjectwiseNatIso C D F G α
+    Σ natIsoTrans : NatTrans C D F G, ObjectwiseNatIso C D F G natIsoTrans
   /-- Category equivalence data; definition after Axiom A.3. -/
   syntax_sort CatEquiv (C : SCat) (D : SCat) : Type u
   /-- The mapping anima `Map(C,D)` whose terms are functors `C → D`; Axiom A.1(4). -/
@@ -2084,26 +2084,13 @@ namespace SCT
 
 /- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
 internal_defs where
-  /-- The identity functor satisfies Definition 3.1.2(1).
-  Book target: Example 3.1.4.
-  Status: temporary sorry-admitted component of `idSubcategoryWitness`. -/
-  def idSubcategoryArrowEmbedding (C : SCat) :
-      SubcategoryArrowEmbedding C C (idFunctor C) := sorry
-  /-- The identity functor satisfies Definition 3.1.2(2) for a fixed test category.
-  Book target: Example 3.1.4.
-  Status: temporary sorry-admitted component of `idSubcategoryWitness`. -/
-  def idSubcategoryPullbackSquare (C : SCat) (X : SCat) :
-      SubcategoryPullbackSquare C C (idFunctor C) X := sorry
-  /-- The initial inclusion satisfies Definition 3.1.2(1).
-  Book target: Example 3.1.4.
-  Status: temporary sorry-admitted component of `initialSubcategoryWitness`. -/
-  def initialSubcategoryArrowEmbedding (C : SCat) :
-      SubcategoryArrowEmbedding initialCat C (initialElim C) := sorry
-  /-- The initial inclusion satisfies Definition 3.1.2(2) for a fixed test category.
-  Book target: Example 3.1.4.
-  Status: temporary sorry-admitted component of `initialSubcategoryWitness`. -/
-  def initialSubcategoryPullbackSquare (C : SCat) (X : SCat) :
-      SubcategoryPullbackSquare initialCat C (initialElim C) X := sorry
+  /-- The identity functor is a subcategory; Example 3.1.4.
+  Status: temporary sorry-admitted structural theorem package; not a model field. -/
+  def idSubcategoryWitness (C : SCat) : SubcategoryWitness C C (idFunctor C) := sorry
+  /-- The initial inclusion is a subcategory; Example 3.1.4.
+  Status: temporary sorry-admitted structural theorem package; not a model field. -/
+  def initialSubcategoryWitness (C : SCat) :
+      SubcategoryWitness initialCat C (initialElim C) := sorry
   /-- Every subcategory is an embedding.
   Book target: Lemma 3.1.5.
   Status: temporary theorem-shaped sorry-admitted internal declaration; not a model field. -/
@@ -2111,19 +2098,6 @@ internal_defs where
     (h : SubcategoryWitness A C i) : Embedding A C i := sorry
 
 end SCT
-
-extend_type_theory SCT where
-
-  model_section Chapter3
-
-  /-- The identity functor is a subcategory; Example 3.1.4. -/
-  lf_def idSubcategoryWitness : (C : SCat) ⇒ SubcategoryWitness C C (idFunctor C) :=
-    fun C => ⟨idSubcategoryArrowEmbedding C, fun X => idSubcategoryPullbackSquare C X⟩
-  /-- The initial inclusion is a subcategory; Example 3.1.4. -/
-  lf_def initialSubcategoryWitness : (C : SCat) ⇒
-      SubcategoryWitness initialCat C (initialElim C) :=
-    fun C => ⟨initialSubcategoryArrowEmbedding C,
-      fun X => initialSubcategoryPullbackSquare C X⟩
 
 extend_type_theory SCT where
 
@@ -2251,34 +2225,14 @@ internal_defs where
   Status: temporary sorry-admitted theorem-shaped evidence; not a model field. -/
   def all_morphisms_closed (C : SCat) :
     closedUnderComposition C (allMorphisms C) := sorry
-  /-- The generated subcategory satisfies Definition 3.1.2(1).
-  Book target: Corollary 3.1.11.
-  Status: temporary sorry-admitted component of `subcategoryInclWitness`. -/
-  def subcategoryInclArrowEmbedding (C : SCat) (W : MorphismCollection C)
+  /-- The generated subcategory inclusion is a subcategory; Corollary 3.1.11.
+  Status: temporary sorry-admitted structural theorem package; not a model field. -/
+  def subcategoryInclWitness (C : SCat) (W : MorphismCollection C)
     (ids : containsIdentities C W) (comp : closedUnderComposition C W) :
-      SubcategoryArrowEmbedding (subcategory C W ids comp) C (subcategoryIncl C W ids comp) :=
-    sorry
-  /-- The generated subcategory satisfies Definition 3.1.2(2) for a fixed test category.
-  Book target: Corollary 3.1.11.
-  Status: temporary sorry-admitted component of `subcategoryInclWitness`. -/
-  def subcategoryInclPullbackSquare (C : SCat) (W : MorphismCollection C)
-    (ids : containsIdentities C W) (comp : closedUnderComposition C W) (X : SCat) :
-      SubcategoryPullbackSquare (subcategory C W ids comp) C
-        (subcategoryIncl C W ids comp) X :=
+      SubcategoryWitness (subcategory C W ids comp) C (subcategoryIncl C W ids comp) :=
     sorry
 
 end SCT
-
-extend_type_theory SCT where
-
-  model_section Chapter3
-
-  /-- The generated subcategory inclusion is a subcategory; Corollary 3.1.11. -/
-  lf_def subcategoryInclWitness : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
-      (ids : containsIdentities C W) ⇒ (comp : closedUnderComposition C W) ⇒
-        SubcategoryWitness (subcategory C W ids comp) C (subcategoryIncl C W ids comp) :=
-    fun C W ids comp => ⟨subcategoryInclArrowEmbedding C W ids comp,
-      fun X => subcategoryInclPullbackSquare C W ids comp X⟩
 
 extend_type_theory SCT where
 
@@ -2601,41 +2555,13 @@ namespace SCT
 
 /- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
 internal_defs where
-  /-- Commutativity natural transformation for the localization pushout square.
-  Book target: Remark 3.3.8.
-  Status: temporary sorry-admitted component of `localizationPushoutSquare`. -/
-  def localizationPushoutSquareNatTrans (C : SCat) (W : MorphismCollection C) :
-    NatTrans (prodCat intervalCat (morphismCollectionCat C W)) (localizationCat C W)
-      (compFunctor (prodCat intervalCat (morphismCollectionCat C W)) C (localizationCat C W)
-        (morphismCollectionArrowFunctor C W) (localizationFunctor C W))
-      (compFunctor (prodCat intervalCat (morphismCollectionCat C W))
-        (morphismCollectionCat C W) (localizationCat C W)
-        (prodPr2 intervalCat (morphismCollectionCat C W))
-        (localizationCollectionFunctor C W)) := sorry
-  /-- Objectwise invertibility for the localization pushout-square commutativity transformation.
-  Book target: Remark 3.3.8.
-  Status: temporary sorry-admitted component of `localizationPushoutSquare`. -/
-  def localizationPushoutSquareObjectwise (C : SCat) (W : MorphismCollection C) :
-    ObjectwiseNatIso (prodCat intervalCat (morphismCollectionCat C W)) (localizationCat C W)
-      (compFunctor (prodCat intervalCat (morphismCollectionCat C W)) C (localizationCat C W)
-        (morphismCollectionArrowFunctor C W) (localizationFunctor C W))
-      (compFunctor (prodCat intervalCat (morphismCollectionCat C W))
-        (morphismCollectionCat C W) (localizationCat C W)
-        (prodPr2 intervalCat (morphismCollectionCat C W))
-        (localizationCollectionFunctor C W))
-      (localizationPushoutSquareNatTrans C W) := sorry
-  /-- Mapping-out equivalence for the localization pushout square.
-  Book target: Remark 3.3.8.
-  Status: temporary sorry-admitted component of `localizationPushoutSquare`. -/
-  def localizationPushoutSquareMappingEquivAt (C : SCat) (W : MorphismCollection C)
-    (X : SCat) :
-    CatEquiv (funCat (localizationCat C W) X)
-      (pullbackCat (funCat C X) (funCat (morphismCollectionCat C W) X)
-        (funCat (prodCat intervalCat (morphismCollectionCat C W)) X)
-        (precompFunctor (prodCat intervalCat (morphismCollectionCat C W)) C X
-          (morphismCollectionArrowFunctor C W))
-        (precompFunctor (prodCat intervalCat (morphismCollectionCat C W))
-          (morphismCollectionCat C W) X (prodPr2 intervalCat (morphismCollectionCat C W)))) :=
+  /-- Pushout-square presentation of localization; Remark 3.3.8.
+  Status: temporary sorry-admitted structural theorem package; not a model field. -/
+  def localizationPushoutSquare (C : SCat) (W : MorphismCollection C) :
+    PushoutSquare (prodCat intervalCat (morphismCollectionCat C W)) C
+      (morphismCollectionCat C W) (localizationCat C W)
+      (morphismCollectionArrowFunctor C W) (prodPr2 intervalCat (morphismCollectionCat C W))
+      (localizationFunctor C W) (localizationCollectionFunctor C W) :=
     sorry
 
 end SCT
@@ -2653,16 +2579,10 @@ extend_type_theory SCT where
           (morphismCollectionCat C W) (localizationCat C W)
           (prodPr2 intervalCat (morphismCollectionCat C W))
           (localizationCollectionFunctor C W)) :=
-    fun C W => ⟨localizationPushoutSquareNatTrans C W,
-      localizationPushoutSquareObjectwise C W⟩
-  /-- Pushout-square presentation of localization; Remark 3.3.8. -/
-  lf_def localizationPushoutSquare : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
-      PushoutSquare (prodCat intervalCat (morphismCollectionCat C W)) C
-        (morphismCollectionCat C W) (localizationCat C W)
-        (morphismCollectionArrowFunctor C W) (prodPr2 intervalCat (morphismCollectionCat C W))
-        (localizationFunctor C W) (localizationCollectionFunctor C W) :=
-    fun C W => ⟨localizationPushoutSquareComm C W,
-      fun X => localizationPushoutSquareMappingEquivAt C W X⟩
+    fun C W => pushoutSquareComm (prodCat intervalCat (morphismCollectionCat C W)) C
+      (morphismCollectionCat C W) (localizationCat C W) (morphismCollectionArrowFunctor C W)
+      (prodPr2 intervalCat (morphismCollectionCat C W)) (localizationFunctor C W)
+      (localizationCollectionFunctor C W) (localizationPushoutSquare C W)
 
 extend_type_theory SCT where
 
@@ -3910,22 +3830,13 @@ internal_defs where
   Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
   def stronglySurjectivePreimage (C : SCat) (D : SCat) (F : Functor C D)
     (surj : StronglySurjective C D F) (y : Obj D) : Obj C := sorry
-  /-- Underlying natural transformation for the objectwise comparison from a chosen preimage.
+  /-- Comparison from the chosen preimage to the target object; Remark 6.3.2.
   Book target: Remark 6.3.2, derived from Definition 6.3.1.
-  Status: temporary sorry-admitted component of `stronglySurjectiveBeta`. -/
-  def stronglySurjectiveBetaNatTrans (C : SCat) (D : SCat) (F : Functor C D)
+  Status: temporary sorry-admitted structural theorem package; not a model field. -/
+  def stronglySurjectiveBeta (C : SCat) (D : SCat) (F : Functor C D)
     (surj : StronglySurjective C D F) (y : Obj D) :
-    NatTrans terminalCat D
+    NatIso terminalCat D
       (compFunctor terminalCat C D (stronglySurjectivePreimage C D F surj y) F) y :=
-    sorry
-  /-- Objectwise invertibility for the objectwise comparison from a chosen preimage.
-  Book target: Remark 6.3.2, derived from Definition 6.3.1.
-  Status: temporary sorry-admitted component of `stronglySurjectiveBeta`. -/
-  def stronglySurjectiveBetaObjectwise (C : SCat) (D : SCat) (F : Functor C D)
-    (surj : StronglySurjective C D F) (y : Obj D) :
-    ObjectwiseNatIso terminalCat D
-      (compFunctor terminalCat C D (stronglySurjectivePreimage C D F surj y) F) y
-      (stronglySurjectiveBetaNatTrans C D F surj y) :=
     sorry
 
 end SCT
@@ -3949,13 +3860,6 @@ extend_type_theory SCT where
 
   model_section Chapter6
 
-  /-- Comparison from the chosen preimage to the target object; Remark 6.3.2. -/
-  lf_def stronglySurjectiveBeta : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
-      (surj : StronglySurjective C D F) ⇒ (y : Obj D) ⇒
-        NatIso terminalCat D
-          (compFunctor terminalCat C D (stronglySurjectivePreimage C D F surj y) F) y :=
-    fun C D F surj y => ⟨stronglySurjectiveBetaNatTrans C D F surj y,
-      stronglySurjectiveBetaObjectwise C D F surj y⟩
   /-- Strong surjectivity as a section of the induced map on cores; Definition 6.3.1. -/
   lf_def stronglySurjectiveSection : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
       StronglySurjective C D F ⇒ Functor (coreCat D) (coreCat C) :=
@@ -4068,33 +3972,11 @@ internal_defs where
   To make this book-faithful: Derive from the packaged equivalence data and the core map. -/
   def equivalenceFullyFaithful (C : SCat) (D : SCat) (e : CatEquiv C D) :
     FullyFaithful C D (catEquivForward C D e) := sorry
-  /-- Section on cores induced by an equivalence.
+  /-- Equivalences are strongly surjective; Chapter 6.
   Book target: §6.3, equivalences are strongly surjective.
-  Status: temporary sorry-admitted component of `equivalenceStronglySurjective`. -/
-  def equivalenceStronglySurjectiveSection (C : SCat) (D : SCat) (e : CatEquiv C D) :
-    Functor (coreCat D) (coreCat C) := sorry
-  /-- Underlying natural transformation for the section-on-cores comparison induced by an
-  equivalence.
-  Book target: §6.3, equivalences are strongly surjective.
-  Status: temporary sorry-admitted component of `equivalenceStronglySurjectiveSectionBeta`. -/
-  def equivalenceStronglySurjectiveSectionBetaNatTrans (C : SCat) (D : SCat)
-    (e : CatEquiv C D) :
-    NatTrans (coreCat D) (coreCat D)
-      (compFunctor (coreCat D) (coreCat C) (coreCat D)
-        (equivalenceStronglySurjectiveSection C D e)
-        (coreFunctor C D (catEquivForward C D e)))
-      (idFunctor (coreCat D)) := sorry
-  /-- Objectwise invertibility for the section-on-cores comparison induced by an equivalence.
-  Book target: §6.3, equivalences are strongly surjective.
-  Status: temporary sorry-admitted component of `equivalenceStronglySurjectiveSectionBeta`. -/
-  def equivalenceStronglySurjectiveSectionBetaObjectwise (C : SCat) (D : SCat)
-    (e : CatEquiv C D) :
-    ObjectwiseNatIso (coreCat D) (coreCat D)
-      (compFunctor (coreCat D) (coreCat C) (coreCat D)
-        (equivalenceStronglySurjectiveSection C D e)
-        (coreFunctor C D (catEquivForward C D e)))
-      (idFunctor (coreCat D))
-      (equivalenceStronglySurjectiveSectionBetaNatTrans C D e) := sorry
+  Status: temporary sorry-admitted structural theorem package; not a model field. -/
+  def equivalenceStronglySurjective (C : SCat) (D : SCat) (e : CatEquiv C D) :
+    StronglySurjective C D (catEquivForward C D e) := sorry
 
 end SCT
 
@@ -4102,6 +3984,11 @@ extend_type_theory SCT where
 
   model_section Chapter6
 
+  /-- Section on cores induced by an equivalence. -/
+  lf_def equivalenceStronglySurjectiveSection : (C : SCat) ⇒ (D : SCat) ⇒
+      (e : CatEquiv C D) ⇒ Functor (coreCat D) (coreCat C) :=
+    fun C D e => stronglySurjectiveSection C D (catEquivForward C D e)
+      (equivalenceStronglySurjective C D e)
   /-- Section-on-cores comparison induced by an equivalence. -/
   lf_def equivalenceStronglySurjectiveSectionBeta : (C : SCat) ⇒ (D : SCat) ⇒
       (e : CatEquiv C D) ⇒
@@ -4110,13 +3997,8 @@ extend_type_theory SCT where
             (equivalenceStronglySurjectiveSection C D e)
             (coreFunctor C D (catEquivForward C D e)))
           (idFunctor (coreCat D)) :=
-    fun C D e => ⟨equivalenceStronglySurjectiveSectionBetaNatTrans C D e,
-      equivalenceStronglySurjectiveSectionBetaObjectwise C D e⟩
-  /-- Equivalences are strongly surjective; Chapter 6. -/
-  lf_def equivalenceStronglySurjective : (C : SCat) ⇒ (D : SCat) ⇒
-      (e : CatEquiv C D) ⇒ StronglySurjective C D (catEquivForward C D e) :=
-    fun C D e => ⟨equivalenceStronglySurjectiveSection C D e,
-      equivalenceStronglySurjectiveSectionBeta C D e⟩
+    fun C D e => stronglySurjectiveSectionBeta C D (catEquivForward C D e)
+      (equivalenceStronglySurjective C D e)
 
 namespace SCT
 
