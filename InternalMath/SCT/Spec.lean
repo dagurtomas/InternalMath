@@ -3556,29 +3556,6 @@ extend_type_theory SCT where
   syntax_sort CartesianMorphism (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cart : CartesianFibrationWitness E B p fib)
     (u : Functor intervalCat E) : Type u
-  /-- Cocartesian functor between cocartesian fibrations; Chapter 5. -/
-  syntax_sort CocartesianFunctorWitness (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
-    (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
-    (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E') : Type u
-  /-- A cocartesian functor lies over the base; source data for the commutative triangle in
-  Theorem 6.4.7. -/
-  lf_opaque cocartesianFunctorOverBase (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
-    (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
-    (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
-    (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F) :
-    FunctorOverBase E B p E' p' F
-  /-- Fiber map induced by a cocartesian functor over the base. -/
-  lf_def cocartesianFunctorFiberMap : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
-      (fib : Fibration E B p) ⇒ (cocart : CocartesianFibrationWitness E B p fib) ⇒
-      (E' : SCat) ⇒ (p' : Functor E' B) ⇒ (fib' : Fibration E' B p') ⇒
-      (cocart' : CocartesianFibrationWitness E' B p' fib') ⇒ (F : Functor E E') ⇒
-      (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F) ⇒
-      (b : Obj B) ⇒ Functor (fiberCat E B p b) (fiberCat E' B p' b) :=
-    fun E B p fib cocart E' p' fib' cocart' F hF b =>
-      fiberMap E B p E' p' F
-        (cocartesianFunctorOverBase E B p fib cocart E' p' fib' cocart' F hF) b
   /-- Locally cocartesian fibration structure; Chapter 5. -/
   syntax_sort LocallyCocartesianFibrationWitness (E : SCat) (B : SCat)
     (p : Functor E B) (fib : Fibration E B p) : Type u
@@ -3614,36 +3591,85 @@ extend_type_theory SCT where
 
   /-- Map on directed pullbacks induced by a functor over the base; Chapter 5 transport data. -/
   lf_opaque directedPullbackMapOverBase (E : SCat) (B : SCat) (p : Functor E B)
-    (E' : SCat) (p' : Functor E' B) (F : Functor E E') :
+    (E' : SCat) (p' : Functor E' B) (F : Functor E E')
+    (hBase : FunctorOverBase E B p E' p' F) :
     Functor (directedPullbackCat E B B p (idFunctor B))
       (directedPullbackCat E' B B p' (idFunctor B))
   /-- Beck-Chevalley transformation associated to a functor over the base; Chapter 5 data. -/
   lf_opaque beckChevalleyTransformation (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
-    (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E') :
+    (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
+    (hBase : FunctorOverBase E B p E' p' F) :
     NatTrans (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E')
       (compFunctor (directedPullbackCat E B B p (idFunctor B))
         (directedPullbackCat E' B B p' (idFunctor B)) (funCat intervalCat E')
-        (directedPullbackMapOverBase E B p E' p' F)
+        (directedPullbackMapOverBase E B p E' p' F hBase)
         (cocartesianLiftFunctor E' B p' fib' cocart'))
       (compFunctor (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E)
         (funCat intervalCat E') (cocartesianLiftFunctor E B p fib cocart)
         (postcompFunctor intervalCat E E' F))
-  /-- Cocartesian functor witnesses make the Beck-Chevalley transformation invertible. -/
-  lf_opaque cocartesianFunctorBeckChevalley (E : SCat) (B : SCat) (p : Functor E B)
+  /-- Beck-Chevalley invertibility for the chosen transformation. -/
+  syntax_abbrev CocartesianFunctorBeckChevalley (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
     (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
-    (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F) :
-    NatIso (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E')
+    (hBase : FunctorOverBase E B p E' p' F) :=
+    ObjectwiseNatIso (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E')
       (compFunctor (directedPullbackCat E B B p (idFunctor B))
         (directedPullbackCat E' B B p' (idFunctor B)) (funCat intervalCat E')
-        (directedPullbackMapOverBase E B p E' p' F)
+        (directedPullbackMapOverBase E B p E' p' F hBase)
         (cocartesianLiftFunctor E' B p' fib' cocart'))
       (compFunctor (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E)
         (funCat intervalCat E') (cocartesianLiftFunctor E B p fib cocart)
         (postcompFunctor intervalCat E E' F))
+      (beckChevalleyTransformation E B p fib cocart E' p' fib' cocart' F hBase)
+  /-- Cocartesian functor between cocartesian fibrations, as over-base data plus the
+  Beck-Chevalley invertibility condition. -/
+  syntax_abbrev CocartesianFunctorWitness (E : SCat) (B : SCat) (p : Functor E B)
+    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
+    (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
+    (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E') :=
+    Σ hBase : FunctorOverBase E B p E' p' F,
+      CocartesianFunctorBeckChevalley E B p fib cocart E' p' fib' cocart' F hBase
+  /-- A cocartesian functor lies over the base; source data for the commutative triangle in
+  Theorem 6.4.7. -/
+  lf_def cocartesianFunctorOverBase : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (fib : Fibration E B p) ⇒ (cocart : CocartesianFibrationWitness E B p fib) ⇒
+      (E' : SCat) ⇒ (p' : Functor E' B) ⇒ (fib' : Fibration E' B p') ⇒
+      (cocart' : CocartesianFibrationWitness E' B p' fib') ⇒ (F : Functor E E') ⇒
+      CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F ⇒
+        FunctorOverBase E B p E' p' F :=
+    fun E B p fib cocart E' p' fib' cocart' F hF => fst hF
+  /-- Cocartesian functor witnesses make the Beck-Chevalley transformation invertible. -/
+  lf_def cocartesianFunctorBeckChevalley : (E : SCat) ⇒ (B : SCat) ⇒
+      (p : Functor E B) ⇒ (fib : Fibration E B p) ⇒
+      (cocart : CocartesianFibrationWitness E B p fib) ⇒
+      (E' : SCat) ⇒ (p' : Functor E' B) ⇒ (fib' : Fibration E' B p') ⇒
+      (cocart' : CocartesianFibrationWitness E' B p' fib') ⇒ (F : Functor E E') ⇒
+      (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F) ⇒
+        NatIso (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E')
+          (compFunctor (directedPullbackCat E B B p (idFunctor B))
+            (directedPullbackCat E' B B p' (idFunctor B)) (funCat intervalCat E')
+            (directedPullbackMapOverBase E B p E' p' F
+              (cocartesianFunctorOverBase E B p fib cocart E' p' fib' cocart' F hF))
+            (cocartesianLiftFunctor E' B p' fib' cocart'))
+          (compFunctor (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E)
+            (funCat intervalCat E') (cocartesianLiftFunctor E B p fib cocart)
+            (postcompFunctor intervalCat E E' F)) :=
+    fun E B p fib cocart E' p' fib' cocart' F hF =>
+      ⟨beckChevalleyTransformation E B p fib cocart E' p' fib' cocart' F
+        (cocartesianFunctorOverBase E B p fib cocart E' p' fib' cocart' F hF), snd hF⟩
+  /-- Fiber map induced by a cocartesian functor over the base. -/
+  lf_def cocartesianFunctorFiberMap : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (fib : Fibration E B p) ⇒ (cocart : CocartesianFibrationWitness E B p fib) ⇒
+      (E' : SCat) ⇒ (p' : Functor E' B) ⇒ (fib' : Fibration E' B p') ⇒
+      (cocart' : CocartesianFibrationWitness E' B p' fib') ⇒ (F : Functor E E') ⇒
+      (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F) ⇒
+      (b : Obj B) ⇒ Functor (fiberCat E B p b) (fiberCat E' B p' b) :=
+    fun E B p fib cocart E' p' fib' cocart' F hF b =>
+      fiberMap E B p E' p' F
+        (cocartesianFunctorOverBase E B p fib cocart E' p' fib' cocart' F hF) b
   /-- Identity cocartesian functor; Chapter 5 closure data. -/
   lf_opaque idCocartesianFunctor (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :

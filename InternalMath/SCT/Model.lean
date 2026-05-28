@@ -47,8 +47,6 @@ def sctModel.{u} : SCTModel.{u} where
   RightAdjointSection := sorry
   LeftFibrationWitness := sorry
   RightFibrationWitness := sorry
-  CocartesianFunctorWitness := sorry
-  cocartesianFunctorOverBase := sorry
   LocallyCocartesianFibrationWitness := sorry
   LocallyCartesianFibrationWitness := sorry
   CartesianFunctorWitness := sorry
@@ -323,7 +321,6 @@ def sctModel.{u} : SCTModel.{u} where
   lift1Cat := sorry
   directedPullbackMapOverBase := sorry
   beckChevalleyTransformation := sorry
-  cocartesianFunctorBeckChevalley := sorry
   idCocartesianFunctor := sorry
   compCocartesianFunctor := sorry
   adjunctionUnit := sorry
