@@ -911,6 +911,20 @@ extend_type_theory SCT where
   lf_def functorObject : (C : SCat) ⇒ (D : SCat) ⇒ Functor C D ⇒ Obj (funCat C D) :=
     fun C D F => curryFunctor terminalCat C D
       (compFunctor (prodCat terminalCat C) C D (prodPr2 terminalCat C) F)
+  /-- The source endpoint of the object classified by an interval-shaped functor.  This is the
+  endpoint β-data of the functor-category object notation used by the Segal pullback. -/
+  lf_opaque functorObjectSourceCompat (C : SCat) (f : Functor intervalCat C) :
+    NatIso terminalCat C
+      (compFunctor terminalCat (funCat intervalCat C) C (functorObject intervalCat C f)
+        (sourceFunctor C))
+      (sourceObj C f)
+  /-- The target endpoint of the object classified by an interval-shaped functor.  This is the
+  endpoint β-data of the functor-category object notation used by the Segal pullback. -/
+  lf_opaque functorObjectTargetCompat (C : SCat) (f : Functor intervalCat C) :
+    NatIso terminalCat C
+      (compFunctor terminalCat (funCat intervalCat C) C (functorObject intervalCat C f)
+        (targetFunctor C))
+      (targetObj C f)
 
 extend_type_theory SCT where
 
@@ -1170,26 +1184,46 @@ extend_type_theory SCT where
     fun C => catEquivOfData (funCat simplex2Cat C) (composableMorphismsCat C)
       (segalRestriction C) (segalExtension C) (segalUnit C) (segalCounit C)
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- A composable pair built from arrows and endpoint compatibility; Axiom E.
-  Book target: §1.7, Axiom E (Segal composition in a synthetic category).
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the Segal equivalence and endpoint compatibility data. -/
-  def composablePair (C : SCat) (f : Functor intervalCat C)
-    (g : Functor intervalCat C)
-    (α : NatIso terminalCat C (targetObj C f) (sourceObj C g)) :
-    Obj (composableMorphismsCat C) := sorry
-  /-- Composite arrow extracted from a composable pair; Axiom E.
-  Book target: §1.7, Axiom E (Segal composition in a synthetic category).
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the Segal equivalence and endpoint compatibility data. -/
-  def compositeOfComposablePair (C : SCat)
-    (p : Obj (composableMorphismsCat C)) : Functor intervalCat C := sorry
+  /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
+  model_section Chapter1
 
-end SCT
+  /-- A composable pair built from arrows and endpoint compatibility, using the defining pullback
+  for composable arrows; Axiom E. -/
+  lf_def composablePair : (C : SCat) ⇒ (f : Functor intervalCat C) ⇒
+      (g : Functor intervalCat C) ⇒
+      NatIso terminalCat C (targetObj C f) (sourceObj C g) ⇒
+      Obj (composableMorphismsCat C) :=
+    fun C f g α =>
+      pullbackLift terminalCat (funCat intervalCat C) (funCat intervalCat C) C
+        (targetFunctor C) (sourceFunctor C)
+        (functorObject intervalCat C f) (functorObject intervalCat C g)
+        (compNatIso terminalCat C
+          (compFunctor terminalCat (funCat intervalCat C) C (functorObject intervalCat C f)
+            (targetFunctor C))
+          (targetObj C f)
+          (compFunctor terminalCat (funCat intervalCat C) C (functorObject intervalCat C g)
+            (sourceFunctor C))
+          (functorObjectTargetCompat C f)
+          (compNatIso terminalCat C
+            (targetObj C f) (sourceObj C g)
+            (compFunctor terminalCat (funCat intervalCat C) C (functorObject intervalCat C g)
+              (sourceFunctor C))
+            α
+            (invNatIso terminalCat C
+              (compFunctor terminalCat (funCat intervalCat C) C (functorObject intervalCat C g)
+                (sourceFunctor C))
+              (sourceObj C g)
+              (functorObjectSourceCompat C g))))
+  /-- Composite arrow extracted from a composable pair by extending along the Segal equivalence and
+  restricting to the long edge; Axiom E. -/
+  lf_def compositeOfComposablePair : (C : SCat) ⇒
+      Obj (composableMorphismsCat C) ⇒ Functor intervalCat C :=
+    fun C p => compFunctor intervalCat simplex2Cat C simplex2FaceD1
+      (functorFromObject simplex2Cat C
+        (compFunctor terminalCat (composableMorphismsCat C) (funCat simplex2Cat C) p
+          (segalExtension C)))
 
 extend_type_theory SCT where
 
@@ -1202,36 +1236,29 @@ extend_type_theory SCT where
       NatIso terminalCat C (targetObj C f) (sourceObj C g) ⇒ Functor intervalCat C :=
     fun C f g α => compositeOfComposablePair C (composablePair C f g α)
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Source law for a composite; Axiom E.
-  Book target: §1.7, Axiom E (Segal composition in a synthetic category).
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the Segal equivalence and endpoint compatibility data. -/
-  def compositeSourceCompat (C : SCat)
+  /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
+  model_section Chapter1
+
+  /-- Source law for a Segal composite; split Axiom E data for the chosen Segal extension. -/
+  lf_opaque compositeSourceCompat (C : SCat)
     (p : Obj (composableMorphismsCat C)) :
     NatIso terminalCat C (sourceObj C (compositeOfComposablePair C p))
       (compFunctor terminalCat (funCat intervalCat C) C
         (compFunctor terminalCat (composableMorphismsCat C) (funCat intervalCat C) p
           (pullbackPr1 (funCat intervalCat C) (funCat intervalCat C) C
             (targetFunctor C) (sourceFunctor C)))
-        (sourceFunctor C)) := sorry
-  /-- Target law for a composite; Axiom E.
-  Book target: §1.7, Axiom E (Segal composition in a synthetic category).
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the Segal equivalence and endpoint compatibility data. -/
-  def compositeTargetCompat (C : SCat)
+        (sourceFunctor C))
+  /-- Target law for a Segal composite; split Axiom E data for the chosen Segal extension. -/
+  lf_opaque compositeTargetCompat (C : SCat)
     (p : Obj (composableMorphismsCat C)) :
     NatIso terminalCat C (targetObj C (compositeOfComposablePair C p))
       (compFunctor terminalCat (funCat intervalCat C) C
         (compFunctor terminalCat (composableMorphismsCat C) (funCat intervalCat C) p
           (pullbackPr2 (funCat intervalCat C) (funCat intervalCat C) C
             (targetFunctor C) (sourceFunctor C)))
-        (targetFunctor C)) := sorry
-
-end SCT
+        (targetFunctor C))
 
 extend_type_theory SCT where
 
@@ -1275,33 +1302,26 @@ extend_type_theory SCT where
     Obj (pullbackCat (isoCat C) terminalCat (funCat intervalCat C)
       (isoProjection C) (functorObject intervalCat C f))
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Left unit for Segal composition; Axiom E.
-  Book target: §1.7, Axiom E (Segal composition in a synthetic category).
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the Segal equivalence and endpoint compatibility data. -/
-  def composeLeftUnit (C : SCat) (f : Functor intervalCat C) :
+  /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
+  model_section Chapter1
+
+  /-- Left unit for the chosen Segal composition; split Axiom E coherence data. -/
+  lf_opaque composeLeftUnit (C : SCat) (f : Functor intervalCat C) :
     NatIso intervalCat C
       (composeComposableMorphism C (identityMorphism C (sourceObj C f)) f
         (composeLeftUnitCompat C f))
-      f := sorry
-  /-- Right unit for Segal composition; Axiom E.
-  Book target: §1.7, Axiom E (Segal composition in a synthetic category).
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the Segal equivalence and endpoint compatibility data. -/
-  def composeRightUnit (C : SCat) (f : Functor intervalCat C) :
+      f
+  /-- Right unit for the chosen Segal composition; split Axiom E coherence data. -/
+  lf_opaque composeRightUnit (C : SCat) (f : Functor intervalCat C) :
     NatIso intervalCat C
       (composeComposableMorphism C f (identityMorphism C (targetObj C f))
         (composeRightUnitCompat C f))
-      f := sorry
-  /-- Associativity for Segal composition with explicit endpoint coherences; Axiom E.
-  Book target: §1.7, Axiom E (Segal composition in a synthetic category).
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the Segal equivalence and endpoint compatibility data. -/
-  def composeAssoc (C : SCat)
+      f
+  /-- Associativity for Segal composition with explicit endpoint coherences; split Axiom E
+  coherence data. -/
+  lf_opaque composeAssoc (C : SCat)
     (f : Functor intervalCat C) (g : Functor intervalCat C) (h : Functor intervalCat C)
     (α : NatIso terminalCat C (targetObj C f) (sourceObj C g))
     (β : NatIso terminalCat C (targetObj C g) (sourceObj C h))
@@ -1311,16 +1331,11 @@ internal_defs where
       (targetObj C f) (sourceObj C (composeComposableMorphism C g h β))) :
     NatIso intervalCat C
       (composeComposableMorphism C (composeComposableMorphism C f g α) h γL)
-      (composeComposableMorphism C f (composeComposableMorphism C g h β) γR) := sorry
-  /-- The projection `Iso(C) → Fun([1],C)` is an embedding; Definition 1.8.2.
-  Book target: Definition 1.8.2 and Axiom F, the projection `Iso(C) → Fun([1],C)` as an embedding.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the pullback definition of `Iso(C)` and embedding
-  stability. -/
-  def isoProjectionEmbedding (C : SCat) :
-    Embedding (isoCat C) (funCat intervalCat C) (isoProjection C) := sorry
-
-end SCT
+      (composeComposableMorphism C f (composeComposableMorphism C g h β) γR)
+  /-- The projection `Iso(C) → Fun([1],C)` is an embedding; split Definition 1.8.2/Axiom F data.
+  -/
+  lf_opaque isoProjectionEmbedding (C : SCat) :
+    Embedding (isoCat C) (funCat intervalCat C) (isoProjection C)
 
 extend_type_theory SCT where
 
@@ -1398,18 +1413,13 @@ extend_type_theory SCT where
   /-- Objects of `C` parameterized by an anima/groupoid; Axiom G. -/
   syntax_abbrev GroupoidObject (A : Anima) (C : SCat) := Functor (animaCat A) (coreCat C)
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- The core inclusion is an embedding.
-  Book target: Definition 2.1.1, the core inclusion as the maximal groupoid subcategory.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the core construction and the subcategory/embedding
-  criterion. -/
-  def coreInclEmbedding (C : SCat) : Embedding (coreCat C) C (coreIncl C) := sorry
+  model_section Chapter2
 
-end SCT
+  /-- The core inclusion is an embedding; split Definition 2.1.1/Axiom G data until the maximal
+  subgroupoid property is represented internally. -/
+  lf_opaque coreInclEmbedding (C : SCat) : Embedding (coreCat C) C (coreIncl C)
 
 extend_type_theory SCT where
 
@@ -1690,25 +1700,20 @@ extend_type_theory SCT where
             (compFunctor G (coreCat C) C M (coreIncl C)) M
             (idNatIso G C (compFunctor G (coreCat C) C M (coreIncl C)))))
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Higher compatibility of a lifted core natural isomorphism with the original one.
-  Book target: Axiom G specialized from anima sources to groupoid sources.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove by transporting the core-lift universal property along the
-  groupoid/anima equivalence. -/
-  def coreLiftNatIsoFromGroupoidBeta (G : SCat) (C : SCat) (gG : GroupoidWitness G)
+  model_section Chapter2
+
+  /-- Higher compatibility of a lifted core natural isomorphism with the original one; split
+  Axiom G coherence data for the current core-universal-property interface. -/
+  lf_opaque coreLiftNatIsoFromGroupoidBeta (G : SCat) (C : SCat) (gG : GroupoidWitness G)
     (L : Functor G (coreCat C)) (M : Functor G (coreCat C))
     (α : NatIso G C (compFunctor G (coreCat C) C L (coreIncl C))
       (compFunctor G (coreCat C) C M (coreIncl C))) :
     NatIsoIso G C (compFunctor G (coreCat C) C L (coreIncl C))
       (compFunctor G (coreCat C) C M (coreIncl C))
       (postWhiskerNatIso G (coreCat C) C L M (coreIncl C)
-        (coreLiftNatIsoFromGroupoid G C gG L M α)) α := sorry
-
-end SCT
+        (coreLiftNatIsoFromGroupoid G C gG L M α)) α
 
 extend_type_theory SCT where
 
@@ -1729,18 +1734,76 @@ extend_type_theory SCT where
   lf_opaque mapAnimaCoreEquiv (C : SCat) (D : SCat) :
     CatEquiv (animaCat (mapAnima C D)) (coreCat (funCat C D))
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- If `C` is a groupoid, its core inclusion is an equivalence.
-  Book target: Axiom G and Definition 2.1.1, a groupoid is equivalent to its core.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Package the core inclusion and universal property as an equivalence.
-  -/
-  def coreOfGroupoidEquiv (C : SCat) (gC : GroupoidWitness C) : CatEquiv (coreCat C) C := sorry
+  model_section Chapter2
 
-end SCT
+  /-- Inverse to the core inclusion for a groupoid, obtained by the groupoid-source core lift. -/
+  lf_def coreOfGroupoidBackward : (C : SCat) ⇒ GroupoidWitness C ⇒ Functor C (coreCat C) :=
+    fun C gC => coreLiftFromGroupoid C C gC (idFunctor C)
+  /-- Section comparison for the core inclusion of a groupoid. -/
+  lf_def coreOfGroupoidSection : (C : SCat) ⇒ (gC : GroupoidWitness C) ⇒
+      NatIso C C
+        (compFunctor C (coreCat C) C (coreOfGroupoidBackward C gC) (coreIncl C))
+        (idFunctor C) :=
+    fun C gC => coreLiftFromGroupoidBeta C C gC (idFunctor C)
+  /-- Comparison showing that the retraction candidate composes with the core inclusion as
+  required to invoke core-lift uniqueness. -/
+  lf_def coreOfGroupoidRetractionBeta : (C : SCat) ⇒ (gC : GroupoidWitness C) ⇒
+      NatIso (coreCat C) C
+        (compFunctor (coreCat C) (coreCat C) C
+          (compFunctor (coreCat C) C (coreCat C) (coreIncl C)
+            (coreOfGroupoidBackward C gC))
+          (coreIncl C))
+        (coreIncl C) :=
+    fun C gC =>
+      compNatIso (coreCat C) C
+        (compFunctor (coreCat C) (coreCat C) C
+          (compFunctor (coreCat C) C (coreCat C) (coreIncl C)
+            (coreOfGroupoidBackward C gC))
+          (coreIncl C))
+        (compFunctor (coreCat C) C C (coreIncl C)
+          (compFunctor C (coreCat C) C (coreOfGroupoidBackward C gC) (coreIncl C)))
+        (coreIncl C)
+        (assocFunctor (coreCat C) C (coreCat C) C (coreIncl C)
+          (coreOfGroupoidBackward C gC) (coreIncl C))
+        (compNatIso (coreCat C) C
+          (compFunctor (coreCat C) C C (coreIncl C)
+            (compFunctor C (coreCat C) C (coreOfGroupoidBackward C gC) (coreIncl C)))
+          (compFunctor (coreCat C) C C (coreIncl C) (idFunctor C))
+          (coreIncl C)
+          (preWhiskerNatIso (coreCat C) C C (coreIncl C)
+            (compFunctor C (coreCat C) C (coreOfGroupoidBackward C gC) (coreIncl C))
+            (idFunctor C)
+            (coreOfGroupoidSection C gC))
+          (rightUnitor (coreCat C) C (coreIncl C)))
+  /-- Retraction comparison for the core inclusion of a groupoid. -/
+  lf_def coreOfGroupoidRetraction : (C : SCat) ⇒ (gC : GroupoidWitness C) ⇒
+      NatIso (coreCat C) (coreCat C)
+        (compFunctor (coreCat C) C (coreCat C) (coreIncl C)
+          (coreOfGroupoidBackward C gC))
+        (idFunctor (coreCat C)) :=
+    fun C gC =>
+      compNatIso (coreCat C) (coreCat C)
+        (compFunctor (coreCat C) C (coreCat C) (coreIncl C)
+          (coreOfGroupoidBackward C gC))
+        (coreLiftFromGroupoid (coreCat C) C (coreGroupoid C) (coreIncl C))
+        (idFunctor (coreCat C))
+        (coreLiftFromGroupoidUniq (coreCat C) C (coreGroupoid C) (coreIncl C)
+          (compFunctor (coreCat C) C (coreCat C) (coreIncl C)
+            (coreOfGroupoidBackward C gC))
+          (coreOfGroupoidRetractionBeta C gC))
+        (invNatIso (coreCat C) (coreCat C) (idFunctor (coreCat C))
+          (coreLiftFromGroupoid (coreCat C) C (coreGroupoid C) (coreIncl C))
+          (coreLiftFromGroupoidUniq (coreCat C) C (coreGroupoid C) (coreIncl C)
+            (idFunctor (coreCat C))
+            (leftUnitor (coreCat C) C (coreIncl C))))
+  /-- If `C` is a groupoid, its core inclusion is an equivalence, by Axiom G. -/
+  lf_def coreOfGroupoidEquiv : (C : SCat) ⇒ GroupoidWitness C ⇒ CatEquiv (coreCat C) C :=
+    fun C gC => catEquivOfSectionRetraction (coreCat C) C (coreIncl C)
+      (coreOfGroupoidBackward C gC) (coreOfGroupoidSection C gC)
+      (coreOfGroupoidBackward C gC) (coreOfGroupoidRetraction C gC)
+      (coreOfGroupoidSection C gC) (coreOfGroupoidRetraction C gC)
 
 extend_type_theory SCT where
 
@@ -1777,18 +1840,14 @@ extend_type_theory SCT where
     fun C D => catEquivCounit (animaCat (mapAnima C D)) (coreCat (funCat C D))
       (mapAnimaCoreEquiv C D)
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Functor categories into a groupoid are groupoids.
-  Book target: Proposition 2.1.2(4), functor categories into a groupoid are groupoids.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the interval-characterization of groupoids. -/
-  def funCatTargetGroupoid (C : SCat) (D : SCat) (gD : GroupoidWitness D) :
-    GroupoidWitness (funCat C D) := sorry
+  model_section Chapter2
 
-end SCT
+  /-- Functor categories into a groupoid are groupoids; source-facing Proposition 2.1.2(4) data
+  until `GroupoidWitness` exposes the interval-characterization proof internally. -/
+  lf_opaque funCatTargetGroupoid (C : SCat) (D : SCat) (gD : GroupoidWitness D) :
+    GroupoidWitness (funCat C D)
 
 extend_type_theory SCT where
 
@@ -1806,29 +1865,19 @@ extend_type_theory SCT where
   lf_opaque intervalCoreEndpointEquiv :
     CatEquiv (coprodCat terminalCat terminalCat) (coreCat intervalCat)
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Product of cores comparison.
-  Book target: Chapter 2 closure of groupoids/cores under finite limits, using Axiom G.1.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by comparing the core universal properties with
-  products/pullbacks. -/
-  def coreProductEquiv (C : SCat) (D : SCat) :
-    CatEquiv (coreCat (prodCat C D)) (prodCat (coreCat C) (coreCat D)) := sorry
-  /-- Pullback of cores comparison.
-  Book target: Chapter 2 closure of groupoids/cores under finite limits, using Axiom G.1.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive by comparing the core universal properties with
-  products/pullbacks. -/
-  def corePullbackEquiv (C : SCat) (D : SCat) (E : SCat)
+  model_section Chapter2
+
+  /-- Product of cores comparison; source-facing Chapter 2 finite-limit closure data. -/
+  lf_opaque coreProductEquiv (C : SCat) (D : SCat) :
+    CatEquiv (coreCat (prodCat C D)) (prodCat (coreCat C) (coreCat D))
+  /-- Pullback of cores comparison; source-facing Chapter 2 finite-limit closure data. -/
+  lf_opaque corePullbackEquiv (C : SCat) (D : SCat) (E : SCat)
     (F : Functor C E) (G : Functor D E) :
     CatEquiv (coreCat (pullbackCat C D E F G))
       (pullbackCat (coreCat C) (coreCat D) (coreCat E)
-        (coreFunctor C E F) (coreFunctor D E G)) := sorry
-
-end SCT
+        (coreFunctor C E F) (coreFunctor D E G))
 
 extend_type_theory SCT where
 
@@ -1847,47 +1896,31 @@ extend_type_theory SCT where
 
 namespace SCT
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
 internal_defs where
   /-- A groupoid category is an anima-category.
   Book target: Axiom G, identifying groupoids with anima.
   This is derived from the groupoid/anima comparison and invariance under equivalence. -/
   def groupoid_is_anima_cat (C : SCat) (g : GroupoidWitness C) : isAnimaCat C :=
     equiv_to_anima_is_anima C (animaOfGroupoid C g) (groupoid_anima_equiv C g)
-  /-- The core of `[2]` is equivalent to three points.
-  Book target: Axiom G.1 and Definition 3.6.14/Lemma 3.6.15, the core of `[2]` has three endpoint
-  objects.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the walking-interval endpoint axiom and the join/simplex
-  construction. -/
-  def simplex2CoreEndpointEquiv : CatEquiv threePointCat (coreCat simplex2Cat) := sorry
-  /-- Coproducts of groupoids are groupoids.
-  Book target: Chapter 2 closure statements for groupoids under coproducts, pullbacks, and the
-  initial category.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from Axiom G plus the corresponding categorical universal
-  property. -/
-  def coprodGroupoid (C : SCat) (D : SCat)
-    (gC : GroupoidWitness C) (gD : GroupoidWitness D) : GroupoidWitness (coprodCat C D) := sorry
-  /-- Pullbacks of groupoids are groupoids.
-  Book target: Chapter 2 closure statements for groupoids under coproducts, pullbacks, and the
-  initial category.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from Axiom G plus the corresponding categorical universal
-  property. -/
-  def pullbackGroupoid (C : SCat) (D : SCat) (E : SCat)
-    (F : Functor C E) (G : Functor D E)
-    (gC : GroupoidWitness C) (gD : GroupoidWitness D) (gE : GroupoidWitness E) :
-    GroupoidWitness (pullbackCat C D E F G) := sorry
-  /-- The initial category is a groupoid.
-  Book target: Chapter 2 closure statements for groupoids under coproducts, pullbacks, and the
-  initial category.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from Axiom G plus the corresponding categorical universal
-  property. -/
-  def initialGroupoid : GroupoidWitness initialCat := sorry
 
 end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter2
+
+  /-- The core of `[2]` is equivalent to three points; source-facing Axiom G.1 endpoint data. -/
+  lf_opaque simplex2CoreEndpointEquiv : CatEquiv threePointCat (coreCat simplex2Cat)
+  /-- Coproducts of groupoids are groupoids; source-facing Chapter 2 closure data. -/
+  lf_opaque coprodGroupoid (C : SCat) (D : SCat)
+    (gC : GroupoidWitness C) (gD : GroupoidWitness D) : GroupoidWitness (coprodCat C D)
+  /-- Pullbacks of groupoids are groupoids; source-facing Chapter 2 closure data. -/
+  lf_opaque pullbackGroupoid (C : SCat) (D : SCat) (E : SCat)
+    (F : Functor C E) (G : Functor D E)
+    (gC : GroupoidWitness C) (gD : GroupoidWitness D) (gE : GroupoidWitness E) :
+    GroupoidWitness (pullbackCat C D E F G)
+  /-- The initial category is a groupoid; source-facing Chapter 2 closure data. -/
+  lf_opaque initialGroupoid : GroupoidWitness initialCat
 
 /-- Chapter 3: subcategories, localizations, realizations, joins, and slices; Axioms H--J.2. -/
 extend_type_theory SCT where
