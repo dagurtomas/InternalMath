@@ -30,6 +30,7 @@ def sctModel.{u} : SCTModel.{u} where
   CatEquiv := sorry
   AnimaIndexedCat := sorry
   PushoutSquare := sorry
+  InvertibleMorphismData := sorry
   GroupoidWitness := sorry
   SubcategoryWitness := sorry
   AnimaSubobject := sorry
@@ -133,6 +134,7 @@ def sctModel.{u} : SCTModel.{u} where
   coprodDisjointCounit := sorry
   funCat := sorry
   precompFunctor := sorry
+  pushoutSquareMappingEquiv := sorry
   postcompFunctor := sorry
   evalFunctor := sorry
   curryFunctor := sorry
@@ -184,12 +186,14 @@ def sctModel.{u} : SCTModel.{u} where
   segalCounit := sorry
   compositeSourceCompat := sorry
   compositeTargetCompat := sorry
-  isoCat := sorry
-  isoProjection := sorry
   composeLeftUnit := sorry
   composeRightUnit := sorry
   composeAssoc := sorry
-  isoProjectionEmbedding := sorry
+  invertibleMorphismInverse := sorry
+  invertibleMorphismInverseSource := sorry
+  invertibleMorphismInverseTarget := sorry
+  invertibleMorphismLeftUnit := sorry
+  invertibleMorphismRightUnit := sorry
   rezkEquiv := sorry
   groupoidOfAnima := sorry
   animaOfGroupoid := sorry
@@ -222,11 +226,9 @@ def sctModel.{u} : SCTModel.{u} where
   fullSubcategoryInclWitness := sorry
   fullSubcategoryCoreEquiv := sorry
   fullSubcategoryAllObjectsEquiv := sorry
+  invertibleMorphismObjects := sorry
   localizationCat := sorry
-  invertingFunctorCat := sorry
-  invertingFunctorIncl := sorry
-  invertingFunctorSubcategoryWitness := sorry
-  invertingFunctorTargetGroupoidEquiv := sorry
+  invertingFunctorObjects := sorry
   localizationFunctor := sorry
   localizationUniversalEquiv := sorry
   dependentProductOverCat := sorry
@@ -353,7 +355,7 @@ def sctModel.{u} : SCTModel.{u} where
   coconeCat := sorry
   limitFunctor := sorry
   colimitFunctor := sorry
-  fullyFaithfulHomEquiv := sorry
+  postcompEndpointFunctorCompat := sorry
   stronglySurjectivePreimage := sorry
   stronglySurjectiveBeta := sorry
   stronglySurjectiveSection := sorry
@@ -434,7 +436,6 @@ def sctModel.{u} : SCTModel.{u} where
   anima_cat_is_anima := sorry
   equiv_to_anima_is_anima := sorry
   sigma_anima_indexed_is_anima := sorry
-  geometric_realization_is_anima := sorry
   containsIdentities := sorry
   closedUnderComposition := sorry
   PreservesMorphismCollection := sorry

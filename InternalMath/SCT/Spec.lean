@@ -687,6 +687,15 @@ extend_type_theory SCT where
   /-- Precomposition functor between functor categories; Axiom B.6. -/
   lf_opaque precompFunctor (A : SCat) (B : SCat) (C : SCat) (u : Functor A B) :
     Functor (funCat B C) (funCat A C)
+  /-- Mapping-out universal property associated to a pushout-square witness.  InternalLean cannot
+  yet use this Pi-shaped type directly as an opaque witness result, so the universal property is a
+  projection from the witness sort. -/
+  lf_opaque pushoutSquareMappingEquiv (A : SCat) (B : SCat) (C : SCat) (D : SCat)
+    (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D)
+    (sq : PushoutSquare A B C D top left right bottom) (X : SCat) :
+    CatEquiv (funCat D X)
+      (pullbackCat (funCat B X) (funCat C X) (funCat A X)
+        (precompFunctor A B X top) (precompFunctor A C X left))
   /-- Postcomposition functor between functor categories; Axiom B.6. -/
   lf_opaque postcompFunctor (A : SCat) (B : SCat) (C : SCat) (v : Functor B C) :
     Functor (funCat A B) (funCat A C)
@@ -1283,24 +1292,43 @@ extend_type_theory SCT where
   /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
   model_section Chapter1
 
-  /-- Category of isomorphisms in `C`, used by Rezk completeness; Axiom F.
-  Book target: Definition 1.8.2, the category `Iso(C)` of invertible morphisms. -/
-  lf_opaque isoCat (C : SCat) : SCat
-  /-- Projection from an isomorphism to its underlying arrow; Definition 1.8.2.
-  Book target: Definition 1.8.2, the category `Iso(C)` of invertible morphisms. -/
-  lf_opaque isoProjection (C : SCat) : Functor (isoCat C) (funCat intervalCat C)
-
-extend_type_theory SCT where
-
-  /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
-  model_section Chapter1
-
-  /-- Predicate-like witness that an interval-shaped morphism is invertible, represented by a lift
-  to `Iso(C)`.  Book context: Chapter 1 of the SCT book.
+  /-- Explicit inverse data for an interval-shaped morphism.  This breaks the previous circular
+  definition of invertibility through `Iso(C)`: the category `Iso(C)` should eventually be built
+  from this data, while Axiom F still supplies the Rezk equivalence for that category.
+  -/
+  syntax_sort InvertibleMorphismData (C : SCat) (f : Functor intervalCat C) : Type u
+  syntax_sort_role InvertibleMorphismData : side_structure
+  /-- Predicate-like witness that an interval-shaped morphism is invertible.  Book target:
+  Definition 1.8.2, before packaging invertible morphisms into `Iso(C)`.
   -/
   syntax_abbrev InvertibleMorphism (C : SCat) (f : Functor intervalCat C) :=
-    Obj (pullbackCat (isoCat C) terminalCat (funCat intervalCat C)
-      (isoProjection C) (functorObject intervalCat C f))
+    InvertibleMorphismData C f
+  /-- Chosen inverse arrow of an invertible interval-shaped morphism. -/
+  lf_opaque invertibleMorphismInverse (C : SCat) (f : Functor intervalCat C)
+    (h : InvertibleMorphism C f) : Functor intervalCat C
+  /-- The inverse arrow starts at the target of the original morphism. -/
+  lf_opaque invertibleMorphismInverseSource (C : SCat) (f : Functor intervalCat C)
+    (h : InvertibleMorphism C f) :
+    NatIso terminalCat C (sourceObj C (invertibleMorphismInverse C f h)) (targetObj C f)
+  /-- The inverse arrow ends at the source of the original morphism. -/
+  lf_opaque invertibleMorphismInverseTarget (C : SCat) (f : Functor intervalCat C)
+    (h : InvertibleMorphism C f) :
+    NatIso terminalCat C (targetObj C (invertibleMorphismInverse C f h)) (sourceObj C f)
+  /-- Composing a morphism with its inverse on the right gives the identity at its source. -/
+  lf_opaque invertibleMorphismLeftUnit (C : SCat) (f : Functor intervalCat C)
+    (h : InvertibleMorphism C f) :
+    NatIso intervalCat C
+      (composeComposableMorphism C f (invertibleMorphismInverse C f h)
+        (invNatIso terminalCat C (sourceObj C (invertibleMorphismInverse C f h))
+          (targetObj C f) (invertibleMorphismInverseSource C f h)))
+      (identityMorphism C (sourceObj C f))
+  /-- Composing an inverse on the left with the morphism gives the identity at its target. -/
+  lf_opaque invertibleMorphismRightUnit (C : SCat) (f : Functor intervalCat C)
+    (h : InvertibleMorphism C f) :
+    NatIso intervalCat C
+      (composeComposableMorphism C (invertibleMorphismInverse C f h) f
+        (invertibleMorphismInverseTarget C f h))
+      (identityMorphism C (targetObj C f))
 
 extend_type_theory SCT where
 
@@ -1332,46 +1360,6 @@ extend_type_theory SCT where
     NatIso intervalCat C
       (composeComposableMorphism C (composeComposableMorphism C f g α) h γL)
       (composeComposableMorphism C f (composeComposableMorphism C g h β) γR)
-  /-- The projection `Iso(C) → Fun([1],C)` is an embedding; split Definition 1.8.2/Axiom F data.
-  -/
-  lf_opaque isoProjectionEmbedding (C : SCat) :
-    Embedding (isoCat C) (funCat intervalCat C) (isoProjection C)
-
-extend_type_theory SCT where
-
-  /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
-  model_section Chapter1
-
-  /-- Packaged Rezk completeness equivalence; Axiom F. -/
-  lf_opaque rezkEquiv (C : SCat) : CatEquiv C (isoCat C)
-  /-- Identity-isomorphism functor into the isomorphism category; derived from Rezk completeness.
-  Book context: Chapter 1 of the SCT book.
-  -/
-  lf_def identityIsoFunctor : (C : SCat) ⇒ Functor C (isoCat C) :=
-    fun C => catEquivForward C (isoCat C) (rezkEquiv C)
-  /-- Projection from isomorphisms back to objects; derived from Rezk completeness.  Book context:
-  Chapter 1 of the SCT book.
-  -/
-  lf_def isoProjectionFunctor : (C : SCat) ⇒ Functor (isoCat C) C :=
-    fun C => catEquivBackward C (isoCat C) (rezkEquiv C)
-  /-- Unit for the Rezk equivalence; derived from the packaged equivalence.  Book context: Chapter 1
-  of the SCT book.
-  -/
-  lf_def rezkUnit : (C : SCat) ⇒
-      NatIso C C
-        (compFunctor C (isoCat C) C (identityIsoFunctor C) (isoProjectionFunctor C))
-        (idFunctor C) :=
-    fun C => catEquivUnit C (isoCat C) (rezkEquiv C)
-  /-- Counit for the Rezk equivalence; derived from the packaged equivalence.  Book context:
-  Chapter 1 of the SCT book.
-  -/
-  lf_def rezkCounit : (C : SCat) ⇒
-      NatIso (isoCat C) (isoCat C)
-        (compFunctor (isoCat C) C (isoCat C)
-          (isoProjectionFunctor C) (identityIsoFunctor C))
-        (idFunctor (isoCat C)) :=
-    fun C => catEquivCounit C (isoCat C) (rezkEquiv C)
-
 
 /-- Chapter 2: groupoids, anima, and the groupoid core; Axiom G. -/
 extend_type_theory SCT where
@@ -2082,6 +2070,59 @@ extend_type_theory SCT where
 
 extend_type_theory SCT where
 
+  /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
+  model_section Chapter1
+
+  /-- Object collection of invertible arrows in `Fun([1], C)`.  This is the remaining
+  source-shaped placeholder for the subobject comprehension needed to build `Iso(C)` from explicit
+  invertible-arrow data.
+  -/
+  lf_opaque invertibleMorphismObjects (C : SCat) : ObjectCollection (funCat intervalCat C)
+  /-- Category of isomorphisms in `C`, constructed as the full subcategory of the arrow category
+  spanned by invertible arrows.  Book target: Definition 1.8.2.
+  -/
+  lf_def isoCat : SCat ⇒ SCat :=
+    fun C => fullSubcategory (funCat intervalCat C) (invertibleMorphismObjects C)
+  /-- Projection from an isomorphism to its underlying arrow; Definition 1.8.2. -/
+  lf_def isoProjection : (C : SCat) ⇒ Functor (isoCat C) (funCat intervalCat C) :=
+    fun C => fullSubcategoryIncl (funCat intervalCat C) (invertibleMorphismObjects C)
+  /-- The projection `Iso(C) → Fun([1],C)` is an embedding, by the full-subcategory witness. -/
+  lf_def isoProjectionEmbedding : (C : SCat) ⇒
+      Embedding (isoCat C) (funCat intervalCat C) (isoProjection C) :=
+    fun C => subcategoryWitnessEmbedding (isoCat C) (funCat intervalCat C) (isoProjection C)
+      (fullSubcategoryInclWitness (funCat intervalCat C) (invertibleMorphismObjects C))
+  /-- Packaged Rezk completeness equivalence; Axiom F. -/
+  lf_opaque rezkEquiv (C : SCat) : CatEquiv C (isoCat C)
+  /-- Identity-isomorphism functor into the isomorphism category; derived from Rezk completeness.
+  Book context: Chapter 1 of the SCT book.
+  -/
+  lf_def identityIsoFunctor : (C : SCat) ⇒ Functor C (isoCat C) :=
+    fun C => catEquivForward C (isoCat C) (rezkEquiv C)
+  /-- Projection from isomorphisms back to objects; derived from Rezk completeness.  Book context:
+  Chapter 1 of the SCT book.
+  -/
+  lf_def isoProjectionFunctor : (C : SCat) ⇒ Functor (isoCat C) C :=
+    fun C => catEquivBackward C (isoCat C) (rezkEquiv C)
+  /-- Unit for the Rezk equivalence; derived from the packaged equivalence.  Book context: Chapter 1
+  of the SCT book.
+  -/
+  lf_def rezkUnit : (C : SCat) ⇒
+      NatIso C C
+        (compFunctor C (isoCat C) C (identityIsoFunctor C) (isoProjectionFunctor C))
+        (idFunctor C) :=
+    fun C => catEquivUnit C (isoCat C) (rezkEquiv C)
+  /-- Counit for the Rezk equivalence; derived from the packaged equivalence.  Book context:
+  Chapter 1 of the SCT book.
+  -/
+  lf_def rezkCounit : (C : SCat) ⇒
+      NatIso (isoCat C) (isoCat C)
+        (compFunctor (isoCat C) C (isoCat C)
+          (isoProjectionFunctor C) (identityIsoFunctor C))
+        (idFunctor (isoCat C)) :=
+    fun C => catEquivCounit C (isoCat C) (rezkEquiv C)
+
+extend_type_theory SCT where
+
   model_section Chapter3
 
   /-- The generated subcategory inclusion preserves the defining morphism collection.
@@ -2151,24 +2192,39 @@ extend_type_theory SCT where
 
   model_section Chapter3
 
-  /-- Full subcategory of functors that invert a morphism collection; Definition 3.3.2.
-  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms. -/
-  lf_opaque invertingFunctorCat (C : SCat) (D : SCat) (W : MorphismCollection C) : SCat
-  /-- Inclusion of inverting functors into the ordinary functor category.
-  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms. -/
-  lf_opaque invertingFunctorIncl (C : SCat) (D : SCat) (W : MorphismCollection C) :
-    Functor (invertingFunctorCat C D W) (funCat C D)
-  /-- The inverting-functor inclusion is a full subcategory.
-  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms. -/
-  lf_opaque invertingFunctorSubcategoryWitness (C : SCat) (D : SCat)
-    (W : MorphismCollection C) :
-      SubcategoryWitness (invertingFunctorCat C D W) (funCat C D)
-        (invertingFunctorIncl C D W)
+  /-- Object collection of functors that invert a morphism collection.  This is the remaining
+  source-shaped placeholder for the comprehension needed in Definition 3.3.2. -/
+  lf_opaque invertingFunctorObjects (C : SCat) (D : SCat) (W : MorphismCollection C) :
+    ObjectCollection (funCat C D)
+  /-- Full subcategory of functors that invert a morphism collection; Definition 3.3.2. -/
+  lf_def invertingFunctorCat : (C : SCat) ⇒ (D : SCat) ⇒ MorphismCollection C ⇒ SCat :=
+    fun C D W => fullSubcategory (funCat C D) (invertingFunctorObjects C D W)
+  /-- Inclusion of inverting functors into the ordinary functor category; Definition 3.3.2. -/
+  lf_def invertingFunctorIncl : (C : SCat) ⇒ (D : SCat) ⇒ (W : MorphismCollection C) ⇒
+      Functor (invertingFunctorCat C D W) (funCat C D) :=
+    fun C D W => fullSubcategoryIncl (funCat C D) (invertingFunctorObjects C D W)
+  /-- The inverting-functor inclusion is a full subcategory, by construction. -/
+  lf_def invertingFunctorSubcategoryWitness :
+      (C : SCat) ⇒ (D : SCat) ⇒ (W : MorphismCollection C) ⇒
+        SubcategoryWitness (invertingFunctorCat C D W) (funCat C D)
+          (invertingFunctorIncl C D W) :=
+    fun C D W => fullSubcategoryInclWitness (funCat C D) (invertingFunctorObjects C D W)
+
+namespace SCT
+
+/- Theorem-shaped declaration admitted temporarily while moved out of the model interface. -/
+internal_defs where
   /-- If the target is a groupoid, every functor inverts the selected morphisms.
-  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms. -/
-  lf_opaque invertingFunctorTargetGroupoidEquiv (C : SCat) (D : SCat)
+  Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: prove that all morphisms in a groupoid are invertible, then show the
+  inverting-functor object collection is all of `Fun(C,D)`.
+  -/
+  def invertingFunctorTargetGroupoidEquiv (C : SCat) (D : SCat)
     (W : MorphismCollection C) (gD : GroupoidWitness D) :
-    CatEquiv (invertingFunctorCat C D W) (funCat C D)
+    CatEquiv (invertingFunctorCat C D W) (funCat C D) := sorry
+
+end SCT
 
 extend_type_theory SCT where
 
@@ -2263,12 +2319,6 @@ extend_type_theory SCT where
   /-- The realization functor; Axiom I and Axiom J. -/
   lf_def geometricRealizationFunctor : (C : SCat) ⇒ Functor C (geometricRealization C) :=
     fun C => localizationFunctor C (allMorphisms C)
-  /-- Geometric realizations are anima.
-  Book target: Proposition 3.4.5 and the groupoid/anima identification of Axiom G.
-  Status: remaining T-shaped model-facing rule.  To make this book-faithful, prove that the
-  localization at all morphisms is groupoidal and then transport it to an anima. -/
-  rule geometric_realization_is_anima (C : SCat) where
-    conclusion : isAnimaCat (geometricRealization C)
   /-- Realization is universal for maps from `C` to groupoids.  Book context: Chapter 3 of the SCT
   book.
   -/
@@ -2289,6 +2339,14 @@ namespace SCT
 
 /- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
 internal_defs where
+  /-- Geometric realizations are anima.
+  Book target: Proposition 3.4.5 and the groupoid/anima identification of Axiom G.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: prove that localization at all morphisms is groupoidal and transport
+  it to an anima via `groupoid_is_anima_cat`.
+  -/
+  def geometric_realization_is_anima (C : SCat) : isAnimaCat (geometricRealization C) := sorry
+
   /-- Categories over a base, used for exponentiable functors.
   Book target: Definition 3.5.4, the over-category `Cat/C` of categories over a base.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
@@ -3357,12 +3415,28 @@ extend_type_theory SCT where
     PullbackSquare (coreCat C) C (coreCat D) D (coreIncl C) (coreFunctor C D F) F (coreIncl D)
   /-- Strongly-surjective functors; Chapter 6 Fundamental Theorem. -/
   syntax_sort StronglySurjective (C : SCat) (D : SCat) (F : Functor C D) : Type u
-  /-- Fully faithful functors induce equivalences on object-hom categories; Definition 6.1.1. -/
-  lf_opaque fullyFaithfulHomEquiv (C : SCat) (D : SCat) (F : Functor C D)
+
+namespace SCT
+
+/- Theorem-shaped declaration admitted temporarily while moved out of the model interface. -/
+internal_defs where
+  /-- Fully faithful functors induce equivalences on object-hom categories; Definition 6.1.1.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: derive this fiberwise equivalence from the endpoint-pullback
+  definition of `FullyFaithful`.
+  -/
+  def fullyFaithfulHomEquiv (C : SCat) (D : SCat) (F : Functor C D)
     (ff : FullyFaithful C D F) (x : Obj C) (y : Obj C) :
     CatEquiv (objectHomCat C x y)
       (objectHomCat D (compFunctor terminalCat C D x F)
-        (compFunctor terminalCat C D y F))
+        (compFunctor terminalCat C D y F)) := sorry
+
+end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter6
+
   /-- Fully faithful functors induce the source pullback equivalence on arrows.  Book context:
   Chapter 6 of the SCT book.
   -/
@@ -3372,22 +3446,25 @@ extend_type_theory SCT where
           (pullbackCat (prodCat C C) (funCat intervalCat D) (prodCat D D)
             (objectPairFunctor C D F) (arrowEndpointFunctor D)) :=
     fun C D F ff => ff
-
-namespace SCT
-
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Arrow-map formulation of full faithfulness as a comparison into the endpoint pullback.
-  Book target: §6.2, arrow-map characterization of fully faithful functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the endpoint-pullback comparison and show it matches mapping
-  groupoids. -/
-  def arrowMapFunctor (C : SCat) (D : SCat) (F : Functor C D) :
-    Functor (funCat intervalCat C)
-      (pullbackCat (prodCat C C) (funCat intervalCat D) (prodCat D D)
-        (objectPairFunctor C D F) (arrowEndpointFunctor D)) := sorry
-
-end SCT
+  /-- Postcomposition preserves the source/target endpoint map on arrow categories.  This is
+  functor-category endpoint β-data used to construct the Chapter 6 arrow comparison. -/
+  lf_opaque postcompEndpointFunctorCompat (C : SCat) (D : SCat) (F : Functor C D) :
+    NatIso (funCat intervalCat C) (prodCat D D)
+      (compFunctor (funCat intervalCat C) (prodCat C C) (prodCat D D)
+        (arrowEndpointFunctor C) (objectPairFunctor C D F))
+      (compFunctor (funCat intervalCat C) (funCat intervalCat D) (prodCat D D)
+        (postcompFunctor intervalCat C D F) (arrowEndpointFunctor D))
+  /-- Arrow-map comparison into the endpoint pullback.  Book target: §6.2, arrow-map
+  characterization of fully faithful functors. -/
+  lf_def arrowMapFunctor : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
+      Functor (funCat intervalCat C)
+        (pullbackCat (prodCat C C) (funCat intervalCat D) (prodCat D D)
+          (objectPairFunctor C D F) (arrowEndpointFunctor D)) :=
+    fun C D F => pullbackLift (funCat intervalCat C)
+      (prodCat C C) (funCat intervalCat D) (prodCat D D)
+      (objectPairFunctor C D F) (arrowEndpointFunctor D)
+      (arrowEndpointFunctor C) (postcompFunctor intervalCat C D F)
+      (postcompEndpointFunctorCompat C D F)
 
 extend_type_theory SCT where
 
