@@ -291,6 +291,12 @@ def sctModel.{u} : SCTModel.{u} where
   sigmaDescUniq := sorry
   sigmaProjection := sorry
   sigmaLift := sorry
+  sigmaTerminalUnit := sorry
+  sigmaTerminalCounit := sorry
+  sigmaReindexPullbackEquiv := sorry
+  sigmaFunctorPullbackSquare := sorry
+  sigmaSecondProjectionPullbackSquare := sorry
+  sigmaPreservesPullbackEquiv := sorry
   directedPullbackCat := sorry
   directedPullbackPr1 := sorry
   directedPullbackPr2 := sorry

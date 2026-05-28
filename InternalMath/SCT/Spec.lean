@@ -2784,39 +2784,26 @@ extend_type_theory SCT where
     fun Γ C D F => sigmaDescBeta Γ C (sigmaCat Γ D)
       (compContextFunctor Γ C D (weakenContextCat Γ (sigmaCat Γ D)) F (sigmaPair Γ D))
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
+  model_section Chapter4
 
-
-
-  /-- Unit for `Σ_Γ * → Γ`; Axiom K.5.
-  Book target: Axiom K.5, the dependent sum of the terminal contextual family is equivalent to the
-  base.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove the equivalence from the K.5 unit/counit data. -/
-  def sigmaTerminalUnit (Γ : SCat) :
+  /-- Unit for `Σ_Γ * → Γ`; Axiom K.5 split equivalence data. -/
+  lf_opaque sigmaTerminalUnit (Γ : SCat) :
     NatIso (sigmaCat Γ (weakenContextCat Γ terminalCat))
       (sigmaCat Γ (weakenContextCat Γ terminalCat))
       (compFunctor (sigmaCat Γ (weakenContextCat Γ terminalCat)) Γ
         (sigmaCat Γ (weakenContextCat Γ terminalCat))
         (sigmaProjection Γ (weakenContextCat Γ terminalCat))
         (sigmaLift Γ Γ (idFunctor Γ) (weakenContextCat Γ terminalCat)))
-      (idFunctor (sigmaCat Γ (weakenContextCat Γ terminalCat))) := sorry
-  /-- Counit for `Σ_Γ * → Γ`; Axiom K.5.
-  Book target: Axiom K.5, the dependent sum of the terminal contextual family is equivalent to the
-  base.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove the equivalence from the K.5 unit/counit data. -/
-  def sigmaTerminalCounit (Γ : SCat) :
+      (idFunctor (sigmaCat Γ (weakenContextCat Γ terminalCat)))
+  /-- Counit for `Σ_Γ * → Γ`; Axiom K.5 split equivalence data. -/
+  lf_opaque sigmaTerminalCounit (Γ : SCat) :
     NatIso Γ Γ
       (compFunctor Γ (sigmaCat Γ (weakenContextCat Γ terminalCat)) Γ
         (sigmaLift Γ Γ (idFunctor Γ) (weakenContextCat Γ terminalCat))
         (sigmaProjection Γ (weakenContextCat Γ terminalCat)))
-      (idFunctor Γ) := sorry
-
-end SCT
+      (idFunctor Γ)
 
 extend_type_theory SCT where
 
@@ -2838,30 +2825,22 @@ extend_type_theory SCT where
     fun Γ D => sigmaDesc Γ (weakenContextCat Γ D) D
       (idContextFunctor Γ (weakenContextCat Γ D))
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Dependent sums commute with reindexing by pullback; Axiom K.6.
-  Book target: Axiom K.6, pullback/reindexing properties of dependent sums.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive the stated pullback squares and equivalences from K.6. -/
-  def sigmaReindexPullbackEquiv (Δ : SCat) (Γ : SCat) (u : Functor Δ Γ)
+  model_section Chapter4
+
+  /-- Dependent sums commute with reindexing by pullback; Axiom K.6 split data. -/
+  lf_opaque sigmaReindexPullbackEquiv (Δ : SCat) (Γ : SCat) (u : Functor Δ Γ)
     (C : ContextCat Γ) :
     CatEquiv (sigmaCat Δ (reindexContextCat Δ Γ u C))
-      (pullbackCat Δ (sigmaCat Γ C) Γ u (sigmaProjection Γ C)) := sorry
-  /-- K.6 first pullback clause for a contextual functor and pair functors.
-  Book target: Axiom K.6, pullback/reindexing properties of dependent sums.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive the stated pullback squares and equivalences from K.6. -/
-  def sigmaFunctorPullbackSquare (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ)
+      (pullbackCat Δ (sigmaCat Γ C) Γ u (sigmaProjection Γ C))
+  /-- K.6 first pullback clause for a contextual functor and pair functors. -/
+  lf_opaque sigmaFunctorPullbackSquare (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ)
     (F : ContextFunctor Γ C D) :
     ContextPullbackSquare Γ C (weakenContextCat Γ (sigmaCat Γ C)) D
       (weakenContextCat Γ (sigmaCat Γ D)) (sigmaPair Γ C) F
       (weakenContextFunctor Γ (sigmaCat Γ C) (sigmaCat Γ D) (sigmaFunctor Γ C D F))
-      (sigmaPair Γ D) := sorry
-
-end SCT
+      (sigmaPair Γ D)
 
 extend_type_theory SCT where
 
@@ -2874,30 +2853,29 @@ extend_type_theory SCT where
   lf_def contextToOverFunctor : (Γ : SCat) ⇒ (C : ContextCat Γ) ⇒ Functor (sigmaCat Γ C) Γ :=
     fun Γ C => sigmaProjection Γ C
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- K.6 second-projection pullback clause for weakened absolute functors.
-  Book target: Axiom K.6, pullback/reindexing properties of dependent sums.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive the stated pullback squares and equivalences from K.6. -/
-  def sigmaSecondProjectionPullbackSquare (Γ : SCat) (D : SCat) (E : SCat)
+  model_section Chapter4
+
+  /-- K.6 second-projection pullback clause for weakened absolute functors. -/
+  lf_opaque sigmaSecondProjectionPullbackSquare (Γ : SCat) (D : SCat) (E : SCat)
     (F : Functor D E) :
     PullbackSquare (sigmaCat Γ (weakenContextCat Γ D)) D
       (sigmaCat Γ (weakenContextCat Γ E)) E (sigmaSecondProjection Γ D)
       (sigmaFunctor Γ (weakenContextCat Γ D) (weakenContextCat Γ E)
-        (weakenContextFunctor Γ D E F)) F (sigmaSecondProjection Γ E) := sorry
-  /-- K.6 preservation of contextual pullbacks by dependent sums.
-  Book target: Axiom K.6, pullback/reindexing properties of dependent sums.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive the stated pullback squares and equivalences from K.6. -/
-  def sigmaPreservesPullbackEquiv (Γ : SCat)
+        (weakenContextFunctor Γ D E F)) F (sigmaSecondProjection Γ E)
+  /-- K.6 preservation of contextual pullbacks by dependent sums. -/
+  lf_opaque sigmaPreservesPullbackEquiv (Γ : SCat)
     (C : ContextCat Γ) (D : ContextCat Γ) (E : ContextCat Γ)
     (F : ContextFunctor Γ C E) (G : ContextFunctor Γ D E) :
     CatEquiv (sigmaCat Γ (contextPullbackCat Γ C D E F G))
       (pullbackCat (sigmaCat Γ C) (sigmaCat Γ D) (sigmaCat Γ E)
-        (sigmaFunctor Γ C E F) (sigmaFunctor Γ D E G)) := sorry
+        (sigmaFunctor Γ C E F) (sigmaFunctor Γ D E G))
+
+namespace SCT
+
+/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
+internal_defs where
   /-- Category of contextual categories over `Γ`, used to state the context/over-category
   equivalence.
   Book target: Proposition 4.2.16, correspondence between categories in context `Γ` and categories
