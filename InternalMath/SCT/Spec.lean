@@ -2982,9 +2982,8 @@ extend_type_theory SCT where
     LeftAdjointSection (funCat intervalCat E)
       (directedPullbackCat E B B p (idFunctor B)) (directedEval0 E B p)
   /-- Left-fibration structure; Chapter 5. -/
-  syntax_abbrev LeftFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) :=
-    CatEquiv (funCat intervalCat E) (directedPullbackCat E B B p (idFunctor B))
+  syntax_sort LeftFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
+    (fib : Fibration E B p) : Type u
 
 extend_type_theory SCT where
 
@@ -3000,23 +2999,20 @@ extend_type_theory SCT where
   model_section Chapter5
 
   /-- Right-fibration structure; Chapter 5. -/
-  syntax_abbrev RightFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) :=
-    CatEquiv (funCat intervalCat E) (directedPullbackCat B E B (idFunctor B) p)
+  syntax_sort RightFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
+    (fib : Fibration E B p) : Type u
   /-- Left fibrations are equivalently those with `directedEval0` an equivalence.  Book context:
   Chapter 5 of the SCT book.
   -/
-  lf_def leftFibrationEvalEquiv : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
-      (fib : Fibration E B p) ⇒ LeftFibrationWitness E B p fib ⇒
-      CatEquiv (funCat intervalCat E) (directedPullbackCat E B B p (idFunctor B)) :=
-    fun E B p fib left => left
+  lf_opaque leftFibrationEvalEquiv (E : SCat) (B : SCat) (p : Functor E B)
+      (fib : Fibration E B p) (left : LeftFibrationWitness E B p fib) :
+      CatEquiv (funCat intervalCat E) (directedPullbackCat E B B p (idFunctor B))
   /-- Right fibrations are equivalently those with `directedEval1` an equivalence.  Book context:
   Chapter 5 of the SCT book.
   -/
-  lf_def rightFibrationEvalEquiv : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
-      (fib : Fibration E B p) ⇒ RightFibrationWitness E B p fib ⇒
-      CatEquiv (funCat intervalCat E) (directedPullbackCat B E B (idFunctor B) p) :=
-    fun E B p fib right => right
+  lf_opaque rightFibrationEvalEquiv (E : SCat) (B : SCat) (p : Functor E B)
+      (fib : Fibration E B p) (right : RightFibrationWitness E B p fib) :
+      CatEquiv (funCat intervalCat E) (directedPullbackCat B E B (idFunctor B) p)
   /-- Category of covariant lifts for `directedEval0`, indexed by `(e, α)`.  Book context: Chapter 5
   of the SCT book.
   -/
@@ -3092,28 +3088,20 @@ extend_type_theory SCT where
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (u : Functor intervalCat E) : Type u
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Every left fibration is cocartesian.
-  Book target: Definition 5.6.1 and §5.2, left/right fibrations as special cocartesian/cartesian
-  fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the directed-evaluation equivalence. -/
-  def leftFibrationCocartesian (E : SCat) (B : SCat) (p : Functor E B)
+  model_section Chapter5
+
+  /-- Every left fibration is cocartesian; projection data for the Chapter 5 left-fibration
+  package. -/
+  lf_opaque leftFibrationCocartesian (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (left : LeftFibrationWitness E B p fib) :
-    CocartesianFibrationWitness E B p fib := sorry
-  /-- Every right fibration is cartesian.
-  Book target: Definition 5.6.1 and §5.2, left/right fibrations as special cocartesian/cartesian
-  fibrations.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the directed-evaluation equivalence. -/
-  def rightFibrationCartesian (E : SCat) (B : SCat) (p : Functor E B)
+    CocartesianFibrationWitness E B p fib
+  /-- Every right fibration is cartesian; projection data for the Chapter 5 right-fibration
+  package. -/
+  lf_opaque rightFibrationCartesian (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (right : RightFibrationWitness E B p fib) :
-    CartesianFibrationWitness E B p fib := sorry
-
-end SCT
+    CartesianFibrationWitness E B p fib
 
 extend_type_theory SCT where
 
@@ -3603,54 +3591,36 @@ extend_type_theory SCT where
   /-- Total category of the universe fibration; Axiom N. -/
   lf_opaque universeTotalCat (U : SCat) (u : UniverseWitness U) : SCat
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Category of proof objects that a functor over `B` is cocartesian.
-  Book target: Construction 7.1.2, the category `is_Cocart(u)` of proofs that a functor is
-  cocartesian.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Build from the Chapter 5 Beck-Chevalley transformation and dependent
-  products. -/
-  def isCocartesianFunctorCat (B : SCat) (E : SCat) (F : SCat)
+  model_section Chapter7
+
+  /-- Category of proof objects that a functor over `B` is cocartesian; Construction 7.1.2 data. -/
+  lf_opaque isCocartesianFunctorCat (B : SCat) (E : SCat) (F : SCat)
     (p : Functor E B) (fibp : Fibration E B p)
     (cocartp : CocartesianFibrationWitness E B p fibp)
     (q : Functor F B) (fibq : Fibration F B q)
-    (cocartq : CocartesianFibrationWitness F B q fibq) : SCat := sorry
-  /-- Non-full subcategory `CoCart_B(E,F)` of cocartesian functors.
-  Book target: Definition 7.1.10, the non-full subcategory `CoCart_B(E,F)` of cocartesian functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct as the subcategory generated by cocartesian morphisms in the
-  relative functor category. -/
-  def cocartesianFunctorCat (B : SCat) (E : SCat) (F : SCat)
+    (cocartq : CocartesianFibrationWitness F B q fibq) : SCat
+  /-- Non-full subcategory `CoCart_B(E,F)` of cocartesian functors; Definition 7.1.10 data. -/
+  lf_opaque cocartesianFunctorCat (B : SCat) (E : SCat) (F : SCat)
     (p : Functor E B) (fibp : Fibration E B p)
     (cocartp : CocartesianFibrationWitness E B p fibp)
     (q : Functor F B) (fibq : Fibration F B q)
-    (cocartq : CocartesianFibrationWitness F B q fibq) : SCat := sorry
-  /-- Inclusion `CoCart_B(E,F) → Fun_B(E,F)`.
-  Book target: Definition 7.1.10, the non-full subcategory `CoCart_B(E,F)` of cocartesian functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct as the subcategory generated by cocartesian morphisms in the
-  relative functor category. -/
-  def cocartesianFunctorCatIncl (B : SCat) (E : SCat) (F : SCat)
+    (cocartq : CocartesianFibrationWitness F B q fibq) : SCat
+  /-- Inclusion `CoCart_B(E,F) → Fun_B(E,F)`; Definition 7.1.10 data. -/
+  lf_opaque cocartesianFunctorCatIncl (B : SCat) (E : SCat) (F : SCat)
     (p : Functor E B) (fibp : Fibration E B p) (cocartp : CocartesianFibrationWitness E B p fibp)
     (q : Functor F B) (fibq : Fibration F B q) (cocartq : CocartesianFibrationWitness F B q fibq) :
     Functor (cocartesianFunctorCat B E F p fibp cocartp q fibq cocartq)
-      (functorOverBaseCat B E F p q) := sorry
-  /-- `CoCart_B(E,F)` is the subcategory selected by the Beck-Chevalley condition.
-  Book target: Definition 7.1.10, the non-full subcategory `CoCart_B(E,F)` of cocartesian functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct as the subcategory generated by cocartesian morphisms in the
-  relative functor category. -/
-  def cocartesianFunctorCatSubcategory (B : SCat) (E : SCat) (F : SCat)
+      (functorOverBaseCat B E F p q)
+  /-- `CoCart_B(E,F)` is the subcategory selected by the Beck-Chevalley condition; Definition
+  7.1.10 data. -/
+  lf_opaque cocartesianFunctorCatSubcategory (B : SCat) (E : SCat) (F : SCat)
     (p : Functor E B) (fibp : Fibration E B p) (cocartp : CocartesianFibrationWitness E B p fibp)
     (q : Functor F B) (fibq : Fibration F B q) (cocartq : CocartesianFibrationWitness F B q fibq) :
     SubcategoryWitness (cocartesianFunctorCat B E F p fibp cocartp q fibq cocartq)
       (functorOverBaseCat B E F p q)
-      (cocartesianFunctorCatIncl B E F p fibp cocartp q fibq cocartq) := sorry
-
-end SCT
+      (cocartesianFunctorCatIncl B E F p fibp cocartp q fibq cocartq)
 
 extend_type_theory SCT where
 
@@ -3792,26 +3762,19 @@ extend_type_theory SCT where
       (classifiedCocartesian U u B f) (classifiedProjection U u B g)
       (classifiedFibration U u B g) (classifiedCocartesian U u B g)
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Straightening over `[1]`; Definition 7.2.3.
-  Book target: Construction 7.2.1 and Definition 7.2.3, straightening over `[1]`.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct by cocartesian transport from the zero fiber to the one
-  fiber. -/
-  def straighteningFunctor (B : SCat) (E : SCat)
+  model_section Chapter7
+
+  /-- Straightening over `[1]`; Construction 7.2.1 and Definition 7.2.3 data. -/
+  lf_opaque straighteningFunctor (B : SCat) (E : SCat)
     (p : Functor E (prodCat intervalCat B))
     (fib : Fibration E (prodCat intervalCat B) p)
     (cocart : CocartesianFibrationWitness E (prodCat intervalCat B) p fib) :
-    Functor (straighteningSourceTotal B E p) (straighteningTargetTotal B E p) := sorry
-  /-- Straightening is a cocartesian functor over the base; Lemma 7.2.2.
-  Book target: Construction 7.2.1 and Definition 7.2.3, straightening over `[1]`.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct by cocartesian transport from the zero fiber to the one
-  fiber. -/
-  def straighteningFunctorCocartesian (B : SCat) (E : SCat)
+    Functor (straighteningSourceTotal B E p) (straighteningTargetTotal B E p)
+  /-- Straightening is a cocartesian functor over the base; Construction 7.2.1/Lemma 7.2.2 data.
+  -/
+  lf_opaque straighteningFunctorCocartesian (B : SCat) (E : SCat)
     (p : Functor E (prodCat intervalCat B))
     (fib : Fibration E (prodCat intervalCat B) p)
     (cocart : CocartesianFibrationWitness E (prodCat intervalCat B) p fib) :
@@ -3820,9 +3783,7 @@ internal_defs where
       (straighteningSourceCocartesian B E p fib cocart) (straighteningTargetTotal B E p)
       (straighteningTargetProjection B E p) (straighteningTargetFibration B E p fib)
       (straighteningTargetCocartesian B E p fib cocart)
-      (straighteningFunctor B E p fib cocart) := sorry
-
-end SCT
+      (straighteningFunctor B E p fib cocart)
 
 extend_type_theory SCT where
 
@@ -3847,22 +3808,17 @@ extend_type_theory SCT where
       (functorOverBaseIncl B (classifiedTotalCat U u B f) (classifiedTotalCat U u B g)
         (classifiedProjection U u B f) (classifiedProjection U u B g))
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- Directed univalence equivalence between classifying transformations and cocartesian functors.
-  Book target: Definition 7.3.10 and the mapping-space comparison following it.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from directed univalence by identifying classifying
-  transformations with cocartesian functors. -/
-  def directedUnivalenceMappingEquiv (U : SCat) (u : UniverseWitness U)
+  model_section Chapter7
+
+  /-- Directed-univalence equivalence between classifying transformations and cocartesian functors;
+  Axiom N/Definition 7.3.10 data. -/
+  lf_opaque directedUnivalenceMappingEquiv (U : SCat) (u : UniverseWitness U)
     (du : DirectedUnivalenceWitness U (universeTotalCat U u) (universeProjection U u)
       (universeFibration U u) (universeCocartesian U u))
     (B : SCat) (f : Functor B U) (g : Functor B U) :
-    CatEquiv (natTransCat B U f g) (classifiedCocartesianFunctorCat U u B f g) := sorry
-
-end SCT
+    CatEquiv (natTransCat B U f g) (classifiedCocartesianFunctorCat U u B f g)
 
 extend_type_theory SCT where
 
@@ -3897,16 +3853,12 @@ extend_type_theory SCT where
   /-- Smallness relative to a universe; Axiom N. -/
   syntax_sort SmallWitness (U : SCat) (C : SCat) : Type u
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Theorem-shaped declarations are admitted temporarily while moved out of the model interface. -/
-internal_defs where
-  /-- The functor produced by directed univalence is cocartesian; Axiom N.
-  Book target: Definition 7.3.10, consequences of directed univalence for classifiers and
-  cocartesian functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from the equivalence `directedUnivalenceMappingEquiv`. -/
-  def directedUnivalenceFunctorCocartesian (U : SCat) (u : UniverseWitness U)
+  model_section Chapter7
+
+  /-- The functor produced by directed univalence is cocartesian; Axiom N/Definition 7.3.10 data. -/
+  lf_opaque directedUnivalenceFunctorCocartesian (U : SCat) (u : UniverseWitness U)
     (du : DirectedUnivalenceWitness U (universeTotalCat U u) (universeProjection U u)
       (universeFibration U u) (universeCocartesian U u))
     (B : SCat) (f : Functor B U) (g : Functor B U)
@@ -3915,13 +3867,10 @@ internal_defs where
       (classifiedFibration U u B f) (classifiedCocartesian U u B f)
       (classifiedTotalCat U u B g) (classifiedProjection U u B g)
       (classifiedFibration U u B g) (classifiedCocartesian U u B g)
-      (directedUnivalenceFunctor U u du B f g α) := sorry
-  /-- Directed univalence sends cocartesian functors back to transformations; Axiom N.
-  Book target: Definition 7.3.10, consequences of directed univalence for classifiers and
-  cocartesian functors.
-  Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from the equivalence `directedUnivalenceMappingEquiv`. -/
-  def directedUnivalenceToTransformation (U : SCat) (u : UniverseWitness U)
+      (directedUnivalenceFunctor U u du B f g α)
+  /-- Directed univalence sends cocartesian functors back to transformations; Axiom N/Definition
+  7.3.10 data. -/
+  lf_opaque directedUnivalenceToTransformation (U : SCat) (u : UniverseWitness U)
     (du : DirectedUnivalenceWitness U (universeTotalCat U u) (universeProjection U u)
       (universeFibration U u) (universeCocartesian U u))
     (B : SCat) (f : Functor B U) (g : Functor B U)
@@ -3930,9 +3879,7 @@ internal_defs where
       (classifiedProjection U u B f) (classifiedFibration U u B f)
       (classifiedCocartesian U u B f) (classifiedTotalCat U u B g)
       (classifiedProjection U u B g) (classifiedFibration U u B g)
-      (classifiedCocartesian U u B g) F) : ClassifyingTransformation B U f g := sorry
-
-end SCT
+      (classifiedCocartesian U u B g) F) : ClassifyingTransformation B U f g
 
 extend_type_theory SCT where
 

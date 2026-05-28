@@ -46,6 +46,8 @@ def sctModel.{u} : SCTModel.{u} where
   Adjunction := sorry
   LeftAdjointSection := sorry
   RightAdjointSection := sorry
+  LeftFibrationWitness := sorry
+  RightFibrationWitness := sorry
   CocartesianFunctorWitness := sorry
   LocallyCocartesianFibrationWitness := sorry
   LocallyCartesianFibrationWitness := sorry
@@ -305,6 +307,8 @@ def sctModel.{u} : SCTModel.{u} where
   targetFibration := sorry
   sourceCartesian := sorry
   targetCocartesian := sorry
+  leftFibrationEvalEquiv := sorry
+  rightFibrationEvalEquiv := sorry
   baseChangeFibration := sorry
   baseChangeCartesian := sorry
   baseChangeCocartesian := sorry
@@ -317,6 +321,8 @@ def sctModel.{u} : SCTModel.{u} where
   compCocartesianFunctor := sorry
   adjunctionUnit := sorry
   adjunctionCounit := sorry
+  leftFibrationCocartesian := sorry
+  rightFibrationCartesian := sorry
   universal_left_adjoint_section := sorry
   universalLeftSectionBase := sorry
   universal_right_adjoint_section := sorry
@@ -335,11 +341,20 @@ def sctModel.{u} : SCTModel.{u} where
   stronglySurjectiveBeta := sorry
   stronglySurjectiveSection := sorry
   stronglySurjectiveSectionBeta := sorry
+  isCocartesianFunctorCat := sorry
+  cocartesianFunctorCat := sorry
+  cocartesianFunctorCatIncl := sorry
+  cocartesianFunctorCatSubcategory := sorry
+  straighteningFunctor := sorry
+  straighteningFunctorCocartesian := sorry
   universeTotalCat := sorry
   universeProjection := sorry
   universeFibration := sorry
   universeCocartesian := sorry
   universeDirectedUnivalence := sorry
+  directedUnivalenceMappingEquiv := sorry
+  directedUnivalenceFunctorCocartesian := sorry
+  directedUnivalenceToTransformation := sorry
   smallClassifyingMap := sorry
   smallClassifyingEquiv := sorry
   smallFibrationClassifyingMap := sorry
