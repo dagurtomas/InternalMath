@@ -30,10 +30,9 @@ The declaration is universe-polymorphic. Sorts intended to be modeled by simplic
 quasicategory-level data are annotated with explicit result universes, for example `SCat : Type
 (u+1)` and `Functor C D : Type u`.
 
-`Spec.lean` has no admitted InternalLean declarations. The current trust boundary is explicit:
-book axioms and theorem packages that are not yet derived internally appear as source-facing
-`lf_opaque` fields and therefore as model obligations. Over time, more of these fields should be
-replaced by checked InternalLean declarations as the supporting representations are strengthened.
+Many theorem-shaped internal declarations are currently admitted with `sorry`. They are kept
+lint-visible and should gradually be replaced by checked InternalLean declarations or by more
+source-shaped axioms.
 
 ## Quasicategory model status
 
@@ -50,11 +49,13 @@ target in view while the full model is developed.
 
 ## Expected warnings
 
-`Spec.lean` should elaborate without admitted-internal-declaration warnings. `Model.lean` still
-emits warnings about `sorry` placeholders in the model skeleton.
+The SCT files currently emit warnings about:
 
-These model warnings are known SCT/model debt. The current sanity check is that `SSet.QCat.{u}` and
-the Kan-complex full subcategory elaborate at the expected universes.
+- admitted InternalLean declarations in `Spec.lean`;
+- `sorry` placeholders in the model skeleton.
+
+These warnings are known SCT/model debt. The current sanity check is that `SSet.QCat.{u}` and the
+Kan-complex full subcategory elaborate at the expected universes.
 
 ## Useful checks
 
@@ -67,5 +68,5 @@ lake build InternalMath.SCT.Model
 ## Reading the file
 
 `Spec.lean` is best read as book-facing LF metadata rather than a polished public API. The comments
-record chapter-level source context and, for several explicit theorem packages, explain what would
-be needed to turn a model-facing obligation into a checked internal declaration.
+record chapter-level source context and, for several remaining axioms, explain what would be needed
+to turn a model-facing obligation into a checked internal declaration.

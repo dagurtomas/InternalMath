@@ -22,8 +22,6 @@ generate_model_interface SCT as SCTModel
 
 open SCT CategoryTheory
 
-set_option maxRecDepth 20000 in
-
 def sctModel.{u} : SCTModel.{u} where
   Anima := ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S)
   SCat := SSet.QCat.{u}
@@ -213,9 +211,6 @@ def sctModel.{u} : SCTModel.{u} where
   coprodGroupoid := sorry
   pullbackGroupoid := sorry
   initialGroupoid := sorry
-  idSubcategoryWitness := sorry
-  initialSubcategoryWitness := sorry
-  subcategoryWitnessEmbedding := sorry
   subobjectAnima := sorry
   subobjectIncl := sorry
   subobjectInclEmbedding := sorry
@@ -234,13 +229,8 @@ def sctModel.{u} : SCTModel.{u} where
   invertingFunctorTargetGroupoidEquiv := sorry
   localizationFunctor := sorry
   localizationUniversalEquiv := sorry
-  localizationPushoutSquare := sorry
-  overCat := sorry
   dependentProductOverCat := sorry
   dependentProductOverProjection := sorry
-  overPullbackFunctor := sorry
-  dependentProductFunctor := sorry
-  dependentProductBeckChevalley := sorry
   joinCat := sorry
   joinInl := sorry
   joinInr := sorry
@@ -256,9 +246,6 @@ def sctModel.{u} : SCTModel.{u} where
   intervalJoinCounit := sorry
   joinDependentProductCat := sorry
   joinDependentProductEquiv := sorry
-  relativeJoinCat := sorry
-  relativeJoinInl := sorry
-  relativeJoinInr := sorry
   idContextFunctor := sorry
   compContextFunctor := sorry
   idContextNatIso := sorry
@@ -325,10 +312,6 @@ def sctModel.{u} : SCTModel.{u} where
   sigmaFunctorPullbackSquare := sorry
   sigmaSecondProjectionPullbackSquare := sorry
   sigmaPreservesPullbackEquiv := sorry
-  contextCategoryCat := sorry
-  contextCategoryObject := sorry
-  overFunctorToContext := sorry
-  contextOverCorrespondence := sorry
   leftAdjointSectionFunctor := sorry
   rightAdjointSectionFunctor := sorry
   directedPullbackCat := sorry
@@ -371,21 +354,10 @@ def sctModel.{u} : SCTModel.{u} where
   limitFunctor := sorry
   colimitFunctor := sorry
   fullyFaithfulHomEquiv := sorry
-  arrowMapFunctor := sorry
-  fullyFaithfulConservative := sorry
-  conservativeReflectsIso := sorry
-  conservativeOfRetract := sorry
   stronglySurjectivePreimage := sorry
   stronglySurjectiveBeta := sorry
   stronglySurjectiveSection := sorry
   stronglySurjectiveSectionBeta := sorry
-  fundamental_theorem_equiv := sorry
-  natIsoOfObjectwise := sorry
-  equivalenceFullyFaithful := sorry
-  equivalenceStronglySurjective := sorry
-  fullSubcategoryEquivOfStronglySurjective := sorry
-  cocartesianFunctorFiberwiseEquiv := sorry
-  funCatPostcompFullyFaithful := sorry
   isCocartesianFunctorCat := sorry
   cocartesianFunctorCat := sorry
   cocartesianFunctorCatIncl := sorry
