@@ -1961,11 +1961,21 @@ extend_type_theory SCT where
         (compFunctor (coreCat C) C D (coreIncl C) F) :=
     fun C D F => coreLiftFromGroupoidBeta (coreCat C) D (coreGroupoid C)
       (compFunctor (coreCat C) C D (coreIncl C) F)
-  /-- The mapping anima is the core of the functor category.  Book context: Chapter 2 of the SCT
-  book.
-  -/
-  lf_opaque mapAnimaCoreEquiv (C : SCat) (D : SCat) :
-    CatEquiv (animaCat (mapAnima C D)) (coreCat (funCat C D))
+
+namespace SCT
+
+/- Theorem-shaped Chapter 2 consequences are admitted temporarily while moved out of the model
+interface. -/
+internal_defs where
+  /-- The mapping anima is the core of the functor category.
+  Book target: Chapter 2, the mapping-anima/core comparison.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: construct the equivalence from the object/functor interpretation of
+  `Map(C,D)` and the definition of the maximal subgroupoid of the functor category. -/
+  def mapAnimaCoreEquiv (C : SCat) (D : SCat) :
+    CatEquiv (animaCat (mapAnima C D)) (coreCat (funCat C D)) := sorry
+
+end SCT
 
 extend_type_theory SCT where
 
@@ -2073,14 +2083,18 @@ extend_type_theory SCT where
     fun C D => catEquivCounit (animaCat (mapAnima C D)) (coreCat (funCat C D))
       (mapAnimaCoreEquiv C D)
 
-extend_type_theory SCT where
+namespace SCT
 
-  model_section Chapter2
+internal_defs where
+  /-- Functor categories into a groupoid are groupoids.
+  Book target: Proposition 2.1.2(4).
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: prove the interval-characterization of groupoids for `D^C` from the
+  interval-characterization for `D`. -/
+  def funCatTargetGroupoid (C : SCat) (D : SCat) (gD : GroupoidWitness D) :
+    GroupoidWitness (funCat C D) := sorry
 
-  /-- Functor categories into a groupoid are groupoids; source-facing Proposition 2.1.2(4) data
-  until `GroupoidWitness` exposes the interval-characterization proof internally. -/
-  lf_opaque funCatTargetGroupoid (C : SCat) (D : SCat) (gD : GroupoidWitness D) :
-    GroupoidWitness (funCat C D)
+end SCT
 
 extend_type_theory SCT where
 
@@ -2094,23 +2108,41 @@ extend_type_theory SCT where
     fun A G gG => catEquivTrans (animaCat (mapAnima A G)) (coreCat (funCat A G))
       (funCat A G) (mapAnimaCoreEquiv A G)
       (coreOfGroupoidEquiv (funCat A G) (funCatTargetGroupoid A G gG))
-  /-- The core of `[1]` is equivalent to two points; Axiom G.1. -/
-  lf_opaque intervalCoreEndpointEquiv :
-    CatEquiv (coprodCat terminalCat terminalCat) (coreCat intervalCat)
 
-extend_type_theory SCT where
+namespace SCT
 
-  model_section Chapter2
+internal_defs where
+  /-- The core of `[1]` is equivalent to two points.
+  Book target: Axiom G.1 endpoint computation.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: construct the endpoint equivalence from the maximal subgroupoid of
+  the walking arrow. -/
+  def intervalCoreEndpointEquiv :
+    CatEquiv (coprodCat terminalCat terminalCat) (coreCat intervalCat) := sorry
 
-  /-- Product of cores comparison; source-facing Chapter 2 finite-limit closure data. -/
-  lf_opaque coreProductEquiv (C : SCat) (D : SCat) :
-    CatEquiv (coreCat (prodCat C D)) (prodCat (coreCat C) (coreCat D))
-  /-- Pullback of cores comparison; source-facing Chapter 2 finite-limit closure data. -/
-  lf_opaque corePullbackEquiv (C : SCat) (D : SCat) (E : SCat)
+end SCT
+
+namespace SCT
+
+internal_defs where
+  /-- Product of cores comparison.
+  Book target: Chapter 2 finite-limit closure of cores/groupoids.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: prove that taking maximal subgroupoids preserves binary products. -/
+  def coreProductEquiv (C : SCat) (D : SCat) :
+    CatEquiv (coreCat (prodCat C D)) (prodCat (coreCat C) (coreCat D)) := sorry
+
+  /-- Pullback of cores comparison.
+  Book target: Chapter 2 finite-limit closure of cores/groupoids.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: prove that taking maximal subgroupoids preserves pullbacks. -/
+  def corePullbackEquiv (C : SCat) (D : SCat) (E : SCat)
     (F : Functor C E) (G : Functor D E) :
     CatEquiv (coreCat (pullbackCat C D E F G))
       (pullbackCat (coreCat C) (coreCat D) (coreCat E)
-        (coreFunctor C E F) (coreFunctor D E G))
+        (coreFunctor C E F) (coreFunctor D E G)) := sorry
+
+end SCT
 
 extend_type_theory SCT where
 
@@ -2138,22 +2170,40 @@ internal_defs where
 
 end SCT
 
-extend_type_theory SCT where
+namespace SCT
 
-  model_section Chapter2
+internal_defs where
+  /-- The core of `[2]` is equivalent to three points.
+  Book target: Axiom G.1 endpoint computation.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: construct the equivalence from the maximal subgroupoid of `[2]`. -/
+  def simplex2CoreEndpointEquiv : CatEquiv threePointCat (coreCat simplex2Cat) := sorry
 
-  /-- The core of `[2]` is equivalent to three points; source-facing Axiom G.1 endpoint data. -/
-  lf_opaque simplex2CoreEndpointEquiv : CatEquiv threePointCat (coreCat simplex2Cat)
-  /-- Coproducts of groupoids are groupoids; source-facing Chapter 2 closure data. -/
-  lf_opaque coprodGroupoid (C : SCat) (D : SCat)
-    (gC : GroupoidWitness C) (gD : GroupoidWitness D) : GroupoidWitness (coprodCat C D)
-  /-- Pullbacks of groupoids are groupoids; source-facing Chapter 2 closure data. -/
-  lf_opaque pullbackGroupoid (C : SCat) (D : SCat) (E : SCat)
+  /-- Coproducts of groupoids are groupoids.
+  Book target: Chapter 2 closure of groupoids under finite colimits used in the interval
+  endpoint computations.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: construct the interval-characterization witness for the coproduct. -/
+  def coprodGroupoid (C : SCat) (D : SCat)
+    (gC : GroupoidWitness C) (gD : GroupoidWitness D) : GroupoidWitness (coprodCat C D) :=
+    sorry
+
+  /-- Pullbacks of groupoids are groupoids.
+  Book target: Chapter 2 finite-limit closure of groupoids.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: construct the interval-characterization witness for the pullback. -/
+  def pullbackGroupoid (C : SCat) (D : SCat) (E : SCat)
     (F : Functor C E) (G : Functor D E)
     (gC : GroupoidWitness C) (gD : GroupoidWitness D) (gE : GroupoidWitness E) :
-    GroupoidWitness (pullbackCat C D E F G)
-  /-- The initial category is a groupoid; source-facing Chapter 2 closure data. -/
-  lf_opaque initialGroupoid : GroupoidWitness initialCat
+    GroupoidWitness (pullbackCat C D E F G) := sorry
+
+  /-- The initial category is a groupoid.
+  Book target: Chapter 2 finite-colimit closure of groupoids.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: prove the interval-characterization witness for the empty category. -/
+  def initialGroupoid : GroupoidWitness initialCat := sorry
+
+end SCT
 
 /-- Chapter 3: subcategories, localizations, realizations, joins, and slices; Axioms H--J.2. -/
 extend_type_theory SCT where
@@ -4348,36 +4398,71 @@ extend_type_theory SCT where
   /-- Total category of the universe fibration; Axiom N. -/
   lf_opaque universeTotalCat (U : SCat) (u : UniverseWitness U) : SCat
 
+namespace SCT
+
+internal_defs where
+  /-- Category of proof objects that a functor over `B` is cocartesian.
+  Book target: Construction 7.1.2.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: construct it from functors over the base and Beck-Chevalley proof
+  objects. -/
+  def isCocartesianFunctorCat (B : SCat) (E : SCat) (F : SCat)
+    (p : Functor E B) (fibp : Fibration E B p)
+    (cocartp : CocartesianFibrationWitness E B p fibp)
+    (q : Functor F B) (fibq : Fibration F B q)
+    (cocartq : CocartesianFibrationWitness F B q fibq) : SCat := sorry
+
+end SCT
+
 extend_type_theory SCT where
 
   model_section Chapter7
 
-  /-- Category of proof objects that a functor over `B` is cocartesian; Construction 7.1.2 data. -/
-  lf_opaque isCocartesianFunctorCat (B : SCat) (E : SCat) (F : SCat)
+  /-- Source-shaped package for `CoCart_B(E,F)` and its inclusion into functors over the base;
+  Definition 7.1.10.  The subcategory witness remains lint-visible theorem debt. -/
+  lf_opaque cocartesianFunctorCategoryPackage (B : SCat) (E : SCat) (F : SCat)
     (p : Functor E B) (fibp : Fibration E B p)
     (cocartp : CocartesianFibrationWitness E B p fibp)
     (q : Functor F B) (fibq : Fibration F B q)
-    (cocartq : CocartesianFibrationWitness F B q fibq) : SCat
-  /-- Non-full subcategory `CoCart_B(E,F)` of cocartesian functors; Definition 7.1.10 data. -/
-  lf_opaque cocartesianFunctorCat (B : SCat) (E : SCat) (F : SCat)
+    (cocartq : CocartesianFibrationWitness F B q fibq) :
+    Σ CoCart : SCat, Functor CoCart (functorOverBaseCat B E F p q)
+  /-- Non-full subcategory `CoCart_B(E,F)` of cocartesian functors; Definition 7.1.10. -/
+  lf_def cocartesianFunctorCat : (B : SCat) ⇒ (E : SCat) ⇒ (F : SCat) ⇒
+      (p : Functor E B) ⇒ (fibp : Fibration E B p) ⇒
+      (cocartp : CocartesianFibrationWitness E B p fibp) ⇒
+      (q : Functor F B) ⇒ (fibq : Fibration F B q) ⇒
+      (cocartq : CocartesianFibrationWitness F B q fibq) ⇒ SCat :=
+    fun B E F p fibp cocartp q fibq cocartq =>
+      fst (cocartesianFunctorCategoryPackage B E F p fibp cocartp q fibq cocartq)
+  /-- Inclusion `CoCart_B(E,F) → Fun_B(E,F)`; Definition 7.1.10. -/
+  lf_def cocartesianFunctorCatIncl : (B : SCat) ⇒ (E : SCat) ⇒ (F : SCat) ⇒
+      (p : Functor E B) ⇒ (fibp : Fibration E B p) ⇒
+      (cocartp : CocartesianFibrationWitness E B p fibp) ⇒
+      (q : Functor F B) ⇒ (fibq : Fibration F B q) ⇒
+      (cocartq : CocartesianFibrationWitness F B q fibq) ⇒
+      Functor (cocartesianFunctorCat B E F p fibp cocartp q fibq cocartq)
+        (functorOverBaseCat B E F p q) :=
+    fun B E F p fibp cocartp q fibq cocartq =>
+      snd (cocartesianFunctorCategoryPackage B E F p fibp cocartp q fibq cocartq)
+
+namespace SCT
+
+internal_defs where
+  /-- `CoCart_B(E,F)` is the subcategory selected by the Beck-Chevalley condition.
+  Book target: Definition 7.1.10.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: prove the chosen cocartesian-functor category and inclusion satisfy
+  Definition 7.1.10. -/
+  def cocartesianFunctorCatSubcategory (B : SCat) (E : SCat) (F : SCat)
     (p : Functor E B) (fibp : Fibration E B p)
     (cocartp : CocartesianFibrationWitness E B p fibp)
     (q : Functor F B) (fibq : Fibration F B q)
-    (cocartq : CocartesianFibrationWitness F B q fibq) : SCat
-  /-- Inclusion `CoCart_B(E,F) → Fun_B(E,F)`; Definition 7.1.10 data. -/
-  lf_opaque cocartesianFunctorCatIncl (B : SCat) (E : SCat) (F : SCat)
-    (p : Functor E B) (fibp : Fibration E B p) (cocartp : CocartesianFibrationWitness E B p fibp)
-    (q : Functor F B) (fibq : Fibration F B q) (cocartq : CocartesianFibrationWitness F B q fibq) :
-    Functor (cocartesianFunctorCat B E F p fibp cocartp q fibq cocartq)
-      (functorOverBaseCat B E F p q)
-  /-- `CoCart_B(E,F)` is the subcategory selected by the Beck-Chevalley condition; Definition
-  7.1.10 data. -/
-  lf_opaque cocartesianFunctorCatSubcategory (B : SCat) (E : SCat) (F : SCat)
-    (p : Functor E B) (fibp : Fibration E B p) (cocartp : CocartesianFibrationWitness E B p fibp)
-    (q : Functor F B) (fibq : Fibration F B q) (cocartq : CocartesianFibrationWitness F B q fibq) :
+    (cocartq : CocartesianFibrationWitness F B q fibq) :
     SubcategoryWitness (cocartesianFunctorCat B E F p fibp cocartp q fibq cocartq)
       (functorOverBaseCat B E F p q)
-      (cocartesianFunctorCatIncl B E F p fibp cocartp q fibq cocartq)
+      (cocartesianFunctorCatIncl B E F p fibp cocartp q fibq cocartq) := sorry
+
+end SCT
 
 extend_type_theory SCT where
 
@@ -4519,19 +4604,25 @@ extend_type_theory SCT where
       (classifiedCocartesian U u B f) (classifiedProjection U u B g)
       (classifiedFibration U u B g) (classifiedCocartesian U u B g)
 
-extend_type_theory SCT where
+namespace SCT
 
-  model_section Chapter7
-
-  /-- Straightening over `[1]`; Construction 7.2.1 and Definition 7.2.3 data. -/
-  lf_opaque straighteningFunctor (B : SCat) (E : SCat)
+internal_defs where
+  /-- Straightening over `[1]`.
+  Book target: Construction 7.2.1 and Definition 7.2.3.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: construct the functor from locally cocartesian transport over
+  `[1] × B`. -/
+  def straighteningFunctor (B : SCat) (E : SCat)
     (p : Functor E (prodCat intervalCat B))
     (fib : Fibration E (prodCat intervalCat B) p)
     (cocart : CocartesianFibrationWitness E (prodCat intervalCat B) p fib) :
-    Functor (straighteningSourceTotal B E p) (straighteningTargetTotal B E p)
-  /-- Straightening is a cocartesian functor over the base; Construction 7.2.1/Lemma 7.2.2 data.
-  -/
-  lf_opaque straighteningFunctorCocartesian (B : SCat) (E : SCat)
+    Functor (straighteningSourceTotal B E p) (straighteningTargetTotal B E p) := sorry
+
+  /-- Straightening is a cocartesian functor over the base.
+  Book target: Construction 7.2.1/Lemma 7.2.2.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field.
+  To make this book-faithful: prove the straightening functor preserves cocartesian arrows. -/
+  def straighteningFunctorCocartesian (B : SCat) (E : SCat)
     (p : Functor E (prodCat intervalCat B))
     (fib : Fibration E (prodCat intervalCat B) p)
     (cocart : CocartesianFibrationWitness E (prodCat intervalCat B) p fib) :
@@ -4540,7 +4631,9 @@ extend_type_theory SCT where
       (straighteningSourceCocartesian B E p fib cocart) (straighteningTargetTotal B E p)
       (straighteningTargetProjection B E p) (straighteningTargetFibration B E p fib)
       (straighteningTargetCocartesian B E p fib cocart)
-      (straighteningFunctor B E p fib cocart)
+      (straighteningFunctor B E p fib cocart) := sorry
+
+end SCT
 
 extend_type_theory SCT where
 
@@ -4775,76 +4868,148 @@ extend_type_theory SCT where
   -/
   lf_def catInternalTerminalSmall : SmallWitness categoryUniverse terminalCat := terminalSmall
 
+namespace SCT
+
+internal_defs where
+  /-- The initial object of internal category theory in `Cat`.
+  Book target: §7.5, derived from the small initial category.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def catInternalInitial : Obj categoryUniverse := sorry
+
+  /-- Internal product operation in `Cat`.
+  Book target: Lemma 7.5.5.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def catInternalProduct :
+      Functor (prodCat categoryUniverse categoryUniverse) categoryUniverse := sorry
+
+  /-- Internal coproduct operation in `Cat`.
+  Book target: Lemma 7.5.5.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def catInternalCoproduct :
+      Functor (prodCat categoryUniverse categoryUniverse) categoryUniverse := sorry
+
+  /-- Internal pullback operation in `Cat`.
+  Book target: §7.5.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def catInternalPullback :
+      Functor (funCat pullbackShapeCat categoryUniverse) categoryUniverse := sorry
+
+  /-- Internal functor-category/exponential operation in `Cat`.
+  Book target: §7.5/Remark 7.5.15.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def catInternalFunctorCategory :
+    Functor (prodCat categoryUniverse categoryUniverse) categoryUniverse := sorry
+
+end SCT
+
 extend_type_theory SCT where
 
   model_section Chapter7
 
-  /-- The initial object of internal category theory in `Cat`; §7.5 source data. -/
-  lf_opaque catInternalInitial : Obj categoryUniverse
-  /-- Internal product operation in `Cat`; Lemma 7.5.5 source data. -/
-  lf_opaque catInternalProduct :
-      Functor (prodCat categoryUniverse categoryUniverse) categoryUniverse
-  /-- Internal coproduct operation in `Cat`; Lemma 7.5.5 source data. -/
-  lf_opaque catInternalCoproduct :
-      Functor (prodCat categoryUniverse categoryUniverse) categoryUniverse
-  /-- Internal pullback operation in `Cat`; §7.5 source data. -/
-  lf_opaque catInternalPullback :
-      Functor (funCat pullbackShapeCat categoryUniverse) categoryUniverse
-  /-- Internal functor-category/exponential operation in `Cat`; §7.5/Remark 7.5.15 source data. -/
-  lf_opaque catInternalFunctorCategory :
-    Functor (prodCat categoryUniverse categoryUniverse) categoryUniverse
-
-extend_type_theory SCT where
-
-  model_section Chapter7
-
+  /-- Source-shaped regular-subuniverse package generated above a small subcategory;
+  Definition 7.4.5 (Cat8). -/
+  lf_opaque regularSubuniversePackage (U : SCat) (u : UniverseWitness U)
+    (S : SCat) (iS : Functor S U) (embS : Embedding S U iS)
+    (hS : SmallWitness U S) :
+    Σ V : SCat,
+      Σ v : UniverseWitness V,
+        Σ incl : Functor V U,
+          Σ smallV : SmallWitness U V,
+            Σ regularV : RegularUniverseWitness V v,
+              Σ lift : Functor S V, NatIso S U (compFunctor S V U lift incl) iS
   /-- Regular subuniverse generated above a small subcategory; Definition 7.4.5 (Cat8). -/
-  lf_opaque regularSubuniverseCat (U : SCat) (u : UniverseWitness U)
-    (S : SCat) (iS : Functor S U) (embS : Embedding S U iS)
-    (hS : SmallWitness U S) : SCat
+  lf_def regularSubuniverseCat : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
+      (S : SCat) ⇒ (iS : Functor S U) ⇒ Embedding S U iS ⇒ SmallWitness U S ⇒ SCat :=
+    fun U u S iS embS hS => fst (regularSubuniversePackage U u S iS embS hS)
   /-- Universe witness for a regular subuniverse; Definition 7.4.5 (Cat8). -/
-  lf_opaque regularSubuniverseWitness (U : SCat) (u : UniverseWitness U)
-    (S : SCat) (iS : Functor S U) (embS : Embedding S U iS)
-    (hS : SmallWitness U S) : UniverseWitness (regularSubuniverseCat U u S iS embS hS)
+  lf_def regularSubuniverseWitness : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
+      (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
+      (hS : SmallWitness U S) ⇒ UniverseWitness (regularSubuniverseCat U u S iS embS hS) :=
+    fun U u S iS embS hS => fst (snd (regularSubuniversePackage U u S iS embS hS))
   /-- Inclusion of a regular subuniverse into the ambient universe; Definition 7.4.5 (Cat8). -/
-  lf_opaque regularSubuniverseIncl (U : SCat) (u : UniverseWitness U)
-    (S : SCat) (iS : Functor S U) (embS : Embedding S U iS)
-    (hS : SmallWitness U S) : Functor (regularSubuniverseCat U u S iS embS hS) U
+  lf_def regularSubuniverseIncl : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
+      (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
+      (hS : SmallWitness U S) ⇒ Functor (regularSubuniverseCat U u S iS embS hS) U :=
+    fun U u S iS embS hS =>
+      fst (snd (snd (regularSubuniversePackage U u S iS embS hS)))
   /-- The regular subuniverse is small in the ambient universe; Definition 7.4.5 (Cat8). -/
-  lf_opaque regularSubuniverseSmall (U : SCat) (u : UniverseWitness U)
-    (S : SCat) (iS : Functor S U) (embS : Embedding S U iS)
-    (hS : SmallWitness U S) : SmallWitness U (regularSubuniverseCat U u S iS embS hS)
+  lf_def regularSubuniverseSmall : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
+      (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
+      (hS : SmallWitness U S) ⇒ SmallWitness U (regularSubuniverseCat U u S iS embS hS) :=
+    fun U u S iS embS hS =>
+      fst (snd (snd (snd (regularSubuniversePackage U u S iS embS hS))))
   /-- The regular subuniverse is regular; Definition 7.4.5 (Cat8). -/
-  lf_opaque regularSubuniverseRegular (U : SCat) (u : UniverseWitness U)
-    (S : SCat) (iS : Functor S U) (embS : Embedding S U iS)
-    (hS : SmallWitness U S) :
-    RegularUniverseWitness (regularSubuniverseCat U u S iS embS hS)
-      (regularSubuniverseWitness U u S iS embS hS)
+  lf_def regularSubuniverseRegular : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
+      (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
+      (hS : SmallWitness U S) ⇒
+      RegularUniverseWitness (regularSubuniverseCat U u S iS embS hS)
+        (regularSubuniverseWitness U u S iS embS hS) :=
+    fun U u S iS embS hS =>
+      fst (snd (snd (snd (snd (regularSubuniversePackage U u S iS embS hS)))))
   /-- The seed subcategory maps into the regular subuniverse; Definition 7.4.5 (Cat8). -/
-  lf_opaque regularSubuniverseLift (U : SCat) (u : UniverseWitness U)
-    (S : SCat) (iS : Functor S U) (embS : Embedding S U iS)
-    (hS : SmallWitness U S) : Functor S (regularSubuniverseCat U u S iS embS hS)
+  lf_def regularSubuniverseLift : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
+      (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
+      (hS : SmallWitness U S) ⇒ Functor S (regularSubuniverseCat U u S iS embS hS) :=
+    fun U u S iS embS hS =>
+      fst (snd (snd (snd (snd (snd (regularSubuniversePackage U u S iS embS hS))))))
   /-- The seed inclusion factors through the regular subuniverse; Definition 7.4.5 (Cat8). -/
-  lf_opaque regularSubuniverseLiftBeta (U : SCat) (u : UniverseWitness U)
-    (S : SCat) (iS : Functor S U) (embS : Embedding S U iS)
-    (hS : SmallWitness U S) :
-    NatIso S U
-      (compFunctor S (regularSubuniverseCat U u S iS embS hS) U
-        (regularSubuniverseLift U u S iS embS hS)
-        (regularSubuniverseIncl U u S iS embS hS))
-      iS
+  lf_def regularSubuniverseLiftBeta : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
+      (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
+      (hS : SmallWitness U S) ⇒
+      NatIso S U
+        (compFunctor S (regularSubuniverseCat U u S iS embS hS) U
+          (regularSubuniverseLift U u S iS embS hS)
+          (regularSubuniverseIncl U u S iS embS hS))
+        iS :=
+    fun U u S iS embS hS =>
+      snd (snd (snd (snd (snd (snd (regularSubuniversePackage U u S iS embS hS))))))
 
 extend_type_theory SCT where
 
   model_section Chapter7
 
-  /-- Universe of groupoids inside the universe of categories; §7.6 source data. -/
-  lf_opaque groupoidUniverse : SCat
-  /-- Universe package for groupoids; §7.6 source data. -/
-  lf_opaque groupoidUniverseWitness : UniverseWitness groupoidUniverse
-  /-- Cores of small categories are small groupoids; §7.6 source data. -/
-  lf_opaque coreSmall (C : SCat) (hC : SmallWitness categoryUniverse C) :
-    SmallWitness groupoidUniverse (coreCat C)
+  /-- Source-shaped package for the universe of groupoids inside the universe of categories;
+  §7.6. -/
+  lf_opaque groupoidUniversePackage :
+    Σ G : SCat,
+      Σ g : UniverseWitness G,
+        Σ coreData :
+          ((C : SCat) → SmallWitness categoryUniverse C → SmallWitness G (coreCat C)),
+          Σ incl : Functor G categoryUniverse,
+            Σ emb : Embedding G categoryUniverse incl,
+              Σ regular : RegularUniverseWitness G g,
+                Σ leftFib : LeftFibrationWitness (universeTotalCat G g) G
+                    (universeProjection G g) (universeFibration G g),
+                  (A : Anima) → SmallWitness G (animaCat A)
+  /-- Universe of groupoids inside the universe of categories; §7.6. -/
+  lf_def groupoidUniverse : SCat := fst groupoidUniversePackage
+  /-- Universe package for groupoids; §7.6. -/
+  lf_def groupoidUniverseWitness : UniverseWitness groupoidUniverse :=
+    fst (snd groupoidUniversePackage)
+  /-- Cores of small categories are small groupoids; §7.6. -/
+  lf_def coreSmall : (C : SCat) ⇒ SmallWitness categoryUniverse C ⇒
+      SmallWitness groupoidUniverse (coreCat C) :=
+    fun C hC => fst (snd (snd groupoidUniversePackage)) C hC
+  /-- Inclusion of the groupoid universe into `Cat`; §7.6. -/
+  lf_def groupoidUniverseIncl : Functor groupoidUniverse categoryUniverse :=
+    fst (snd (snd (snd groupoidUniversePackage)))
+  /-- The groupoid universe inclusion is an embedding; §7.6. -/
+  lf_def groupoidUniverseEmbedding :
+      Embedding groupoidUniverse categoryUniverse groupoidUniverseIncl :=
+    fst (snd (snd (snd (snd groupoidUniversePackage))))
+  /-- The groupoid universe is regular; §7.6. -/
+  lf_def groupoidUniverseRegular :
+      RegularUniverseWitness groupoidUniverse groupoidUniverseWitness :=
+    fst (snd (snd (snd (snd (snd groupoidUniversePackage)))))
+  /-- The universal family over `Grpd` is a left fibration; §7.6. -/
+  lf_def groupoidUniverseLeftFibration :
+      LeftFibrationWitness (universeTotalCat groupoidUniverse groupoidUniverseWitness)
+        groupoidUniverse (universeProjection groupoidUniverse groupoidUniverseWitness)
+        (universeFibration groupoidUniverse groupoidUniverseWitness) :=
+    fst (snd (snd (snd (snd (snd (snd groupoidUniversePackage))))))
+  /-- Primitive anima are small in the groupoid universe; §7.6. -/
+  lf_def animaSmall : (A : Anima) ⇒ SmallWitness groupoidUniverse (animaCat A) :=
+    fun A => snd (snd (snd (snd (snd (snd (snd groupoidUniversePackage)))))) A
 
 extend_type_theory SCT where
 
@@ -4862,31 +5027,6 @@ extend_type_theory SCT where
 
   model_section Chapter7
 
-  /-- Inclusion of the groupoid universe into `Cat`; §7.6 source data. -/
-  lf_opaque groupoidUniverseIncl : Functor groupoidUniverse categoryUniverse
-  /-- The groupoid universe inclusion is an embedding; §7.6 source data. -/
-  lf_opaque groupoidUniverseEmbedding :
-    Embedding groupoidUniverse categoryUniverse groupoidUniverseIncl
-  /-- The groupoid universe is regular; §7.6 source data. -/
-  lf_opaque groupoidUniverseRegular :
-    RegularUniverseWitness groupoidUniverse groupoidUniverseWitness
-  /-- The universal family over `Grpd` is a left fibration; §7.6 source data. -/
-  lf_opaque groupoidUniverseLeftFibration :
-    LeftFibrationWitness (universeTotalCat groupoidUniverse groupoidUniverseWitness)
-      groupoidUniverse (universeProjection groupoidUniverse groupoidUniverseWitness)
-      (universeFibration groupoidUniverse groupoidUniverseWitness)
-
-extend_type_theory SCT where
-
-  model_section Chapter7
-
-  /-- Primitive anima are small in the groupoid universe; §7.6 source data. -/
-  lf_opaque animaSmall (A : Anima) : SmallWitness groupoidUniverse (animaCat A)
-
-extend_type_theory SCT where
-
-  model_section Chapter7
-
   /-- Classifying object of a primitive anima in the groupoid universe; Section 7.6.  Book context:
   Chapter 7 of the SCT book.
   -/
@@ -4894,31 +5034,46 @@ extend_type_theory SCT where
     fun A => smallClassifyingMap groupoidUniverse groupoidUniverseWitness
       (animaCat A) (animaSmall A)
 
-extend_type_theory SCT where
+namespace SCT
 
-  model_section Chapter7
+internal_defs where
+  /-- Geometric realization of a small category is a small groupoid.
+  Book target: §7.6, using geometric realization and smallness closure.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def geometricRealizationSmall (C : SCat) (hC : SmallWitness categoryUniverse C) :
+    SmallWitness groupoidUniverse (geometricRealization C) := sorry
 
-  /-- Geometric realization of a small category is a small groupoid; §7.6 source data. -/
-  lf_opaque geometricRealizationSmall (C : SCat) (hC : SmallWitness categoryUniverse C) :
-    SmallWitness groupoidUniverse (geometricRealization C)
-  /-- Fiberwise localization of a cocartesian fibration; §7.6 source data. -/
-  lf_opaque fiberwiseLocalizationTotal (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) : SCat
-  /-- Projection of the fiberwise localization; §7.6 source data. -/
-  lf_opaque fiberwiseLocalizationProjection (E : SCat) (B : SCat) (p : Functor E B)
+  /-- Fiberwise localization of a cocartesian fibration.
+  Book target: §7.6.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def fiberwiseLocalizationTotal (E : SCat) (B : SCat) (p : Functor E B)
+    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) : SCat := sorry
+
+  /-- Projection of the fiberwise localization.
+  Book target: §7.6.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def fiberwiseLocalizationProjection (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
-    Functor (fiberwiseLocalizationTotal E B p fib cocart) B
-  /-- Fibration structure on the fiberwise localization; §7.6 source data. -/
-  lf_opaque fiberwiseLocalizationFibration (E : SCat) (B : SCat) (p : Functor E B)
+    Functor (fiberwiseLocalizationTotal E B p fib cocart) B := sorry
+
+  /-- Fibration structure on the fiberwise localization.
+  Book target: §7.6.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def fiberwiseLocalizationFibration (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
     Fibration (fiberwiseLocalizationTotal E B p fib cocart) B
-      (fiberwiseLocalizationProjection E B p fib cocart)
-  /-- Fiberwise localization remains cocartesian; §7.6 source data. -/
-  lf_opaque fiberwiseLocalizationCocartesian (E : SCat) (B : SCat) (p : Functor E B)
+      (fiberwiseLocalizationProjection E B p fib cocart) := sorry
+
+  /-- Fiberwise localization remains cocartesian.
+  Book target: §7.6.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def fiberwiseLocalizationCocartesian (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
     CocartesianFibrationWitness (fiberwiseLocalizationTotal E B p fib cocart) B
       (fiberwiseLocalizationProjection E B p fib cocart)
-      (fiberwiseLocalizationFibration E B p fib cocart)
+      (fiberwiseLocalizationFibration E B p fib cocart) := sorry
+
+end SCT
 
 extend_type_theory SCT where
 
@@ -4934,17 +5089,22 @@ extend_type_theory SCT where
     fun A => smallClassifyingEquiv groupoidUniverse groupoidUniverseWitness
       (animaCat A) (animaSmall A)
 
-extend_type_theory SCT where
+namespace SCT
 
-  model_section Chapter7
+internal_defs where
+  /-- Category of small cocartesian fibrations over a base.
+  Book target: Theorem 7.7.8.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def cocartesianFibrationsOverCat (U : SCat) (u : UniverseWitness U) (B : SCat) :
+    SCat := sorry
 
-  /-- Category of small cocartesian fibrations over a base; Theorem 7.7.8 source data. -/
-  lf_opaque cocartesianFibrationsOverCat (U : SCat) (u : UniverseWitness U) (B : SCat) :
-    SCat
-  /-- Straightening/unstraightening equivalence over an arbitrary base; Theorem 7.7.8 source data.
-  -/
-  lf_opaque straighteningUnstraighteningEquiv (U : SCat) (u : UniverseWitness U) (B : SCat) :
-    CatEquiv (cocartesianFibrationsOverCat U u B) (funCat B U)
+  /-- Straightening/unstraightening equivalence over an arbitrary base.
+  Book target: Theorem 7.7.8.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def straighteningUnstraighteningEquiv (U : SCat) (u : UniverseWitness U) (B : SCat) :
+    CatEquiv (cocartesianFibrationsOverCat U u B) (funCat B U) := sorry
+
+end SCT
 
 extend_type_theory SCT where
 
@@ -4983,15 +5143,21 @@ extend_type_theory SCT where
   -/
   syntax_sort ConstructiveRegularUniverseWitness (U : SCat) (u : UniverseWitness U) : Type u
 
-extend_type_theory SCT where
+namespace SCT
 
-  model_section Chapter7
+internal_defs where
+  /-- Universal composable pair of small cocartesian fibrations.
+  Book target: §7.8.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def universalComposablePairCat (U : SCat) (u : UniverseWitness U) : SCat := sorry
 
-  /-- Universal composable pair of small cocartesian fibrations; §7.8 source data. -/
-  lf_opaque universalComposablePairCat (U : SCat) (u : UniverseWitness U) : SCat
-  /-- Projection from the universal composable-pair category; §7.8 source data. -/
-  lf_opaque universalComposablePairProjection (U : SCat) (u : UniverseWitness U) :
-    Functor (universalComposablePairCat U u) U
+  /-- Projection from the universal composable-pair category.
+  Book target: §7.8.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def universalComposablePairProjection (U : SCat) (u : UniverseWitness U) :
+    Functor (universalComposablePairCat U u) U := sorry
+
+end SCT
 
 extend_type_theory SCT where
 
@@ -5002,10 +5168,13 @@ extend_type_theory SCT where
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
     SmallCocartesianFibrationWitness categoryUniverse E B p fib cocart
 
-extend_type_theory SCT where
+namespace SCT
 
-  model_section Chapter7
+internal_defs where
+  /-- Constructive regularity implies regularity.
+  Book target: §7.8.
+  Status: temporary sorry-admitted internal declaration; not a model-provider field. -/
+  def regularOfConstructiveRegular (U : SCat) (u : UniverseWitness U)
+    (h : ConstructiveRegularUniverseWitness U u) : RegularUniverseWitness U u := sorry
 
-  /-- Constructive regularity implies regularity; §7.8 source data. -/
-  lf_opaque regularOfConstructiveRegular (U : SCat) (u : UniverseWitness U)
-    (h : ConstructiveRegularUniverseWitness U u) : RegularUniverseWitness U u
+end SCT
