@@ -20,6 +20,10 @@ no generic `wf...` judgments. Mathematical properties that are not part of a sor
 witness sorts or judgments. In particular, anima are primitive and have an underlying synthetic
 category; the judgment `isAnimaCat` records that the underlying category is an anima-category.
 
+Axiom A policy: functors, natural transformations, natural-isomorphism evidence, equivalence data,
+and the unitality/associativity/whiskering operations are primitive book-facing structure. The
+interface does not try to force strict functorial laws into definitional equality.
+
 -/
 
 @[expose] public section
