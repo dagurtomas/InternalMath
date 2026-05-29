@@ -2114,10 +2114,11 @@ extend_type_theory SCT where
   lf_def subobjectInclEmbedding : (A : Anima) ⇒ (P : AnimaSubobject A) ⇒
       Embedding (animaCat (subobjectAnima A P)) (animaCat A) (subobjectIncl A P) :=
     fun A P => snd (snd P)
-  /-- The total subobject of an anima, represented by the identity inclusion.
-  Status: temporary model-facing constructor until checked structural packages can be rendered
-  without expanding through dependent Sigma abbreviations. -/
-  lf_opaque totalAnimaSubobject (A : Anima) : AnimaSubobject A
+  /-- The total subobject of an anima, represented by the identity inclusion. -/
+  lf_def totalAnimaSubobject : (A : Anima) ⇒ AnimaSubobject A :=
+    fun A => ⟨A, ⟨idFunctor (animaCat A),
+      subcategoryWitnessEmbedding (animaCat A) (animaCat A) (idFunctor (animaCat A))
+        (idSubcategoryWitness (animaCat A))⟩⟩
   /-- The anima of morphisms of `C`, namely the core of `Fun([1], C)`; Axiom H. -/
   lf_def morphismAnima : SCat ⇒ Anima := fun C => coreAnima (funCat intervalCat C)
   /-- A morphism collection is a subobject of the anima of morphisms; Axiom H. -/
@@ -2173,7 +2174,10 @@ extend_type_theory SCT where
 
   /-- The collection of all morphisms; Example 3.1.7. -/
   lf_def allMorphisms : (C : SCat) ⇒ MorphismCollection C :=
-    fun C => totalAnimaSubobject (morphismAnima C)
+    fun C => ⟨morphismAnima C, ⟨idFunctor (animaCat (morphismAnima C)),
+      subcategoryWitnessEmbedding (animaCat (morphismAnima C))
+        (animaCat (morphismAnima C)) (idFunctor (animaCat (morphismAnima C)))
+        (idSubcategoryWitness (animaCat (morphismAnima C)))⟩⟩
 
   /-- Evidence that a functor's morphisms factor through a chosen collection; Definition 3.1.14.
   -/
