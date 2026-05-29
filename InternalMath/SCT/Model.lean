@@ -195,9 +195,8 @@ def sctModel.{u} : SCTModel.{u} where
   groupoidIntervalEquiv := sorry
   animaOfGroupoidEquiv := sorry
   coreIncl := sorry
-  coreInclEmbedding := sorry
-  coreLiftPackage := sorry
-  coreLiftNatIsoFromGroupoidBeta := sorry
+  coreUniversalPackage := sorry
+  coreLiftNatIsoFromGroupoidCoherencePackage := sorry
   mapAnimaCoreEquiv := sorry
   funCatTargetGroupoid := sorry
   intervalCoreEndpointEquiv := sorry
@@ -214,8 +213,7 @@ def sctModel.{u} : SCTModel.{u} where
   invertingFunctorObjectPackage := sorry
   localizationFunctor := sorry
   localizationUniversalPackage := sorry
-  dependentProductOverCat := sorry
-  dependentProductOverProjection := sorry
+  dependentProductOverPackage := sorry
   joinCat := sorry
   joinInl := sorry
   joinInr := sorry
@@ -229,8 +227,7 @@ def sctModel.{u} : SCTModel.{u} where
   intervalJoinBackward := sorry
   intervalJoinUnit := sorry
   intervalJoinCounit := sorry
-  joinDependentProductCat := sorry
-  joinDependentProductEquiv := sorry
+  joinDependentProductPackage := sorry
   idContextFunctor := sorry
   compContextFunctor := sorry
   idContextNatIso := sorry

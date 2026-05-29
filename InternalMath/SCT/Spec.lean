@@ -1611,23 +1611,36 @@ extend_type_theory SCT where
 
   model_section Chapter2
 
-  /-- The core inclusion is an embedding; split Definition 2.1.1/Axiom G data until the maximal
-  subgroupoid property is represented internally. -/
-  lf_opaque coreInclEmbedding (C : SCat) : Embedding (coreCat C) C (coreIncl C)
+  /-- Source-shaped universal package for the core inclusion; Axiom G.  It stores the embedding of
+  the core into the ambient category together with the lift, β comparison, and uniqueness for
+  anima-indexed objects. -/
+  lf_opaque coreUniversalPackage (C : SCat) :
+    Σ emb : Embedding (coreCat C) C (coreIncl C),
+      (A : Anima) → (F : Functor (animaCat A) C) →
+        Σ K : Functor (animaCat A) (coreCat C),
+          Σ β : NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C K
+            (coreIncl C)) F,
+            (L : Functor (animaCat A) (coreCat C)) →
+              NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C L
+                (coreIncl C)) F → NatIso (animaCat A) (coreCat C) L K
+  /-- The core inclusion is an embedding; projection from the Axiom G core package. -/
+  lf_def coreInclEmbedding : (C : SCat) ⇒ Embedding (coreCat C) C (coreIncl C) :=
+    fun C => fst (coreUniversalPackage C)
 
 extend_type_theory SCT where
 
   model_section Chapter2
 
   /-- Source-shaped universal package for lifting anima-indexed objects through the groupoid core;
-  Axiom G.  It stores the lift, its β comparison, and uniqueness from any competing lift. -/
-  lf_opaque coreLiftPackage (A : Anima) (C : SCat) (F : Functor (animaCat A) C) :
-    Σ K : Functor (animaCat A) (coreCat C),
-      Σ β : NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C K
-        (coreIncl C)) F,
-        (L : Functor (animaCat A) (coreCat C)) →
-          NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C L
-            (coreIncl C)) F → NatIso (animaCat A) (coreCat C) L K
+  Axiom G.  Projection from `coreUniversalPackage`. -/
+  lf_def coreLiftPackage : (A : Anima) ⇒ (C : SCat) ⇒ (F : Functor (animaCat A) C) ⇒
+      Σ K : Functor (animaCat A) (coreCat C),
+        Σ β : NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C K
+          (coreIncl C)) F,
+          (L : Functor (animaCat A) (coreCat C)) →
+            NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C L
+              (coreIncl C)) F → NatIso (animaCat A) (coreCat C) L K :=
+    fun A C F => snd (coreUniversalPackage C) A F
   /-- Lift an anima-parametrized object through the groupoid core; Axiom G. -/
   lf_def coreLift : (A : Anima) ⇒ (C : SCat) ⇒ Functor (animaCat A) C ⇒
       Functor (animaCat A) (coreCat C) :=
@@ -1907,16 +1920,33 @@ extend_type_theory SCT where
 
   model_section Chapter2
 
-  /-- Higher compatibility of a lifted core natural isomorphism with the original one; split
-  Axiom G coherence data for the current core-universal-property interface. -/
-  lf_opaque coreLiftNatIsoFromGroupoidBeta (G : SCat) (C : SCat) (gG : GroupoidWitness G)
-    (L : Functor G (coreCat C)) (M : Functor G (coreCat C))
+  /-- Source-shaped coherence package for lifting natural isomorphisms through the core inclusion;
+  Axiom G specialized to groupoid sources. -/
+  lf_opaque coreLiftNatIsoFromGroupoidCoherencePackage (G : SCat) (C : SCat)
+    (gG : GroupoidWitness G) (L : Functor G (coreCat C)) (M : Functor G (coreCat C))
     (α : NatIso G C (compFunctor G (coreCat C) C L (coreIncl C))
       (compFunctor G (coreCat C) C M (coreIncl C))) :
-    NatIsoIso G C (compFunctor G (coreCat C) C L (coreIncl C))
+    Σ β : NatIsoIso G C (compFunctor G (coreCat C) C L (coreIncl C))
       (compFunctor G (coreCat C) C M (coreIncl C))
       (postWhiskerNatIso G (coreCat C) C L M (coreIncl C)
-        (coreLiftNatIsoFromGroupoid G C gG L M α)) α
+        (coreLiftNatIsoFromGroupoid G C gG L M α)) α,
+      (N : NatIso G (coreCat C) L M) →
+        NatIsoIso G C (compFunctor G (coreCat C) C L (coreIncl C))
+          (compFunctor G (coreCat C) C M (coreIncl C))
+          (postWhiskerNatIso G (coreCat C) C L M (coreIncl C) N) α →
+        NatIsoIso G (coreCat C) L M N (coreLiftNatIsoFromGroupoid G C gG L M α)
+  /-- Higher compatibility of a lifted core natural isomorphism with the original one; projection
+  from the core lifting coherence package. -/
+  lf_def coreLiftNatIsoFromGroupoidBeta : (G : SCat) ⇒ (C : SCat) ⇒
+      (gG : GroupoidWitness G) ⇒ (L : Functor G (coreCat C)) ⇒
+      (M : Functor G (coreCat C)) ⇒
+      (α : NatIso G C (compFunctor G (coreCat C) C L (coreIncl C))
+        (compFunctor G (coreCat C) C M (coreIncl C))) ⇒
+      NatIsoIso G C (compFunctor G (coreCat C) C L (coreIncl C))
+        (compFunctor G (coreCat C) C M (coreIncl C))
+        (postWhiskerNatIso G (coreCat C) C L M (coreIncl C)
+          (coreLiftNatIsoFromGroupoid G C gG L M α)) α :=
+    fun G C gG L M α => fst (coreLiftNatIsoFromGroupoidCoherencePackage G C gG L M α)
 
 extend_type_theory SCT where
 
@@ -2863,15 +2893,23 @@ extend_type_theory SCT where
 
   model_section Chapter3
 
-  /-- Dependent product along a map over a base.  Book context: Chapter 3 of the SCT book. -/
-  lf_opaque dependentProductOverCat (A : SCat) (B : SCat) (E : SCat)
-    (u : Functor A B) (p : Functor E A) : SCat
-  /-- Projection of a dependent product over the codomain.  Book context: Chapter 3 of the SCT book.
-  -/
-  lf_opaque dependentProductOverProjection (A : SCat) (B : SCat) (E : SCat)
-    (u : Functor A B) (p : Functor E A) : Functor (dependentProductOverCat A B E u p) B
   /-- Exponentiable functor witness; Definition 3.5.7. -/
   syntax_sort ExponentiableFunctor (A : SCat) (B : SCat) (u : Functor A B) : Type u
+  /-- Source-shaped dependent-product package along an exponentiable functor.  It stores the
+  dependent product category over the codomain and its projection; the universal property is part
+  of the exponentiability data.  Book target: Definition 3.5.4 and Definition 3.5.7. -/
+  lf_opaque dependentProductOverPackage (A : SCat) (B : SCat) (E : SCat)
+    (u : Functor A B) (p : Functor E A) (exp : ExponentiableFunctor A B u) :
+    Σ Pdt : SCat, Functor Pdt B
+  /-- Dependent product along an exponentiable map over a base. -/
+  lf_def dependentProductOverCat : (A : SCat) ⇒ (B : SCat) ⇒ (E : SCat) ⇒
+      (u : Functor A B) ⇒ (p : Functor E A) ⇒ ExponentiableFunctor A B u ⇒ SCat :=
+    fun A B E u p exp => fst (dependentProductOverPackage A B E u p exp)
+  /-- Projection of a dependent product over the codomain. -/
+  lf_def dependentProductOverProjection : (A : SCat) ⇒ (B : SCat) ⇒ (E : SCat) ⇒
+      (u : Functor A B) ⇒ (p : Functor E A) ⇒ (exp : ExponentiableFunctor A B u) ⇒
+        Functor (dependentProductOverCat A B E u p exp) B :=
+    fun A B E u p exp => snd (dependentProductOverPackage A B E u p exp)
 
   /-- Join of synthetic categories; Axioms J.1 and J.2. -/
   lf_opaque joinCat (C : SCat) (D : SCat) : SCat
@@ -2966,11 +3004,16 @@ extend_type_theory SCT where
   lf_def interval_join_equiv : CatEquiv intervalCat (joinCat simplex0Cat simplex0Cat) :=
     catEquivOfData intervalCat (joinCat simplex0Cat simplex0Cat)
       intervalJoinForward intervalJoinBackward intervalJoinUnit intervalJoinCounit
+  /-- Source-shaped package for the mapping-in dependent-product side of Axiom J.2. -/
+  lf_opaque joinDependentProductPackage (C : SCat) (D : SCat) (E : SCat) :
+    Σ J : SCat, CatEquiv (funCat E (joinCat C D)) J
   /-- Source-shaped category for the mapping-in dependent-product side of Axiom J.2. -/
-  lf_opaque joinDependentProductCat (C : SCat) (D : SCat) (E : SCat) : SCat
+  lf_def joinDependentProductCat : (C : SCat) ⇒ (D : SCat) ⇒ (E : SCat) ⇒ SCat :=
+    fun C D E => fst (joinDependentProductPackage C D E)
   /-- Join-dependent-product universal property; Axiom J.2. -/
-  lf_opaque joinDependentProductEquiv (C : SCat) (D : SCat) (E : SCat) :
-    CatEquiv (funCat E (joinCat C D)) (joinDependentProductCat C D E)
+  lf_def joinDependentProductEquiv : (C : SCat) ⇒ (D : SCat) ⇒ (E : SCat) ⇒
+      CatEquiv (funCat E (joinCat C D)) (joinDependentProductCat C D E) :=
+    fun C D E => snd (joinDependentProductPackage C D E)
 
   /-- The 3-simplex, defined as the join of a point and `[2]`.  Book context: Chapter 3 of the SCT
   book.
