@@ -6,14 +6,24 @@ Authors: Dagur Asgeirsson, AI assistant
 module
 
 public import InternalMath.SCT.Spec
+public import Mathlib.AlgebraicTopology.Quasicategory.Nerve
 public import Mathlib.AlgebraicTopology.Quasicategory.StrictBicategory
+public import Mathlib.CategoryTheory.Category.Preorder
 
 /-!
 # SCT model file
 
 This file contains the generated SCT model interface and a quasicategory/Kan-complex model
-skeleton. Most operations are still placeholder interpretations; the concrete top-level carriers
-record the intended quasicategory semantics while the full model is developed.
+skeleton. The concrete top-level carriers record the intended quasicategory semantics while the
+full model is developed.
+
+The current pass fills the small amount of structure that is already directly available from
+mathlib: Kan complexes embed in quasicategories, `Δ[0]` is a Kan complex, identities and
+composition are the ordinary maps in the full subcategory of quasicategories, and binary products of
+quasicategories are quasicategories. The remaining `sorry`s are genuine semantic gaps in the
+current mathlib/SCT interface: natural isomorphisms should be equivalences in functor
+quasicategories, pullbacks should be homotopy/∞-categorical pullbacks, and the fibration/universe
+fields require the universal cocartesian fibration and directed-univalence machinery.
 -/
 
 @[expose] public section
@@ -21,17 +31,124 @@ record the intended quasicategory semantics while the full model is developed.
 generate_model_interface SCT as SCTModel
 
 open SCT CategoryTheory
+open Simplicial
+open MonoidalCategory CartesianMonoidalCategory
+open scoped SSet.modelCategoryQuillen
+
+namespace SCTModelHelpers
+
+universe u
+
+/-- The terminal simplicial set is a Kan complex.
+
+The proof uses the Quillen fibration structure on simplicial sets: the map from `Δ[0]` to the
+chosen terminal simplicial set is an isomorphism because `Δ[0]` is terminal, hence it has the right
+lifting property against the horn inclusions.
+-/
+lemma kanComplexStdSimplexZero : SSet.KanComplex (Δ[0] : SSet.{u}) := by
+  rw [SSet.KanComplex]
+  rw [HomotopicalAlgebra.isFibrant_iff]
+  rw [SSet.modelCategoryQuillen.fibration_iff]
+  haveI : IsIso (Limits.terminal.from (Δ[0] : SSet.{u})) :=
+    Limits.isIso_of_isTerminal SSet.stdSimplex.isTerminalObj₀ Limits.terminalIsTerminal _
+  exact MorphismProperty.rlp_of_isIso SSet.modelCategoryQuillen.J _
+
+/-- Products of quasicategories are quasicategories.
+
+This is the pointwise product argument: an inner horn in `X × Y` is the same as compatible inner
+horns in `X` and `Y`, and the two fillers combine by the cartesian product of simplicial sets.
+-/
+lemma quasicategoryTensor (X Y : SSet.{u}) [SSet.Quasicategory X] [SSet.Quasicategory Y] :
+    SSet.Quasicategory (X ⊗ Y) where
+  hornFilling' := by
+    intro n i σ₀ h0 hn
+    let fstXY := SemiCartesianMonoidalCategory.fst X Y
+    let sndXY := SemiCartesianMonoidalCategory.snd X Y
+    obtain ⟨σX, hX⟩ :=
+      SSet.Quasicategory.hornFilling' (S := X) (σ₀ ≫ fstXY) h0 hn
+    obtain ⟨σY, hY⟩ :=
+      SSet.Quasicategory.hornFilling' (S := Y) (σ₀ ≫ sndXY) h0 hn
+    let σ : Δ[n + 2] ⟶ X ⊗ Y := CartesianMonoidalCategory.lift σX σY
+    use σ
+    ext m z <;> simp [σ, fstXY, sndXY, hX, hY]
+
+/-- Interpret an anima, bundled as a Kan complex, as its underlying quasicategory. -/
+def animaCat (A : ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S)) :
+    SSet.QCat.{u} := by
+  letI : SSet.KanComplex A.obj := A.property
+  exact ⟨A.obj, inferInstance⟩
+
+/-- The terminal anima is `Δ[0]`. -/
+def terminalAnima : ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S) :=
+  ⟨Δ[0], kanComplexStdSimplexZero⟩
+
+/-- The unique map from a quasicategory to the terminal anima. -/
+def terminalProjection (C : SSet.QCat.{u}) : C ⟶ animaCat terminalAnima :=
+  ObjectProperty.homMk (P := SSet.Quasicategory)
+    (SSet.const (SSet.stdSimplex.obj₀Equiv.symm 0))
+
+/-- The initial quasicategory, realized as the nerve of the empty category. -/
+def initialQCat : SSet.QCat.{u} :=
+  ⟨CategoryTheory.nerve (ULift.{u} Empty), inferInstance⟩
+
+/-- The unique map from the initial quasicategory to any quasicategory. -/
+def initialMap (C : SSet.QCat.{u}) : initialQCat ⟶ C :=
+  ObjectProperty.homMk (P := SSet.Quasicategory)
+    { app := fun Δ => TypeCat.ofHom fun x => False.elim (by
+        exact x.obj ⟨0, by simp⟩ |>.down.elim)
+      naturality := by
+        intro Δ Γ f
+        ext x
+        exact False.elim (by exact x.obj ⟨0, by simp⟩ |>.down.elim) }
+
+/-- The walking arrow, modeled as the nerve of the linearly ordered category with two objects. -/
+def intervalQCat : SSet.QCat.{u} :=
+  ⟨CategoryTheory.nerve (ULift.{u} (Fin 2)), inferInstance⟩
+
+/-- A vertex of the walking arrow as a map from `Δ[0]`. -/
+def intervalVertex (i : Fin 2) : animaCat terminalAnima ⟶ intervalQCat :=
+  ObjectProperty.homMk (P := SSet.Quasicategory)
+    (SSet.yonedaEquiv.symm (CategoryTheory.ComposableArrows.mk₀ (ULift.up i)))
+
+/-- Binary product of bundled quasicategories, using the cartesian product of simplicial sets. -/
+def qcatProduct (C D : SSet.QCat.{u}) : SSet.QCat.{u} := by
+  letI : SSet.Quasicategory C.obj := C.property
+  letI : SSet.Quasicategory D.obj := D.property
+  exact ⟨C.obj ⊗ D.obj, quasicategoryTensor C.obj D.obj⟩
+
+/-- First projection from the product quasicategory. -/
+def qcatProdPr1 (C D : SSet.QCat.{u}) : qcatProduct C D ⟶ C :=
+  ObjectProperty.homMk (P := SSet.Quasicategory)
+    (SemiCartesianMonoidalCategory.fst C.obj D.obj)
+
+/-- Second projection from the product quasicategory. -/
+def qcatProdPr2 (C D : SSet.QCat.{u}) : qcatProduct C D ⟶ D :=
+  ObjectProperty.homMk (P := SSet.Quasicategory)
+    (SemiCartesianMonoidalCategory.snd C.obj D.obj)
+
+/-- Pairing into the product quasicategory. -/
+def qcatProdPair (T C D : SSet.QCat.{u}) (F : T ⟶ C) (G : T ⟶ D) :
+    T ⟶ qcatProduct C D :=
+  ObjectProperty.homMk (P := SSet.Quasicategory)
+    (CartesianMonoidalCategory.lift F.hom G.hom)
+
+end SCTModelHelpers
 
 def sctModel.{u} : SCTModel.{u} where
   Anima := ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S)
   SCat := SSet.QCat.{u}
   Functor C D := C ⟶ D
+  /- Missing: mathlib does not yet provide the functor-quasicategory/core package needed here.
+  The intended interpretation is an edge in the functor quasicategory, with natural isomorphisms
+  given by equivalence edges. -/
   NatTrans := sorry
   ObjectwiseNatIsoData := sorry
+  /- Missing: this should be equivalence in the ∞-category of quasicategories, not strict
+  isomorphism of simplicial sets. -/
   CatEquiv := sorry
   AnimaIndexedCat := sorry
   InvertibleMorphismData := sorry
-  GroupoidWitness := sorry
+  GroupoidWitness := fun C => ULift.{u} (PLift (SSet.KanComplex C.obj))
   ExponentiableFunctor := sorry
   ContextCat := sorry
   ContextFunctor := sorry
@@ -67,12 +184,12 @@ def sctModel.{u} : SCTModel.{u} where
   RegularUniverseWitness := sorry
   ExponentiableFibrationWitness := sorry
   ConstructiveRegularUniverseWitness := sorry
-  animaCat := sorry
+  animaCat := SCTModelHelpers.animaCat
   mapAnima := sorry
   sigmaAnimaIndexed := sorry
   sigmaAnimaIndexedProjection := sorry
-  idFunctor := sorry
-  compFunctor := sorry
+  idFunctor := fun C => 𝟙 C
+  compFunctor := fun _ _ _ F G => F ≫ G
   idNatIso := sorry
   compNatIso := sorry
   invNatIso := sorry
@@ -87,21 +204,27 @@ def sctModel.{u} : SCTModel.{u} where
   catEquivBackward := sorry
   catEquivUnit := sorry
   catEquivCounit := sorry
-  terminalAnima := sorry
-  terminalProjection := sorry
+  terminalAnima := SCTModelHelpers.terminalAnima
+  terminalProjection := SCTModelHelpers.terminalProjection
   terminalUnique := sorry
-  initialCat := sorry
-  initialElim := sorry
+  initialCat := SCTModelHelpers.initialQCat
+  initialElim := SCTModelHelpers.initialMap
   initialUnique := sorry
   initialStrict := sorry
-  prodCat := sorry
-  prodPr1 := sorry
-  prodPr2 := sorry
-  prodPair := sorry
+  prodCat := SCTModelHelpers.qcatProduct
+  prodPr1 := SCTModelHelpers.qcatProdPr1
+  prodPr2 := SCTModelHelpers.qcatProdPr2
+  prodPair := SCTModelHelpers.qcatProdPair
+  /- Missing: these product comparison fields are stated as `NatIso`s. They should be filled once
+  `NatIso` is interpreted as equivalences in functor quasicategories. The underlying product
+  quasicategory and projection/pairing maps above are already constructed. -/
   prodBeta1 := sorry
   prodBeta2 := sorry
   prodEta := sorry
   prodUniq := sorry
+  /- Missing: coproduct closure for quasicategories should use the disjoint union of simplicial
+  sets together with the fact that inner horns are connected. This is not currently packaged in
+  mathlib. -/
   coprodCat := sorry
   coprodIn1 := sorry
   coprodIn2 := sorry
@@ -110,6 +233,8 @@ def sctModel.{u} : SCTModel.{u} where
   coprodBeta2 := sorry
   coprodEta := sorry
   coprodUniq := sorry
+  /- Missing: the SCT pullback should be a homotopy/∞-categorical pullback in `Cat_∞`.
+  Strict pullbacks of simplicial sets along arbitrary maps do not supply this field. -/
   pullbackCat := sorry
   pullbackPr1 := sorry
   pullbackPr2 := sorry
@@ -127,6 +252,9 @@ def sctModel.{u} : SCTModel.{u} where
   coprodDisjointBackward := sorry
   coprodDisjointUnit := sorry
   coprodDisjointCounit := sorry
+  /- Missing: mathlib is expected to gain the theorem that the simplicial internal hom with
+  quasicategory target is again a quasicategory. Once available, this should be the bundled
+  functor quasicategory. -/
   funCat := sorry
   precompFunctor := sorry
   postcompFunctor := sorry
@@ -141,9 +269,11 @@ def sctModel.{u} : SCTModel.{u} where
   curryUncurryBackward := sorry
   curryUncurryUnit := sorry
   curryUncurryCounit := sorry
-  intervalCat := sorry
-  intervalZero := sorry
-  intervalOne := sorry
+  intervalCat := SCTModelHelpers.intervalQCat
+  intervalZero := SCTModelHelpers.intervalVertex 0
+  intervalOne := SCTModelHelpers.intervalVertex 1
+  /- Missing: the low-dimensional face, degeneracy, and endpoint universal-property data below
+  should be transported from the usual simplex maps. -/
   simplex2Id0 := sorry
   simplex2Can := sorry
   simplex2Id1 := sorry
@@ -189,8 +319,8 @@ def sctModel.{u} : SCTModel.{u} where
   invertibleMorphismLeftUnit := sorry
   invertibleMorphismRightUnit := sorry
   rezkEquiv := sorry
-  groupoidOfAnima := sorry
-  animaOfGroupoid := sorry
+  groupoidOfAnima := fun A => ULift.up (PLift.up A.property)
+  animaOfGroupoid := fun C g => ⟨C.obj, g.down.down⟩
   groupoidConstArrowFunctor := sorry
   groupoidIntervalEquiv := sorry
   animaOfGroupoidEquiv := sorry
@@ -363,9 +493,11 @@ def sctModel.{u} : SCTModel.{u} where
   categoryUniverseRegular := sorry
   regularSubuniversePackage := sorry
   groupoidUniversePackage := sorry
+  /- Missing: this cluster needs the universal cocartesian fibration and directed univalence;
+  see Cisinski--Nguyen, `The universal coCartesian fibration`, §§7--8. -/
   directed_univalence_classifies := sorry
-  isAnimaCat := sorry
-  anima_cat_is_anima := sorry
+  isAnimaCat := fun C => PLift.{0} (SSet.KanComplex C.obj)
+  anima_cat_is_anima := fun A => PLift.up A.property
   equiv_to_anima_is_anima := sorry
   sigma_anima_indexed_is_anima := sorry
   containsIdentities := sorry
