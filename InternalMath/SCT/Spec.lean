@@ -2307,6 +2307,13 @@ extend_type_theory SCT where
   lf_def objectCollectionIncl : (C : SCat) ⇒ (P : ObjectCollection C) ⇒
       Functor (objectCollectionCat C P) (coreCat C) :=
     fun C P => subobjectIncl (coreAnima C) P
+  /-- Evidence that a functor lands in a chosen object collection; Axiom H. -/
+  syntax_sort LandsInObjectCollection (D : SCat) (C : SCat)
+    (P : ObjectCollection C) (F : Functor D C) : Type u
+  syntax_sort_role LandsInObjectCollection : side_structure
+  /-- Membership of an absolute object in an object collection. -/
+  syntax_abbrev ObjectCollectionMember (C : SCat) (P : ObjectCollection C) (x : Obj C) :=
+    LandsInObjectCollection terminalCat C P x
 
   /-- Evidence that a morphism collection contains identities; Axiom H. -/
   syntax_sort containsIdentities (C : SCat) (W : MorphismCollection C) : Type u
@@ -2380,37 +2387,55 @@ internal_defs where
 
 end SCT
 
-namespace SCT
-
-/- Endpoint-restricted morphism collections are definition-shaped data, not model fields. -/
-internal_defs where
-  /-- Source-shaped endpoint-restricted morphism package used to build full subcategories from
-  Axiom H.  It contains the collection of arrows whose source and target lie in the chosen object
-  collection, together with the identity and composition closure evidence.
-  Book target: Definition 3.1.6 and the full-subcategory construction from Axiom H.
-  Status: temporary sorry-admitted structural definition package; not a model-provider field. -/
-  def fullSubcategoryMorphismPackage (C : SCat) (P : ObjectCollection C) :
-    Σ W : MorphismCollection C,
-      Σ ids : containsIdentities C W, closedUnderComposition C W := sorry
-
-end SCT
-
 extend_type_theory SCT where
 
   model_section Chapter3
 
+  /-- Membership data for an arrow whose endpoints lie in the chosen object collection. -/
+  syntax_abbrev EndpointRestrictedMorphismData (C : SCat) (P : ObjectCollection C)
+    (f : Functor intervalCat C) :=
+    Σ source_mem : ObjectCollectionMember C P (sourceObj C f),
+      ObjectCollectionMember C P (targetObj C f)
+  /-- Membership of an interval-shaped morphism in a morphism collection. -/
+  syntax_abbrev MorphismCollectionMember (C : SCat) (W : MorphismCollection C)
+    (f : Functor intervalCat C) :=
+    PreservesMorphismCollection intervalCat C W f
+  /-- Source-shaped endpoint-restricted morphism package used to build full subcategories from
+  Axiom H.  It contains the collection of arrows whose source and target lie in the chosen object
+  collection, identity and composition closure evidence, and the two directions of the endpoint
+  membership specification.
+  Book target: Definition 3.1.6 and the full-subcategory construction from Axiom H. -/
+  lf_opaque fullSubcategoryMorphismComprehensionPackage (C : SCat) (P : ObjectCollection C) :
+    Σ W : MorphismCollection C,
+      Σ ids : containsIdentities C W,
+        Σ comp : closedUnderComposition C W,
+          (f : Functor intervalCat C) →
+            Σ intro : EndpointRestrictedMorphismData C P f → MorphismCollectionMember C W f,
+              MorphismCollectionMember C W f → EndpointRestrictedMorphismData C P f
+  /-- Endpoint data determines membership in the endpoint-restricted morphism collection. -/
+  lf_def fullSubcategoryMorphismMemberIntro : (C : SCat) ⇒ (P : ObjectCollection C) ⇒
+      (f : Functor intervalCat C) ⇒ EndpointRestrictedMorphismData C P f →
+        MorphismCollectionMember C (fst (fullSubcategoryMorphismComprehensionPackage C P)) f :=
+    fun C P f h => fst (snd (snd (snd (fullSubcategoryMorphismComprehensionPackage C P))) f) h
+  /-- Membership in the endpoint-restricted collection recovers endpoint data. -/
+  lf_def fullSubcategoryMorphismMemberElim : (C : SCat) ⇒ (P : ObjectCollection C) ⇒
+      (f : Functor intervalCat C) ⇒
+        MorphismCollectionMember C (fst (fullSubcategoryMorphismComprehensionPackage C P)) f →
+          EndpointRestrictedMorphismData C P f :=
+    fun C P f h => snd (snd (snd (snd (fullSubcategoryMorphismComprehensionPackage C P))) f) h
+
   /-- Morphism collection of arrows whose endpoints lie in the chosen object collection. -/
   lf_def fullSubcategoryMorphismCollection : (C : SCat) ⇒ ObjectCollection C ⇒
       MorphismCollection C :=
-    fun C P => fst (fullSubcategoryMorphismPackage C P)
+    fun C P => fst (fullSubcategoryMorphismComprehensionPackage C P)
   /-- Endpoint-restricted morphisms contain identities. -/
   lf_def fullSubcategoryMorphismContainsIdentities : (C : SCat) ⇒ (P : ObjectCollection C) ⇒
       containsIdentities C (fullSubcategoryMorphismCollection C P) :=
-    fun C P => fst (snd (fullSubcategoryMorphismPackage C P))
+    fun C P => fst (snd (fullSubcategoryMorphismComprehensionPackage C P))
   /-- Endpoint-restricted morphisms are closed under composition. -/
   lf_def fullSubcategoryMorphismClosed : (C : SCat) ⇒ (P : ObjectCollection C) ⇒
       closedUnderComposition C (fullSubcategoryMorphismCollection C P) :=
-    fun C P => snd (snd (fullSubcategoryMorphismPackage C P))
+    fun C P => fst (snd (snd (fullSubcategoryMorphismComprehensionPackage C P)))
   /-- Full subcategory determined by an object collection; Definition 3.1.6. -/
   lf_def fullSubcategory : (C : SCat) ⇒ ObjectCollection C ⇒ SCat :=
     fun C P => subcategory C (fullSubcategoryMorphismCollection C P)
@@ -2446,21 +2471,33 @@ internal_defs where
 
 end SCT
 
-namespace SCT
-
-/- The invertible-arrow object collection is definition-shaped comprehension data. -/
-internal_defs where
-  /-- Object collection of invertible arrows in `Fun([1], C)`.
-  Book target: Definition 1.8.2, building `Iso(C)` from explicit invertible-arrow data.
-  Status: temporary sorry-admitted structural definition package; not a model-provider field. -/
-  def invertibleMorphismObjects (C : SCat) : ObjectCollection (funCat intervalCat C) := sorry
-
-end SCT
-
 extend_type_theory SCT where
 
   /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
   model_section Chapter1
+
+  /-- Membership of an arrow object in the object collection of invertible arrows. -/
+  syntax_abbrev InvertibleMorphismObjectMember (C : SCat)
+    (P : ObjectCollection (funCat intervalCat C)) (f : Functor intervalCat C) :=
+    ObjectCollectionMember (funCat intervalCat C) P (functorObject intervalCat C f)
+  /-- Source-shaped comprehension package for invertible arrows in `Fun([1], C)`.
+  Book target: Definition 1.8.2, building `Iso(C)` from explicit invertible-arrow data. -/
+  lf_opaque invertibleMorphismObjectPackage (C : SCat) :
+    Σ P : ObjectCollection (funCat intervalCat C),
+      (f : Functor intervalCat C) →
+        Σ intro : InvertibleMorphism C f → InvertibleMorphismObjectMember C P f,
+          InvertibleMorphismObjectMember C P f → InvertibleMorphism C f
+  /-- Object collection of invertible arrows in `Fun([1], C)`. -/
+  lf_def invertibleMorphismObjects : (C : SCat) ⇒ ObjectCollection (funCat intervalCat C) :=
+    fun C => fst (invertibleMorphismObjectPackage C)
+  /-- Invertible-arrow data gives membership in the invertible-arrow object collection. -/
+  lf_def invertibleMorphismObjectIntro : (C : SCat) ⇒ (f : Functor intervalCat C) ⇒
+      InvertibleMorphism C f → InvertibleMorphismObjectMember C (invertibleMorphismObjects C) f :=
+    fun C f h => fst (snd (invertibleMorphismObjectPackage C) f) h
+  /-- Membership in the invertible-arrow object collection gives invertible-arrow data. -/
+  lf_def invertibleMorphismObjectElim : (C : SCat) ⇒ (f : Functor intervalCat C) ⇒
+      InvertibleMorphismObjectMember C (invertibleMorphismObjects C) f → InvertibleMorphism C f :=
+    fun C f h => snd (snd (invertibleMorphismObjectPackage C) f) h
 
   /-- Category of isomorphisms in `C`, constructed as the full subcategory of the arrow category
   spanned by invertible arrows.  Book target: Definition 1.8.2.
@@ -2536,11 +2573,6 @@ extend_type_theory SCT where
         NatIso D (subcategory C W ids comp) K (subcategoryLift D C W ids comp F h) :=
     fun D C W ids comp F h K β =>
       snd (snd ((snd (snd (snd (subcategoryPackage C W ids comp)))) D F h)) K β
-  /-- Evidence that a functor lands in a chosen object collection; Axiom H. -/
-  syntax_sort LandsInObjectCollection (D : SCat) (C : SCat)
-    (P : ObjectCollection C) (F : Functor D C) : Type u
-  syntax_sort_role LandsInObjectCollection : side_structure
-
 namespace SCT
 
 /- Theorem-shaped declaration admitted temporarily while moved out of the model interface. -/
@@ -2606,21 +2638,36 @@ extend_type_theory SCT where
   /-- Localization at a morphism collection; Axiom I. -/
   lf_opaque localizationCat (C : SCat) (W : MorphismCollection C) : SCat
 
-namespace SCT
-
-/- The inverting-functor object collection is definition-shaped comprehension data. -/
-internal_defs where
-  /-- Object collection of functors that invert a morphism collection.
-  Book target: Definition 3.3.2, the full subcategory of functors inverting `W`.
-  Status: temporary sorry-admitted structural definition package; not a model-provider field. -/
-  def invertingFunctorObjects (C : SCat) (D : SCat) (W : MorphismCollection C) :
-    ObjectCollection (funCat C D) := sorry
-
-end SCT
-
 extend_type_theory SCT where
 
   model_section Chapter3
+
+  /-- Membership of a functor object in the object collection of functors inverting `W`. -/
+  syntax_abbrev InvertingFunctorObjectMember (C : SCat) (D : SCat)
+    (W : MorphismCollection C) (P : ObjectCollection (funCat C D)) (F : Functor C D) :=
+    ObjectCollectionMember (funCat C D) P (functorObject C D F)
+  /-- Source-shaped comprehension package for the full subcategory of functors inverting `W`.
+  Book target: Definition 3.3.2. -/
+  lf_opaque invertingFunctorObjectPackage (C : SCat) (D : SCat) (W : MorphismCollection C) :
+    Σ P : ObjectCollection (funCat C D),
+      (F : Functor C D) →
+        Σ intro : InvertsMorphismCollection C D W F → InvertingFunctorObjectMember C D W P F,
+          InvertingFunctorObjectMember C D W P F → InvertsMorphismCollection C D W F
+  /-- Object collection of functors that invert a morphism collection. -/
+  lf_def invertingFunctorObjects : (C : SCat) ⇒ (D : SCat) ⇒ MorphismCollection C ⇒
+      ObjectCollection (funCat C D) :=
+    fun C D W => fst (invertingFunctorObjectPackage C D W)
+  /-- Inverting evidence gives membership in the inverting-functor object collection. -/
+  lf_def invertingFunctorObjectIntro : (C : SCat) ⇒ (D : SCat) ⇒
+      (W : MorphismCollection C) ⇒ (F : Functor C D) ⇒ InvertsMorphismCollection C D W F →
+        InvertingFunctorObjectMember C D W (invertingFunctorObjects C D W) F :=
+    fun C D W F h => fst (snd (invertingFunctorObjectPackage C D W) F) h
+  /-- Membership in the inverting-functor object collection gives inverting evidence. -/
+  lf_def invertingFunctorObjectElim : (C : SCat) ⇒ (D : SCat) ⇒
+      (W : MorphismCollection C) ⇒ (F : Functor C D) ⇒
+        InvertingFunctorObjectMember C D W (invertingFunctorObjects C D W) F →
+          InvertsMorphismCollection C D W F :=
+    fun C D W F h => snd (snd (invertingFunctorObjectPackage C D W) F) h
 
   /-- Full subcategory of functors that invert a morphism collection; Definition 3.3.2. -/
   lf_def invertingFunctorCat : (C : SCat) ⇒ (D : SCat) ⇒ MorphismCollection C ⇒ SCat :=

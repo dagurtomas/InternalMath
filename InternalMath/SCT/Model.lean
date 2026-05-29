@@ -208,10 +208,10 @@ def sctModel.{u} : SCTModel.{u} where
   pullbackGroupoid := sorry
   initialGroupoid := sorry
   subcategoryPackage := sorry
-  fullSubcategoryMorphismPackage := sorry
-  invertibleMorphismObjects := sorry
+  fullSubcategoryMorphismComprehensionPackage := sorry
+  invertibleMorphismObjectPackage := sorry
   localizationCat := sorry
-  invertingFunctorObjects := sorry
+  invertingFunctorObjectPackage := sorry
   localizationFunctor := sorry
   localizationUniversalPackage := sorry
   dependentProductOverCat := sorry
