@@ -663,6 +663,151 @@ extend_type_theory SCT where
   -/
   syntax_abbrev Embedding (C : SCat) (D : SCat) (F : Functor C D) :=
     CatEquiv C (pullbackCat C C D F F)
+  /-- Self-pullback of the identity functor. -/
+  lf_def identitySelfPullback : SCat ⇒ SCat :=
+    fun C => pullbackCat C C C (idFunctor C) (idFunctor C)
+  /-- First projection from the identity self-pullback. -/
+  lf_def identitySelfPullbackPr1 : (C : SCat) ⇒ Functor (identitySelfPullback C) C :=
+    fun C => pullbackPr1 C C C (idFunctor C) (idFunctor C)
+  /-- Second projection from the identity self-pullback. -/
+  lf_def identitySelfPullbackPr2 : (C : SCat) ⇒ Functor (identitySelfPullback C) C :=
+    fun C => pullbackPr2 C C C (idFunctor C) (idFunctor C)
+  /-- Diagonal comparison into the self-pullback of the identity functor. -/
+  lf_def identitySelfPullbackDiagonal : (C : SCat) ⇒
+      Functor C (identitySelfPullback C) :=
+    fun C => pullbackLift C C C C (idFunctor C) (idFunctor C) (idFunctor C)
+      (idFunctor C) (idNatIso C C (compFunctor C C C (idFunctor C) (idFunctor C)))
+  /-- First projection β comparison for the identity diagonal. -/
+  lf_def identityEmbeddingUnit : (C : SCat) ⇒
+      NatIso C C
+        (compFunctor C (identitySelfPullback C) C (identitySelfPullbackDiagonal C)
+          (identitySelfPullbackPr1 C))
+        (idFunctor C) :=
+    fun C => pullbackBeta1 C C C C (idFunctor C) (idFunctor C) (idFunctor C)
+      (idFunctor C) (idNatIso C C (compFunctor C C C (idFunctor C) (idFunctor C)))
+  /-- Second projection β comparison for the identity diagonal. -/
+  lf_def identityEmbeddingUnitPr2 : (C : SCat) ⇒
+      NatIso C C
+        (compFunctor C (identitySelfPullback C) C (identitySelfPullbackDiagonal C)
+          (identitySelfPullbackPr2 C))
+        (idFunctor C) :=
+    fun C => pullbackBeta2 C C C C (idFunctor C) (idFunctor C) (idFunctor C)
+      (idFunctor C) (idNatIso C C (compFunctor C C C (idFunctor C) (idFunctor C)))
+  /-- First projection comparison used in the identity-embedding counit. -/
+  lf_def identityEmbeddingCounitPr1 : (C : SCat) ⇒
+      NatIso (identitySelfPullback C) C
+        (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+          (compFunctor (identitySelfPullback C) C (identitySelfPullback C)
+            (identitySelfPullbackPr1 C) (identitySelfPullbackDiagonal C))
+          (identitySelfPullbackPr1 C))
+        (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+          (idFunctor (identitySelfPullback C)) (identitySelfPullbackPr1 C)) :=
+    fun C => compNatIso (identitySelfPullback C) C
+      (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+        (compFunctor (identitySelfPullback C) C (identitySelfPullback C)
+          (identitySelfPullbackPr1 C) (identitySelfPullbackDiagonal C))
+        (identitySelfPullbackPr1 C))
+      (compFunctor (identitySelfPullback C) C C (identitySelfPullbackPr1 C)
+        (compFunctor C (identitySelfPullback C) C (identitySelfPullbackDiagonal C)
+          (identitySelfPullbackPr1 C)))
+      (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+        (idFunctor (identitySelfPullback C)) (identitySelfPullbackPr1 C))
+      (assocFunctor (identitySelfPullback C) C (identitySelfPullback C) C
+        (identitySelfPullbackPr1 C) (identitySelfPullbackDiagonal C)
+        (identitySelfPullbackPr1 C))
+      (compNatIso (identitySelfPullback C) C
+        (compFunctor (identitySelfPullback C) C C (identitySelfPullbackPr1 C)
+          (compFunctor C (identitySelfPullback C) C (identitySelfPullbackDiagonal C)
+            (identitySelfPullbackPr1 C)))
+        (compFunctor (identitySelfPullback C) C C (identitySelfPullbackPr1 C)
+          (idFunctor C))
+        (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+          (idFunctor (identitySelfPullback C)) (identitySelfPullbackPr1 C))
+        (preWhiskerNatIso (identitySelfPullback C) C C (identitySelfPullbackPr1 C)
+          (compFunctor C (identitySelfPullback C) C (identitySelfPullbackDiagonal C)
+            (identitySelfPullbackPr1 C))
+          (idFunctor C) (identityEmbeddingUnit C))
+        (compNatIso (identitySelfPullback C) C
+          (compFunctor (identitySelfPullback C) C C (identitySelfPullbackPr1 C)
+            (idFunctor C))
+          (identitySelfPullbackPr1 C)
+          (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+            (idFunctor (identitySelfPullback C)) (identitySelfPullbackPr1 C))
+          (rightUnitor (identitySelfPullback C) C (identitySelfPullbackPr1 C))
+          (invNatIso (identitySelfPullback C) C
+            (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+              (idFunctor (identitySelfPullback C)) (identitySelfPullbackPr1 C))
+            (identitySelfPullbackPr1 C)
+            (leftUnitor (identitySelfPullback C) C (identitySelfPullbackPr1 C)))))
+  /-- Second projection comparison used in the identity-embedding counit. -/
+  lf_def identityEmbeddingCounitPr2 : (C : SCat) ⇒
+      NatIso (identitySelfPullback C) C
+        (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+          (compFunctor (identitySelfPullback C) C (identitySelfPullback C)
+            (identitySelfPullbackPr1 C) (identitySelfPullbackDiagonal C))
+          (identitySelfPullbackPr2 C))
+        (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+          (idFunctor (identitySelfPullback C)) (identitySelfPullbackPr2 C)) :=
+    fun C => compNatIso (identitySelfPullback C) C
+      (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+        (compFunctor (identitySelfPullback C) C (identitySelfPullback C)
+          (identitySelfPullbackPr1 C) (identitySelfPullbackDiagonal C))
+        (identitySelfPullbackPr2 C))
+      (compFunctor (identitySelfPullback C) C C (identitySelfPullbackPr1 C)
+        (compFunctor C (identitySelfPullback C) C (identitySelfPullbackDiagonal C)
+          (identitySelfPullbackPr2 C)))
+      (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+        (idFunctor (identitySelfPullback C)) (identitySelfPullbackPr2 C))
+      (assocFunctor (identitySelfPullback C) C (identitySelfPullback C) C
+        (identitySelfPullbackPr1 C) (identitySelfPullbackDiagonal C)
+        (identitySelfPullbackPr2 C))
+      (compNatIso (identitySelfPullback C) C
+        (compFunctor (identitySelfPullback C) C C (identitySelfPullbackPr1 C)
+          (compFunctor C (identitySelfPullback C) C (identitySelfPullbackDiagonal C)
+            (identitySelfPullbackPr2 C)))
+        (compFunctor (identitySelfPullback C) C C (identitySelfPullbackPr1 C)
+          (idFunctor C))
+        (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+          (idFunctor (identitySelfPullback C)) (identitySelfPullbackPr2 C))
+        (preWhiskerNatIso (identitySelfPullback C) C C (identitySelfPullbackPr1 C)
+          (compFunctor C (identitySelfPullback C) C (identitySelfPullbackDiagonal C)
+            (identitySelfPullbackPr2 C))
+          (idFunctor C) (identityEmbeddingUnitPr2 C))
+        (compNatIso (identitySelfPullback C) C
+          (compFunctor (identitySelfPullback C) C C (identitySelfPullbackPr1 C)
+            (idFunctor C))
+          (compFunctor (identitySelfPullback C) C C (identitySelfPullbackPr2 C)
+            (idFunctor C))
+          (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+            (idFunctor (identitySelfPullback C)) (identitySelfPullbackPr2 C))
+          (pullbackComm C C C (idFunctor C) (idFunctor C))
+          (compNatIso (identitySelfPullback C) C
+            (compFunctor (identitySelfPullback C) C C (identitySelfPullbackPr2 C)
+              (idFunctor C))
+            (identitySelfPullbackPr2 C)
+            (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+              (idFunctor (identitySelfPullback C)) (identitySelfPullbackPr2 C))
+            (rightUnitor (identitySelfPullback C) C (identitySelfPullbackPr2 C))
+            (invNatIso (identitySelfPullback C) C
+              (compFunctor (identitySelfPullback C) (identitySelfPullback C) C
+                (idFunctor (identitySelfPullback C)) (identitySelfPullbackPr2 C))
+              (identitySelfPullbackPr2 C)
+              (leftUnitor (identitySelfPullback C) C (identitySelfPullbackPr2 C))))))
+  /-- Counit comparison for the identity embedding equivalence. -/
+  lf_def identityEmbeddingCounit : (C : SCat) ⇒
+      NatIso (identitySelfPullback C) (identitySelfPullback C)
+        (compFunctor (identitySelfPullback C) C (identitySelfPullback C)
+          (identitySelfPullbackPr1 C) (identitySelfPullbackDiagonal C))
+        (idFunctor (identitySelfPullback C)) :=
+    fun C => pullbackUniq (identitySelfPullback C) C C C (idFunctor C) (idFunctor C)
+      (compFunctor (identitySelfPullback C) C (identitySelfPullback C)
+        (identitySelfPullbackPr1 C) (identitySelfPullbackDiagonal C))
+      (idFunctor (identitySelfPullback C)) (identityEmbeddingCounitPr1 C)
+      (identityEmbeddingCounitPr2 C)
+  /-- The identity functor is an embedding. -/
+  lf_def identityEmbedding : (C : SCat) ⇒ Embedding C C (idFunctor C) :=
+    fun C => catEquivOfData C (identitySelfPullback C) (identitySelfPullbackDiagonal C)
+      (identitySelfPullbackPr1 C) (identityEmbeddingUnit C) (identityEmbeddingCounit C)
 
   -- B.4' coproduct universality is stated after pullbacks for dependency order.
   /-- Base-change decomposition category for coproducts; Axiom B.4'. -/
@@ -2116,9 +2261,7 @@ extend_type_theory SCT where
     fun A P => snd (snd P)
   /-- The total subobject of an anima, represented by the identity inclusion. -/
   lf_def totalAnimaSubobject : (A : Anima) ⇒ AnimaSubobject A :=
-    fun A => ⟨A, ⟨idFunctor (animaCat A),
-      subcategoryWitnessEmbedding (animaCat A) (animaCat A) (idFunctor (animaCat A))
-        (idSubcategoryWitness (animaCat A))⟩⟩
+    fun A => ⟨A, ⟨idFunctor (animaCat A), identityEmbedding (animaCat A)⟩⟩
   /-- The anima of morphisms of `C`, namely the core of `Fun([1], C)`; Axiom H. -/
   lf_def morphismAnima : SCat ⇒ Anima := fun C => coreAnima (funCat intervalCat C)
   /-- A morphism collection is a subobject of the anima of morphisms; Axiom H. -/
@@ -2174,10 +2317,8 @@ extend_type_theory SCT where
 
   /-- The collection of all morphisms; Example 3.1.7. -/
   lf_def allMorphisms : (C : SCat) ⇒ MorphismCollection C :=
-    fun C => ⟨morphismAnima C, ⟨idFunctor (animaCat (morphismAnima C)),
-      subcategoryWitnessEmbedding (animaCat (morphismAnima C))
-        (animaCat (morphismAnima C)) (idFunctor (animaCat (morphismAnima C)))
-        (idSubcategoryWitness (animaCat (morphismAnima C)))⟩⟩
+    fun C => ⟨morphismAnima C,
+      ⟨idFunctor (animaCat (morphismAnima C)), identityEmbedding (animaCat (morphismAnima C))⟩⟩
 
   /-- Evidence that a functor's morphisms factor through a chosen collection; Definition 3.1.14.
   -/

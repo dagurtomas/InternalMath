@@ -207,8 +207,6 @@ def sctModel.{u} : SCTModel.{u} where
   coprodGroupoid := sorry
   pullbackGroupoid := sorry
   initialGroupoid := sorry
-  idSubcategoryWitness := sorry
-  subcategoryWitnessEmbedding := sorry
   subcategoryPackage := sorry
   fullSubcategoryMorphismPackage := sorry
   invertibleMorphismObjects := sorry
