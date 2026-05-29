@@ -1175,8 +1175,8 @@ extend_type_theory SCT where
     fun C D F G => pullbackCat (natTransSourceFiberCat C D F) terminalCat (funCat C D)
       (natTransSourceFiberTarget C D F) (functorObject C D G)
   /-- A natural transformation, viewed as an object of the source-shaped
-  natural-transformation category.  Book context: Chapter 1 of the SCT book.
-  -/
+  natural-transformation category.  This records the Chapter 1 identification of natural
+  transformations with arrows in `Fun(C,D)` while `NatTrans` remains primitive vocabulary. -/
   lf_opaque natTransObject (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D)
     (α : NatTrans C D F G) : Obj (natTransCat C D F G)
 
@@ -3409,19 +3409,24 @@ extend_type_theory SCT where
   -/
   syntax_sort ContextObjectCollection (Γ : SCat) (gΓ : GroupoidalContext Γ)
     (C : ContextCat Γ) : Type (u+1)
-  /-- Contextual subcategories in groupoidal contexts; Axiom K.2. -/
+  /-- Contextual subcategories in groupoidal contexts; Axiom K.2 applies Axiom H in groupoidal
+  context. -/
   lf_opaque contextSubcategory (Γ : SCat) (gΓ : GroupoidalContext Γ)
     (C : ContextCat Γ) (W : ContextMorphismCollection Γ gΓ C) : ContextCat Γ
-  /-- Contextual localizations in groupoidal contexts; Axiom K.2. -/
+  /-- Contextual localizations in groupoidal contexts; Axiom K.2 applies Axiom I in groupoidal
+  context. -/
   lf_opaque contextLocalization (Γ : SCat) (gΓ : GroupoidalContext Γ)
     (C : ContextCat Γ) (W : ContextMorphismCollection Γ gΓ C) : ContextCat Γ
-  /-- Contextual geometric realizations in groupoidal contexts; Axiom K.2. -/
+  /-- Contextual geometric realizations in groupoidal contexts; Axiom K.2 applies Axiom J in
+  groupoidal context. -/
   lf_opaque contextGeometricRealization (Γ : SCat) (gΓ : GroupoidalContext Γ)
     (C : ContextCat Γ) : ContextCat Γ
-  /-- Contextual joins in groupoidal contexts; Axiom K.2. -/
+  /-- Contextual joins in groupoidal contexts; Axiom K.2 applies Axiom J.1/J.2 in groupoidal
+  context. -/
   lf_opaque contextJoinCat (Γ : SCat) (gΓ : GroupoidalContext Γ)
     (C : ContextCat Γ) (D : ContextCat Γ) : ContextCat Γ
-  /-- Contextual slice categories in groupoidal contexts; Axiom K.2. -/
+  /-- Contextual slice categories in groupoidal contexts; Axiom K.2 applies the Chapter 3 slice
+  construction in groupoidal context. -/
   lf_opaque contextSliceCat (Γ : SCat) (gΓ : GroupoidalContext Γ)
     (A : ContextCat Γ) (C : ContextCat Γ) (F : ContextFunctor Γ A C) : ContextCat Γ
 
@@ -3677,9 +3682,9 @@ extend_type_theory SCT where
 
   model_section Chapter5
 
-  /-- Source fibration of a category; Chapter 5 source-fibration structure data. -/
+  /-- Source fibration of a category; Chapter 5 source-fibration structure data from §5.8. -/
   lf_opaque sourceFibration (C : SCat) : Fibration (funCat intervalCat C) C (sourceFunctor C)
-  /-- Target fibration of a category; Chapter 5 target-fibration structure data. -/
+  /-- Target fibration of a category; Chapter 5 target-fibration structure data from §5.8. -/
   lf_opaque targetFibration (C : SCat) : Fibration (funCat intervalCat C) C (targetFunctor C)
 
 extend_type_theory SCT where
@@ -4197,7 +4202,8 @@ extend_type_theory SCT where
             (stronglySurjectiveSection C D F surj) (coreFunctor C D F))
           (idFunctor (coreCat D)) :=
     fun C D F surj => snd surj
-  /-- Componentwise invertibility stored in objectwise natural-isomorphism evidence. -/
+  /-- Componentwise invertibility stored in objectwise natural-isomorphism evidence; the package
+  form follows Theorem 6.2.11. -/
   lf_opaque objectwiseNatIsoComponent (A : SCat) (C : SCat)
     (F : Functor A C) (G : Functor A C) (α : NatTrans A C F G)
     (h : ObjectwiseNatIso A C F G α) (x : Obj A) :
