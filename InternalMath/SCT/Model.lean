@@ -276,7 +276,6 @@ def noVerticesInitialQCat : IsEmpty (initialQCat.{u}.obj _⦋0⦌) where
 /-- Maps out of a quasicategory with no vertices are unique. -/
 lemma qcatHomExtOfNoVertices {C D : SSet.QCat.{u}} (hC : IsEmpty (C.obj _⦋0⦌))
     (F G : C ⟶ D) : F = G := by
-  haveI : IsEmpty (C.obj _⦋0⦌) := hC
   apply ObjectProperty.hom_ext
   ext m x
   exact False.elim ((isEmptyObjOfNoVertices C.obj m).false x)
@@ -631,11 +630,11 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   NatTrans := SCTModelHelpers.NatTrans
   /- This is equivalence-edge data in `Fun(C,D)`. The objectwise interpretation is the theorem
   supplied by `objectwiseNatIsoComponent` below. -/
-  ObjectwiseNatIsoData := fun _ _ _ _ α => SCTModelHelpers.EdgeIsIso α
+  ObjectwiseNatIsoData _ _ _ _ α := SCTModelHelpers.EdgeIsIso α
   CatEquiv := SCTModelHelpers.CatEquivData
   AnimaIndexedCat := sorry
   InvertibleMorphismData := SCTModelHelpers.InvertibleMorphismData
-  GroupoidWitness := fun C => ULift.{u} (PLift (SSet.KanComplex C.obj))
+  GroupoidWitness C := ULift.{u} (PLift (SSet.KanComplex C.obj))
   ExponentiableFunctor := sorry
   ContextCat := sorry
   ContextFunctor := sorry
@@ -675,30 +674,30 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   mapAnima := sorry
   sigmaAnimaIndexed := sorry
   sigmaAnimaIndexedProjection := sorry
-  idFunctor := fun C => 𝟙 C
-  compFunctor := fun _ _ _ F G => F ≫ G
+  idFunctor C := 𝟙 C
+  compFunctor _ _ _ F G := F ≫ G
   idNatIso := SCTModelHelpers.idNatIso
-  compNatIso := fun C D _ _ _ α β => SCTModelHelpers.compNatIso C D α β
-  invNatIso := fun C D _ _ α => SCTModelHelpers.invNatIso C D α
-  leftUnitor := fun _ _ _ => SCTModelHelpers.natIsoOfEq (by simp)
-  rightUnitor := fun _ _ _ => SCTModelHelpers.natIsoOfEq (by simp)
-  assocFunctor := fun _ _ _ _ _ _ _ => SCTModelHelpers.natIsoOfEq (by simp [Category.assoc])
-  preWhiskerNatIso := fun B C D K _ _ α => SCTModelHelpers.preWhiskerNatIso B C D K α
-  postWhiskerNatIso := fun B C D _ _ K α => SCTModelHelpers.postWhiskerNatIso B C D K α
-  horizCompNatIso := fun B C D _ _ _ _ α β => SCTModelHelpers.horizCompNatIso B C D α β
-  catEquivOfData := fun _ _ F G η ε => ⟨F, G, η, ε⟩
-  catEquivForward := fun _ _ e => e.forward
-  catEquivBackward := fun _ _ e => e.backward
-  catEquivUnit := fun _ _ e => e.unitIso
-  catEquivCounit := fun _ _ e => e.counitIso
+  compNatIso C D _ _ _ α β := SCTModelHelpers.compNatIso C D α β
+  invNatIso C D _ _ α := SCTModelHelpers.invNatIso C D α
+  leftUnitor _ _ _ := SCTModelHelpers.natIsoOfEq (by simp)
+  rightUnitor _ _ _ := SCTModelHelpers.natIsoOfEq (by simp)
+  assocFunctor _ _ _ _ _ _ _ := SCTModelHelpers.natIsoOfEq (by simp [Category.assoc])
+  preWhiskerNatIso B C D K _ _ α := SCTModelHelpers.preWhiskerNatIso B C D K α
+  postWhiskerNatIso B C D _ _ K α := SCTModelHelpers.postWhiskerNatIso B C D K α
+  horizCompNatIso B C D _ _ _ _ α β := SCTModelHelpers.horizCompNatIso B C D α β
+  catEquivOfData _ _ F G η ε := ⟨F, G, η, ε⟩
+  catEquivForward _ _ e := e.forward
+  catEquivBackward _ _ e := e.backward
+  catEquivUnit _ _ e := e.unitIso
+  catEquivCounit _ _ e := e.counitIso
   terminalAnima := SCTModelHelpers.terminalAnima
   terminalProjection := SCTModelHelpers.terminalProjection
-  terminalUnique := fun _ _ _ => SCTModelHelpers.natIsoOfEq (by
+  terminalUnique _ _ _ := SCTModelHelpers.natIsoOfEq (by
     apply ObjectProperty.hom_ext
     exact SSet.stdSimplex.ext₀)
   initialCat := SCTModelHelpers.initialQCat
   initialElim := SCTModelHelpers.initialMap
-  initialUnique := fun _ _ _ => SCTModelHelpers.natIsoOfEq (by
+  initialUnique _ _ _ := SCTModelHelpers.natIsoOfEq (by
     apply ObjectProperty.hom_ext
     ext n x
     exact False.elim (x.obj ⟨0, by simp⟩).down.elim)
@@ -707,13 +706,13 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   prodPr1 := SCTModelHelpers.qcatProdPr1
   prodPr2 := SCTModelHelpers.qcatProdPr2
   prodPair := SCTModelHelpers.qcatProdPair
-  prodBeta1 := fun _ _ _ _ _ => SCTModelHelpers.natIsoOfEq (by
+  prodBeta1 _ _ _ _ _ := SCTModelHelpers.natIsoOfEq (by
     ext n x
     rfl)
-  prodBeta2 := fun _ _ _ _ _ => SCTModelHelpers.natIsoOfEq (by
+  prodBeta2 _ _ _ _ _ := SCTModelHelpers.natIsoOfEq (by
     ext n x
     rfl)
-  prodEta := fun _ _ _ _ => SCTModelHelpers.natIsoOfEq (by
+  prodEta _ _ _ _ := SCTModelHelpers.natIsoOfEq (by
     ext n x
     rfl)
   prodUniq := sorry
@@ -752,8 +751,8 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   uncurryFunctor := SCTModelHelpers.uncurryFunctor
   curryBeta := SCTModelHelpers.curryBeta
   curryEta := SCTModelHelpers.curryEta
-  curryNatIso := fun Γ C D _ _ α => SCTModelHelpers.curryNatIso Γ C D α
-  uncurryNatIso := fun Γ C D _ _ α => SCTModelHelpers.uncurryNatIso Γ C D α
+  curryNatIso Γ C D _ _ α := SCTModelHelpers.curryNatIso Γ C D α
+  uncurryNatIso Γ C D _ _ α := SCTModelHelpers.uncurryNatIso Γ C D α
   curryUncurryForward := SCTModelHelpers.curryUncurryForward
   curryUncurryBackward := SCTModelHelpers.curryUncurryBackward
   curryUncurryUnit := SCTModelHelpers.curryUncurryUnit
@@ -808,8 +807,8 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   invertibleMorphismLeftUnit := sorry
   invertibleMorphismRightUnit := sorry
   rezkEquiv := sorry
-  groupoidOfAnima := fun A => ULift.up (PLift.up A.property)
-  animaOfGroupoid := fun C g => ⟨C.obj, g.down.down⟩
+  groupoidOfAnima A := ULift.up (PLift.up A.property)
+  animaOfGroupoid C g := ⟨C.obj, g.down.down⟩
   groupoidConstArrowFunctor := sorry
   groupoidIntervalEquiv := sorry
   animaOfGroupoidEquiv := sorry
@@ -985,8 +984,8 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   /- Missing: this cluster needs the universal cocartesian fibration and directed univalence;
   see Cisinski--Nguyen, `The universal coCartesian fibration`, §§7--8. -/
   directed_univalence_classifies := sorry
-  isAnimaCat := fun C => PLift.{0} (SSet.KanComplex C.obj)
-  anima_cat_is_anima := fun A => PLift.up A.property
+  isAnimaCat C := PLift.{0} (SSet.KanComplex C.obj)
+  anima_cat_is_anima A := PLift.up A.property
   equiv_to_anima_is_anima := sorry
   sigma_anima_indexed_is_anima := sorry
   containsIdentities := sorry
