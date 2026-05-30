@@ -8,6 +8,7 @@ module
 public import InternalMath.SCT.Spec
 public import Mathlib.AlgebraicTopology.Quasicategory.Nerve
 public import Mathlib.AlgebraicTopology.Quasicategory.StrictBicategory
+public import Mathlib.AlgebraicTopology.SimplicialSet.FiniteColimits
 public import Mathlib.CategoryTheory.Category.Preorder
 public import Mathlib.CategoryTheory.Category.ULift
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.Cospan
@@ -59,6 +60,36 @@ public lemma Quasicategory.ofIso {X Y : SSet.{u}} (e : X ≅ Y) [Quasicategory Y
 nerve. -/
 public instance stdSimplex.quasicategory (n : ℕ) : Quasicategory (Δ[n] : SSet.{u}) :=
   Quasicategory.ofIso (stdSimplex.isoNerve n)
+
+namespace Subcomplex
+
+/-- The `i`th vertex of a simplex. -/
+def vertex (X : SSet.{u}) {m : SimplexCategoryᵒᵖ} (x : X.obj m)
+    (i : Fin (m.unop.len + 1)) : X _⦋0⦌ :=
+  X.map (SimplexCategory.const ⦋0⦌ m.unop i).op x
+
+@[simp]
+lemma vertex_map (X : SSet.{u}) {m n : SimplexCategoryᵒᵖ} (f : m ⟶ n)
+    (x : X.obj m) (i : Fin (n.unop.len + 1)) :
+    vertex X (X.map f x) i = vertex X x (f.unop.toOrderHom i) := by
+  dsimp [vertex]
+  rw [← Functor.map_comp_apply]
+  rfl
+
+/-- The full subcomplex spanned by a predicate on vertices. -/
+def fullOnVertices (X : SSet.{u}) (P : X _⦋0⦌ → Prop) : X.Subcomplex where
+  obj m := {x | ∀ i : Fin (m.unop.len + 1), P (vertex X x i)}
+  map {m n} f x hx i := by
+    rw [vertex_map]
+    exact hx _
+
+@[simp]
+lemma mem_fullOnVertices_iff {X : SSet.{u}} {P : X _⦋0⦌ → Prop}
+    {m : SimplexCategoryᵒᵖ} {x : X.obj m} :
+    x ∈ (fullOnVertices X P).obj m ↔ ∀ i, P (vertex X x i) :=
+  Iff.rfl
+
+end Subcomplex
 
 end SSet
 
@@ -146,6 +177,26 @@ def intervalVertex (i : Fin 2) : animaCat terminalAnima ⟶ intervalQCat :=
   ObjectProperty.homMk (P := SSet.Quasicategory)
     (SSet.yonedaEquiv.symm (CategoryTheory.ComposableArrows.mk₀ (ULift.up i)))
 
+/-- A vertex of a bundled quasicategory as a map from the terminal anima. -/
+def qcatPoint (C : SSet.QCat.{u}) (x : C.obj _⦋0⦌) : animaCat terminalAnima ⟶ C :=
+  ObjectProperty.homMk (P := SSet.Quasicategory) (SSet.yonedaEquiv.symm x)
+
+/-- The nerve of a finite ordinal as a bundled quasicategory. -/
+def finiteOrdinalQCat (n : ℕ) : SSet.QCat.{u} :=
+  qcatNerve (ULift.{u} (Fin n))
+
+/-- The `[2]` shape, modeled as the nerve of the finite ordinal with three objects. -/
+def simplex2QCat : SSet.QCat.{u} :=
+  finiteOrdinalQCat 3
+
+/-- The square shape, modeled as the nerve of the product poset `[1] × [1]`. -/
+def squareQCat : SSet.QCat.{u} :=
+  qcatNerve (ULift.{u} (Fin 2 × Fin 2))
+
+/-- A constant endomap of the walking arrow. -/
+def intervalConst (i : Fin 2) : intervalQCat.{u} ⟶ intervalQCat.{u} :=
+  qcatNerveMap ((Functor.const (ULift.{u} (Fin 2))).obj (ULift.up i))
+
 /-- Pullback-indexing shape for cospans, modeled by the ordinary walking cospan nerve. -/
 public def pullbackShapeQCat : SSet.QCat.{u} :=
   qcatNerve (CategoryTheory.AsSmall.{u} Limits.WalkingCospan)
@@ -175,6 +226,69 @@ def qcatProdPair (T C D : SSet.QCat.{u}) (F : T ⟶ C) (G : T ⟶ D) :
     T ⟶ qcatProduct C D :=
   ObjectProperty.homMk (P := SSet.Quasicategory)
     (CartesianMonoidalCategory.lift F.hom G.hom)
+
+/-- If a simplicial set has no vertices, then it has no simplices in any degree. -/
+@[reducible]
+def isEmptyObjOfNoVertices (X : SSet.{u}) [IsEmpty (X _⦋0⦌)] (m : SimplexCategoryᵒᵖ) :
+    IsEmpty (X.obj m) where
+  false x := isEmptyElim (X.map (SimplexCategory.const ⦋0⦌ m.unop 0).op x)
+
+/-- If a simplicial set has no vertices, then its type of `n`-simplices is empty. -/
+@[reducible]
+def isEmptySimplexOfNoVertices (X : SSet.{u}) [IsEmpty (X _⦋0⦌)] (n : ℕ) :
+    IsEmpty (X _⦋n⦌) :=
+  isEmptyObjOfNoVertices X _
+
+/-- A map to the empty-nerve quasicategory forces the source to have no vertices. -/
+@[reducible]
+def noVerticesOfMapToInitialQCat (C : SSet.QCat.{u}) (F : C ⟶ initialQCat) :
+    IsEmpty (C.obj _⦋0⦌) where
+  false x := (F.hom.app _ x).obj ⟨0, by simp⟩ |>.down.elim
+
+/-- The empty-nerve quasicategory has no vertices. -/
+@[reducible]
+def noVerticesInitialQCat : IsEmpty (initialQCat.{u}.obj _⦋0⦌) where
+  false x := (x.obj ⟨0, by simp⟩).down.elim
+
+/-- Maps out of a quasicategory with no vertices are unique. -/
+lemma qcatHomExtOfNoVertices {C D : SSet.QCat.{u}} (hC : IsEmpty (C.obj _⦋0⦌))
+    (F G : C ⟶ D) : F = G := by
+  haveI : IsEmpty (C.obj _⦋0⦌) := hC
+  apply ObjectProperty.hom_ext
+  ext m x
+  exact False.elim ((isEmptyObjOfNoVertices C.obj m).false x)
+
+/-- Assumption/local target: binary coproducts of quasicategories are quasicategories.
+
+The expected proof is by connectedness of inner horns: a map from an inner horn to a binary
+simplicial-set coproduct lands in one summand, where it can be filled. The current mathlib
+coproduct API is enough to package the maps below, but this closure theorem is not yet available as
+an imported theorem.
+-/
+lemma quasicategoryCoprod (X Y : SSet.{u}) [SSet.Quasicategory X] [SSet.Quasicategory Y] :
+    SSet.Quasicategory (X ⨿ Y) := by
+  sorry
+
+/-- Binary coproduct of bundled quasicategories, using the simplicial-set coproduct. -/
+noncomputable def qcatCoprod (C D : SSet.QCat.{u}) : SSet.QCat.{u} := by
+  letI : SSet.Quasicategory C.obj := C.property
+  letI : SSet.Quasicategory D.obj := D.property
+  exact ⟨C.obj ⨿ D.obj, quasicategoryCoprod C.obj D.obj⟩
+
+/-- First coproduct injection. -/
+noncomputable def qcatCoprodIn1 (C D : SSet.QCat.{u}) : C ⟶ qcatCoprod C D :=
+  ObjectProperty.homMk (P := SSet.Quasicategory)
+    (Limits.coprod.inl : C.obj ⟶ C.obj ⨿ D.obj)
+
+/-- Second coproduct injection. -/
+noncomputable def qcatCoprodIn2 (C D : SSet.QCat.{u}) : D ⟶ qcatCoprod C D :=
+  ObjectProperty.homMk (P := SSet.Quasicategory)
+    (Limits.coprod.inr : D.obj ⟶ C.obj ⨿ D.obj)
+
+/-- Coproduct case analysis. -/
+noncomputable def qcatCoprodDesc (C D Γ : SSet.QCat.{u}) (F : C ⟶ Γ) (G : D ⟶ Γ) :
+    qcatCoprod C D ⟶ Γ :=
+  ObjectProperty.homMk (P := SSet.Quasicategory) (Limits.coprod.desc F.hom G.hom)
 
 section UpstreamFunctorQuasicategorySkeleton
 
@@ -320,6 +434,77 @@ structure CatEquivData (C D : SSet.QCat.{u}) : Type u where
   unitIso : NatIso C C (forward ≫ backward) (𝟙 C)
   counitIso : NatIso D D (backward ≫ forward) (𝟙 D)
 
+/-- A strict isomorphism of bundled quasicategories induces equivalence data. -/
+def qcatCatEquivOfIso {C D : SSet.QCat.{u}} (e : C ≅ D) : CatEquivData C D where
+  forward := e.hom
+  backward := e.inv
+  unitIso := natIsoOfEq e.hom_inv_id
+  counitIso := natIsoOfEq e.inv_hom_id
+
+/-- A strict functor as a point of the functor quasicategory. -/
+def functorPoint (C D : SSet.QCat.{u}) (F : C ⟶ D) : animaCat terminalAnima ⟶ funCat C D :=
+  qcatPoint (funCat C D) (functorVertex C D F)
+
+/-- The constant-zero endomap of the interval, as a point of `Fun([1],[1])`. -/
+def simplex2Id0 : animaCat terminalAnima ⟶ funCat intervalQCat intervalQCat :=
+  functorPoint intervalQCat intervalQCat (intervalConst 0)
+
+/-- The identity endomap of the interval, as a point of `Fun([1],[1])`. -/
+def simplex2Can : animaCat terminalAnima ⟶ funCat intervalQCat intervalQCat :=
+  functorPoint intervalQCat intervalQCat (𝟙 intervalQCat)
+
+/-- The constant-one endomap of the interval, as a point of `Fun([1],[1])`. -/
+def simplex2Id1 : animaCat terminalAnima ⟶ funCat intervalQCat intervalQCat :=
+  functorPoint intervalQCat intervalQCat (intervalConst 1)
+
+/-- A degenerate zero edge in `Fun([1],[1])`. -/
+def simplex2Deg0 : animaCat terminalAnima ⟶ funCat intervalQCat intervalQCat :=
+  simplex2Id0
+
+/-- A degenerate one edge in `Fun([1],[1])`. -/
+def simplex2Deg1 : animaCat terminalAnima ⟶ funCat intervalQCat intervalQCat :=
+  simplex2Id1
+
+/-- First coproduct β-comparison. -/
+noncomputable def qcatCoprodBeta1 (C D Γ : SSet.QCat.{u}) (F : C ⟶ Γ) (G : D ⟶ Γ) :
+    NatIso C Γ (qcatCoprodIn1 C D ≫ qcatCoprodDesc C D Γ F G) F :=
+  natIsoOfEq (by
+    apply ObjectProperty.hom_ext
+    change (Limits.coprod.inl : C.obj ⟶ C.obj ⨿ D.obj) ≫
+      Limits.coprod.desc F.hom G.hom = F.hom
+    rw [Limits.coprod.inl_desc])
+
+/-- Second coproduct β-comparison. -/
+noncomputable def qcatCoprodBeta2 (C D Γ : SSet.QCat.{u}) (F : C ⟶ Γ) (G : D ⟶ Γ) :
+    NatIso D Γ (qcatCoprodIn2 C D ≫ qcatCoprodDesc C D Γ F G) G :=
+  natIsoOfEq (by
+    apply ObjectProperty.hom_ext
+    change (Limits.coprod.inr : D.obj ⟶ C.obj ⨿ D.obj) ≫
+      Limits.coprod.desc F.hom G.hom = G.hom
+    rw [Limits.coprod.inr_desc])
+
+/-- Coproduct η-comparison. -/
+noncomputable def qcatCoprodEta (C D Γ : SSet.QCat.{u}) (H : qcatCoprod C D ⟶ Γ) :
+    NatIso (qcatCoprod C D) Γ
+      (qcatCoprodDesc C D Γ (qcatCoprodIn1 C D ≫ H) (qcatCoprodIn2 C D ≫ H)) H :=
+  natIsoOfEq (by
+    apply ObjectProperty.hom_ext
+    dsimp [qcatCoprodDesc, qcatCoprodIn1, qcatCoprodIn2]
+    apply Limits.coprod.hom_ext
+    · rw [Limits.coprod.inl_desc]
+      rfl
+    · rw [Limits.coprod.inr_desc]
+      rfl)
+
+/-- Strict initiality of the empty-nerve quasicategory, packaged as equivalence data. -/
+def initialStrict (C : SSet.QCat.{u}) (F : C ⟶ initialQCat) : CatEquivData C initialQCat :=
+  let hC := noVerticesOfMapToInitialQCat C F
+  { forward := F
+    backward := initialMap C
+    unitIso := natIsoOfEq (qcatHomExtOfNoVertices hC (F ≫ initialMap C) (𝟙 C))
+    counitIso := natIsoOfEq
+      (qcatHomExtOfNoVertices noVerticesInitialQCat (initialMap C ≫ F) (𝟙 initialQCat)) }
+
 /-- Precomposition as a functor between functor quasicategories. -/
 def precompFunctor (A B C : SSet.QCat.{u}) (F : A ⟶ B) : funCat B C ⟶ funCat A C :=
   ObjectProperty.homMk (P := SSet.Quasicategory) ((MonoidalClosed.pre F.hom).app C.obj)
@@ -418,7 +603,7 @@ end UpstreamFunctorQuasicategorySkeleton
 
 end SCTModelHelpers
 
-def sctModel.{u} : SCTModel.{u} where
+noncomputable def sctModel.{u} : SCTModel.{u} where
   Anima := ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S)
   SCat := SSet.QCat.{u}
   Functor C D := C ⟶ D
@@ -496,7 +681,7 @@ def sctModel.{u} : SCTModel.{u} where
     apply ObjectProperty.hom_ext
     ext n x
     exact False.elim (x.obj ⟨0, by simp⟩).down.elim)
-  initialStrict := sorry
+  initialStrict := SCTModelHelpers.initialStrict
   prodCat := SCTModelHelpers.qcatProduct
   prodPr1 := SCTModelHelpers.qcatProdPr1
   prodPr2 := SCTModelHelpers.qcatProdPr2
@@ -511,16 +696,13 @@ def sctModel.{u} : SCTModel.{u} where
     ext n x
     rfl)
   prodUniq := sorry
-  /- Missing: coproduct closure for quasicategories should use the disjoint union of simplicial
-  sets together with the fact that inner horns are connected. This is not currently packaged in
-  mathlib. -/
-  coprodCat := sorry
-  coprodIn1 := sorry
-  coprodIn2 := sorry
-  coprodCase := sorry
-  coprodBeta1 := sorry
-  coprodBeta2 := sorry
-  coprodEta := sorry
+  coprodCat := SCTModelHelpers.qcatCoprod
+  coprodIn1 := SCTModelHelpers.qcatCoprodIn1
+  coprodIn2 := SCTModelHelpers.qcatCoprodIn2
+  coprodCase := SCTModelHelpers.qcatCoprodDesc
+  coprodBeta1 := SCTModelHelpers.qcatCoprodBeta1
+  coprodBeta2 := SCTModelHelpers.qcatCoprodBeta2
+  coprodEta := SCTModelHelpers.qcatCoprodEta
   coprodUniq := sorry
   /- Missing: the SCT pullback should be a homotopy/∞-categorical pullback in `Cat_∞`.
   Strict pullbacks of simplicial sets along arbitrary maps do not supply this field. -/
@@ -560,22 +742,22 @@ def sctModel.{u} : SCTModel.{u} where
   intervalOne := SCTModelHelpers.intervalVertex 1
   /- Missing: the low-dimensional face, degeneracy, and endpoint universal-property data below
   should be transported from the usual simplex maps. -/
-  simplex2Id0 := sorry
-  simplex2Can := sorry
-  simplex2Id1 := sorry
+  simplex2Id0 := SCTModelHelpers.simplex2Id0
+  simplex2Can := SCTModelHelpers.simplex2Can
+  simplex2Id1 := SCTModelHelpers.simplex2Id1
   simplex2Face01 := sorry
   simplex2Face12 := sorry
   simplex2Face02 := sorry
-  simplex2Deg0 := sorry
-  simplex2Deg1 := sorry
+  simplex2Deg0 := SCTModelHelpers.simplex2Deg0
+  simplex2Deg1 := SCTModelHelpers.simplex2Deg1
   simplex2Face01Zero := sorry
   simplex2Face01One := sorry
   simplex2Face12Zero := sorry
   simplex2Face12One := sorry
   simplex2Face02Zero := sorry
   simplex2Face02One := sorry
-  simplex2Deg0Beta := sorry
-  simplex2Deg1Beta := sorry
+  simplex2Deg0Beta := SCTModelHelpers.natIsoOfEq rfl
+  simplex2Deg1Beta := SCTModelHelpers.natIsoOfEq rfl
   functorObjectSourceCompat := sorry
   functorObjectTargetCompat := sorry
   natTransObject := sorry
