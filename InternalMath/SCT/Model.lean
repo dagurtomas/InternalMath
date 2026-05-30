@@ -9,6 +9,8 @@ public import InternalMath.SCT.Spec
 public import Mathlib.AlgebraicTopology.Quasicategory.Nerve
 public import Mathlib.AlgebraicTopology.Quasicategory.StrictBicategory
 public import Mathlib.CategoryTheory.Category.Preorder
+public import Mathlib.CategoryTheory.Category.ULift
+public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.Cospan
 
 /-!
 # SCT model file
@@ -34,6 +36,26 @@ open SCT CategoryTheory
 open Simplicial
 open MonoidalCategory CartesianMonoidalCategory
 open scoped SSet.modelCategoryQuillen
+
+namespace SSet
+
+universe u
+
+/-- Quasicategories are invariant under isomorphism of simplicial sets. -/
+public lemma Quasicategory.ofIso {X Y : SSet.{u}} (e : X ≅ Y) [Quasicategory Y] :
+    Quasicategory X where
+  hornFilling' := by
+    intro n i σ₀ h0 hn
+    obtain ⟨σ, hσ⟩ := Quasicategory.hornFilling' (S := Y) (σ₀ ≫ e.hom) h0 hn
+    use σ ≫ e.inv
+    simpa [Category.assoc] using congrArg (fun f => f ≫ e.inv) hσ
+
+/-- Every standard simplex is a quasicategory, via its identification with a finite-ordinal
+nerve. -/
+public instance stdSimplex.quasicategory (n : ℕ) : Quasicategory (Δ[n] : SSet.{u}) :=
+  Quasicategory.ofIso (stdSimplex.isoNerve n)
+
+end SSet
 
 namespace SCTModelHelpers
 
@@ -72,6 +94,15 @@ lemma quasicategoryTensor (X Y : SSet.{u}) [SSet.Quasicategory X] [SSet.Quasicat
     use σ
     ext m z <;> simp [σ, fstXY, sndXY, hX, hY]
 
+/-- Bundle the nerve of an ordinary category as a quasicategory. -/
+public def qcatNerve (C : Type u) [Category.{u} C] : SSet.QCat.{u} :=
+  ⟨CategoryTheory.nerve C, inferInstance⟩
+
+/-- Bundle the map on nerves induced by an ordinary functor. -/
+public def qcatNerveMap {C D : Type u} [Category.{u} C] [Category.{u} D] (F : C ⥤ D) :
+    qcatNerve C ⟶ qcatNerve D :=
+  ObjectProperty.homMk (P := SSet.Quasicategory) (CategoryTheory.nerveMap F)
+
 /-- Interpret an anima, bundled as a Kan complex, as its underlying quasicategory. -/
 def animaCat (A : ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S)) :
     SSet.QCat.{u} := by
@@ -89,7 +120,7 @@ def terminalProjection (C : SSet.QCat.{u}) : C ⟶ animaCat terminalAnima :=
 
 /-- The initial quasicategory, realized as the nerve of the empty category. -/
 def initialQCat : SSet.QCat.{u} :=
-  ⟨CategoryTheory.nerve (ULift.{u} Empty), inferInstance⟩
+  qcatNerve (ULift.{u} Empty)
 
 /-- The unique map from the initial quasicategory to any quasicategory. -/
 def initialMap (C : SSet.QCat.{u}) : initialQCat ⟶ C :=
@@ -103,12 +134,20 @@ def initialMap (C : SSet.QCat.{u}) : initialQCat ⟶ C :=
 
 /-- The walking arrow, modeled as the nerve of the linearly ordered category with two objects. -/
 def intervalQCat : SSet.QCat.{u} :=
-  ⟨CategoryTheory.nerve (ULift.{u} (Fin 2)), inferInstance⟩
+  qcatNerve (ULift.{u} (Fin 2))
 
 /-- A vertex of the walking arrow as a map from `Δ[0]`. -/
 def intervalVertex (i : Fin 2) : animaCat terminalAnima ⟶ intervalQCat :=
   ObjectProperty.homMk (P := SSet.Quasicategory)
     (SSet.yonedaEquiv.symm (CategoryTheory.ComposableArrows.mk₀ (ULift.up i)))
+
+/-- Pullback-indexing shape for cospans, modeled by the ordinary walking cospan nerve. -/
+public def pullbackShapeQCat : SSet.QCat.{u} :=
+  qcatNerve (CategoryTheory.AsSmall.{u} Limits.WalkingCospan)
+
+/-- Pushout-indexing shape for spans, modeled by the ordinary walking span nerve. -/
+public def pushoutShapeQCat : SSet.QCat.{u} :=
+  qcatNerve (CategoryTheory.AsSmall.{u} Limits.WalkingSpan)
 
 /-- Binary product of bundled quasicategories, using the cartesian product of simplicial sets. -/
 def qcatProduct (C D : SSet.QCat.{u}) : SSet.QCat.{u} := by
@@ -447,8 +486,8 @@ def sctModel.{u} : SCTModel.{u} where
   universal_right_adjoint_section := sorry
   universalRightSectionBase := sorry
   weakenContextFibration := sorry
-  pullbackShapeCat := sorry
-  pushoutShapeCat := sorry
+  pullbackShapeCat := SCTModelHelpers.pullbackShapeQCat
+  pushoutShapeCat := SCTModelHelpers.pushoutShapeQCat
   locallyCocartesianOfCocartesian := sorry
   locallyCartesianOfCartesian := sorry
   coneCat := sorry
