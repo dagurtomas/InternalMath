@@ -176,13 +176,22 @@ def qcatProdPair (T C D : SSet.QCat.{u}) (F : T ⟶ C) (G : T ⟶ D) :
   ObjectProperty.homMk (P := SSet.Quasicategory)
     (CartesianMonoidalCategory.lift F.hom G.hom)
 
+section UpstreamFunctorQuasicategorySkeleton
+
 /-!
-The following block is a local skeleton for the functor-quasicategory and equivalence-edge API.
-It follows the route used in `emilyriehl/infinity-cosmos` and mathlib PR #35287: functor objects
-are simplicial internal homs, natural transformations are edges in those internal homs, and natural
-isomorphisms are equivalence/invertible edges. The closure theorem for internal homs of
-quasicategories and several compatibility results are currently admitted here so that the SCT model
-can use the right semantic shape before that material lands in mathlib.
+## Upstream functor-quasicategory skeleton
+
+This section is a temporary adapter for functor quasicategories, equivalence edges, natural
+isomorphisms, and the associated curry/uncurry API. It follows the route used in
+`emilyriehl/infinity-cosmos` and mathlib PR #35287: functor objects are simplicial internal homs,
+natural transformations are edges in those internal homs, and natural isomorphisms are
+invertible/equivalence edges.
+
+The `sorry`s in this section mark upstream API assumptions, not local project proof obligations.
+Contributors should not spend effort closing these local `sorry`s directly unless they are replacing
+this adapter by the corresponding mathlib/infinity-cosmos definitions and theorems. In particular,
+the cartesian-closedness theorem for quasicategories and the compatibility results for equivalence
+edges should come from upstream once that material lands in mathlib.
 -/
 
 /-- The cartesian symmetry map for the pointwise product of simplicial sets. -/
@@ -404,6 +413,8 @@ def intervalFunctorEdge (C : SSet.QCat.{u}) (f : intervalQCat ⟶ C) :
 quasicategory. -/
 abbrev InvertibleMorphismData (C : SSet.QCat.{u}) (f : intervalQCat ⟶ C) : Type u :=
   EdgeIsIso (intervalFunctorEdge C f)
+
+end UpstreamFunctorQuasicategorySkeleton
 
 end SCTModelHelpers
 
