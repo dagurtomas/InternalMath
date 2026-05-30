@@ -47,6 +47,33 @@ namespace SSet
 
 universe u
 
+instance (C : QCat.{u}) : Quasicategory C.obj := C.property
+
+/-- `Kan` is the category of Kan complexes, as a full subcategory of simplicial sets. -/
+abbrev Kan := ObjectProperty.FullSubcategory KanComplex
+
+instance (A : Kan.{u}) : KanComplex A.obj := A.property
+
+namespace Kan
+
+/-- Bundle a Kan complex as an object of `SSet.Kan`. -/
+def of (S : SSet.{u}) [KanComplex S] : Kan.{u} :=
+  ⟨S, inferInstance⟩
+
+@[simp]
+lemma of_obj (S : SSet.{u}) [KanComplex S] : (of S).obj = S :=
+  rfl
+
+/-- Regard a Kan complex as a quasicategory. -/
+def toQCat (A : Kan.{u}) : QCat.{u} :=
+  ⟨A.obj, inferInstance⟩
+
+@[simp]
+lemma toQCat_obj (A : Kan.{u}) : (toQCat A).obj = A.obj :=
+  rfl
+
+end Kan
+
 /-- Quasicategories are invariant under isomorphism of simplicial sets. -/
 public lemma Quasicategory.ofIso {X Y : SSet.{u}} (e : X ≅ Y) [Quasicategory Y] :
     Quasicategory X where
@@ -140,13 +167,11 @@ public def qcatNerveMap {C D : Type u} [Category.{u} C] [Category.{u} D] (F : C 
   ObjectProperty.homMk (P := SSet.Quasicategory) (CategoryTheory.nerveMap F)
 
 /-- Interpret an anima, bundled as a Kan complex, as its underlying quasicategory. -/
-def animaCat (A : ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S)) :
-    SSet.QCat.{u} := by
-  letI : SSet.KanComplex A.obj := A.property
-  exact ⟨A.obj, inferInstance⟩
+def animaCat (A : SSet.Kan.{u}) : SSet.QCat.{u} :=
+  SSet.Kan.toQCat A
 
 /-- The terminal anima is `Δ[0]`. -/
-def terminalAnima : ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S) :=
+def terminalAnima : SSet.Kan.{u} :=
   ⟨Δ[0], kanComplexStdSimplexZero⟩
 
 /-- The unique map from a quasicategory to the terminal anima. -/
@@ -206,10 +231,8 @@ public def pushoutShapeQCat : SSet.QCat.{u} :=
   qcatNerve (CategoryTheory.AsSmall.{u} Limits.WalkingSpan)
 
 /-- Binary product of bundled quasicategories, using the cartesian product of simplicial sets. -/
-def qcatProduct (C D : SSet.QCat.{u}) : SSet.QCat.{u} := by
-  letI : SSet.Quasicategory C.obj := C.property
-  letI : SSet.Quasicategory D.obj := D.property
-  exact ⟨C.obj ⊗ D.obj, quasicategoryTensor C.obj D.obj⟩
+def qcatProduct (C D : SSet.QCat.{u}) : SSet.QCat.{u} :=
+  ⟨C.obj ⊗ D.obj, quasicategoryTensor C.obj D.obj⟩
 
 /-- First projection from the product quasicategory. -/
 def qcatProdPr1 (C D : SSet.QCat.{u}) : qcatProduct C D ⟶ C :=
@@ -270,10 +293,8 @@ lemma quasicategoryCoprod (X Y : SSet.{u}) [SSet.Quasicategory X] [SSet.Quasicat
   sorry
 
 /-- Binary coproduct of bundled quasicategories, using the simplicial-set coproduct. -/
-noncomputable def qcatCoprod (C D : SSet.QCat.{u}) : SSet.QCat.{u} := by
-  letI : SSet.Quasicategory C.obj := C.property
-  letI : SSet.Quasicategory D.obj := D.property
-  exact ⟨C.obj ⨿ D.obj, quasicategoryCoprod C.obj D.obj⟩
+noncomputable def qcatCoprod (C D : SSet.QCat.{u}) : SSet.QCat.{u} :=
+  ⟨C.obj ⨿ D.obj, quasicategoryCoprod C.obj D.obj⟩
 
 /-- First coproduct injection. -/
 noncomputable def qcatCoprodIn1 (C D : SSet.QCat.{u}) : C ⟶ qcatCoprod C D :=
@@ -604,7 +625,7 @@ end UpstreamFunctorQuasicategorySkeleton
 end SCTModelHelpers
 
 noncomputable def sctModel.{u} : SCTModel.{u} where
-  Anima := ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S)
+  Anima := SSet.Kan.{u}
   SCat := SSet.QCat.{u}
   Functor C D := C ⟶ D
   NatTrans := SCTModelHelpers.NatTrans
