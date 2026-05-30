@@ -706,15 +706,9 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   prodPr1 := SCTModelHelpers.qcatProdPr1
   prodPr2 := SCTModelHelpers.qcatProdPr2
   prodPair := SCTModelHelpers.qcatProdPair
-  prodBeta1 _ _ _ _ _ := SCTModelHelpers.natIsoOfEq (by
-    ext n x
-    rfl)
-  prodBeta2 _ _ _ _ _ := SCTModelHelpers.natIsoOfEq (by
-    ext n x
-    rfl)
-  prodEta _ _ _ _ := SCTModelHelpers.natIsoOfEq (by
-    ext n x
-    rfl)
+  prodBeta1 _ _ _ _ _ := SCTModelHelpers.natIsoOfEq rfl
+  prodBeta2 _ _ _ _ _ := SCTModelHelpers.natIsoOfEq rfl
+  prodEta _ _ _ _ := SCTModelHelpers.natIsoOfEq rfl
   prodUniq := sorry
   coprodCat := SCTModelHelpers.qcatCoprod
   coprodIn1 := SCTModelHelpers.qcatCoprodIn1
