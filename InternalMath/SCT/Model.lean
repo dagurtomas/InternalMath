@@ -23,9 +23,14 @@ The current pass fills the small amount of structure that is already directly av
 mathlib: Kan complexes embed in quasicategories, `Δ[0]` is a Kan complex, identities and
 composition are the ordinary maps in the full subcategory of quasicategories, and binary products of
 quasicategories are quasicategories. The remaining `sorry`s are genuine semantic gaps in the
-current mathlib/SCT interface: natural isomorphisms should be equivalences in functor
+current mathlib/SCT interface: natural isomorphisms are equivalence edges in functor
 quasicategories, pullbacks should be homotopy/∞-categorical pullbacks, and the fibration/universe
 fields require the universal cocartesian fibration and directed-univalence machinery.
+
+For functor quasicategories and natural isomorphisms, this file now includes a local skeleton for
+API that is being developed in the `emilyriehl/infinity-cosmos` project and mathlib PR #35287. The
+skeleton uses the existing simplicial internal hom, assumes/sorries quasicategory closure, and
+models natural isomorphisms as invertible/equivalence edges in those functor quasicategories.
 -/
 
 @[expose] public section
@@ -171,22 +176,248 @@ def qcatProdPair (T C D : SSet.QCat.{u}) (F : T ⟶ C) (G : T ⟶ D) :
   ObjectProperty.homMk (P := SSet.Quasicategory)
     (CartesianMonoidalCategory.lift F.hom G.hom)
 
+/-!
+The following block is a local skeleton for the functor-quasicategory and equivalence-edge API.
+It follows the route used in `emilyriehl/infinity-cosmos` and mathlib PR #35287: functor objects
+are simplicial internal homs, natural transformations are edges in those internal homs, and natural
+isomorphisms are equivalence/invertible edges. The closure theorem for internal homs of
+quasicategories and several compatibility results are currently admitted here so that the SCT model
+can use the right semantic shape before that material lands in mathlib.
+-/
+
+/-- The cartesian symmetry map for the pointwise product of simplicial sets. -/
+def swapTensor (X Y : SSet.{u}) : X ⊗ Y ⟶ Y ⊗ X :=
+  CartesianMonoidalCategory.lift
+    (SemiCartesianMonoidalCategory.snd X Y)
+    (SemiCartesianMonoidalCategory.fst X Y)
+
+/-- Assumption/API target: the simplicial internal hom `D^C` is a quasicategory when `C` and `D`
+are quasicategories.
+
+This is the cartesian-closedness theorem for quasicategories. It is expected to be replaced by the
+mathlib/infinity-cosmos API once available.
+-/
+lemma quasicategoryInternalHom (C D : SSet.QCat.{u}) :
+    SSet.Quasicategory ((ihom C.obj).obj D.obj) := by
+  sorry
+
+/-- The functor quasicategory `Fun(C,D)`, realized as the simplicial internal hom. -/
+def funCat (C D : SSet.QCat.{u}) : SSet.QCat.{u} :=
+  ⟨(ihom C.obj).obj D.obj, quasicategoryInternalHom C D⟩
+
+/-- A strict functor `C ⟶ D` as a vertex of the functor quasicategory `Fun(C,D)`. -/
+def functorVertex (C D : SSet.QCat.{u}) (F : C ⟶ D) : (funCat C D).obj _⦋0⦌ :=
+  SSet.unitHomEquiv (funCat C D).obj
+    (MonoidalClosed.curry ((ρ_ C.obj).hom ≫ F.hom))
+
+/-- Natural transformations are edges in the functor quasicategory. -/
+abbrev NatTrans (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
+  SSet.Edge (functorVertex C D F) (functorVertex C D G)
+
+/-- Invertible/equivalence-edge data for an edge in a simplicial set.
+
+This mirrors the `Edge.IsIso`/`Edge.InvStruct` API from `emilyriehl/infinity-cosmos` and mathlib
+PR #35287: an inverse edge together with two `2`-simplices witnessing the two composites as
+identity edges. In a quasicategory this is one standard presentation of an equivalence edge.
+-/
+structure EdgeIsIso {X : SSet.{u}} {x₀ x₁ : X _⦋0⦌} (e : SSet.Edge x₀ x₁) : Type u where
+  inv : SSet.Edge x₁ x₀
+  homInvId : SSet.Edge.CompStruct e inv (SSet.Edge.id x₀)
+  invHomId : SSet.Edge.CompStruct inv e (SSet.Edge.id x₁)
+
+namespace EdgeIsIso
+
+/-- The identity edge is invertible. -/
+def id {X : SSet.{u}} (x : X _⦋0⦌) : EdgeIsIso (SSet.Edge.id x) where
+  inv := SSet.Edge.id x
+  homInvId := SSet.Edge.CompStruct.idComp (SSet.Edge.id x)
+  invHomId := SSet.Edge.CompStruct.idComp (SSet.Edge.id x)
+
+/-- Invertibility is symmetric. -/
+def symm {X : SSet.{u}} {x₀ x₁ : X _⦋0⦌} {e : SSet.Edge x₀ x₁}
+    (I : EdgeIsIso e) : EdgeIsIso I.inv where
+  inv := e
+  homInvId := I.invHomId
+  invHomId := I.homInvId
+
+/-- Simplicial maps preserve invertible edges. -/
+def map {X Y : SSet.{u}} {x₀ x₁ : X _⦋0⦌} {e : SSet.Edge x₀ x₁}
+    (I : EdgeIsIso e) (f : X ⟶ Y) : EdgeIsIso (e.map f) where
+  inv := I.inv.map f
+  homInvId := by simpa using I.homInvId.map f
+  invHomId := by simpa using I.invHomId.map f
+
+end EdgeIsIso
+
+/-- Natural-isomorphism data in the model: an edge in `Fun(C,D)` which is an equivalence edge. -/
+abbrev NatIso (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
+  (α : NatTrans C D F G) × EdgeIsIso α
+
+/-- The identity natural isomorphism. -/
+def idNatIso (C D : SSet.QCat.{u}) (F : C ⟶ D) : NatIso C D F F :=
+  ⟨SSet.Edge.id (functorVertex C D F), EdgeIsIso.id _⟩
+
+/-- Transport a natural isomorphism across equality of strict functors. -/
+def natIsoOfEq {C D : SSet.QCat.{u}} {F G : C ⟶ D} (h : F = G) : NatIso C D F G := by
+  subst h
+  exact idNatIso C D F
+
+/-- Assumption/API target: compose natural transformations as edges in the functor
+quasicategory. -/
+def compNatTrans {C D : SSet.QCat.{u}} {F G H : C ⟶ D}
+    (α : NatTrans C D F G) (β : NatTrans C D G H) : NatTrans C D F H := by
+  sorry
+
+/-- Assumption/API target: equivalence edges in a quasicategory are closed under composition. -/
+def compEdgeIsIso {C D : SSet.QCat.{u}} {F G H : C ⟶ D}
+    {α : NatTrans C D F G} {β : NatTrans C D G H}
+    (hα : EdgeIsIso α) (hβ : EdgeIsIso β) : EdgeIsIso (compNatTrans α β) := by
+  sorry
+
+/-- Vertical composition of natural isomorphisms. -/
+def compNatIso (C D : SSet.QCat.{u}) {F G H : C ⟶ D}
+    (α : NatIso C D F G) (β : NatIso C D G H) : NatIso C D F H :=
+  ⟨compNatTrans α.1 β.1, compEdgeIsIso α.2 β.2⟩
+
+/-- Inverse of a natural isomorphism. -/
+def invNatIso (C D : SSet.QCat.{u}) {F G : C ⟶ D}
+    (α : NatIso C D F G) : NatIso C D G F :=
+  ⟨α.2.inv, α.2.symm⟩
+
+/-- Assumption/API target: pre-whiskering preserves equivalence edges in functor
+quasicategories, with the expected endpoint compatibility. -/
+def preWhiskerNatIso (B C D : SSet.QCat.{u}) (K : B ⟶ C) {F G : C ⟶ D}
+    (α : NatIso C D F G) : NatIso B D (K ≫ F) (K ≫ G) := by
+  sorry
+
+/-- Assumption/API target: post-whiskering preserves equivalence edges in functor
+quasicategories, with the expected endpoint compatibility. -/
+def postWhiskerNatIso (B C D : SSet.QCat.{u}) {F G : B ⟶ C} (K : C ⟶ D)
+    (α : NatIso B C F G) : NatIso B D (F ≫ K) (G ≫ K) := by
+  sorry
+
+/-- Horizontal composition of natural isomorphisms. -/
+def horizCompNatIso (B C D : SSet.QCat.{u}) {F G : B ⟶ C} {H K : C ⟶ D}
+    (α : NatIso B C F G) (β : NatIso C D H K) : NatIso B D (F ≫ H) (G ≫ K) := by
+  sorry
+
+/-- Equivalence of quasicategories as forward/backward functors with natural-isomorphism unit and
+counit. Once the upstream equivalence-edge API is available, this package should become routine
+structure built from `NatIso`.
+-/
+structure CatEquivData (C D : SSet.QCat.{u}) : Type u where
+  forward : C ⟶ D
+  backward : D ⟶ C
+  unitIso : NatIso C C (forward ≫ backward) (𝟙 C)
+  counitIso : NatIso D D (backward ≫ forward) (𝟙 D)
+
+/-- Precomposition as a functor between functor quasicategories. -/
+def precompFunctor (A B C : SSet.QCat.{u}) (F : A ⟶ B) : funCat B C ⟶ funCat A C :=
+  ObjectProperty.homMk (P := SSet.Quasicategory) ((MonoidalClosed.pre F.hom).app C.obj)
+
+/-- Postcomposition as a functor between functor quasicategories. -/
+def postcompFunctor (A B C : SSet.QCat.{u}) (F : B ⟶ C) : funCat A B ⟶ funCat A C :=
+  ObjectProperty.homMk (P := SSet.Quasicategory) ((ihom A.obj).map F.hom)
+
+/-- Evaluation `Fun(C,D) × C ⟶ D`. -/
+def evalFunctor (C D : SSet.QCat.{u}) : qcatProduct (funCat C D) C ⟶ D :=
+  ObjectProperty.homMk (P := SSet.Quasicategory)
+    (swapTensor (funCat C D).obj C.obj ≫ (ihom.ev C.obj).app D.obj)
+
+/-- Currying for maps `Γ × C ⟶ D`. -/
+def curryFunctor (Γ C D : SSet.QCat.{u}) (F : qcatProduct Γ C ⟶ D) : Γ ⟶ funCat C D :=
+  ObjectProperty.homMk (P := SSet.Quasicategory)
+    (MonoidalClosed.curry (swapTensor C.obj Γ.obj ≫ F.hom))
+
+/-- Uncurrying for maps `Γ ⟶ Fun(C,D)`. -/
+def uncurryFunctor (Γ C D : SSet.QCat.{u})
+    (F : Γ ⟶ funCat C D) : qcatProduct Γ C ⟶ D :=
+  ObjectProperty.homMk (P := SSet.Quasicategory)
+    (swapTensor Γ.obj C.obj ≫ MonoidalClosed.uncurry F.hom)
+
+/-- Assumption/API target: currying followed by uncurrying agrees up to natural isomorphism. -/
+def curryBeta (Γ C D : SSet.QCat.{u}) (F : qcatProduct Γ C ⟶ D) :
+    NatIso (qcatProduct Γ C) D (uncurryFunctor Γ C D (curryFunctor Γ C D F)) F := by
+  sorry
+
+/-- Assumption/API target: uncurrying followed by currying agrees up to natural isomorphism. -/
+def curryEta (Γ C D : SSet.QCat.{u}) (F : Γ ⟶ funCat C D) :
+    NatIso Γ (funCat C D) (curryFunctor Γ C D (uncurryFunctor Γ C D F)) F := by
+  sorry
+
+/-- Assumption/API target: currying preserves natural isomorphisms. -/
+def curryNatIso (Γ C D : SSet.QCat.{u}) {F G : qcatProduct Γ C ⟶ D}
+    (α : NatIso (qcatProduct Γ C) D F G) :
+    NatIso Γ (funCat C D) (curryFunctor Γ C D F) (curryFunctor Γ C D G) := by
+  sorry
+
+/-- Assumption/API target: uncurrying preserves natural isomorphisms. -/
+def uncurryNatIso (Γ C D : SSet.QCat.{u}) {F G : Γ ⟶ funCat C D}
+    (α : NatIso Γ (funCat C D) F G) :
+    NatIso (qcatProduct Γ C) D (uncurryFunctor Γ C D F) (uncurryFunctor Γ C D G) := by
+  sorry
+
+/-- Assumption/API target: the forward functor in the curry/uncurry equivalence. -/
+def curryUncurryForward (Γ C D : SSet.QCat.{u}) :
+    funCat Γ (funCat C D) ⟶ funCat (qcatProduct Γ C) D := by
+  sorry
+
+/-- Assumption/API target: the backward functor in the curry/uncurry equivalence. -/
+def curryUncurryBackward (Γ C D : SSet.QCat.{u}) :
+    funCat (qcatProduct Γ C) D ⟶ funCat Γ (funCat C D) := by
+  sorry
+
+/-- Assumption/API target: the unit for the curry/uncurry equivalence. -/
+def curryUncurryUnit (Γ C D : SSet.QCat.{u}) :
+    NatIso (funCat Γ (funCat C D)) (funCat Γ (funCat C D))
+      (curryUncurryForward Γ C D ≫ curryUncurryBackward Γ C D) (𝟙 _) := by
+  sorry
+
+/-- Assumption/API target: the counit for the curry/uncurry equivalence. -/
+def curryUncurryCounit (Γ C D : SSet.QCat.{u}) :
+    NatIso (funCat (qcatProduct Γ C) D) (funCat (qcatProduct Γ C) D)
+      (curryUncurryBackward Γ C D ≫ curryUncurryForward Γ C D) (𝟙 _) := by
+  sorry
+
+/-- The source vertex of the walking-arrow quasicategory. -/
+def intervalZeroSimplex : intervalQCat.{u}.obj _⦋0⦌ :=
+  CategoryTheory.ComposableArrows.mk₀ (ULift.up (0 : Fin 2))
+
+/-- The target vertex of the walking-arrow quasicategory. -/
+def intervalOneSimplex : intervalQCat.{u}.obj _⦋0⦌ :=
+  CategoryTheory.ComposableArrows.mk₀ (ULift.up (1 : Fin 2))
+
+/-- The nondegenerate edge in the walking-arrow quasicategory. -/
+def intervalEdge : SSet.Edge intervalZeroSimplex.{u} intervalOneSimplex.{u} where
+  edge := CategoryTheory.ComposableArrows.mk₁
+    (CategoryTheory.homOfLE
+      (show (ULift.up (0 : Fin 2) : ULift.{u} (Fin 2)) ≤ ULift.up 1 by decide))
+  src_eq := CategoryTheory.ComposableArrows.ext₀ rfl
+  tgt_eq := CategoryTheory.ComposableArrows.ext₀ rfl
+
+/-- The edge of `C` represented by an interval-shaped functor `Δ[1] ⟶ C`. -/
+def intervalFunctorEdge (C : SSet.QCat.{u}) (f : intervalQCat ⟶ C) :
+    SSet.Edge (f.hom.app _ intervalZeroSimplex) (f.hom.app _ intervalOneSimplex) :=
+  intervalEdge.map f.hom
+
+/-- Invertible interval-shaped morphisms are represented by invertible edges in the target
+quasicategory. -/
+abbrev InvertibleMorphismData (C : SSet.QCat.{u}) (f : intervalQCat ⟶ C) : Type u :=
+  EdgeIsIso (intervalFunctorEdge C f)
+
 end SCTModelHelpers
 
 def sctModel.{u} : SCTModel.{u} where
   Anima := ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S)
   SCat := SSet.QCat.{u}
   Functor C D := C ⟶ D
-  /- Missing: mathlib does not yet provide the functor-quasicategory/core package needed here.
-  The intended interpretation is an edge in the functor quasicategory, with natural isomorphisms
-  given by equivalence edges. -/
-  NatTrans := sorry
-  ObjectwiseNatIsoData := sorry
-  /- Missing: this should be equivalence in the ∞-category of quasicategories, not strict
-  isomorphism of simplicial sets. -/
-  CatEquiv := sorry
+  NatTrans := SCTModelHelpers.NatTrans
+  /- This is equivalence-edge data in `Fun(C,D)`. The objectwise interpretation is the theorem
+  supplied by `objectwiseNatIsoComponent` below. -/
+  ObjectwiseNatIsoData := fun _ _ _ _ α => SCTModelHelpers.EdgeIsIso α
+  CatEquiv := SCTModelHelpers.CatEquivData
   AnimaIndexedCat := sorry
-  InvertibleMorphismData := sorry
+  InvertibleMorphismData := SCTModelHelpers.InvertibleMorphismData
   GroupoidWitness := fun C => ULift.{u} (PLift (SSet.KanComplex C.obj))
   ExponentiableFunctor := sorry
   ContextCat := sorry
@@ -229,37 +460,45 @@ def sctModel.{u} : SCTModel.{u} where
   sigmaAnimaIndexedProjection := sorry
   idFunctor := fun C => 𝟙 C
   compFunctor := fun _ _ _ F G => F ≫ G
-  idNatIso := sorry
-  compNatIso := sorry
-  invNatIso := sorry
-  leftUnitor := sorry
-  rightUnitor := sorry
-  assocFunctor := sorry
-  preWhiskerNatIso := sorry
-  postWhiskerNatIso := sorry
-  horizCompNatIso := sorry
-  catEquivOfData := sorry
-  catEquivForward := sorry
-  catEquivBackward := sorry
-  catEquivUnit := sorry
-  catEquivCounit := sorry
+  idNatIso := SCTModelHelpers.idNatIso
+  compNatIso := fun C D _ _ _ α β => SCTModelHelpers.compNatIso C D α β
+  invNatIso := fun C D _ _ α => SCTModelHelpers.invNatIso C D α
+  leftUnitor := fun _ _ _ => SCTModelHelpers.natIsoOfEq (by simp)
+  rightUnitor := fun _ _ _ => SCTModelHelpers.natIsoOfEq (by simp)
+  assocFunctor := fun _ _ _ _ _ _ _ => SCTModelHelpers.natIsoOfEq (by simp [Category.assoc])
+  preWhiskerNatIso := fun B C D K _ _ α => SCTModelHelpers.preWhiskerNatIso B C D K α
+  postWhiskerNatIso := fun B C D _ _ K α => SCTModelHelpers.postWhiskerNatIso B C D K α
+  horizCompNatIso := fun B C D _ _ _ _ α β => SCTModelHelpers.horizCompNatIso B C D α β
+  catEquivOfData := fun _ _ F G η ε => ⟨F, G, η, ε⟩
+  catEquivForward := fun _ _ e => e.forward
+  catEquivBackward := fun _ _ e => e.backward
+  catEquivUnit := fun _ _ e => e.unitIso
+  catEquivCounit := fun _ _ e => e.counitIso
   terminalAnima := SCTModelHelpers.terminalAnima
   terminalProjection := SCTModelHelpers.terminalProjection
-  terminalUnique := sorry
+  terminalUnique := fun _ _ _ => SCTModelHelpers.natIsoOfEq (by
+    apply ObjectProperty.hom_ext
+    exact SSet.stdSimplex.ext₀)
   initialCat := SCTModelHelpers.initialQCat
   initialElim := SCTModelHelpers.initialMap
-  initialUnique := sorry
+  initialUnique := fun _ _ _ => SCTModelHelpers.natIsoOfEq (by
+    apply ObjectProperty.hom_ext
+    ext n x
+    exact False.elim (x.obj ⟨0, by simp⟩).down.elim)
   initialStrict := sorry
   prodCat := SCTModelHelpers.qcatProduct
   prodPr1 := SCTModelHelpers.qcatProdPr1
   prodPr2 := SCTModelHelpers.qcatProdPr2
   prodPair := SCTModelHelpers.qcatProdPair
-  /- Missing: these product comparison fields are stated as `NatIso`s. They should be filled once
-  `NatIso` is interpreted as equivalences in functor quasicategories. The underlying product
-  quasicategory and projection/pairing maps above are already constructed. -/
-  prodBeta1 := sorry
-  prodBeta2 := sorry
-  prodEta := sorry
+  prodBeta1 := fun _ _ _ _ _ => SCTModelHelpers.natIsoOfEq (by
+    ext n x
+    rfl)
+  prodBeta2 := fun _ _ _ _ _ => SCTModelHelpers.natIsoOfEq (by
+    ext n x
+    rfl)
+  prodEta := fun _ _ _ _ => SCTModelHelpers.natIsoOfEq (by
+    ext n x
+    rfl)
   prodUniq := sorry
   /- Missing: coproduct closure for quasicategories should use the disjoint union of simplicial
   sets together with the fact that inner horns are connected. This is not currently packaged in
@@ -291,23 +530,20 @@ def sctModel.{u} : SCTModel.{u} where
   coprodDisjointBackward := sorry
   coprodDisjointUnit := sorry
   coprodDisjointCounit := sorry
-  /- Missing: mathlib is expected to gain the theorem that the simplicial internal hom with
-  quasicategory target is again a quasicategory. Once available, this should be the bundled
-  functor quasicategory. -/
-  funCat := sorry
-  precompFunctor := sorry
-  postcompFunctor := sorry
-  evalFunctor := sorry
-  curryFunctor := sorry
-  uncurryFunctor := sorry
-  curryBeta := sorry
-  curryEta := sorry
-  curryNatIso := sorry
-  uncurryNatIso := sorry
-  curryUncurryForward := sorry
-  curryUncurryBackward := sorry
-  curryUncurryUnit := sorry
-  curryUncurryCounit := sorry
+  funCat := SCTModelHelpers.funCat
+  precompFunctor := SCTModelHelpers.precompFunctor
+  postcompFunctor := SCTModelHelpers.postcompFunctor
+  evalFunctor := SCTModelHelpers.evalFunctor
+  curryFunctor := SCTModelHelpers.curryFunctor
+  uncurryFunctor := SCTModelHelpers.uncurryFunctor
+  curryBeta := SCTModelHelpers.curryBeta
+  curryEta := SCTModelHelpers.curryEta
+  curryNatIso := fun Γ C D _ _ α => SCTModelHelpers.curryNatIso Γ C D α
+  uncurryNatIso := fun Γ C D _ _ α => SCTModelHelpers.uncurryNatIso Γ C D α
+  curryUncurryForward := SCTModelHelpers.curryUncurryForward
+  curryUncurryBackward := SCTModelHelpers.curryUncurryBackward
+  curryUncurryUnit := SCTModelHelpers.curryUncurryUnit
+  curryUncurryCounit := SCTModelHelpers.curryUncurryCounit
   intervalCat := SCTModelHelpers.intervalQCat
   intervalZero := SCTModelHelpers.intervalVertex 0
   intervalOne := SCTModelHelpers.intervalVertex 1
@@ -551,4 +787,7 @@ def sctModel.{u} : SCTModel.{u} where
   intervalZeroInitialHomContractible := sorry
   intervalOneTerminalHomContractible := sorry
   localizationInverts := sorry
+  /- Missing/API target: evaluation at an object maps an equivalence edge in `Fun(A,C)` to an
+  invertible edge in `C`. This is the objectwise-isomorphism theorem expected from the
+  infinity-cosmos/mathlib equivalence-edge API. -/
   objectwiseNatIsoComponent := sorry
