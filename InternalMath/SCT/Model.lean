@@ -6,6 +6,7 @@ Authors: Dagur Asgeirsson, AI assistant
 module
 
 public import InternalMath.SCT.Spec
+public import InternalMath.SCT.MappingAnima
 public import Mathlib.AlgebraicTopology.Quasicategory.Nerve
 public import Mathlib.AlgebraicTopology.Quasicategory.StrictBicategory
 public import Mathlib.AlgebraicTopology.SimplicialSet.FiniteColimits
@@ -32,6 +33,7 @@ For functor quasicategories and natural isomorphisms, this file now includes a l
 API that is being developed in the `emilyriehl/infinity-cosmos` project and mathlib PR #35287. The
 skeleton uses the existing simplicial internal hom, assumes/sorries quasicategory closure, and
 models natural isomorphisms as invertible/equivalence edges in those functor quasicategories.
+The maximal-core/mapping-anima workshop scaffold lives in `InternalMath.SCT.MappingAnima`.
 -/
 
 @[expose] public section
