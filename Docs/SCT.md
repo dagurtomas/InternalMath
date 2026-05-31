@@ -13,6 +13,8 @@ internal reasoning in the theory from Lean. This is work in progress.
 - `InternalMath/SCT/Spec.lean` declares the type theory `SCT`.
 - `InternalMath/SCT/Model.lean` generates `SCTModel` and contains a quasicategory/Kan-complex model
   skeleton.
+- `Docs/SCTTutorial.md` introduces the InternalLean syntax used by SCT and gives beginner
+  exercises for working internally in the theory.
 
 ## Specification status
 
@@ -69,4 +71,5 @@ lake build InternalMath.SCT.Model
 
 `Spec.lean` is best read as book-facing LF metadata rather than a polished public API. The comments
 record chapter-level source context and, for several remaining axioms, explain what would be needed
-to turn a model-facing obligation into a checked internal declaration.
+to turn a model-facing obligation into a checked internal declaration. For a guided introduction,
+start with [`SCTTutorial.md`](SCTTutorial.md).

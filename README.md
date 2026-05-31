@@ -39,7 +39,9 @@ The goals are to implement this type theory, prove that quasicategories form a m
 reason internally in the type theory from Lean. This is not yet complete. Many theorem-shaped
 declarations are currently admitted, and most model fields are still placeholders.
 
-See [`Docs/SCT.md`](Docs/SCT.md) for the current status and expected warnings.
+See [`Docs/SCT.md`](Docs/SCT.md) for the current status and expected warnings, and
+[`Docs/SCTTutorial.md`](Docs/SCTTutorial.md) for a tutorial on SCT's InternalLean syntax and
+beginner exercises.
 
 ## Building
 
@@ -72,4 +74,5 @@ placeholder `sorry`s in the model skeleton.
 
 ## License
 
-InternalMath is released under the Apache 2.0 license, matching InternalLean. See [`LICENSE`](LICENSE).
+InternalMath is released under the Apache 2.0 license, matching InternalLean. See
+[`LICENSE`](LICENSE).
