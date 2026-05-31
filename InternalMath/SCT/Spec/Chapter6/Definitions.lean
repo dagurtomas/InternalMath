@@ -50,7 +50,7 @@ namespace SCT
 internal_defs where
   /-- Fully faithful functors induce equivalences on object-hom categories; Definition 6.1.1.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: derive this fiberwise equivalence from the endpoint-pullback
+  To finish this declaration: derive this fiberwise equivalence from the endpoint-pullback
   definition of `FullyFaithful`.
   -/
   def fullyFaithfulHomEquiv (C : SCat) (D : SCat) (F : Functor C D)

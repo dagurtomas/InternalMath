@@ -98,7 +98,7 @@ extend_type_theory SCT where
     (W : MorphismCollection C) (F : Functor D C) : Type u
   syntax_sort_role PreservesMorphismCollection : side_structure
 
-  /-- Source-shaped universal package for Axiom H.  For a closed morphism collection it stores the
+  /-- Universal package for Axiom H.  For a closed morphism collection it stores the
   generated category, its inclusion, the evidence that the inclusion preserves the selected
   morphisms, and the universal lift with β comparison and uniqueness. -/
   lf_opaque subcategoryPackage (C : SCat) (W : MorphismCollection C)

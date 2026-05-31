@@ -43,9 +43,9 @@ extend_type_theory SCT where
   lf_def natTransCat : (C : SCat) ⇒ (D : SCat) ⇒ Functor C D ⇒ Functor C D ⇒ SCat :=
     fun C D F G => pullbackCat (natTransSourceFiberCat C D F) terminalCat (funCat C D)
       (natTransSourceFiberTarget C D F) (functorObject C D G)
-  /-- A natural transformation, viewed as an object of the source-shaped
-  natural-transformation category.  This records the Chapter 1 identification of natural
-  transformations with arrows in `Fun(C,D)` while `NatTrans` remains primitive vocabulary. -/
+  /-- A natural transformation, viewed as an object of the explicit natural-transformation
+  category.  This records the Chapter 1 identification of natural transformations with arrows in
+  `Fun(C,D)` while `NatTrans` remains primitive vocabulary. -/
   lf_opaque natTransObject (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D)
     (α : NatTrans C D F G) : Obj (natTransCat C D F G)
 

@@ -31,8 +31,8 @@ quasicategory-level data are annotated with explicit result universes, for examp
 (u+1)` and `Functor C D : Type u`.
 
 Many theorem-shaped internal declarations are currently admitted with `sorry`. They are kept
-lint-visible and should gradually be replaced by checked InternalLean declarations or by more
-source-shaped axioms.
+lint-visible and should gradually be replaced by checked InternalLean declarations or by axiom
+packages that match the book's formulation.
 
 ## Quasicategory model status
 

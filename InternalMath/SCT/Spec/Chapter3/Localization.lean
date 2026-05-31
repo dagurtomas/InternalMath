@@ -55,7 +55,7 @@ extend_type_theory SCT where
   syntax_abbrev InvertingFunctorObjectMember (C : SCat) (D : SCat)
     (W : MorphismCollection C) (P : ObjectCollection (funCat C D)) (F : Functor C D) :=
     ObjectCollectionMember (funCat C D) P (functorObject C D F)
-  /-- Source-shaped comprehension package for the full subcategory of functors inverting `W`.
+  /-- Comprehension package for the full subcategory of functors inverting `W`.
   Book target: Definition 3.3.2. -/
   lf_opaque invertingFunctorObjectPackage (C : SCat) (D : SCat) (W : MorphismCollection C) :
     Σ P : ObjectCollection (funCat C D),
@@ -99,7 +99,7 @@ internal_defs where
   /-- If the target is a groupoid, every functor inverts the selected morphisms.
   Book target: Definition 3.3.2, functors that invert a chosen collection of morphisms.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: prove that all morphisms in a groupoid are invertible, then show the
+  To finish this declaration: prove that all morphisms in a groupoid are invertible, then show the
   inverting-functor object collection is all of `Fun(C,D)`.
   -/
   def invertingFunctorTargetGroupoidEquiv (C : SCat) (D : SCat)
@@ -118,7 +118,7 @@ extend_type_theory SCT where
   /-- The localization functor inverts the chosen morphisms; Axiom I. -/
   lf_opaque localizationInverts (C : SCat) (W : MorphismCollection C) :
     InvertsMorphismCollection C (localizationCat C W) W (localizationFunctor C W)
-  /-- Source-shaped localization universal package.  It stores the mapping-category equivalence,
+  /-- Localization universal package.  It stores the mapping-category equivalence,
   descents of inverting functors, their β comparisons, and uniqueness of descents. -/
   lf_opaque localizationUniversalPackage (C : SCat) (W : MorphismCollection C) (D : SCat) :
     Σ e : CatEquiv (funCat (localizationCat C W) D) (invertingFunctorCat C D W),
@@ -255,7 +255,7 @@ internal_defs where
   /-- Geometric realizations are anima.
   Book target: Proposition 3.4.5 and the groupoid/anima identification of Axiom G.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: prove that localization at all morphisms is groupoidal and transport
+  To finish this declaration: prove that localization at all morphisms is groupoidal and transport
   it to an anima via `groupoid_is_anima_cat`.
   -/
   def geometric_realization_is_anima (C : SCat) : isAnimaCat (geometricRealization C) := sorry
@@ -263,7 +263,7 @@ internal_defs where
   /-- Categories over a base, used for exponentiable functors.
   Book target: Definition 3.5.4, the over-category `Cat/C` of categories over a base.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct as the appropriate slice/fiber of a functor category. -/
+  To finish this declaration: construct as the appropriate slice/fiber of a functor category. -/
   def overCat (B : SCat) : SCat := sorry
 
 end SCT

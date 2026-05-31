@@ -18,8 +18,8 @@ extend_type_theory SCT where
   /-- Directed-univalence witness for a cocartesian fibration; Axiom N. -/
   syntax_sort DirectedUnivalenceWitness (U : SCat) (Udot : SCat) (p : Functor Udot U)
     (fib : Fibration Udot U p) (cocart : CocartesianFibrationWitness Udot U p fib) : Type u
-  /-- Classifying transformations are source-shaped natural transformations between classifiers.
-  Book context: Chapter 7 of the SCT book.
+  /-- Classifying transformations are natural transformations between classifiers, as in Chapter 7
+  of the SCT book.
   -/
   syntax_abbrev ClassifyingTransformation (B : SCat) (U : SCat)
     (f : Functor B U) (g : Functor B U) := NatTrans B U f g
@@ -49,7 +49,7 @@ internal_defs where
   /-- Category of proof objects that a functor over `B` is cocartesian.
   Book target: Construction 7.1.2.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: construct it from functors over the base and Beck-Chevalley proof
+  To finish this declaration: construct it from functors over the base and Beck-Chevalley proof
   objects. -/
   def isCocartesianFunctorCat (B : SCat) (E : SCat) (F : SCat)
     (p : Functor E B) (fibp : Fibration E B p)
@@ -63,7 +63,7 @@ extend_type_theory SCT where
 
   model_section Chapter7
 
-  /-- Source-shaped package for `CoCart_B(E,F)` and its inclusion into functors over the base;
+  /-- Package for `CoCart_B(E,F)` and its inclusion into functors over the base;
   Definition 7.1.10.  The subcategory witness remains lint-visible theorem debt. -/
   lf_opaque cocartesianFunctorCategoryPackage (B : SCat) (E : SCat) (F : SCat)
     (p : Functor E B) (fibp : Fibration E B p)
@@ -96,7 +96,7 @@ internal_defs where
   /-- `CoCart_B(E,F)` is the subcategory selected by the Beck-Chevalley condition.
   Book target: Definition 7.1.10.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: prove the chosen cocartesian-functor category and inclusion satisfy
+  To finish this declaration: prove the chosen cocartesian-functor category and inclusion satisfy
   Definition 7.1.10. -/
   def cocartesianFunctorCatSubcategory (B : SCat) (E : SCat) (F : SCat)
     (p : Functor E B) (fibp : Fibration E B p)

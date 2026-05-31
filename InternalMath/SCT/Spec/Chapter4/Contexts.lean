@@ -439,13 +439,13 @@ internal_defs where
   Book target: Proposition 4.2.16, correspondence between categories in context `Γ` and categories
   over `Γ`.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the equivalence using dependent sums and reindexing. -/
+  To finish this declaration: construct the equivalence using dependent sums and reindexing. -/
   def contextCategoryCat (Γ : SCat) : SCat := sorry
   /-- Object of `contextCategoryCat Γ` corresponding to a contextual category.
   Book target: Proposition 4.2.16, correspondence between categories in context `Γ` and categories
   over `Γ`.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the equivalence using dependent sums and reindexing. -/
+  To finish this declaration: construct the equivalence using dependent sums and reindexing. -/
   def contextCategoryObject (Γ : SCat) (C : ContextCat Γ) : Obj (contextCategoryCat Γ) := sorry
 
 end SCT
@@ -458,13 +458,13 @@ internal_defs where
   Book target: Proposition 4.2.16, correspondence between categories in context `Γ` and categories
   over `Γ`.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the equivalence using dependent sums and reindexing. -/
+  To finish this declaration: construct the equivalence using dependent sums and reindexing. -/
   def overFunctorToContext (Γ : SCat) (E : SCat) (p : Functor E Γ) : ContextCat Γ := sorry
   /-- Equivalence between contextual categories over `Γ` and categories over `Γ`.
   Book target: Proposition 4.2.16, correspondence between categories in context `Γ` and categories
   over `Γ`.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the equivalence using dependent sums and reindexing. -/
+  To finish this declaration: construct the equivalence using dependent sums and reindexing. -/
   def contextOverCorrespondence (Γ : SCat) : CatEquiv (contextCategoryCat Γ) (overCat Γ) := sorry
 
 

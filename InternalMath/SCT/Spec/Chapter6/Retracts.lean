@@ -16,7 +16,7 @@ internal_defs where
   /-- A retraction makes a functor conservative.
   Book target: §6.2, retract arguments for conservativity.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove by composing the retraction data with the conservative
+  To finish this declaration: prove by composing the retraction data with the conservative
   criterion. -/
   def conservativeOfRetract (C : SCat) (D : SCat) (F : Functor C D)
     (R : Functor D C) (ρ : NatIso C C (compFunctor C D C F R) (idFunctor C)) :

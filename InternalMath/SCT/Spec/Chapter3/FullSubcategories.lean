@@ -22,7 +22,7 @@ extend_type_theory SCT where
   syntax_abbrev MorphismCollectionMember (C : SCat) (W : MorphismCollection C)
     (f : Functor intervalCat C) :=
     PreservesMorphismCollection intervalCat C W f
-  /-- Source-shaped endpoint-restricted morphism package used to build full subcategories from
+  /-- Endpoint-restricted morphism package used to build full subcategories from
   Axiom H.  It contains the collection of arrows whose source and target lie in the chosen object
   collection, identity and composition closure evidence, and the two directions of the endpoint
   membership specification.

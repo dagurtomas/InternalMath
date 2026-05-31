@@ -16,9 +16,8 @@ extend_type_theory SCT where
 
   /-- Isomorphisms between absolute objects.  Book context: Chapter 1 of the SCT book. -/
   syntax_abbrev ObjIso (C : SCat) (x : Obj C) (y : Obj C) := NatIso terminalCat C x y
-  /-- Source-shaped evidence that every fiber of an anima-indexed family is an anima: each fiber is
-  presented as equivalent to the underlying category of a primitive anima.  Book context:
-  Axiom A.1(3). -/
+  /-- Evidence that every fiber of an anima-indexed family is an anima: each fiber is presented as
+  equivalent to the underlying category of a primitive anima.  Book context: Axiom A.1(3). -/
   syntax_abbrev allFibersAnima (Γ : Anima) (C : AnimaIndexedCat Γ) :=
     (x : Obj (animaCat Γ)) → Σ A : Anima, CatEquiv (animaIndexedFiber Γ C x) (animaCat A)
   /-- The primitive anima witnessing that a chosen fiber is an anima. -/
@@ -275,8 +274,8 @@ extend_type_theory SCT where
       pullbackLift (fiberCat E B p b) E' terminalCat B p' b
         (compFunctor (fiberCat E B p b) E E' (fiberProjection E B p b) F)
         (fiberPointProjection E B p b) (fiberMapCompat E B p E' p' F hBase b)
-  /-- A source-shaped pullback-square predicate for theorem statements, represented by the
-  comparison to the pullback object.  Book context: Chapter 1 of the SCT book.
+  /-- A pullback-square predicate for theorem statements, represented by the comparison to the
+  pullback object.  Book context: Chapter 1 of the SCT book.
   -/
   syntax_abbrev PullbackSquare (A : SCat) (B : SCat) (C : SCat) (D : SCat)
     (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) :=
@@ -500,9 +499,8 @@ extend_type_theory SCT where
   /-- Precomposition functor between functor categories; Axiom B.6. -/
   lf_opaque precompFunctor (A : SCat) (B : SCat) (C : SCat) (u : Functor A B) :
     Functor (funCat B C) (funCat A C)
-  /-- Source-shaped pushout-square witness: a commutative square plus its mapping-out universal
-  property.  Book target: pushout squares used throughout Chapter 1, especially Proposition 1.3.3
-  and Axiom J.1. -/
+  /-- Pushout-square witness: a commutative square plus its mapping-out universal property.  Book
+  target: pushout squares used throughout Chapter 1, especially Proposition 1.3.3 and Axiom J.1. -/
   syntax_abbrev PushoutSquare (A : SCat) (B : SCat) (C : SCat) (D : SCat)
     (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) :=
     Σ comm : NatIso A D (compFunctor A B D top right) (compFunctor A C D left bottom),

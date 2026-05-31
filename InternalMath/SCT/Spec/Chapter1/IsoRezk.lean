@@ -18,7 +18,7 @@ extend_type_theory SCT where
   syntax_abbrev InvertibleMorphismObjectMember (C : SCat)
     (P : ObjectCollection (funCat intervalCat C)) (f : Functor intervalCat C) :=
     ObjectCollectionMember (funCat intervalCat C) P (functorObject intervalCat C f)
-  /-- Source-shaped comprehension package for invertible arrows in `Fun([1], C)`.
+  /-- Comprehension package for invertible arrows in `Fun([1], C)`.
   Book target: Definition 1.8.2, building `Iso(C)` from explicit invertible-arrow data. -/
   lf_opaque invertibleMorphismObjectPackage (C : SCat) :
     Σ P : ObjectCollection (funCat intervalCat C),

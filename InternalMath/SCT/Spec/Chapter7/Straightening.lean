@@ -155,7 +155,7 @@ internal_defs where
   /-- Straightening over `[1]`.
   Book target: Construction 7.2.1 and Definition 7.2.3.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: construct the functor from locally cocartesian transport over
+  To finish this declaration: construct the functor from locally cocartesian transport over
   `[1] × B`. -/
   def straighteningFunctor (B : SCat) (E : SCat)
     (p : Functor E (prodCat intervalCat B))
@@ -166,7 +166,7 @@ internal_defs where
   /-- Straightening is a cocartesian functor over the base.
   Book target: Construction 7.2.1/Lemma 7.2.2.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: prove the straightening functor preserves cocartesian arrows. -/
+  To finish this declaration: prove the straightening functor preserves cocartesian arrows. -/
   def straighteningFunctorCocartesian (B : SCat) (E : SCat)
     (p : Functor E (prodCat intervalCat B))
     (fib : Fibration E (prodCat intervalCat B) p)

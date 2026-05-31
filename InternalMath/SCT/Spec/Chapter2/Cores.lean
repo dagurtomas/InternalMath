@@ -53,7 +53,7 @@ extend_type_theory SCT where
 
   model_section Chapter2
 
-  /-- Source-shaped universal package for the core inclusion; Axiom G.  It stores the embedding of
+  /-- Universal package for the core inclusion; Axiom G.  It stores the embedding of
   the core into the ambient category together with the lift, β comparison, and uniqueness for
   anima-indexed objects. -/
   lf_opaque coreUniversalPackage (C : SCat) :
@@ -73,7 +73,7 @@ extend_type_theory SCT where
 
   model_section Chapter2
 
-  /-- Source-shaped universal package for lifting anima-indexed objects through the groupoid core;
+  /-- Universal package for lifting anima-indexed objects through the groupoid core;
   Axiom G.  Projection from `coreUniversalPackage`. -/
   lf_def coreLiftPackage : (A : Anima) ⇒ (C : SCat) ⇒ (F : Functor (animaCat A) C) ⇒
       Σ K : Functor (animaCat A) (coreCat C),
@@ -362,7 +362,7 @@ extend_type_theory SCT where
 
   model_section Chapter2
 
-  /-- Source-shaped coherence package for lifting natural isomorphisms through the core inclusion;
+  /-- Coherence package for lifting natural isomorphisms through the core inclusion;
   Axiom G specialized to groupoid sources. -/
   lf_opaque coreLiftNatIsoFromGroupoidCoherencePackage (G : SCat) (C : SCat)
     (gG : GroupoidWitness G) (L : Functor G (coreCat C)) (M : Functor G (coreCat C))
@@ -412,7 +412,7 @@ internal_defs where
   /-- The mapping anima is the core of the functor category.
   Book target: Chapter 2, the mapping-anima/core comparison.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: construct the equivalence from the object/functor interpretation of
+  To finish this declaration: construct the equivalence from the object/functor interpretation of
   `Map(C,D)` and the definition of the maximal subgroupoid of the functor category. -/
   def mapAnimaCoreEquiv (C : SCat) (D : SCat) :
     CatEquiv (animaCat (mapAnima C D)) (coreCat (funCat C D)) := sorry
@@ -531,7 +531,7 @@ internal_defs where
   /-- Functor categories into a groupoid are groupoids.
   Book target: Proposition 2.1.2(4).
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: prove the interval-characterization of groupoids for `D^C` from the
+  To finish this declaration: prove the interval-characterization of groupoids for `D^C` from the
   interval-characterization for `D`. -/
   def funCatTargetGroupoid (C : SCat) (D : SCat) (gD : GroupoidWitness D) :
     GroupoidWitness (funCat C D) := sorry
@@ -557,7 +557,7 @@ internal_defs where
   /-- The core of `[1]` is equivalent to two points.
   Book target: Axiom G.1 endpoint computation.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: construct the endpoint equivalence from the maximal subgroupoid of
+  To finish this declaration: construct the endpoint equivalence from the maximal subgroupoid of
   the walking arrow. -/
   def intervalCoreEndpointEquiv :
     CatEquiv (coprodCat terminalCat terminalCat) (coreCat intervalCat) := sorry
@@ -570,14 +570,14 @@ internal_defs where
   /-- Product of cores comparison.
   Book target: Chapter 2 finite-limit closure of cores/groupoids.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: prove that taking maximal subgroupoids preserves binary products. -/
+  To finish this declaration: prove that taking maximal subgroupoids preserves binary products. -/
   def coreProductEquiv (C : SCat) (D : SCat) :
     CatEquiv (coreCat (prodCat C D)) (prodCat (coreCat C) (coreCat D)) := sorry
 
   /-- Pullback of cores comparison.
   Book target: Chapter 2 finite-limit closure of cores/groupoids.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: prove that taking maximal subgroupoids preserves pullbacks. -/
+  To finish this declaration: prove that taking maximal subgroupoids preserves pullbacks. -/
   def corePullbackEquiv (C : SCat) (D : SCat) (E : SCat)
     (F : Functor C E) (G : Functor D E) :
     CatEquiv (coreCat (pullbackCat C D E F G))
@@ -618,14 +618,14 @@ internal_defs where
   /-- The core of `[2]` is equivalent to three points.
   Book target: Axiom G.1 endpoint computation.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: construct the equivalence from the maximal subgroupoid of `[2]`. -/
+  To finish this declaration: construct the equivalence from the maximal subgroupoid of `[2]`. -/
   def simplex2CoreEndpointEquiv : CatEquiv threePointCat (coreCat simplex2Cat) := sorry
 
   /-- Coproducts of groupoids are groupoids.
   Book target: Chapter 2 closure of groupoids under finite colimits used in the interval
   endpoint computations.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: construct the interval-characterization witness for the coproduct. -/
+  To finish this declaration: construct the interval-characterization witness for the coproduct. -/
   def coprodGroupoid (C : SCat) (D : SCat)
     (gC : GroupoidWitness C) (gD : GroupoidWitness D) : GroupoidWitness (coprodCat C D) :=
     sorry
@@ -633,7 +633,7 @@ internal_defs where
   /-- Pullbacks of groupoids are groupoids.
   Book target: Chapter 2 finite-limit closure of groupoids.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: construct the interval-characterization witness for the pullback. -/
+  To finish this declaration: construct the interval-characterization witness for the pullback. -/
   def pullbackGroupoid (C : SCat) (D : SCat) (E : SCat)
     (F : Functor C E) (G : Functor D E)
     (gC : GroupoidWitness C) (gD : GroupoidWitness D) (gE : GroupoidWitness E) :
@@ -642,7 +642,7 @@ internal_defs where
   /-- The initial category is a groupoid.
   Book target: Chapter 2 finite-colimit closure of groupoids.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: prove the interval-characterization witness for the empty category. -/
+  To finish this declaration: prove the interval-characterization witness for the empty category. -/
   def initialGroupoid : GroupoidWitness initialCat := sorry
 
 end SCT

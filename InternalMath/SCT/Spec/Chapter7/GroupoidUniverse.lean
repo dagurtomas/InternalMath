@@ -13,7 +13,7 @@ extend_type_theory SCT where
 
   model_section Chapter7
 
-  /-- Source-shaped regular-subuniverse package generated above a small subcategory;
+  /-- Regular-subuniverse package generated above a small subcategory;
   Definition 7.4.5 (Cat8). -/
   lf_opaque regularSubuniversePackage (U : SCat) (u : UniverseWitness U)
     (S : SCat) (iS : Functor S U) (embS : Embedding S U iS)
@@ -75,7 +75,7 @@ extend_type_theory SCT where
 
   model_section Chapter7
 
-  /-- Source-shaped package for the universe of groupoids inside the universe of categories;
+  /-- Package for the universe of groupoids inside the universe of categories;
   §7.6. -/
   lf_opaque groupoidUniversePackage :
     Σ G : SCat,

@@ -15,7 +15,7 @@ extend_type_theory SCT where
 
   /-- Exponentiable functor witness; Definition 3.5.7. -/
   syntax_sort ExponentiableFunctor (A : SCat) (B : SCat) (u : Functor A B) : Type u
-  /-- Source-shaped dependent-product package along an exponentiable functor.  It stores the
+  /-- Dependent-product package along an exponentiable functor.  It stores the
   dependent product category over the codomain and its projection; the universal property is part
   of the exponentiability data.  Book target: Definition 3.5.4 and Definition 3.5.7. -/
   lf_opaque dependentProductOverPackage (A : SCat) (B : SCat) (E : SCat)
@@ -42,21 +42,21 @@ internal_defs where
   Book target: Construction 3.5.6, pullback/reindexing, dependent product, and Beck-Chevalley
   comparison.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from exponentiability of the base functor. -/
+  To finish this declaration: prove from exponentiability of the base functor. -/
   def overPullbackFunctor (A : SCat) (B : SCat) (u : Functor A B) :
     Functor (overCat B) (overCat A) := sorry
   /-- Dependent product functor right adjoint to pullback for an exponentiable functor.
   Book target: Construction 3.5.6, pullback/reindexing, dependent product, and Beck-Chevalley
   comparison.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from exponentiability of the base functor. -/
+  To finish this declaration: prove from exponentiability of the base functor. -/
   def dependentProductFunctor (A : SCat) (B : SCat)
     (u : Functor A B) (exp : ExponentiableFunctor A B u) : Functor (overCat A) (overCat B) := sorry
   /-- Beck-Chevalley comparison for dependent products; Construction 3.5.6.
   Book target: Construction 3.5.6, pullback/reindexing, dependent product, and Beck-Chevalley
   comparison.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from exponentiability of the base functor. -/
+  To finish this declaration: prove from exponentiability of the base functor. -/
   def dependentProductBeckChevalley (A : SCat) (B : SCat) (A' : SCat) (B' : SCat)
     (u : Functor A B) (u' : Functor A' B') (f : Functor A' A) (g : Functor B' B)
     (exp : ExponentiableFunctor A B u) (exp' : ExponentiableFunctor A' B' u') :
@@ -124,10 +124,10 @@ extend_type_theory SCT where
   lf_def interval_join_equiv : CatEquiv intervalCat (joinCat simplex0Cat simplex0Cat) :=
     catEquivOfData intervalCat (joinCat simplex0Cat simplex0Cat)
       intervalJoinForward intervalJoinBackward intervalJoinUnit intervalJoinCounit
-  /-- Source-shaped package for the mapping-in dependent-product side of Axiom J.2. -/
+  /-- Package for the mapping-in dependent-product side of Axiom J.2. -/
   lf_opaque joinDependentProductPackage (C : SCat) (D : SCat) (E : SCat) :
     Σ J : SCat, CatEquiv (funCat E (joinCat C D)) J
-  /-- Source-shaped category for the mapping-in dependent-product side of Axiom J.2. -/
+  /-- Category for the mapping-in dependent-product side of Axiom J.2. -/
   lf_def joinDependentProductCat : (C : SCat) ⇒ (D : SCat) ⇒ (E : SCat) ⇒ SCat :=
     fun C D E => fst (joinDependentProductPackage C D E)
   /-- Join-dependent-product universal property; Axiom J.2. -/
@@ -152,21 +152,21 @@ internal_defs where
   Book target: Proposition 3.5.15 and Corollary 3.5.16, relative joins as dependent-product
   constructions.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Define from dependent products and the ordinary join interface. -/
+  To finish this declaration: define from dependent products and the ordinary join interface. -/
   def relativeJoinCat (B : SCat) (C : SCat) (D : SCat)
     (p : Functor C B) (q : Functor D B) : SCat := sorry
   /-- Left inclusion into a relative join.
   Book target: Proposition 3.5.15 and Corollary 3.5.16, relative joins as dependent-product
   constructions.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Define from dependent products and the ordinary join interface. -/
+  To finish this declaration: define from dependent products and the ordinary join interface. -/
   def relativeJoinInl (B : SCat) (C : SCat) (D : SCat)
     (p : Functor C B) (q : Functor D B) : Functor C (relativeJoinCat B C D p q) := sorry
   /-- Right inclusion into a relative join.
   Book target: Proposition 3.5.15 and Corollary 3.5.16, relative joins as dependent-product
   constructions.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Define from dependent products and the ordinary join interface. -/
+  To finish this declaration: define from dependent products and the ordinary join interface. -/
   def relativeJoinInr (B : SCat) (C : SCat) (D : SCat)
     (p : Functor C B) (q : Functor D B) : Functor D (relativeJoinCat B C D p q) := sorry
 

@@ -58,7 +58,7 @@ internal_defs where
   /-- Fully faithful plus strongly surjective gives an equivalence; Chapter 6.
   Book target: Theorem 6.3.3, fully faithful plus strongly surjective implies equivalence.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Construct the inverse and unit/counit from strong-surjectivity data.
+  To finish this declaration: construct the inverse and unit/counit from strong-surjectivity data.
   -/
   def fundamental_theorem_equiv (C : SCat) (D : SCat) (F : Functor C D)
     (ff : FullyFaithful C D F) (surj : StronglySurjective C D F) : CatEquiv C D := sorry
@@ -123,7 +123,7 @@ internal_defs where
   /-- Equivalences are fully faithful; Chapter 6.
   Book target: §6.3, equivalences are fully faithful and strongly surjective.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Derive from the packaged equivalence data and the core map. -/
+  To finish this declaration: derive from the packaged equivalence data and the core map. -/
   def equivalenceFullyFaithful (C : SCat) (D : SCat) (e : CatEquiv C D) :
     FullyFaithful C D (catEquivForward C D e) := sorry
   /-- Equivalences are strongly surjective; Chapter 6.
@@ -162,7 +162,7 @@ internal_defs where
   Book target: Proposition 6.4.1/6.4.2, full subcategory inclusions that are strongly surjective are
   equivalences.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Combine full faithfulness of the inclusion with the Fundamental
+  To finish this declaration: combine full faithfulness of the inclusion with the Fundamental
   Theorem. -/
   def fullSubcategoryEquivOfStronglySurjective (C : SCat) (P : ObjectCollection C)
     (ss : StronglySurjective (fullSubcategory C P) C (fullSubcategoryIncl C P)) :
@@ -170,7 +170,7 @@ internal_defs where
   /-- Fiberwise criterion for cocartesian functors to be equivalences.
   Book target: Theorem 6.4.9, fiberwise criterion for equivalences of cocartesian fibrations.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove by applying the Fundamental Theorem fiberwise and using
+  To finish this declaration: prove by applying the Fundamental Theorem fiberwise and using
   cocartesian transport. -/
   def cocartesianFunctorFiberwiseEquiv (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
@@ -184,7 +184,7 @@ internal_defs where
   postcomposition.
   Book target: §6.4, postcomposition with a fully faithful functor is fully faithful.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove from the objectwise/natural-isomorphism criterion. -/
+  To finish this declaration: prove from the objectwise/natural-isomorphism criterion. -/
   def funCatPostcompFullyFaithful (A : SCat) (C : SCat) (D : SCat)
     (F : Functor C D) (ff : FullyFaithful C D F) :
     FullyFaithful (funCat A C) (funCat A D) (postcompFunctor A C D F) := sorry

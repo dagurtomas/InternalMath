@@ -16,14 +16,14 @@ internal_defs where
   /-- Fully faithful functors are conservative; Proposition 6.2.8.
   Book target: Proposition 6.2.8, fully faithful functors are conservative.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Prove using the arrow-map characterization and invertible morphisms.
+  To finish this declaration: prove using the arrow-map characterization and invertible morphisms.
   -/
   def fullyFaithfulConservative (C : SCat) (D : SCat) (F : Functor C D)
     (ff : FullyFaithful C D F) : Conservative C D F := sorry
   /-- Conservative functors reflect invertible morphisms.
   Book target: §6.2, conservative functors reflect invertible morphisms.
   Status: temporary sorry-admitted internal declaration; not a model-provider field.
-  To make this book-faithful: Unpack the conservative/core-pullback criterion. -/
+  To finish this declaration: unpack the conservative/core-pullback criterion. -/
   def conservativeReflectsIso (C : SCat) (D : SCat) (F : Functor C D)
     (cons : Conservative C D F) (f : Functor intervalCat C)
     (hf : InvertibleMorphism D (compFunctor intervalCat C D f F)) : InvertibleMorphism C f := sorry
