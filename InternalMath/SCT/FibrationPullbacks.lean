@@ -13,8 +13,9 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.HasPullback
 
 This file gives a small model-side scaffold for the workshop project on fibration-stable strict
 pullbacks and homotopy pullbacks of quasicategories. It does not try to interpret the general SCT
-pullback fields. Instead, it names the narrower API targets that can justify strict simplicial-set
-pullbacks under explicit fibration hypotheses and can later feed a homotopy-pullback adapter.
+pullback fields. Instead, it names the narrower mathematical interfaces that can justify strict
+simplicial-set pullbacks under explicit fibration hypotheses and can later feed a
+homotopy-pullback adapter.
 
 The intended first theorem is: if one leg of a cospan of quasicategories is an inner fibration,
 then the strict simplicial-set pullback is again a quasicategory and models the homotopy pullback.
@@ -62,8 +63,13 @@ variable {C D E X : SSet.QCat.{u}} {F : C ⟶ E} {G : D ⟶ E}
 noncomputable abbrev obj (F : C ⟶ E) (G : D ⟶ E) : SSet.{u} :=
   pullback F.hom G.hom
 
-/-- API target: strict pullbacks of quasicategories along a right inner fibration are
-quasicategories. -/
+/-- Strict pullbacks of quasicategories along a right inner fibration are quasicategories.
+
+The intended proof takes an inner horn in `pullback F.hom G.hom`, projects it to horns in `C` and
+`D`, fills the `C`-horn using the quasicategory structure on `C`, and then uses the inner-fibration
+lifting property of `G` to fill the `D`-horn compatibly over `E`. The compatible pair of fillers is
+exactly a filler in the strict pullback.
+-/
 lemma quasicategoryOfRightInnerFibration (F : C ⟶ E) (G : D ⟶ E)
     (hG : InnerFibration G.hom) : SSet.Quasicategory (obj F G) := by
   sorry
@@ -139,20 +145,25 @@ namespace HomotopyPullback
 
 variable {C D E : SSet.QCat.{u}} {F : C ⟶ E} {G : D ⟶ E}
 
-/-- API target: the actual homotopy-pullback universal property in `Cat_∞`.
+/-- The homotopy-pullback universal property in `Cat_∞`.
 
-The intended shape is a mapping-anima universal property: for every test quasicategory `X`, the map
-induced by precomposition with `pr1` and `pr2` should identify `Map(X,P)` with the homotopy
-pullback of `Map(X,C) → Map(X,E) ← Map(X,D)`.  This is left as an abstract project target until the
-mapping-anima and coherent-equivalence APIs are available.
+To make this definition correct, replace the placeholder by a structure expressing the
+mapping-anima universal property. For every test quasicategory `X`, postcomposition with `pr1` and
+`pr2`, together with `comparison`, should induce an equivalence
+`Map(X,P) ≃ Map(X,C) ×^h_{Map(X,E)} Map(X,D)`, where the right-hand side is the
+homotopy pullback of anima. Once `mapAnima`, coherent natural isomorphisms, and anima pullbacks are
+available, those maps and equivalences should become explicit fields of this structure.
 -/
 def UniversalProperty {P : SSet.QCat.{u}} (pr1 : P ⟶ C) (pr2 : P ⟶ D)
     (comparison : pr1 ≫ F = pr2 ≫ G) : Type (u + 1) := by
   sorry
 
-/-- A homotopy-pullback candidate: strict cone data together with the eventual `Cat_∞` universal
-property. The final SCT pullback fields should use a package of this kind, not an arbitrary strict
-simplicial-set pullback. -/
+/-- A homotopy-pullback candidate: cone data plus the `Cat_∞` universal property.
+
+This structure is correct only when `universal` contains the mapping-anima universal property above.
+The strict cone fields alone are not enough: a final SCT pullback package must prove that maps into
+`obj` classify pairs of maps into `C` and `D` with coherent comparison over `E`.
+-/
 structure Candidate (F : C ⟶ E) (G : D ⟶ E) : Type (u + 1) where
   obj : SSet.QCat.{u}
   pr1 : obj ⟶ C
@@ -160,8 +171,12 @@ structure Candidate (F : C ⟶ E) (G : D ⟶ E) : Type (u + 1) where
   comparison : pr1 ≫ F = pr2 ≫ G
   universal : UniversalProperty pr1 pr2 comparison
 
-/-- API target: under an inner-fibration hypothesis, the strict pullback represents the homotopy
-pullback. This is the bridge from the strict package above to the general `Cat_∞` semantics. -/
+/-- Under an inner-fibration hypothesis, the strict pullback represents the homotopy pullback.
+
+The cone fields are the ordinary strict pullback projections. The remaining proof is the real
+homotopy-pullback theorem: strict pullbacks along inner fibrations compute homotopy pullbacks in
+`Cat_∞`, equivalently satisfy the mapping-anima universal property for every test quasicategory.
+-/
 noncomputable def representedByRightInnerFibration (F : C ⟶ E) (G : D ⟶ E)
     (hG : InnerFibration G.hom) : Candidate F G where
   obj := StrictPullback.qcatOfRightInnerFibration F G hG

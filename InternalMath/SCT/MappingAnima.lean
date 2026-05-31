@@ -14,7 +14,8 @@ public import Mathlib.AlgebraicTopology.SimplicialSet.Subcomplex
 
 This file gives a small model-side scaffold for the workshop project on maximal Kan cores and
 mapping anima. It is not intended to settle the mathematics locally. The declarations below split
-that project into named API targets which can later be replaced by mathlib/infinity-cosmos results.
+that project into named mathematical interfaces which can later be replaced by
+mathlib/infinity-cosmos results.
 
 The intended semantics is:
 
@@ -36,16 +37,23 @@ universe u
 
 namespace MaximalKanCore
 
-/-- API target: the predicate saying that an edge of a simplicial set is an equivalence edge.
+/-- Predicate saying that an edge of a simplicial set is an equivalence edge.
 
-This should eventually be an alias for the upstream quasicategory equivalence-edge API, with
-inverse-edge data and the usual two triangle witnesses.  It is kept abstract here so that the
-workshop project can first agree on the API boundary.
+To make this definition correct, replace the placeholder by the chosen equivalence-edge predicate
+for quasicategories. A concrete local version should say that `e` admits an inverse edge and two
+2-simplices witnessing the two composites as degenerate identity edges; if mathlib/infinity-cosmos
+provides a standard predicate, this should be an alias or theorem-equivalent wrapper.
 -/
 def EquivalenceEdge {X : SSet.{u}} {x y : X _⦋0⦌} (e : SSet.Edge x y) : Prop := by
   sorry
 
-/-- API target: the maximal-core subcomplex of a quasicategory. -/
+/-- The maximal-core subcomplex of a quasicategory.
+
+To make this definition correct, define membership of a simplex by requiring all of its edge
+restrictions to be equivalence edges. Then prove this condition is stable under simplicial
+operators: the edges of a restricted simplex are restrictions of edges of the original simplex,
+possibly degenerate identity edges.
+-/
 noncomputable def subcomplex (C : SSet.QCat.{u}) : C.obj.Subcomplex := by
   sorry
 
@@ -60,7 +68,13 @@ lemma edge_mem_subcomplex_iff (C : SSet.QCat.{u}) {x y : C.obj _⦋0⦌}
     e.edge ∈ (subcomplex C).obj (Opposite.op ⦋1⦌) ↔ EquivalenceEdge e := by
   sorry
 
-/-- API target: the maximal core is a Kan complex. -/
+/-- The maximal core is a Kan complex.
+
+The intended proof is the standard maximal-core theorem: inner horns are filled in the ambient
+quasicategory and the filler remains in the core because its edges are already in the horn; outer
+horns are reduced to inner horn filling using inverse data for the equivalence edge appearing in the
+outer horn. This should eventually be imported or proved from the upstream equivalence-edge API.
+-/
 lemma kanComplex (C : SSet.QCat.{u}) :
     SSet.KanComplex ((subcomplex C : SSet.{u})) := by
   sorry
@@ -74,7 +88,13 @@ noncomputable def qcat (C : SSet.QCat.{u}) : SSet.QCat.{u} :=
 noncomputable def incl (C : SSet.QCat.{u}) : qcat C ⟶ C :=
   ObjectProperty.homMk (P := SSet.Quasicategory) (SSet.Subcomplex.ι (subcomplex C))
 
-/-- API target: a map from a Kan complex into a quasicategory lands in the maximal core. -/
+/-- A map from a Kan complex into a quasicategory lands in the maximal core.
+
+To make this construction correct, use the same simplicial map `F` and prove its image lies in the
+core. Every edge in a Kan complex is an equivalence, by filling the two outer 2-horns, and
+simplicial maps preserve equivalence edges. Hence every edge in the image of every simplex of `A`
+is an equivalence edge of `C`.
+-/
 noncomputable def liftFromKan (A : SSet.{u}) [SSet.KanComplex A] (C : SSet.QCat.{u})
     (F : A ⟶ C.obj) : A ⟶ (qcat C).obj := by
   sorry
