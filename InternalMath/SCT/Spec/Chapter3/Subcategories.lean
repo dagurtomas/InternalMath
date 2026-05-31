@@ -1,0 +1,153 @@
+/-
+Copyright (c) 2026 Dagur Asgeirsson. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Dagur Asgeirsson, AI assistant
+-/
+module
+
+public import InternalMath.SCT.Spec.Chapter3.Subobjects
+
+@[expose] public section
+
+extend_type_theory SCT where
+
+  model_section Chapter3
+
+  /-- Domain anima of a subobject; Definition 3.1.6. -/
+  lf_def subobjectAnima : (A : Anima) ⇒ AnimaSubobject A ⇒ Anima :=
+    fun A P => fst P
+  /-- Inclusion functor of an anima subobject; Definition 3.1.6. -/
+  lf_def subobjectIncl : (A : Anima) ⇒ (P : AnimaSubobject A) ⇒
+      Functor (animaCat (subobjectAnima A P)) (animaCat A) :=
+    fun A P => fst (snd P)
+  /-- Subobject inclusions are embeddings; Definition 3.1.6. -/
+  lf_def subobjectInclEmbedding : (A : Anima) ⇒ (P : AnimaSubobject A) ⇒
+      Embedding (animaCat (subobjectAnima A P)) (animaCat A) (subobjectIncl A P) :=
+    fun A P => snd (snd P)
+  /-- The total subobject of an anima, represented by the identity inclusion. -/
+  lf_def totalAnimaSubobject : (A : Anima) ⇒ AnimaSubobject A :=
+    fun A => ⟨A, ⟨idFunctor (animaCat A), identityEmbedding (animaCat A)⟩⟩
+  /-- The anima of morphisms of `C`, namely the core of `Fun([1], C)`; Axiom H. -/
+  lf_def morphismAnima : SCat ⇒ Anima := fun C => coreAnima (funCat intervalCat C)
+  /-- A morphism collection is a subobject of the anima of morphisms; Axiom H. -/
+  syntax_abbrev MorphismCollection (C : SCat) := AnimaSubobject (morphismAnima C)
+  /-- Underlying anima of a morphism collection.  Book context: Chapter 3 of the SCT book. -/
+  lf_def morphismCollectionAnima : (C : SCat) ⇒ MorphismCollection C ⇒ Anima :=
+    fun C W => subobjectAnima (morphismAnima C) W
+  /-- Underlying groupoid/category of a morphism collection.  Book context: Chapter 3 of the SCT
+  book.
+  -/
+  lf_def morphismCollectionCat : (C : SCat) ⇒ MorphismCollection C ⇒ SCat :=
+    fun C W => animaCat (morphismCollectionAnima C W)
+  /-- The underlying category of a morphism collection is a groupoid.
+  Book context:Chapter 3 of the
+  SCT book.
+  -/
+  lf_def morphismCollectionGroupoid : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      GroupoidWitness (morphismCollectionCat C W) :=
+    fun C W => groupoidOfAnima (morphismCollectionAnima C W)
+  /-- Inclusion of a morphism collection into the morphism anima `Map([1],C)`.  Book context:
+  Chapter 3 of the SCT book.
+  -/
+  lf_def morphismCollectionIncl : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      Functor (morphismCollectionCat C W) (coreCat (funCat intervalCat C)) :=
+    fun C W => subobjectIncl (morphismAnima C) W
+  /-- The morphism-collection inclusion is an embedding.
+  Book context:Chapter 3 of the SCT book. -/
+  lf_def morphismCollectionEmbedding : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      Embedding (morphismCollectionCat C W) (coreCat (funCat intervalCat C))
+        (morphismCollectionIncl C W) :=
+    fun C W => subobjectInclEmbedding (morphismAnima C) W
+  /-- Object collections are subobjects of the core; Axiom H. -/
+  syntax_abbrev ObjectCollection (C : SCat) := AnimaSubobject (coreAnima C)
+  /-- Underlying anima of an object collection.  Book context: Chapter 3 of the SCT book. -/
+  lf_def objectCollectionAnima : (C : SCat) ⇒ ObjectCollection C ⇒ Anima :=
+    fun C P => subobjectAnima (coreAnima C) P
+  /-- Underlying groupoid/category of an object collection.
+  Book context:Chapter 3 of the SCT book.
+  -/
+  lf_def objectCollectionCat : (C : SCat) ⇒ ObjectCollection C ⇒ SCat :=
+    fun C P => animaCat (objectCollectionAnima C P)
+  /-- Inclusion of an object collection into the core.  Book context: Chapter 3 of the SCT book. -/
+  lf_def objectCollectionIncl : (C : SCat) ⇒ (P : ObjectCollection C) ⇒
+      Functor (objectCollectionCat C P) (coreCat C) :=
+    fun C P => subobjectIncl (coreAnima C) P
+  /-- Evidence that a functor lands in a chosen object collection; Axiom H. -/
+  syntax_sort LandsInObjectCollection (D : SCat) (C : SCat)
+    (P : ObjectCollection C) (F : Functor D C) : Type u
+  syntax_sort_role LandsInObjectCollection : side_structure
+  /-- Membership of an absolute object in an object collection. -/
+  syntax_abbrev ObjectCollectionMember (C : SCat) (P : ObjectCollection C) (x : Obj C) :=
+    LandsInObjectCollection terminalCat C P x
+
+  /-- Evidence that a morphism collection contains identities; Axiom H. -/
+  syntax_sort containsIdentities (C : SCat) (W : MorphismCollection C) : Type u
+  syntax_sort_role containsIdentities : side_structure
+  /-- Evidence that a morphism collection is closed under composition; Axiom H. -/
+  syntax_sort closedUnderComposition (C : SCat) (W : MorphismCollection C) : Type u
+  syntax_sort_role closedUnderComposition : side_structure
+
+  /-- The collection of all morphisms; Example 3.1.7. -/
+  lf_def allMorphisms : (C : SCat) ⇒ MorphismCollection C :=
+    fun C => ⟨morphismAnima C,
+      ⟨idFunctor (animaCat (morphismAnima C)), identityEmbedding (animaCat (morphismAnima C))⟩⟩
+
+  /-- Evidence that a functor's morphisms factor through a chosen collection; Definition 3.1.14.
+  -/
+  syntax_sort PreservesMorphismCollection (D : SCat) (C : SCat)
+    (W : MorphismCollection C) (F : Functor D C) : Type u
+  syntax_sort_role PreservesMorphismCollection : side_structure
+
+  /-- Source-shaped universal package for Axiom H.  For a closed morphism collection it stores the
+  generated category, its inclusion, the evidence that the inclusion preserves the selected
+  morphisms, and the universal lift with β comparison and uniqueness. -/
+  lf_opaque subcategoryPackage (C : SCat) (W : MorphismCollection C)
+    (ids : containsIdentities C W) (comp : closedUnderComposition C W) :
+    Σ S : SCat,
+      Σ i : Functor S C,
+        Σ pres : PreservesMorphismCollection S C W i,
+          (D : SCat) → (F : Functor D C) →
+            (h : PreservesMorphismCollection D C W F) →
+              Σ K : Functor D S,
+                Σ β : NatIso D C (compFunctor D S C K i) F,
+                  (L : Functor D S) →
+                    NatIso D C (compFunctor D S C L i) F → NatIso D S L K
+  /-- Subcategory determined by a closed morphism collection; Axiom H. -/
+  lf_def subcategory : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      containsIdentities C W ⇒ closedUnderComposition C W ⇒ SCat :=
+    fun C W ids comp => fst (subcategoryPackage C W ids comp)
+  /-- Inclusion of the subcategory generated by a closed morphism collection; Axiom H. -/
+  lf_def subcategoryIncl : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      (ids : containsIdentities C W) ⇒ (comp : closedUnderComposition C W) ⇒
+        Functor (subcategory C W ids comp) C :=
+    fun C W ids comp => fst (snd (subcategoryPackage C W ids comp))
+  /-- The generated subcategory inclusion preserves the defining morphism collection; Axiom H(1).
+  -/
+  lf_def subcategoryInclPreserves : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
+      (ids : containsIdentities C W) ⇒ (comp : closedUnderComposition C W) ⇒
+        PreservesMorphismCollection (subcategory C W ids comp) C W
+          (subcategoryIncl C W ids comp) :=
+    fun C W ids comp => fst (snd (snd (subcategoryPackage C W ids comp)))
+
+namespace SCT
+
+/- Corollary 3.1.11 is admitted temporarily while kept out of the model interface. -/
+internal_defs where
+  /-- The total morphism collection contains identities.
+  Book target: Example 3.1.7.
+  Status: temporary sorry-admitted theorem-shaped evidence; not a model field. -/
+  def all_morphisms_contains_identities (C : SCat) :
+    containsIdentities C (allMorphisms C) := sorry
+  /-- The total morphism collection is closed under composition.
+  Book target: Example 3.1.7.
+  Status: temporary sorry-admitted theorem-shaped evidence; not a model field. -/
+  def all_morphisms_closed (C : SCat) :
+    closedUnderComposition C (allMorphisms C) := sorry
+  /-- The generated subcategory inclusion is a subcategory; Corollary 3.1.11.
+  Status: temporary sorry-admitted structural theorem package; not a model field. -/
+  def subcategoryInclWitness (C : SCat) (W : MorphismCollection C)
+    (ids : containsIdentities C W) (comp : closedUnderComposition C W) :
+      SubcategoryWitness (subcategory C W ids comp) C (subcategoryIncl C W ids comp) :=
+    sorry
+
+end SCT
