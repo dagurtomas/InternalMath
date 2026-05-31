@@ -8,6 +8,7 @@ module
 public import InternalMath.SCT.Spec
 public import InternalMath.SCT.MappingAnima
 public import InternalMath.SCT.FibrationPullbacks
+public import InternalMath.SCT.Localization
 public import Mathlib.AlgebraicTopology.Quasicategory.Nerve
 public import Mathlib.AlgebraicTopology.Quasicategory.StrictBicategory
 public import Mathlib.AlgebraicTopology.SimplicialSet.FiniteColimits
@@ -35,7 +36,8 @@ API that is being developed in the `emilyriehl/infinity-cosmos` project and math
 skeleton uses the existing simplicial internal hom, assumes/sorries quasicategory closure, and
 models natural isomorphisms as invertible/equivalence edges in those functor quasicategories.
 The maximal-core/mapping-anima workshop scaffold lives in `InternalMath.SCT.MappingAnima`;
-the fibration-stable pullback scaffold lives in `InternalMath.SCT.FibrationPullbacks`.
+the fibration-stable pullback scaffold lives in `InternalMath.SCT.FibrationPullbacks`; the
+inverting-functor/localization scaffold lives in `InternalMath.SCT.Localization`.
 -/
 
 @[expose] public section
