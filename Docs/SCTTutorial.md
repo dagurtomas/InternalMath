@@ -8,8 +8,9 @@ Walde Synthetic Category Theory book project. The files are meant to track the b
 interface is not stable. Some declarations are still admitted, the quasicategory model is a
 skeleton, and several current witness fields are expected to change as the formalization matures.
 
-A good way to use this tutorial is to open a scratch Lean file, import `InternalMath.SCT.Spec`, and
-try the exercises there. Scratch files may contain temporary `sorry`s while you work. Avoid adding
+A good way to use this tutorial is to open `InternalMath/SCT/TutorialExercises.lean` in your editor
+and replace the exercise `sorry`s. You can also use a scratch Lean file that imports
+`InternalMath.SCT.Spec`. Scratch files may contain temporary `sorry`s while you work. Avoid adding
 exercise admissions to the core SCT modules unless you intend them to become part of the project.
 
 ## 1. The two languages in one file
