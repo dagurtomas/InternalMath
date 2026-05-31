@@ -42,7 +42,7 @@ This local wrapper can later be replaced by a mathlib/infinity-cosmos name if on
 workshop design question is how this relates to the book's `IsofibrationWitness` and to
 model-category fibrations.
 -/
-def InnerFibration {E B : SSet.{u}} (p : E ⟶ B) : Prop :=
+abbrev InnerFibration {E B : SSet.{u}} (p : E ⟶ B) : Prop :=
   innerHornInclusions.rlp p
 
 namespace StrictPullback
