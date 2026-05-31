@@ -140,21 +140,41 @@ end StrictPullback
 
 namespace HomotopyPullback
 
-/-- API target: a quasicategory with projections and a comparison witnessing a homotopy pullback in
-`Cat_∞`. The final SCT pullback fields should use a package of this kind, not an arbitrary strict
+/-- API target: the actual homotopy-pullback universal property in `Cat_∞`.
+
+The intended shape is a mapping-anima universal property: for every test quasicategory `X`, the map
+induced by precomposition with `pr1` and `pr2` should identify `Map(X,P)` with the homotopy
+pullback of `Map(X,C) → Map(X,E) ← Map(X,D)`.  This is left as an abstract project target until the
+mapping-anima and coherent-equivalence APIs are available.
+-/
+def UniversalProperty (C D E : SSet.QCat.{u}) (F : C ⟶ E) (G : D ⟶ E)
+    (P : SSet.QCat.{u}) (pr1 : P ⟶ C) (pr2 : P ⟶ D) (comparison : pr1 ≫ F = pr2 ≫ G) :
+    Type (u + 1) := by
+  sorry
+
+/-- A homotopy-pullback candidate: strict cone data together with the eventual `Cat_∞` universal
+property. The final SCT pullback fields should use a package of this kind, not an arbitrary strict
 simplicial-set pullback. -/
 structure Candidate (C D E : SSet.QCat.{u}) (F : C ⟶ E) (G : D ⟶ E) : Type (u + 1) where
   obj : SSet.QCat.{u}
   pr1 : obj ⟶ C
   pr2 : obj ⟶ D
   comparison : pr1 ≫ F = pr2 ≫ G
+  universal : UniversalProperty C D E F G obj pr1 pr2 comparison
 
 /-- API target: under an inner-fibration hypothesis, the strict pullback represents the homotopy
 pullback. This is the bridge from the strict package above to the general `Cat_∞` semantics. -/
-def representedByRightInnerFibration (C D E : SSet.QCat.{u}) (F : C ⟶ E) (G : D ⟶ E)
+noncomputable def representedByRightInnerFibration (C D E : SSet.QCat.{u}) (F : C ⟶ E) (G : D ⟶ E)
     (hG : InnerFibration G.hom) :
-    Candidate C D E F G := by
-  sorry
+    Candidate C D E F G where
+  obj := StrictPullback.qcatOfRightInnerFibration C D E F G hG
+  pr1 := StrictPullback.pr1OfRightInnerFibration C D E F G hG
+  pr2 := StrictPullback.pr2OfRightInnerFibration C D E F G hG
+  comparison := by
+    apply ObjectProperty.hom_ext
+    exact StrictPullback.commOfRightInnerFibration C D E F G hG
+  universal := by
+    sorry
 
 end HomotopyPullback
 
