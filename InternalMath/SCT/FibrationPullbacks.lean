@@ -56,89 +56,88 @@ abbrev InnerFibration {E B : SSet.{u}} (p : E ⟶ B) : Prop :=
 
 namespace StrictPullback
 
+variable {C D E X : SSet.QCat.{u}} {F : C ⟶ E} {G : D ⟶ E}
+
 /-- The strict simplicial-set pullback of a cospan of bundled quasicategories. -/
-noncomputable abbrev obj (C D E : SSet.QCat.{u}) (F : C ⟶ E) (G : D ⟶ E) : SSet.{u} :=
+noncomputable abbrev obj (F : C ⟶ E) (G : D ⟶ E) : SSet.{u} :=
   pullback F.hom G.hom
 
 /-- API target: strict pullbacks of quasicategories along a right inner fibration are
 quasicategories. -/
-lemma quasicategoryOfRightInnerFibration (C D E : SSet.QCat.{u}) (F : C ⟶ E)
-    (G : D ⟶ E) (hG : InnerFibration G.hom) : SSet.Quasicategory (obj C D E F G) := by
+lemma quasicategoryOfRightInnerFibration (F : C ⟶ E) (G : D ⟶ E)
+    (hG : InnerFibration G.hom) : SSet.Quasicategory (obj F G) := by
   sorry
 
 /-- Strict pullbacks of quasicategories along a left inner fibration are quasicategories, by
 symmetry from the right-leg version. -/
-lemma quasicategoryOfLeftInnerFibration (C D E : SSet.QCat.{u}) (F : C ⟶ E)
-    (G : D ⟶ E) (hF : InnerFibration F.hom) : SSet.Quasicategory (obj C D E F G) := by
-  haveI : SSet.Quasicategory (obj D C E G F) :=
-    quasicategoryOfRightInnerFibration D C E G F hF
+lemma quasicategoryOfLeftInnerFibration (F : C ⟶ E) (G : D ⟶ E)
+    (hF : InnerFibration F.hom) : SSet.Quasicategory (obj F G) := by
+  haveI : SSet.Quasicategory (obj G F) := quasicategoryOfRightInnerFibration G F hF
   exact quasicategoryOfIso (pullbackSymmetry F.hom G.hom)
 
 /-- Bundled strict pullback when the right leg is an inner fibration. -/
-noncomputable def qcatOfRightInnerFibration (C D E : SSet.QCat.{u}) (F : C ⟶ E)
-    (G : D ⟶ E) (hG : InnerFibration G.hom) : SSet.QCat.{u} :=
-  ⟨obj C D E F G, quasicategoryOfRightInnerFibration C D E F G hG⟩
+noncomputable def qcatOfRightInnerFibration (F : C ⟶ E) (G : D ⟶ E)
+    (hG : InnerFibration G.hom) : SSet.QCat.{u} :=
+  ⟨obj F G, quasicategoryOfRightInnerFibration F G hG⟩
 
 /-- Bundled strict pullback when the left leg is an inner fibration. -/
-noncomputable def qcatOfLeftInnerFibration (C D E : SSet.QCat.{u}) (F : C ⟶ E)
-    (G : D ⟶ E) (hF : InnerFibration F.hom) : SSet.QCat.{u} :=
-  ⟨obj C D E F G, quasicategoryOfLeftInnerFibration C D E F G hF⟩
+noncomputable def qcatOfLeftInnerFibration (F : C ⟶ E) (G : D ⟶ E)
+    (hF : InnerFibration F.hom) : SSet.QCat.{u} :=
+  ⟨obj F G, quasicategoryOfLeftInnerFibration F G hF⟩
 
 /-- First projection from a right-leg inner-fibration strict pullback. -/
-noncomputable def pr1OfRightInnerFibration (C D E : SSet.QCat.{u}) (F : C ⟶ E)
-    (G : D ⟶ E) (hG : InnerFibration G.hom) :
-    qcatOfRightInnerFibration C D E F G hG ⟶ C :=
+noncomputable def pr1OfRightInnerFibration (F : C ⟶ E) (G : D ⟶ E)
+    (hG : InnerFibration G.hom) : qcatOfRightInnerFibration F G hG ⟶ C :=
   ObjectProperty.homMk (P := SSet.Quasicategory) (pullback.fst F.hom G.hom)
 
 /-- Second projection from a right-leg inner-fibration strict pullback. -/
-noncomputable def pr2OfRightInnerFibration (C D E : SSet.QCat.{u}) (F : C ⟶ E)
-    (G : D ⟶ E) (hG : InnerFibration G.hom) :
-    qcatOfRightInnerFibration C D E F G hG ⟶ D :=
+noncomputable def pr2OfRightInnerFibration (F : C ⟶ E) (G : D ⟶ E)
+    (hG : InnerFibration G.hom) : qcatOfRightInnerFibration F G hG ⟶ D :=
   ObjectProperty.homMk (P := SSet.Quasicategory) (pullback.snd F.hom G.hom)
 
 /-- Strict commutativity of the right-leg inner-fibration pullback projections. -/
-lemma commOfRightInnerFibration (C D E : SSet.QCat.{u}) (F : C ⟶ E) (G : D ⟶ E)
-    (hG : InnerFibration G.hom) :
-    (pr1OfRightInnerFibration C D E F G hG).hom ≫ F.hom =
-      (pr2OfRightInnerFibration C D E F G hG).hom ≫ G.hom :=
+lemma commOfRightInnerFibration (F : C ⟶ E) (G : D ⟶ E) (hG : InnerFibration G.hom) :
+    (pr1OfRightInnerFibration F G hG).hom ≫ F.hom =
+      (pr2OfRightInnerFibration F G hG).hom ≫ G.hom :=
   pullback.condition
 
 /-- Mediating map into the right-fibration strict pullback from a strictly commuting cone. -/
-noncomputable def liftOfRightInnerFibration (X C D E : SSet.QCat.{u}) (F : C ⟶ E)
-    (G : D ⟶ E) (hG : InnerFibration G.hom) (A : X ⟶ C) (B : X ⟶ D)
-    (w : A.hom ≫ F.hom = B.hom ≫ G.hom) :
-    X ⟶ qcatOfRightInnerFibration C D E F G hG :=
+noncomputable def liftOfRightInnerFibration {F : C ⟶ E} {G : D ⟶ E}
+    (hG : InnerFibration G.hom) (A : X ⟶ C) (B : X ⟶ D)
+    (w : A.hom ≫ F.hom = B.hom ≫ G.hom) : X ⟶ qcatOfRightInnerFibration F G hG :=
   ObjectProperty.homMk (P := SSet.Quasicategory) (pullback.lift A.hom B.hom w)
 
 /-- First strict β-rule for the right-leg inner-fibration strict pullback lift. -/
-lemma lift_pr1_homOfRightInnerFibration (X C D E : SSet.QCat.{u}) (F : C ⟶ E)
-    (G : D ⟶ E) (hG : InnerFibration G.hom) (A : X ⟶ C) (B : X ⟶ D)
+lemma lift_pr1_homOfRightInnerFibration {F : C ⟶ E} {G : D ⟶ E}
+    (hG : InnerFibration G.hom) (A : X ⟶ C) (B : X ⟶ D)
     (w : A.hom ≫ F.hom = B.hom ≫ G.hom) :
-    (liftOfRightInnerFibration X C D E F G hG A B w).hom ≫
-      (pr1OfRightInnerFibration C D E F G hG).hom = A.hom :=
+    (liftOfRightInnerFibration hG A B w).hom ≫
+      (pr1OfRightInnerFibration F G hG).hom = A.hom :=
   pullback.lift_fst A.hom B.hom w
 
 /-- Second strict β-rule for the right-leg inner-fibration strict pullback lift. -/
-lemma lift_pr2_homOfRightInnerFibration (X C D E : SSet.QCat.{u}) (F : C ⟶ E)
-    (G : D ⟶ E) (hG : InnerFibration G.hom) (A : X ⟶ C) (B : X ⟶ D)
+lemma lift_pr2_homOfRightInnerFibration {F : C ⟶ E} {G : D ⟶ E}
+    (hG : InnerFibration G.hom) (A : X ⟶ C) (B : X ⟶ D)
     (w : A.hom ≫ F.hom = B.hom ≫ G.hom) :
-    (liftOfRightInnerFibration X C D E F G hG A B w).hom ≫
-      (pr2OfRightInnerFibration C D E F G hG).hom = B.hom :=
+    (liftOfRightInnerFibration hG A B w).hom ≫
+      (pr2OfRightInnerFibration F G hG).hom = B.hom :=
   pullback.lift_snd A.hom B.hom w
 
 /-- Strict uniqueness for maps into the right-fibration strict pullback. -/
-lemma hom_extOfRightInnerFibration (X C D E : SSet.QCat.{u}) (F : C ⟶ E) (G : D ⟶ E)
-    (hG : InnerFibration G.hom) {H K : X ⟶ qcatOfRightInnerFibration C D E F G hG}
-    (h₁ : H.hom ≫ (pr1OfRightInnerFibration C D E F G hG).hom =
-      K.hom ≫ (pr1OfRightInnerFibration C D E F G hG).hom)
-    (h₂ : H.hom ≫ (pr2OfRightInnerFibration C D E F G hG).hom =
-      K.hom ≫ (pr2OfRightInnerFibration C D E F G hG).hom) : H = K := by
+lemma hom_extOfRightInnerFibration {F : C ⟶ E} {G : D ⟶ E} {hG : InnerFibration G.hom}
+    {H K : X ⟶ qcatOfRightInnerFibration F G hG}
+    (h₁ : H.hom ≫ (pr1OfRightInnerFibration F G hG).hom =
+      K.hom ≫ (pr1OfRightInnerFibration F G hG).hom)
+    (h₂ : H.hom ≫ (pr2OfRightInnerFibration F G hG).hom =
+      K.hom ≫ (pr2OfRightInnerFibration F G hG).hom) : H = K := by
   apply ObjectProperty.hom_ext
   exact pullback.hom_ext h₁ h₂
 
 end StrictPullback
 
 namespace HomotopyPullback
+
+variable {C D E : SSet.QCat.{u}} {F : C ⟶ E} {G : D ⟶ E}
 
 /-- API target: the actual homotopy-pullback universal property in `Cat_∞`.
 
@@ -147,32 +146,30 @@ induced by precomposition with `pr1` and `pr2` should identify `Map(X,P)` with t
 pullback of `Map(X,C) → Map(X,E) ← Map(X,D)`.  This is left as an abstract project target until the
 mapping-anima and coherent-equivalence APIs are available.
 -/
-def UniversalProperty (C D E : SSet.QCat.{u}) (F : C ⟶ E) (G : D ⟶ E)
-    (P : SSet.QCat.{u}) (pr1 : P ⟶ C) (pr2 : P ⟶ D) (comparison : pr1 ≫ F = pr2 ≫ G) :
-    Type (u + 1) := by
+def UniversalProperty {P : SSet.QCat.{u}} (pr1 : P ⟶ C) (pr2 : P ⟶ D)
+    (comparison : pr1 ≫ F = pr2 ≫ G) : Type (u + 1) := by
   sorry
 
 /-- A homotopy-pullback candidate: strict cone data together with the eventual `Cat_∞` universal
 property. The final SCT pullback fields should use a package of this kind, not an arbitrary strict
 simplicial-set pullback. -/
-structure Candidate (C D E : SSet.QCat.{u}) (F : C ⟶ E) (G : D ⟶ E) : Type (u + 1) where
+structure Candidate (F : C ⟶ E) (G : D ⟶ E) : Type (u + 1) where
   obj : SSet.QCat.{u}
   pr1 : obj ⟶ C
   pr2 : obj ⟶ D
   comparison : pr1 ≫ F = pr2 ≫ G
-  universal : UniversalProperty C D E F G obj pr1 pr2 comparison
+  universal : UniversalProperty pr1 pr2 comparison
 
 /-- API target: under an inner-fibration hypothesis, the strict pullback represents the homotopy
 pullback. This is the bridge from the strict package above to the general `Cat_∞` semantics. -/
-noncomputable def representedByRightInnerFibration (C D E : SSet.QCat.{u}) (F : C ⟶ E) (G : D ⟶ E)
-    (hG : InnerFibration G.hom) :
-    Candidate C D E F G where
-  obj := StrictPullback.qcatOfRightInnerFibration C D E F G hG
-  pr1 := StrictPullback.pr1OfRightInnerFibration C D E F G hG
-  pr2 := StrictPullback.pr2OfRightInnerFibration C D E F G hG
+noncomputable def representedByRightInnerFibration (F : C ⟶ E) (G : D ⟶ E)
+    (hG : InnerFibration G.hom) : Candidate F G where
+  obj := StrictPullback.qcatOfRightInnerFibration F G hG
+  pr1 := StrictPullback.pr1OfRightInnerFibration F G hG
+  pr2 := StrictPullback.pr2OfRightInnerFibration F G hG
   comparison := by
     apply ObjectProperty.hom_ext
-    exact StrictPullback.commOfRightInnerFibration C D E F G hG
+    exact StrictPullback.commOfRightInnerFibration F G hG
   universal := by
     sorry
 
