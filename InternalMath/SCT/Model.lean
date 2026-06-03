@@ -12,6 +12,7 @@ public import InternalMath.SCT.Localization
 public import Mathlib.AlgebraicTopology.Quasicategory.Nerve
 public import Mathlib.AlgebraicTopology.Quasicategory.StrictBicategory
 public import Mathlib.AlgebraicTopology.SimplicialSet.FiniteColimits
+public import Mathlib.CategoryTheory.Bicategory.Adjunction.Basic
 public import Mathlib.CategoryTheory.Category.Preorder
 public import Mathlib.CategoryTheory.Category.ULift
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.Cospan
@@ -27,14 +28,15 @@ The current pass fills the small amount of structure that is already directly av
 mathlib: Kan complexes embed in quasicategories, `Δ[0]` is a Kan complex, identities and
 composition are the ordinary maps in the full subcategory of quasicategories, and binary products of
 quasicategories are quasicategories. The remaining `sorry`s are genuine semantic gaps in the
-current mathlib/SCT interface: natural isomorphisms are equivalence edges in functor
+current mathlib/SCT interface: two-cells still need a bridge to objects of functor
 quasicategories, pullbacks should be homotopy/∞-categorical pullbacks, and the fibration/universe
 fields require the universal cocartesian fibration and directed-univalence machinery.
 
-For functor quasicategories and natural isomorphisms, this file now includes a local skeleton for
-API that is being developed in the `emilyriehl/infinity-cosmos` project and mathlib PR #35287. The
-skeleton uses the existing simplicial internal hom, assumes/sorries quasicategory closure, and
-models natural isomorphisms as invertible/equivalence edges in those functor quasicategories.
+For functor quasicategories, this file includes a local skeleton for API that is being developed
+in the `emilyriehl/infinity-cosmos` project and mathlib PR #35287. The skeleton uses the existing
+simplicial internal hom and assumes/sorries quasicategory closure. Natural transformations are
+modeled as 2-cells in mathlib's strict bicategory of quasicategories; the remaining bridge from
+those 2-cells to objects of the functor quasicategory is the `natTransObject` field below.
 The maximal-core/mapping-anima workshop scaffold lives in `InternalMath.SCT.MappingAnima`;
 the fibration-stable pullback scaffold lives in `InternalMath.SCT.FibrationPullbacks`; the
 inverting-functor/localization scaffold lives in `InternalMath.SCT.Localization`.
@@ -359,9 +361,21 @@ def functorVertex (C D : SSet.QCat.{u}) (F : C ⟶ D) : (funCat C D).obj _⦋0�
   SSet.unitHomEquiv (funCat C D).obj
     (MonoidalClosed.curry ((ρ_ C.obj).hom ≫ F.hom))
 
-/-- Natural transformations are edges in the functor quasicategory. -/
+/-- Natural transformations in the SCT model are 2-cells in mathlib's strict bicategory of
+quasicategories. The separate `natTransObject` model field below will connect these 2-cells with
+objects of the functor quasicategory/internal hom. -/
 abbrev NatTrans (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
-  SSet.Edge (functorVertex C D F) (functorVertex C D G)
+  F ⟶ G
+
+/-- Invertibility evidence for a bicategorical 2-cell, universe-lifted to match the InternalLean
+side-structure field. -/
+abbrev TwoCellIsIso {C D : SSet.QCat.{u}} {F G : C ⟶ D} (α : NatTrans C D F G) : Type u :=
+  ULift.{u} (PLift (IsIso α))
+
+/-- Package an available Lean `IsIso` instance as SCT side-structure data. -/
+def twoCellIsIso {C D : SSet.QCat.{u}} {F G : C ⟶ D} {α : NatTrans C D F G}
+    [IsIso α] : TwoCellIsIso α :=
+  ULift.up (PLift.up inferInstance)
 
 /-- Invertible/equivalence-edge data for an edge in a simplicial set.
 
@@ -398,61 +412,65 @@ def map {X Y : SSet.{u}} {x₀ x₁ : X _⦋0⦌} {e : SSet.Edge x₀ x₁}
 
 end EdgeIsIso
 
-/-- Natural-isomorphism data in the model: an edge in `Fun(C,D)` which is an equivalence edge. -/
+/-- Natural-isomorphism data in the model: an invertible bicategorical 2-cell. -/
 abbrev NatIso (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
-  (α : NatTrans C D F G) × EdgeIsIso α
+  (α : NatTrans C D F G) × TwoCellIsIso α
 
 /-- The identity natural isomorphism. -/
 def idNatIso (C D : SSet.QCat.{u}) (F : C ⟶ D) : NatIso C D F F :=
-  ⟨SSet.Edge.id (functorVertex C D F), EdgeIsIso.id _⟩
+  ⟨𝟙 F, twoCellIsIso⟩
 
 /-- Transport a natural isomorphism across equality of strict functors. -/
 def natIsoOfEq {C D : SSet.QCat.{u}} {F G : C ⟶ D} (h : F = G) : NatIso C D F G := by
   subst h
   exact idNatIso C D F
 
-/-- Assumption/API target: compose natural transformations as edges in the functor
-quasicategory. -/
+/-- Vertical composition of natural transformations as 2-cells. -/
 def compNatTrans {C D : SSet.QCat.{u}} {F G H : C ⟶ D}
-    (α : NatTrans C D F G) (β : NatTrans C D G H) : NatTrans C D F H := by
-  sorry
+    (α : NatTrans C D F G) (β : NatTrans C D G H) : NatTrans C D F H :=
+  α ≫ β
 
-/-- Assumption/API target: equivalence edges in a quasicategory are closed under composition. -/
-def compEdgeIsIso {C D : SSet.QCat.{u}} {F G H : C ⟶ D}
+/-- Invertible 2-cells are closed under vertical composition. -/
+noncomputable def compTwoCellIsIso {C D : SSet.QCat.{u}} {F G H : C ⟶ D}
     {α : NatTrans C D F G} {β : NatTrans C D G H}
-    (hα : EdgeIsIso α) (hβ : EdgeIsIso β) : EdgeIsIso (compNatTrans α β) := by
-  sorry
+    (hα : TwoCellIsIso α) (hβ : TwoCellIsIso β) : TwoCellIsIso (compNatTrans α β) := by
+  letI : IsIso α := hα.down.down
+  letI : IsIso β := hβ.down.down
+  change TwoCellIsIso (α ≫ β)
+  exact twoCellIsIso
 
 /-- Vertical composition of natural isomorphisms. -/
-def compNatIso (C D : SSet.QCat.{u}) {F G H : C ⟶ D}
+noncomputable def compNatIso (C D : SSet.QCat.{u}) {F G H : C ⟶ D}
     (α : NatIso C D F G) (β : NatIso C D G H) : NatIso C D F H :=
-  ⟨compNatTrans α.1 β.1, compEdgeIsIso α.2 β.2⟩
+  ⟨compNatTrans α.1 β.1, compTwoCellIsIso α.2 β.2⟩
 
 /-- Inverse of a natural isomorphism. -/
-def invNatIso (C D : SSet.QCat.{u}) {F G : C ⟶ D}
-    (α : NatIso C D F G) : NatIso C D G F :=
-  ⟨α.2.inv, α.2.symm⟩
+noncomputable def invNatIso (C D : SSet.QCat.{u}) {F G : C ⟶ D}
+    (α : NatIso C D F G) : NatIso C D G F := by
+  letI : IsIso α.1 := α.2.down.down
+  exact ⟨inv α.1, twoCellIsIso⟩
 
-/-- Assumption/API target: pre-whiskering preserves equivalence edges in functor
-quasicategories, with the expected endpoint compatibility. -/
-def preWhiskerNatIso (B C D : SSet.QCat.{u}) (K : B ⟶ C) {F G : C ⟶ D}
+/-- Pre-whiskering of natural isomorphisms in the strict bicategory of quasicategories. -/
+noncomputable def preWhiskerNatIso (B C D : SSet.QCat.{u}) (K : B ⟶ C) {F G : C ⟶ D}
     (α : NatIso C D F G) : NatIso B D (K ≫ F) (K ≫ G) := by
-  sorry
+  letI : IsIso α.1 := α.2.down.down
+  exact ⟨Bicategory.whiskerLeft K α.1, twoCellIsIso⟩
 
-/-- Assumption/API target: post-whiskering preserves equivalence edges in functor
-quasicategories, with the expected endpoint compatibility. -/
-def postWhiskerNatIso (B C D : SSet.QCat.{u}) {F G : B ⟶ C} (K : C ⟶ D)
+/-- Post-whiskering of natural isomorphisms in the strict bicategory of quasicategories. -/
+noncomputable def postWhiskerNatIso (B C D : SSet.QCat.{u}) {F G : B ⟶ C} (K : C ⟶ D)
     (α : NatIso B C F G) : NatIso B D (F ≫ K) (G ≫ K) := by
-  sorry
+  letI : IsIso α.1 := α.2.down.down
+  exact ⟨Bicategory.whiskerRight α.1 K, twoCellIsIso⟩
 
-/-- Horizontal composition of natural isomorphisms. -/
-def horizCompNatIso (B C D : SSet.QCat.{u}) {F G : B ⟶ C} {H K : C ⟶ D}
+/-- Horizontal composition of natural isomorphisms in the strict bicategory of quasicategories. -/
+noncomputable def horizCompNatIso (B C D : SSet.QCat.{u}) {F G : B ⟶ C} {H K : C ⟶ D}
     (α : NatIso B C F G) (β : NatIso C D H K) : NatIso B D (F ≫ H) (G ≫ K) := by
-  sorry
+  letI : IsIso α.1 := α.2.down.down
+  letI : IsIso β.1 := β.2.down.down
+  exact ⟨Bicategory.whiskerRight α.1 H ≫ Bicategory.whiskerLeft G β.1, twoCellIsIso⟩
 
 /-- Equivalence of quasicategories as forward/backward functors with natural-isomorphism unit and
-counit. Once the upstream equivalence-edge API is available, this package should become routine
-structure built from `NatIso`.
+counit, now using invertible 2-cells from mathlib's strict bicategory of quasicategories.
 -/
 structure CatEquivData (C D : SSet.QCat.{u}) : Type u where
   forward : C ⟶ D
@@ -625,6 +643,21 @@ quasicategory. -/
 abbrev InvertibleMorphismData (C : SSet.QCat.{u}) (f : intervalQCat ⟶ C) : Type u :=
   EdgeIsIso (intervalFunctorEdge C f)
 
+/-- Adjunction data between quasicategory functors, supplied by the bicategory of
+quasicategories. -/
+abbrev AdjunctionData (C D : SSet.QCat.{u}) (L : C ⟶ D) (R : D ⟶ C) : Type u :=
+  Bicategory.Adjunction L R
+
+/-- Unit 2-cell of a bicategorical adjunction. -/
+def adjunctionUnit (C D : SSet.QCat.{u}) (L : C ⟶ D) (R : D ⟶ C)
+    (adj : AdjunctionData C D L R) : NatTrans C C (𝟙 C) (L ≫ R) :=
+  adj.unit
+
+/-- Counit 2-cell of a bicategorical adjunction. -/
+def adjunctionCounit (C D : SSet.QCat.{u}) (L : C ⟶ D) (R : D ⟶ C)
+    (adj : AdjunctionData C D L R) : NatTrans D D (R ≫ L) (𝟙 D) :=
+  adj.counit
+
 end UpstreamFunctorQuasicategorySkeleton
 
 end SCTModelHelpers
@@ -634,9 +667,9 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   SCat := SSet.QCat.{u}
   Functor C D := C ⟶ D
   NatTrans := SCTModelHelpers.NatTrans
-  /- This is equivalence-edge data in `Fun(C,D)`. The objectwise interpretation is the theorem
-  supplied by `objectwiseNatIsoComponent` below. -/
-  ObjectwiseNatIsoData _ _ _ _ α := SCTModelHelpers.EdgeIsIso α
+  /- This is invertibility data for a bicategorical 2-cell. The bridge to objectwise
+  interpretation is the theorem supplied by `objectwiseNatIsoComponent` below. -/
+  ObjectwiseNatIsoData _ _ _ _ α := SCTModelHelpers.TwoCellIsIso α
   CatEquiv := SCTModelHelpers.CatEquivData
   AnimaIndexedCat := sorry
   InvertibleMorphismData := SCTModelHelpers.InvertibleMorphismData
@@ -651,7 +684,7 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   ContextMorphismCollection := sorry
   ContextObjectCollection := sorry
   IsofibrationWitness := sorry
-  Adjunction := sorry
+  Adjunction := SCTModelHelpers.AdjunctionData
   LeftAdjointSection := sorry
   RightAdjointSection := sorry
   LeftFibrationWitness := sorry
@@ -926,8 +959,8 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   beckChevalleyTransformation := sorry
   idCocartesianFunctor := sorry
   compCocartesianFunctor := sorry
-  adjunctionUnit := sorry
-  adjunctionCounit := sorry
+  adjunctionUnit := SCTModelHelpers.adjunctionUnit
+  adjunctionCounit := SCTModelHelpers.adjunctionCounit
   leftFibrationCocartesian := sorry
   rightFibrationCartesian := sorry
   universal_left_adjoint_section := sorry
