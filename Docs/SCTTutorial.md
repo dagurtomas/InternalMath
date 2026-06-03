@@ -16,7 +16,8 @@ exercise admissions to the core SCT modules unless you intend them to become par
 ## 1. The two languages in one file
 
 SCT files are Lean files, but most declarations inside `declare_type_theory`,
-`extend_type_theory`, `lf_def`, and `internal def` are written in InternalLean's object language.
+`extend_type_theory`, `lf_def`, and `internal def` are written in InternalLean's object language
+(LF = Logical Framework).
 For example:
 
 ```lean
