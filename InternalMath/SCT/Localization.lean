@@ -27,7 +27,9 @@ The intended semantics is:
   among functors that invert `W`.
 
 The universal property must be quasicategorical, preferably stated through mapping anima.  Ordinary
-localization of the homotopy category is not the intended interpretation.
+localization of the homotopy category is not the intended interpretation.  In the current SCT model,
+natural transformations are bicategorical 2-cells; this scaffold still needs the bridge from those
+2-cells to the functor quasicategory when forming inverting-functor subcategories.
 -/
 
 @[expose] public section
@@ -44,8 +46,7 @@ namespace FunctorQuasicategory
 
 To make this construction correct, use the simplicial internal hom `D.obj ^ C.obj` and prove the
 standard theorem that it is a quasicategory whenever `C` and `D` are quasicategories.  This should
-later be replaced by the same upstream functor-quasicategory API used by the SCT model's natural
-isomorphism skeleton.
+later be replaced by the same upstream functor-quasicategory/internal-hom API used by the SCT model.
 -/
 noncomputable def obj (C D : SSet.QCat.{u}) : SSet.QCat.{u} := by
   sorry

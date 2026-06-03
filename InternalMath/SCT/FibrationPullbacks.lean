@@ -19,6 +19,9 @@ homotopy-pullback adapter.
 
 The intended first theorem is: if one leg of a cospan of quasicategories is an inner fibration,
 then the strict simplicial-set pullback is again a quasicategory and models the homotopy pullback.
+Natural-transformation comparisons in the surrounding SCT model are bicategorical 2-cells; this
+file still uses strict equality only for the special strict-pullback cone where the square commutes
+on the nose.
 -/
 
 @[expose] public section
