@@ -49,7 +49,8 @@ The model now implements a substantial first layer: anima categories, terminal a
 categories, products, finite shapes, ordinary-category nerves, strict bicategorical natural
 transformations and natural isomorphisms, and several functor-category operations. Functor
 categories are represented by simplicial internal homs. The remaining API gap there is a proof that
-if `C` and `D` are quasicategories, then the internal hom from `C` to `D` is again a quasicategory.
+if `C` and `D` are quasicategories, then the internal hom from `C` to `D` is again a quasicategory
+(this gap will be closed soon by incoming mathlib PRs by Jack McKoen and Joël Riou).
 
 The remaining gaps are concentrated in higher universal properties and later SCT structure:
 objectwise components of natural transformations, product and coproduct uniqueness, homotopy
