@@ -34,7 +34,7 @@ See [`Docs/STLC.md`](Docs/STLC.md) for a guide to the files and declarations.
 
 ### Synthetic category theory
 
-`InternalMath/SCT` is work in progress. It is a book-structured InternalLean implementation of the
+`InternalMath/SCT` is work in progress. It is an InternalLean implementation of the
 type theory defined in the Cisinski--Cnossen--Nguyen--Walde **Synthetic Category Theory** book
 project:
 
@@ -73,10 +73,10 @@ placeholder `sorry`s in the model skeleton.
 - `InternalMath/LambdaCalculus/Basic.lean` — InternalLean specification of STLC.
 - `InternalMath/LambdaCalculus/Model.lean` — generated model interface, CCC model, syntactic CCC,
   and Curry--Howard--Lambek comparison.
-- `InternalMath/SCT/Spec.lean` — universe-polymorphic book-structured SCT specification.
+- `InternalMath/SCT/Spec.lean` — universe-polymorphic SCT specification organized around the book.
 - `InternalMath/SCT/Model.lean` — generated SCT model interface and quasicategory/Kan-complex model
   skeleton.
-- `Docs/` — human-facing guides to the examples.
+- `Docs/` — guides for readers and users of this repo.
 
 ## License
 

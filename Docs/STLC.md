@@ -14,7 +14,7 @@ finite products and function types.
 - `InternalMath/LambdaCalculus/Model.lean` generates `LambdaCalculusModel` and proves the
   Curry--Howard--Lambek constructions.
 
-## Type-theory declaration
+## Type theory declaration
 
 `LambdaCalculus` is an intrinsic STLC presentation. Its main syntax sorts are:
 
@@ -108,7 +108,7 @@ equivalence : C ≌ (CCC.lambdaCalculusModel C).category
 The file also equips the comparison functors with monoidal structure using the chosen finite
 products.
 
-## Arbitrary-context comparison
+## Comparison for arbitrary contexts
 
 The one-variable syntactic category is enough for the categorical CCC, but STLC terms are indexed by
 arbitrary contexts. The representability fields provide quotient-level comparison data:
@@ -128,7 +128,3 @@ For each context `Γ`, the comparison maps terms modulo `EqTm` to morphisms
 lake build InternalMath.LambdaCalculus.Basic
 lake build InternalMath.LambdaCalculus.Model
 ```
-
-A structural-equivalence skipped-field warning may appear when generating the model interface. That
-warning concerns a generic strict-structure comparison helper and is separate from the STLC/CCC
-constructions in `Model.lean`.

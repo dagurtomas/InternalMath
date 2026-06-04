@@ -120,7 +120,7 @@ lf_opaque idFunctor (C : SCat) : Functor C C
 lf_opaque terminalCat : SCat
 ```
 
-Typed `lf_opaque` declarations become model-interface fields.
+Typed `lf_opaque` declarations become fields in the generated model interface.
 
 ### `lf_def`
 

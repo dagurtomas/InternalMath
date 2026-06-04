@@ -37,7 +37,7 @@ proofs or by axiom packages matching the book's formulation.
 
 ## Quasicategory model status
 
-`Model.lean` interprets the basic SCT carriers with mathlib's simplicial-set APIs:
+`Model.lean` interprets the basic SCT carriers with mathlib's APIs for simplicial sets:
 
 ```lean
 Anima := SSet.Kan.{u}
@@ -46,7 +46,7 @@ Functor := fun C D => C ⟶ D
 ```
 
 The model now implements a substantial first layer: anima categories, terminal and initial
-categories, products, finite shapes, ordinary-category nerves, strict bicategorical natural
+categories, products, finite shapes, nerves of ordinary categories, strict bicategorical natural
 transformations and natural isomorphisms, and several functor-category operations. Functor
 categories are represented by simplicial internal homs. The remaining API gap there is a proof that
 if `C` and `D` are quasicategories, then the internal hom from `C` to `D` is again a quasicategory
