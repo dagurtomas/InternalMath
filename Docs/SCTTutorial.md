@@ -1,24 +1,22 @@
 # SCT tutorial and exercises
 
-This tutorial introduces the Synthetic Category Theory (SCT) experiment in this repository and the
-InternalLean syntax used to implement it.
+This tutorial introduces the Synthetic Category Theory (SCT) experiment and the InternalLean syntax
+used to implement it.
 
-SCT is an active research implementation of the type theory from the Cisinski--Cnossen--Nguyen--
-Walde Synthetic Category Theory book project. The files are meant to track the book closely, but the
-interface is not stable. Some declarations are still admitted, the quasicategory model is a
-skeleton, and several current witness fields are expected to change as the formalization matures.
+SCT is a work-in-progress implementation of the type theory from the
+Cisinski--Cnossen--Nguyen--Walde **Synthetic Category Theory** book project. The specification
+tracks the book's vocabulary, while the quasicategory model and several theorem proofs are still
+under development.
 
-A good way to use this tutorial is to open `InternalMath/SCT/TutorialExercises.lean` in your editor
-and replace the exercise `sorry`s. You can also use a scratch Lean file that imports
-`InternalMath.SCT.Spec`. Scratch files may contain temporary `sorry`s while you work. Avoid adding
-exercise admissions to the core SCT modules unless you intend them to become part of the project.
+For hands-on practice, open `InternalMath/SCT/TutorialExercises.lean` in your editor and replace the
+exercise `sorry`s. You can also make a scratch file that imports `InternalMath.SCT.Spec`.
 
-## 1. The two languages in one file
+## 1. Lean and InternalLean
 
-SCT files are Lean files, but most declarations inside `declare_type_theory`,
-`extend_type_theory`, `lf_def`, and `internal def` are written in InternalLean's object language
-(LF = Logical Framework).
-For example:
+SCT files are Lean files. Inside `declare_type_theory`, `extend_type_theory`, `lf_def`, and
+`internal def`, the declarations are written in InternalLean's object language.
+
+A first SCT block looks like this:
 
 ```lean
 declare_type_theory SCT{u} where
@@ -27,31 +25,28 @@ declare_type_theory SCT{u} where
   lf_opaque animaCat (A : Anima) : SCat
 ```
 
-The names `Anima` and `SCat` are syntax sorts in the object theory `SCT`. InternalLean then
-generates Lean-facing metadata and, later, model-interface obligations for these declarations.
+Here `Anima` and `SCat` are sorts in the object theory `SCT`. InternalLean records this theory and
+can generate Lean model obligations from it.
 
-The main SCT entry points are:
+The main files are:
 
 - `InternalMath/SCT/Spec.lean`: stable aggregate import for the SCT specification;
-- `InternalMath/SCT/Spec/Prelude.lean`: initial `declare_type_theory SCT{u}` block;
-- `InternalMath/SCT/Spec/Chapter*/...`: staged `extend_type_theory SCT where` blocks;
-- `InternalMath/SCT/Model.lean`: generated `SCTModel` interface and current quasicategory model
-  skeleton.
+- `InternalMath/SCT/Spec/Prelude.lean`: the initial `declare_type_theory SCT{u}` block;
+- `InternalMath/SCT/Spec/Chapter*/...`: staged extensions of the theory;
+- `InternalMath/SCT/Model.lean`: the generated `SCTModel` interface and current model skeleton.
 
-## 2. Basic InternalLean declarations used by SCT
+## 2. Common SCT declaration forms
 
 ### `declare_type_theory` and `extend_type_theory`
 
-`declare_type_theory` starts a new object theory. SCT is declared once in
-`Spec/Prelude.lean`:
+`declare_type_theory` starts a new object theory:
 
 ```lean
 declare_type_theory SCT{u} where
   ...
 ```
 
-The `{u}` is an InternalLean universe parameter for the object theory. Later files reopen the same
-theory:
+The `{u}` is an InternalLean universe parameter. Later files add declarations with:
 
 ```lean
 extend_type_theory SCT where
@@ -59,17 +54,15 @@ extend_type_theory SCT where
   ...
 ```
 
-Use `extend_type_theory` when adding new SCT vocabulary or checked LF definitions. Use the stable
-aggregate import `InternalMath.SCT.Spec` when you only want to work with the existing theory.
+Use `import InternalMath.SCT.Spec` when you only need the finished SCT specification.
 
 ### `model_section`
 
-`model_section Chapter3` groups subsequent model obligations. It has no mathematical content by
-itself. It makes generated model templates easier to navigate.
+`model_section Chapter3` groups generated model obligations. It is an organizational marker.
 
 ### `syntax_sort`
 
-A `syntax_sort` is an object-language family of terms or data:
+A `syntax_sort` declares a family of object-language data:
 
 ```lean
 syntax_sort Functor (C : SCat) (D : SCat) : Type u
@@ -77,51 +70,37 @@ syntax_sort CatEquiv (C : SCat) (D : SCat) : Type u
 ```
 
 The result universe controls the Lean universe of the corresponding model field. In SCT,
-`SCat : Type (u+1)` and `Functor C D : Type u` reflect the intended quasicategory semantics: small
-synthetic categories live one universe above their mapping types.
+`SCat : Type (u+1)` and `Functor C D : Type u` match the intended quasicategory semantics.
 
 ### `syntax_sort_role`
 
-A role is metadata for tools. It adds no constructors, theorems, or model laws.
+A role is metadata for tools:
 
 ```lean
-syntax_sort ObjectwiseNatIsoData ... : Type u
 syntax_sort_role ObjectwiseNatIsoData : side_structure
 ```
 
-SCT uses `side_structure` for proof-like or property-like data that is still represented as a
-syntax sort. Examples include `ObjectwiseNatIsoData`, `InvertibleMorphismData`, and several current
-subcategory witness sorts.
+It does not add constructors, proofs, or equations.
 
-### `judgment` and `judgment_role`
+### `judgment`, `judgment_role`, and `rule`
 
-A `judgment` declares an object-theory proposition or relation. SCT has few custom judgments because
-most mathematical data is represented intrinsically by syntax sorts. One important example is:
+A `judgment` declares an object-theory proposition or relation:
 
 ```lean
 judgment isAnimaCat (C : SCat)
 judgment_role isAnimaCat : side_judgment
 ```
 
-`side_judgment` is a role tag used with `judgment_role`. The spelling is `judgment_role ... :
-side_judgment`. A side judgment records a property outside the carrier sort itself. Here it says
-that a synthetic category is an anima-category.
-
-### `rule`
-
-A `rule` is an inference rule for a judgment:
+A `rule` proves a judgment in the object theory:
 
 ```lean
 rule anima_cat_is_anima (A : Anima) where
   conclusion : isAnimaCat (animaCat A)
 ```
 
-Rules are checked as object-theory rules. They are not Lean theorems, although InternalLean can
-transport checked internal rules and definitions to generated model interfaces.
-
 ### `syntax_abbrev`
 
-A `syntax_abbrev` is notation that expands before checking and model-obligation generation:
+A `syntax_abbrev` is notation that expands before checking:
 
 ```lean
 syntax_abbrev Obj (C : SCat) := Functor terminalCat C
@@ -130,9 +109,7 @@ syntax_abbrev NatIso (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D) :
   Σ natIsoTrans : NatTrans C D F G, ObjectwiseNatIso C D F G natIsoTrans
 ```
 
-`Obj C` means a functor from the terminal category into `C`. `NatIso` is currently represented as a
-Sigma package consisting of an underlying natural transformation plus objectwise invertibility
-evidence.
+Thus `Obj C` means a functor from the terminal category into `C`.
 
 ### `lf_opaque`
 
@@ -143,26 +120,22 @@ lf_opaque idFunctor (C : SCat) : Functor C C
 lf_opaque terminalCat : SCat
 ```
 
-Typed `lf_opaque` declarations usually become model-interface fields unless they are hidden or
-replaced by checked definitions. Do not use `lf_opaque` merely to hide a theorem that should be
-proved internally.
+Typed `lf_opaque` declarations become model-interface fields.
 
 ### `lf_def`
 
-`lf_def` is a checked LF definition inside a theory block:
+`lf_def` is a checked definition inside a theory block:
 
 ```lean
 lf_def coreInclEmbedding : (C : SCat) ⇒ Embedding (coreCat C) C (coreIncl C) :=
   fun C => fst (coreUniversalPackage C)
 ```
 
-Use `lf_def` when a declaration is definitional from previous SCT data. It unfolds during internal
-conversion and normally should not add a new model obligation.
+Use it when a construction is definable from earlier SCT data.
 
 ### `internal def`, `internal theorem`, and `internal_defs`
 
-After a theory exists, you can add checked internal declarations from the Lean namespace of the
-theory:
+After the theory exists, you can add checked internal declarations from the Lean namespace `SCT`:
 
 ```lean
 namespace SCT
@@ -173,34 +146,21 @@ internal def example (A : Anima) : isAnimaCat (animaCat A) := by
 end SCT
 ```
 
-`internal_defs where` batches several declarations in source order. SCT uses it for
-currently-admitted theorem debt:
-
-```lean
-namespace SCT
-
-internal_defs where
-  def someFutureTheorem : SomeStatement := sorry
-
-end SCT
-```
-
-For theorem-shaped debt, prefer `internal theorem ... := sorry` or a clearly documented
-`internal_defs` admission. Such admissions remain visible to `#lint_type_theory_sorries SCT` and do
-not silently become model-provider fields.
+`internal_defs where` batches several declarations in source order. Admissions in internal
+statements remain visible to `#lint_type_theory_sorries SCT`.
 
 ## 3. Reading SCT declarations
 
-SCT is intrinsic: most sorts contain valid data by construction. There is no global wellformedness
-judgment for every object. Instead, the declaration uses:
+SCT is intrinsic: most sorts contain valid data by construction. There is no separate
+well-formedness judgment for every object. The specification uses:
 
-- syntax sorts for objects, categories, functors, equivalences, fibrations, and witness data;
+- syntax sorts for categories, functors, equivalences, fibrations, and witness data;
 - side judgments for occasional properties such as `isAnimaCat`;
-- Sigma packages for explicit data with projections;
+- Sigma packages for data with projections;
 - `lf_opaque` for primitive vocabulary and book axiom data;
-- `lf_def` and internal definitions for constructions and theorems derived from earlier data.
+- `lf_def` and internal definitions for derived constructions.
 
-For example, the object type of a category is defined by abbreviation:
+For example:
 
 ```lean
 Obj C := Functor terminalCat C
@@ -208,8 +168,7 @@ Obj C := Functor terminalCat C
 
 A point of `C` is a functor from the terminal category into `C`.
 
-Likewise, an anima subobject is represented by an anima, an inclusion functor, and embedding
-evidence:
+Likewise, an anima subobject is represented by an anima, an inclusion functor, and embedding data:
 
 ```lean
 AnimaSubobject A :=
@@ -218,9 +177,7 @@ AnimaSubobject A :=
       Embedding (animaCat B) (animaCat A) incl
 ```
 
-This style makes the SCT API categorical rather than elementwise.
-
-## 4. Working internally in SCT
+## 4. Exercises
 
 Create a scratch file with:
 
@@ -234,12 +191,12 @@ namespace SCT
 end SCT
 ```
 
-The following exercises are small enough to solve by reading `Spec/Prelude.lean` and
+The first exercises can be solved by reading `Spec/Prelude.lean` and
 `Spec/Chapter1/BasicConstructions.lean`.
 
 ### Exercise 1: use a judgment rule
 
-Fill the proof using the rule `anima_cat_is_anima`.
+Fill the proof using `anima_cat_is_anima`.
 
 ```lean
 internal def exercise01_anima_cat (A : Anima) : isAnimaCat (animaCat A) := by
@@ -264,8 +221,7 @@ internal def exercise02_equiv_to_anima
 
 ### Exercise 3: remember what `Obj C` means
 
-`Obj C` expands to `Functor terminalCat C`. Fill the definition with the parameter already in the
-context.
+`Obj C` expands to `Functor terminalCat C`.
 
 ```lean
 internal def exercise03_object_as_functor (C : SCat) (x : Obj C) : Functor terminalCat C := by
@@ -274,9 +230,8 @@ internal def exercise03_object_as_functor (C : SCat) (x : Obj C) : Functor termi
 
 ### Exercise 4: add a checked LF alias
 
-Some object-level definitions are most predictable as `lf_def`s in an extension block. Try to write
-an alias for the right unitor in a scratch file outside the `namespace SCT` block. The finished
-block should look like this:
+Some object-level definitions are convenient as `lf_def`s in an extension block. Outside the
+`namespace SCT` block, try this alias for the right unitor:
 
 ```lean
 @[expose] public section
@@ -299,23 +254,20 @@ Add these commands to a scratch file and read the messages in your editor:
 #check_model_obligations SCT
 ```
 
-The current `#lint_type_theory_sorries SCT` output is expected to list admitted internal
-SCT declarations. Your scratch exercises can add more admissions locally if they still contain
-`sorry`.
+The linter currently lists admitted SCT declarations. That is expected for this experiment.
 
 ### Exercise 6: find a projection package
 
-Open `InternalMath/SCT/Spec/Chapter2/Cores.lean` and find `coreUniversalPackage`. Then find the
-checked projections `coreInclEmbedding`, `coreLiftPackage`, `coreLift`, `coreLiftBeta`, and
-`coreLiftUniq`.
+Open `InternalMath/SCT/Spec/Chapter2/Cores.lean` and find `coreUniversalPackage`. Then find
+`coreInclEmbedding`, `coreLiftPackage`, `coreLift`, `coreLiftBeta`, and `coreLiftUniq`.
 
 Questions:
 
-1. Which projection is just `fst (coreUniversalPackage C)`?
+1. Which projection is `fst (coreUniversalPackage C)`?
 2. Which projections come from nested `snd`s?
-3. Why is this better than five unrelated primitive fields?
+3. Why is one package better than five unrelated primitive fields?
 
-### Exercise 7: distinguish primitive data from theorem debt
+### Exercise 7: distinguish definitions from theorem debt
 
 Open `InternalMath/SCT/Spec/Chapter6/StrongSurjectivity.lean`. Find:
 
@@ -326,83 +278,44 @@ Open `InternalMath/SCT/Spec/Chapter6/StrongSurjectivity.lean`. Find:
 Questions:
 
 1. Which declaration is the definition from the book?
-2. Which declarations are currently admitted internal consequences?
-3. What data in `StronglySurjective` should eventually be used to prove the admitted declarations?
+2. Which declarations are currently admitted consequences?
+3. What data in `StronglySurjective` should eventually prove them?
 
-## 5. Current design debt: subcategories and side structures
+## 5. Current status
 
-The implementation is experimental, and some fields are expected to change. The clearest current
-example is the Chapter 3 subcategory and full-subcategory interface.
+The SCT specification is still changing. Several Chapter 3 subcategory fields are currently side
+structures and are expected to become more explicit packages. The model file also contains many
+placeholder obligations while the quasicategory interpretation is developed.
 
-Today, several notions are primitive side structures:
+These gaps are part of the current status of the project. They are kept visible so that the
+specification, internal proofs, and model obligations can converge on the book's formulation.
 
-```lean
-LandsInObjectCollection
-containsIdentities
-closedUnderComposition
-PreservesMorphismCollection
-```
+## 6. Common distinctions
 
-They are marked with:
+### Lean equality and SCT equivalence
 
-```lean
-syntax_sort_role ... : side_structure
-```
+SCT uses categorical data such as `NatIso`, `CatEquiv`, and pullback universal properties. Lean
+equality only applies when a statement is definitional.
 
-This is useful for staging the book interface, but it lacks the data needed for all expected
-internal proofs. For example, to prove that a functor preserving endpoint membership preserves the
-full-subcategory morphism collection, the proof should be able to unpack concrete factorization
-data. A forthcoming public design note will explain this in detail.
+### Primitive data and derived facts
 
-The likely direction is to replace some primitive side structures by explicit definitions or
-packages. For instance, `LandsInObjectCollection D C P F` should expose that the induced map on
-cores factors through the object-collection inclusion:
+Use `lf_opaque` for primitive vocabulary and axiom data. Use `lf_def` or checked internal
+definitions for constructions derived from earlier declarations.
 
-```text
-coreCat D  --coreFunctor D C F-->  coreCat C
-    \                                 ↑
-     \                                |
-      ------> objectCollectionCat C P --objectCollectionIncl C P--
-```
+### Roles and data
 
-Similarly, `PreservesMorphismCollection D C W F` should expose that the arrow-action map induced by
-`F` factors through the selected morphism collection `W`.
+`judgment_role` and `syntax_sort_role` classify declarations for tools. They do not provide data on
+their own.
 
-This kind of change determines which consequences can be proved internally without adding new
-opaque fields. When working on SCT, ask:
+### Aggregate import
 
-1. Is this declaration primitive vocabulary from the book?
-2. Is it book axiom data?
-3. Is it a definition that should be an `lf_def` or checked internal definition?
-4. Is it a theorem that should remain visible as theorem debt until proved?
-
-## 6. Common pitfalls
-
-### Do not confuse Lean equality with SCT equivalence
-
-SCT uses `NatIso`, `CatEquiv`, pullback universal properties, and related categorical data. Avoid
-replacing these with Lean equality unless the statement is genuinely definitional.
-
-### Do not hide theorem debt in model fields
-
-If a book theorem is currently hard to prove, leave it as visible internal debt or improve the
-representation. Do not turn it into `lf_opaque` unless the book treats it as primitive axiom data.
-
-### Remember that role declarations are metadata
-
-`judgment_role isAnimaCat : side_judgment` and `syntax_sort_role X : side_structure` help tools
-classify declarations. They do not create constructors or proofs.
-
-### Prefer the aggregate import for users
-
-Use:
+For normal SCT work, import:
 
 ```lean
 import InternalMath.SCT.Spec
 ```
 
-for normal internal SCT work. Import split chapter files only when you are editing that part of the
-specification or trying to keep a file very narrow.
+Import a split chapter file only when you are editing that part of the specification.
 
 ## 7. Further reading
 

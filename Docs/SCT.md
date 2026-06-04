@@ -5,17 +5,16 @@ Cisinski--Cnossen--Nguyen--Walde **Synthetic Category Theory** book project:
 
 https://drive.google.com/file/d/1lKaq7watGGl3xvjqw9qHjm6SDPFJ2-0o/view
 
-The goals are to implement this type theory, prove that quasicategories form a model, and support
-internal reasoning in the theory from Lean. This is work in progress.
+The goals are to implement the type theory, prove that quasicategories form a model, and support
+internal reasoning in Lean. This is work in progress.
 
 ## Files
 
 - `InternalMath/SCT/Spec.lean` declares the type theory `SCT`.
-- `InternalMath/SCT/Model.lean` generates `SCTModel` and contains a quasicategory/Kan-complex model
+- `InternalMath/SCT/Model.lean` generates `SCTModel` and contains the current quasicategory model
   skeleton.
-- `Docs/SCTTutorial.md` introduces the InternalLean syntax used by SCT.
-- `InternalMath/SCT/TutorialExercises.lean` gives beginner exercises for working internally in the
-  theory.
+- `Docs/SCTTutorial.md` introduces the SCT/InternalLean syntax.
+- `InternalMath/SCT/TutorialExercises.lean` gives beginner exercises.
 
 ## Specification status
 
@@ -29,13 +28,12 @@ internal reasoning in the theory from Lean. This is work in progress.
 - cartesian, cocartesian, left, and right fibrations;
 - limits, colimits, directed univalence, and universes.
 
-The declaration is universe-polymorphic. Sorts intended to be modeled by simplicial-set or
-quasicategory-level data are annotated with explicit result universes, for example `SCat : Type
-(u+1)` and `Functor C D : Type u`.
+The declaration is universe-polymorphic. For example, `SCat : Type (u+1)` and `Functor C D : Type u`
+match the intended quasicategory model.
 
-Many theorem-shaped internal declarations are currently admitted with `sorry`. They are kept
-lint-visible and should gradually be replaced by checked InternalLean declarations or by axiom
-packages that match the book's formulation.
+Many theorem-shaped internal declarations are currently admitted with `sorry`. These admissions are
+visible to `#lint_type_theory_sorries SCT` and are expected to be replaced by checked internal
+proofs or by axiom packages matching the book's formulation.
 
 ## Quasicategory model status
 
@@ -47,18 +45,17 @@ SCat := SSet.QCat.{u}
 Functor := fun C D => C ⟶ D
 ```
 
-Most remaining model fields are placeholders. The current concrete carriers keep the quasicategory
-target in view while the full model is developed.
+Most remaining model fields are placeholders. The current carriers keep the intended
+quasicategory/Kan-complex interpretation explicit while the full model is built.
 
 ## Expected warnings
 
 The SCT files currently emit warnings about:
 
-- admitted InternalLean declarations in `Spec.lean`;
-- `sorry` placeholders in the model skeleton.
+- admitted InternalLean declarations in the specification;
+- `sorry` placeholders in the model skeleton and project scaffolds.
 
-These warnings are known SCT/model debt. The current sanity check is that `SSet.QCat.{u}` and the
-Kan-complex full subcategory elaborate at the expected universes.
+These warnings are known SCT/model debt.
 
 ## Useful checks
 
@@ -68,9 +65,7 @@ lake env lean InternalMath/SCT/Model.lean
 lake build InternalMath.SCT.Model
 ```
 
-## Reading the file
+## Where to start
 
-`Spec.lean` is best read as book-facing LF metadata rather than a polished public API. The comments
-record chapter-level source context and, for several remaining axioms, explain what would be needed
-to turn a model-facing obligation into a checked internal declaration. For a guided introduction,
-start with [`SCTTutorial.md`](SCTTutorial.md).
+Start with [`SCTTutorial.md`](SCTTutorial.md) for the syntax and exercises. Then read
+`InternalMath/SCT/Spec/Prelude.lean` and the chapter file for the topic you want to study.
