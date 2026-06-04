@@ -6,9 +6,12 @@ Authors: Dagur Asgeirsson, AI assistant
 module
 
 public import InternalMath.SCT.Spec
+public import InternalMath.SCT.FiniteShapes
 public import InternalMath.SCT.MappingAnima
 public import InternalMath.SCT.FibrationPullbacks
 public import InternalMath.SCT.Localization
+public import InternalMath.SCT.SegalComposition
+public import InternalMath.SCT.IsoRezkModel
 public import Mathlib.AlgebraicTopology.Quasicategory.Nerve
 public import Mathlib.AlgebraicTopology.Quasicategory.StrictBicategory
 public import Mathlib.AlgebraicTopology.SimplicialSet.FiniteColimits
@@ -37,9 +40,12 @@ in the `emilyriehl/infinity-cosmos` project and mathlib PR #35287. The skeleton 
 simplicial internal hom and assumes/sorries quasicategory closure. Natural transformations are
 modeled as 2-cells in mathlib's strict bicategory of quasicategories; the remaining bridge from
 those 2-cells to objects of the functor quasicategory is the `natTransObject` field below.
-The maximal-core/mapping-anima workshop scaffold lives in `InternalMath.SCT.MappingAnima`;
-the fibration-stable pullback scaffold lives in `InternalMath.SCT.FibrationPullbacks`; the
-inverting-functor/localization scaffold lives in `InternalMath.SCT.Localization`.
+The finite-shape package lives in `InternalMath.SCT.FiniteShapes`; the Segal-composition
+scaffold lives in `InternalMath.SCT.SegalComposition`; the invertible-arrow/Rezk scaffold lives in
+`InternalMath.SCT.IsoRezkModel`; the maximal-core/mapping-anima workshop scaffold lives in
+`InternalMath.SCT.MappingAnima`; the fibration-stable pullback scaffold lives in
+`InternalMath.SCT.FibrationPullbacks`; the inverting-functor/localization scaffold lives in
+`InternalMath.SCT.Localization`.
 -/
 
 @[expose] public section
