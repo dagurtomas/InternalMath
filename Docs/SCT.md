@@ -31,7 +31,7 @@ internal reasoning in Lean. This is work in progress.
 The declaration is universe-polymorphic. For example, `SCat : Type (u+1)` and `Functor C D : Type u`
 match the intended quasicategory model.
 
-Many theorem-shaped internal declarations are currently admitted with `sorry`. These admissions are
+Many internal theorem statements are currently admitted with `sorry`. These admissions are
 visible to `#lint_type_theory_sorries SCT` and are expected to be replaced by checked internal
 proofs or by axiom packages matching the book's formulation.
 

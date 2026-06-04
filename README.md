@@ -41,8 +41,8 @@ project:
 https://drive.google.com/file/d/1lKaq7watGGl3xvjqw9qHjm6SDPFJ2-0o/view
 
 The goals are to implement this type theory, prove that quasicategories form a model, and let users
-reason internally in the type theory from Lean. This is not yet complete. Many theorem-shaped
-declarations are currently admitted, and most model fields are still placeholders.
+reason internally in the type theory from Lean. This is not yet complete. Many internal theorem
+statements are currently admitted, and most model fields are still placeholders.
 
 See [`Docs/SCT.md`](Docs/SCT.md) for the current status and expected warnings,
 [`Docs/SCTTutorial.md`](Docs/SCTTutorial.md) for a tutorial on SCT's InternalLean syntax, and
