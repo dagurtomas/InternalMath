@@ -5,7 +5,7 @@ Authors: Dagur Asgeirsson, AI assistant
 -/
 module
 
-public import InternalMath.SCT.MappingAnima
+public import InternalMath.SCT.IML.Model.MappingAnima
 public import Mathlib.AlgebraicTopology.Quasicategory.StrictBicategory
 
 /-!

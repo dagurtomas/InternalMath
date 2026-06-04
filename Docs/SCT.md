@@ -13,6 +13,8 @@ internal reasoning in Lean. This is work in progress.
 - `InternalMath/SCT/Spec.lean` declares the type theory `SCT`.
 - `InternalMath/SCT/Model.lean` generates `SCTModel` and contains the current quasicategory model
   skeleton.
+- `InternalMath/SCT/IML/Model/` contains workshop project files for SCT model construction.
+- `Docs/SCT/IML/` contains the corresponding workshop blueprints.
 - `Docs/SCTTutorial.md` introduces the SCT/InternalLean syntax.
 - `InternalMath/SCT/TutorialExercises.lean` gives beginner exercises.
 

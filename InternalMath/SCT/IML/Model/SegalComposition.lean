@@ -5,17 +5,17 @@ Authors: Dagur Asgeirsson, AI assistant
 -/
 module
 
-public import InternalMath.SCT.FiniteShapes
+public import InternalMath.SCT.IML.Model.FiniteShapes
 
 /-!
 # Segal composition and arrow calculus skeleton
 
 This file gives a model-side scaffold for the SCT project that interprets composition of
 interval-shaped arrows by filling the inner horn `Λ[2,1] -> C` in a quasicategory. The companion
-blueprint is `Plans/SCTResearch/SegalCompositionBlueprint.md`.
+blueprint is `Docs/SCT/IML/Model/SegalCompositionBlueprint.md`.
 
-The finite shape maps are provided by `InternalMath.SCT.FiniteShapes`: `[0]`, `[1]`, `[2]`, the
-three faces of `[2]`, the degeneracy `[1] -> [0]`, and the square `[1] × [1]`.
+The finite shape maps are provided by `InternalMath.SCT.IML.Model.FiniteShapes`: `[0]`, `[1]`,
+`[2]`, the three faces of `[2]`, the degeneracy `[1] -> [0]`, and the square `[1] × [1]`.
 
 The declarations below are honest interfaces. The chosen filler is noncomputable and currently a
 project marker. Unit and associativity comparisons are not strict equalities of fillers; they should

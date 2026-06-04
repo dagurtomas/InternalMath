@@ -84,13 +84,14 @@ explicit external theorem assumptions with clear hypotheses.
 
 The current project files separate model gaps by topic:
 
-- `InternalMath/SCT/FiniteShapes.lean`: checked finite-shape bookkeeping.
-- `InternalMath/SCT/SegalComposition.lean`: Segal composition and the bridge between `[2]` and
-  `Fun([1],[1])`.
-- `InternalMath/SCT/IsoRezkModel.lean`: invertible-arrow and Rezk-equivalence scaffolding.
-- `InternalMath/SCT/MappingAnima.lean`: maximal Kan cores and mapping anima.
-- `InternalMath/SCT/FibrationPullbacks.lean`: fibration-stable pullbacks and homotopy pullbacks.
-- `InternalMath/SCT/Localization.lean`: inverting functors and localization.
+- `InternalMath/SCT/IML/Model/FiniteShapes.lean`: checked finite-shape bookkeeping.
+- `InternalMath/SCT/IML/Model/SegalComposition.lean`: Segal composition and the bridge between
+  `[2]` and `Fun([1],[1])`.
+- `InternalMath/SCT/IML/Model/IsoRezkModel.lean`: invertible-arrow and Rezk-equivalence scaffolding.
+- `InternalMath/SCT/IML/Model/MappingAnima.lean`: maximal Kan cores and mapping anima.
+- `InternalMath/SCT/IML/Model/FibrationPullbacks.lean`: fibration-stable pullbacks and homotopy
+  pullbacks.
+- `InternalMath/SCT/IML/Model/Localization.lean`: inverting functors and localization.
 
 When moving a gap out of `Model.lean`, put it in the project file that owns the mathematics and add
 a docstring explaining what data remains.

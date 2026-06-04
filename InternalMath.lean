@@ -1,12 +1,12 @@
 import InternalMath.LambdaCalculus.Basic
 import InternalMath.LambdaCalculus.Model
-import InternalMath.SCT.FibrationPullbacks
-import InternalMath.SCT.FiniteShapes
-import InternalMath.SCT.IsoRezkModel
-import InternalMath.SCT.Localization
-import InternalMath.SCT.MappingAnima
+import InternalMath.SCT.IML.Model.FibrationPullbacks
+import InternalMath.SCT.IML.Model.FiniteShapes
+import InternalMath.SCT.IML.Model.IsoRezkModel
+import InternalMath.SCT.IML.Model.Localization
+import InternalMath.SCT.IML.Model.MappingAnima
 import InternalMath.SCT.Model
-import InternalMath.SCT.SegalComposition
+import InternalMath.SCT.IML.Model.SegalComposition
 import InternalMath.SCT.Spec
 import InternalMath.SCT.Spec.Chapter1.BasicConstructions
 import InternalMath.SCT.Spec.Chapter1.CellsAndSegal
@@ -35,4 +35,3 @@ import InternalMath.SCT.Spec.Chapter7.Straightening
 import InternalMath.SCT.Spec.Chapter7.StraighteningUnstraightening
 import InternalMath.SCT.Spec.Chapter7.Universes
 import InternalMath.SCT.Spec.Prelude
-import InternalMath.SCT.TutorialExercises

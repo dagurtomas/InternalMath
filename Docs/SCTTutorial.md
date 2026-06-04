@@ -33,7 +33,8 @@ The main files are:
 - `InternalMath/SCT/Spec.lean`: stable aggregate import for the SCT specification;
 - `InternalMath/SCT/Spec/Prelude.lean`: the initial `declare_type_theory SCT{u}` block;
 - `InternalMath/SCT/Spec/Chapter*/...`: staged extensions of the theory;
-- `InternalMath/SCT/Model.lean`: the generated `SCTModel` interface and current model skeleton.
+- `InternalMath/SCT/Model.lean`: the generated `SCTModel` interface and current model skeleton;
+- `InternalMath/SCT/IML/Model/`: workshop project files for SCT model construction.
 
 ## 2. Common SCT declaration forms
 

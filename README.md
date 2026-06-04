@@ -76,6 +76,8 @@ placeholder `sorry`s in the model skeleton.
 - `InternalMath/SCT/Spec.lean` — universe-polymorphic SCT specification organized around the book.
 - `InternalMath/SCT/Model.lean` — generated SCT model interface and quasicategory/Kan-complex model
   skeleton.
+- `InternalMath/SCT/IML/Model/` — workshop project files for SCT model construction.
+- `Docs/SCT/IML/` — blueprints corresponding to the SCT workshop projects.
 - `Docs/` — guides for readers and users of this repo.
 
 ## License

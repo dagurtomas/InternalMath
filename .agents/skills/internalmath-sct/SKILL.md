@@ -23,12 +23,13 @@ even when that requires more InternalLean support or a longer refactor.
 - `InternalMath/SCT/Spec/Chapter*/...`: staged chapter/topic extensions.
 - `InternalMath/SCT/Model.lean`: generated model interface and quasicategory/Kan-complex model
   skeleton.
-- `InternalMath/SCT/FiniteShapes.lean`: checked finite-shape API.
-- `InternalMath/SCT/SegalComposition.lean`: Segal-composition and `[2]`/`Fun([1],[1])` bridge.
-- `InternalMath/SCT/IsoRezkModel.lean`: invertible-arrow and Rezk-equivalence scaffold.
-- `InternalMath/SCT/MappingAnima.lean`: maximal-Kan-core and mapping-anima scaffold.
-- `InternalMath/SCT/FibrationPullbacks.lean`: fibration-stable pullback scaffold.
-- `InternalMath/SCT/Localization.lean`: inverting-functor and localization scaffold.
+- `InternalMath/SCT/IML/Model/FiniteShapes.lean`: checked finite-shape API.
+- `InternalMath/SCT/IML/Model/SegalComposition.lean`: Segal composition and the
+  `[2]`/`Fun([1],[1])` bridge.
+- `InternalMath/SCT/IML/Model/IsoRezkModel.lean`: invertible-arrow and Rezk-equivalence scaffold.
+- `InternalMath/SCT/IML/Model/MappingAnima.lean`: maximal-Kan-core and mapping-anima scaffold.
+- `InternalMath/SCT/IML/Model/FibrationPullbacks.lean`: fibration-stable pullback scaffold.
+- `InternalMath/SCT/IML/Model/Localization.lean`: inverting-functor and localization scaffold.
 - `Docs/SCT.md` and `Docs/SCTTutorial.md`: concise human-facing docs.
 - `.agents/docs/SCTDevelopmentNotes.md`: detailed agent-facing SCT guidance.
 
