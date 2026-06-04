@@ -14,7 +14,7 @@ exercise `sorry`s. You can also make a scratch file that imports `InternalMath.S
 ## 1. Lean and InternalLean
 
 SCT files are Lean files. Inside `declare_type_theory`, `extend_type_theory`, `lf_def`, and
-`internal def`, the declarations are written in InternalLean's object language.
+`internal def`, the declarations are written in InternalLean.
 
 A first SCT block looks like this:
 
@@ -25,7 +25,7 @@ declare_type_theory SCT{u} where
   lf_opaque animaCat (A : Anima) : SCat
 ```
 
-Here `Anima` and `SCat` are sorts in the object theory `SCT`. InternalLean records this theory and
+Here `Anima` and `SCat` are sorts in the type theory `SCT`. InternalLean records this theory and
 can generate Lean model obligations from it.
 
 The main files are:
@@ -39,7 +39,7 @@ The main files are:
 
 ### `declare_type_theory` and `extend_type_theory`
 
-`declare_type_theory` starts a new object theory:
+`declare_type_theory` starts a new type theory:
 
 ```lean
 declare_type_theory SCT{u} where
@@ -62,7 +62,7 @@ Use `import InternalMath.SCT.Spec` when you only need the finished SCT specifica
 
 ### `syntax_sort`
 
-A `syntax_sort` declares a family of object-language data:
+A `syntax_sort` declares a family of primitive data:
 
 ```lean
 syntax_sort Functor (C : SCat) (D : SCat) : Type u
@@ -84,14 +84,14 @@ It does not add constructors, proofs, or equations.
 
 ### `judgment`, `judgment_role`, and `rule`
 
-A `judgment` declares an object-theory proposition or relation:
+A `judgment` declares a type-theoretic judgment:
 
 ```lean
 judgment isAnimaCat (C : SCat)
 judgment_role isAnimaCat : side_judgment
 ```
 
-A `rule` proves a judgment in the object theory:
+A `rule` declares an inference rule whose conclusion is a `judgment`:
 
 ```lean
 rule anima_cat_is_anima (A : Anima) where
@@ -152,7 +152,7 @@ statements remain visible to `#lint_type_theory_sorries SCT`.
 ## 3. Reading SCT declarations
 
 SCT is intrinsic: most sorts contain valid data by construction. There is no separate
-well-formedness judgment for every object. The specification uses:
+well-formedness judgment. The specification uses:
 
 - syntax sorts for categories, functors, equivalences, fibrations, and witness data;
 - side judgments for occasional properties such as `isAnimaCat`;
@@ -230,7 +230,7 @@ internal def exercise03_object_as_functor (C : SCat) (x : Obj C) : Functor termi
 
 ### Exercise 4: add a checked LF alias
 
-Some object-level definitions are convenient as `lf_def`s in an extension block. Outside the
+Some internal definitions are convenient as `lf_def`s in an extension block. Outside the
 `namespace SCT` block, try this alias for the right unitor:
 
 ```lean
