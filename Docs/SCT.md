@@ -37,16 +37,24 @@ proofs or by axiom packages matching the book's formulation.
 
 ## Quasicategory model status
 
-`Model.lean` currently provides concrete top-level carriers:
+`Model.lean` interprets the basic SCT carriers with mathlib's simplicial-set APIs:
 
 ```lean
-Anima := ObjectProperty.FullSubcategory (fun S : SSet.{u} => SSet.KanComplex S)
+Anima := SSet.Kan.{u}
 SCat := SSet.QCat.{u}
 Functor := fun C D => C ⟶ D
 ```
 
-Most remaining model fields are placeholders. The current carriers keep the intended
-quasicategory/Kan-complex interpretation explicit while the full model is built.
+The model now implements a substantial first layer: anima categories, terminal and initial
+categories, products, finite shapes, ordinary-category nerves, strict bicategorical natural
+transformations and natural isomorphisms, and several functor-category operations. The internal-hom
+presentation of functor categories is in place, with the quasicategory closure theorem recorded as
+an API gap.
+
+The remaining gaps are concentrated in higher universal properties and later SCT structure:
+objectwise components of natural transformations, product and coproduct uniqueness, homotopy
+pullbacks, Segal composition, Rezk equivalences, mapping anima, subcategories, localization,
+contexts, fibrations, limits, colimits, and universes.
 
 ## Expected warnings
 
