@@ -47,9 +47,9 @@ Functor := fun C D => C ⟶ D
 
 The model now implements a substantial first layer: anima categories, terminal and initial
 categories, products, finite shapes, ordinary-category nerves, strict bicategorical natural
-transformations and natural isomorphisms, and several functor-category operations. The internal-hom
-presentation of functor categories is in place, with the quasicategory closure theorem recorded as
-an API gap.
+transformations and natural isomorphisms, and several functor-category operations. Functor
+categories are represented by simplicial internal homs. The remaining API gap there is a proof that
+if `C` and `D` are quasicategories, then the internal hom from `C` to `D` is again a quasicategory.
 
 The remaining gaps are concentrated in higher universal properties and later SCT structure:
 objectwise components of natural transformations, product and coproduct uniqueness, homotopy
