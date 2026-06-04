@@ -184,4 +184,118 @@ package the result as bicategorical comparison data.
 def AssociativityComparison {C : SSet.QCat.{u}} (t : ComposableTriple C) : Type (u + 1) := by
   sorry
 
+namespace ModelBridge
+
+/-!
+## Bridge to the generated SCT model fields
+
+The generated SCT model presents `simplex2Cat` as `Fun([1],[1])`, while the finite-shape package
+presents `[2]` as a standard simplex. The bridge between these descriptions is the usual
+identification of monotone maps `[m] -> [2]` with monotone families of endomaps of `[1]`, i.e. a map
+`[m] × [1] -> [1]`. The declarations in this namespace name that bridge so that `Model.lean` can
+refer to project files rather than carrying local `sorry`s.
+-/
+
+/-- The walking-arrow quasicategory in the generated SCT model's nerve presentation. -/
+def intervalQCat : SSet.QCat.{u} :=
+  SCTFiniteShapes.nerveQCat (ULift.{u} (Fin 2))
+
+/-- API target: the simplicial internal hom of quasicategories is a quasicategory. -/
+lemma quasicategoryInternalHom (C D : SSet.QCat.{u}) :
+    SSet.Quasicategory ((ihom C.obj).obj D.obj) := by
+  sorry
+
+/-- The functor quasicategory, realized as a simplicial internal hom. -/
+def funCat (C D : SSet.QCat.{u}) : SSet.QCat.{u} :=
+  ⟨(ihom C.obj).obj D.obj, quasicategoryInternalHom C D⟩
+
+set_option backward.isDefEq.respectTransparency false in
+/-- Natural transformations are bicategorical 2-cells. -/
+abbrev NatTrans (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
+  F ⟶ G
+
+set_option backward.isDefEq.respectTransparency false in
+/-- Invertibility evidence for bicategorical 2-cells, universe-lifted for the model interface. -/
+abbrev TwoCellIsIso {C D : SSet.QCat.{u}} {F G : C ⟶ D}
+    (α : NatTrans C D F G) : Type u :=
+  ULift.{u} (PLift (IsIso α))
+
+/-- Natural-isomorphism data used by the generated SCT model. -/
+abbrev NatIso (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
+  (α : NatTrans C D F G) × TwoCellIsIso α
+
+/-- The face of `Fun([1],[1])` from the constant-zero endomap to the identity endomap.
+
+This is the `0 -> 1` edge of the bridge `[2] ≃ Fun([1],[1])`. Its construction is the monotone
+family `min : [1] × [1] -> [1]`, curried into the internal hom.
+-/
+noncomputable def simplex2Face01 : intervalQCat.{u} ⟶ funCat intervalQCat intervalQCat := by
+  sorry
+
+/-- The face of `Fun([1],[1])` from the identity endomap to the constant-one endomap.
+
+This is the `1 -> 2` edge of the bridge `[2] ≃ Fun([1],[1])`. Its construction is the monotone
+family `max : [1] × [1] -> [1]`, curried into the internal hom.
+-/
+noncomputable def simplex2Face12 : intervalQCat.{u} ⟶ funCat intervalQCat intervalQCat := by
+  sorry
+
+/-- The face of `Fun([1],[1])` from the constant-zero endomap to the constant-one endomap.
+
+This is the `0 -> 2` edge of the bridge `[2] ≃ Fun([1],[1])`. Its construction is the first
+projection `[1] × [1] -> [1]`, curried into the internal hom.
+-/
+noncomputable def simplex2Face02 : intervalQCat.{u} ⟶ funCat intervalQCat intervalQCat := by
+  sorry
+
+/-- Endpoint compatibility for the `0 -> 1` face of `Fun([1],[1])`. -/
+noncomputable def simplex2Face01Zero {T : SSet.QCat.{u}}
+    (simplex2Id0 : T ⟶ funCat intervalQCat intervalQCat)
+    (intervalZero : T ⟶ intervalQCat) :
+    NatIso T (funCat intervalQCat intervalQCat) (intervalZero ≫ simplex2Face01)
+      simplex2Id0 := by
+  sorry
+
+/-- Endpoint compatibility for the `0 -> 1` face of `Fun([1],[1])`. -/
+noncomputable def simplex2Face01One {T : SSet.QCat.{u}}
+    (simplex2Can : T ⟶ funCat intervalQCat intervalQCat)
+    (intervalOne : T ⟶ intervalQCat) :
+    NatIso T (funCat intervalQCat intervalQCat) (intervalOne ≫ simplex2Face01)
+      simplex2Can := by
+  sorry
+
+/-- Endpoint compatibility for the `1 -> 2` face of `Fun([1],[1])`. -/
+noncomputable def simplex2Face12Zero {T : SSet.QCat.{u}}
+    (simplex2Can : T ⟶ funCat intervalQCat intervalQCat)
+    (intervalZero : T ⟶ intervalQCat) :
+    NatIso T (funCat intervalQCat intervalQCat) (intervalZero ≫ simplex2Face12)
+      simplex2Can := by
+  sorry
+
+/-- Endpoint compatibility for the `1 -> 2` face of `Fun([1],[1])`. -/
+noncomputable def simplex2Face12One {T : SSet.QCat.{u}}
+    (simplex2Id1 : T ⟶ funCat intervalQCat intervalQCat)
+    (intervalOne : T ⟶ intervalQCat) :
+    NatIso T (funCat intervalQCat intervalQCat) (intervalOne ≫ simplex2Face12)
+      simplex2Id1 := by
+  sorry
+
+/-- Endpoint compatibility for the `0 -> 2` face of `Fun([1],[1])`. -/
+noncomputable def simplex2Face02Zero {T : SSet.QCat.{u}}
+    (simplex2Id0 : T ⟶ funCat intervalQCat intervalQCat)
+    (intervalZero : T ⟶ intervalQCat) :
+    NatIso T (funCat intervalQCat intervalQCat) (intervalZero ≫ simplex2Face02)
+      simplex2Id0 := by
+  sorry
+
+/-- Endpoint compatibility for the `0 -> 2` face of `Fun([1],[1])`. -/
+noncomputable def simplex2Face02One {T : SSet.QCat.{u}}
+    (simplex2Id1 : T ⟶ funCat intervalQCat intervalQCat)
+    (intervalOne : T ⟶ intervalQCat) :
+    NatIso T (funCat intervalQCat intervalQCat) (intervalOne ≫ simplex2Face02)
+      simplex2Id1 := by
+  sorry
+
+end ModelBridge
+
 end SCTSegalCompositionSkeleton

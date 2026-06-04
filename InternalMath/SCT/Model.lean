@@ -816,17 +816,29 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   simplex2Id0 := SCTModelHelpers.simplex2Id0
   simplex2Can := SCTModelHelpers.simplex2Can
   simplex2Id1 := SCTModelHelpers.simplex2Id1
-  simplex2Face01 := sorry
-  simplex2Face12 := sorry
-  simplex2Face02 := sorry
+  simplex2Face01 := SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01
+  simplex2Face12 := SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12
+  simplex2Face02 := SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02
   simplex2Deg0 := SCTModelHelpers.simplex2Deg0
   simplex2Deg1 := SCTModelHelpers.simplex2Deg1
-  simplex2Face01Zero := sorry
-  simplex2Face01One := sorry
-  simplex2Face12Zero := sorry
-  simplex2Face12One := sorry
-  simplex2Face02Zero := sorry
-  simplex2Face02One := sorry
+  simplex2Face01Zero :=
+    SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01Zero
+      SCTModelHelpers.simplex2Id0 (SCTModelHelpers.intervalVertex 0)
+  simplex2Face01One :=
+    SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01One
+      SCTModelHelpers.simplex2Can (SCTModelHelpers.intervalVertex 1)
+  simplex2Face12Zero :=
+    SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12Zero
+      SCTModelHelpers.simplex2Can (SCTModelHelpers.intervalVertex 0)
+  simplex2Face12One :=
+    SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12One
+      SCTModelHelpers.simplex2Id1 (SCTModelHelpers.intervalVertex 1)
+  simplex2Face02Zero :=
+    SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02Zero
+      SCTModelHelpers.simplex2Id0 (SCTModelHelpers.intervalVertex 0)
+  simplex2Face02One :=
+    SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02One
+      SCTModelHelpers.simplex2Id1 (SCTModelHelpers.intervalVertex 1)
   simplex2Deg0Beta := SCTModelHelpers.natIsoOfEq rfl
   simplex2Deg1Beta := SCTModelHelpers.natIsoOfEq rfl
   functorObjectSourceCompat := sorry
