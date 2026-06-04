@@ -1,20 +1,28 @@
 # SCT model formalization blueprints
 
-Status: refreshed after QCat bicategory two-cell refactor, 2026-06-03.
+Status: refreshed after the SCT IML reorganization and model-status audit, 2026-06-04.
 
-Scope: these notes are for closing and organizing work around `InternalMath/SCT/Model.lean`.
-They do not propose changes to `InternalMath/SCT/Spec.lean`.
+Scope: these notes are for closing and organizing work around `InternalMath/SCT/Model.lean` and the
+model workshop files under `InternalMath/SCT/IML/Model/`. They do not propose changes to
+`InternalMath/SCT/Spec.lean`; internal-theory projects are tracked in
+`Docs/SCT/IML/Internal/SCTInternalWorkshopBlueprints.md`.
 
-The model file currently has the main carriers in place:
+The model file currently has the main carriers and a substantial first layer in place:
 
-- `Anima` is the full subcategory of Kan complexes in simplicial sets;
-- `SCat` is `SSet.QCat`, the full subcategory of quasicategories;
+- `Anima` is `SSet.Kan`, the bundled full subcategory of Kan complexes in simplicial sets;
+- `SCat` is `SSet.QCat`, the bundled full subcategory of quasicategories;
 - functors are maps of simplicial sets between bundled quasicategories;
 - natural transformations are 2-cells in mathlib's strict bicategory on `SSet.QCat`;
 - natural isomorphisms are invertible bicategorical 2-cells;
 - bicategorical adjunction data supplies the Chapter 5 adjunction type and unit/counit fields;
 - the terminal anima, empty category, walking arrow, identities, composition, binary products,
-  pullback/pushout indexing shapes, and several strict comparison fields are already supplied.
+  ordinary-category nerves, finite shapes, pullback/pushout indexing shapes, strict initiality, and
+  several strict comparison fields are already supplied.
+
+Since the previous refresh, the finite-shape package moved to `InternalMath/SCT/IML/Model/`,
+`initialStrict` and `qcatCatEquivOfIso` are implemented, and the generated model's
+`simplex2Face*` fields now refer to `SegalComposition.ModelBridge`. The remaining work there is the
+actual bridge between `[2]` and `Fun([1],[1])`, not basic finite-shape bookkeeping.
 
 `Model.lean` still contains a local section named `UpstreamFunctorQuasicategorySkeleton`. Its
 remaining `sorry`s are upstream API assumptions, not local contributor proof obligations. They now
@@ -35,6 +43,8 @@ Use these labels when selecting workshop projects.
   nontrivial upstream theorem.
 - **Upstream-wait**: should be replaced by mathlib/infinity-cosmos material rather than proved
   locally in this repository.
+- **Completed/reuse**: already implemented locally; keep as background or use the helper in later
+  projects.
 
 ## Workshop target matrix
 
@@ -43,16 +53,16 @@ Use these labels when selecting workshop projects.
 | Replace remaining functor-quasicategory skeleton | 1.1 | Upstream-wait | maintainer/human |
 | Wrap upstream functor-category closed structure | 1.2 | Agent-friendly after upstream | agent |
 | Equality-to-`NatIso` comparison fields | 1.3 | Agent-friendly | agent |
-| Strict isomorphism to `CatEquivData` bridge | 1.4 | Agent-friendly | agent |
+| Strict isomorphism to `CatEquivData` bridge | 1.4 | Completed/reuse | reference |
 | Bridge bicategory 2-cells to functor-quasicategory objects | 2.1 | Mixed | agent + review |
 | Product natural-transformation calculus / `prodUniq` | 2.2 | Agent-friendly after 2.1 | agent |
-| Finite simplex and `natTransObject` package | 2.3 | Mixed | paired work |
+| Finite-shape package and `[2] ≃ Fun([1],[1])` bridge | 2.3 | Mixed | paired work |
 | Segal composition/unit/associativity | 2.4 | Mixed/Human-interest | human + agent |
 | Invertible morphisms, `Iso(C)`, Rezk | 2.5 | Human-interest | human |
 | Maximal Kan cores and mapping anima | 2.6 | Human-interest | human/upstream |
 | Inverting functor categories and localization | 2.7 | Human-interest | human |
-| Empty simplicial sets and `initialStrict` | 3.1 | Agent-friendly | agent |
-| Coproducts of quasicategories | 3.2 | Agent-friendly/Mixed | agent + review |
+| Empty simplicial sets and `initialStrict` | 3.1 | Completed/reuse | reference |
+| Coproduct closure and `coprodUniq` | 3.2 | Agent-friendly/Mixed | agent + review |
 | Vertex-spanned full subcomplexes | 3.3 | Agent-friendly | agent |
 | Kan-complex closure operations | 3.4 | Mixed | split agent/human |
 | Fibration-stable pullbacks | 3.5 | Human-interest | human |
@@ -219,32 +229,24 @@ simplicial-set extensionality.
 
 ### Classification
 
-**Agent-friendly**, once `CatEquivData`/`NatIso` has the current skeleton shape.
+**Completed/reuse**.
 
-### Model fields and uses
+### Current status
 
-- helper for `Iso → CatEquivData`;
-- `initialStrict` after empty-simplicial-set lemmas;
-- finite-shape transports, e.g. standard simplex versus finite ordinal nerve;
-- curry/uncurry equivalences when represented by strict simplicial-set isomorphisms.
-
-### Mathematical statement
-
-A strict isomorphism of bundled quasicategories gives an equivalence data package: use the
-isomorphism and its inverse as forward/backward functors, and use equality-to-`NatIso` for the two
-composites.
-
-### Lean plan
-
-Add a reusable helper:
+`InternalMath/SCT/Model.lean` already provides:
 
 ```lean
--- schematic only
-def qcatCatEquivOfIso {C D : SSet.QCat.{u}} (e : C ≅ D) :
-    SCTModelHelpers.CatEquivData C D
+SCTModelHelpers.qcatCatEquivOfIso
 ```
 
-Use it only as a one-way bridge. Do not redefine `CatEquiv` as strict isomorphism.
+It packages a strict isomorphism of bundled quasicategories as equivalence data, using the
+isomorphism and its inverse as forward/backward functors and equality-to-`NatIso` for the two
+composites.
+
+### Remaining use
+
+Keep this helper as a one-way bridge for strict comparison isomorphisms, finite-shape transports,
+and future strict curry/uncurry equivalences. Do not redefine `CatEquiv` as strict isomorphism.
 
 # Section 2: Projects that build on the functor-quasicategory skeleton
 
@@ -334,29 +336,46 @@ transporting across this comparison.
 Do not prove `prodUniq` by strict equality of `H` and `K`; its hypotheses are natural isomorphisms
 of projections, not equalities.
 
-## 2.3 Finite simplex and shape-map package
+## 2.3 Finite shapes and the `[2] ≃ Fun([1],[1])` bridge
 
-Status: initial Lean package implemented in `InternalMath/SCT/IML/Model/FiniteShapes.lean`, 2026-06-03.
+Status: finite-shape package implemented in `InternalMath/SCT/IML/Model/FiniteShapes.lean`; the
+model-facing `[2]`/`Fun([1],[1])` gap is now isolated in `SegalComposition.ModelBridge`.
 
 ### Classification
 
-**Mostly agent-friendly**. The first reusable shape package is now checked; future work is to
-connect it to generated SCT model fields and the `natTransObject` bridge.
+**Mixed**. The finite-shape bookkeeping is checked; the remaining bridge is a small but real
+mathematical identification.
 
 ### Model fields
+
+Already connected to checked or project-file declarations:
 
 - `simplex2Id0`, `simplex2Can`, `simplex2Id1`;
 - `simplex2Face01`, `simplex2Face12`, `simplex2Face02`;
 - `simplex2Deg0`, `simplex2Deg1`;
-- endpoint beta fields for faces and degeneracies;
+- endpoint beta fields for faces and degeneracies.
+
+Still dependent on later bridge work:
+
 - `natTransObject`;
-- square restriction/extension fields after the basic shape package.
+- square lower/upper triangle, restriction, and extension fields;
+- Segal restriction/extension fields after the horn-map package.
 
 ### Mathematical statement
 
 Finite indexing shapes such as `[0]`, `[1]`, `[2]`, and `[1] × [1]` are nerves of finite ordinary
 categories. Their maps are induced by monotone maps of finite ordinals. These wrappers provide the
 coordinate system for natural transformations, squares, and Segal restrictions.
+
+The generated SCT model presents `simplex2Cat` as `Fun([1],[1])`, not as the standalone standard
+simplex `[2]`. The remaining bridge identifies the three relevant edges of `Fun([1],[1])` with the
+curried monotone maps:
+
+```text
+min        : [1] × [1] -> [1]
+max        : [1] × [1] -> [1]
+projection : [1] × [1] -> [1]
+```
 
 ### Lean status and plan
 
@@ -368,11 +387,13 @@ Implemented:
 3. endpoint beta lemmas for `[2]` faces and the interval degeneracy `[1] -> [0]`;
 4. `[1] × [1]` as a product quasicategory, with projections, vertices, horizontal/vertical edges,
    and a nerve identification with the product poset;
-5. span and cospan shapes as nerves of mathlib walking span/cospan categories.
+5. span and cospan shapes as nerves of mathlib walking span/cospan categories;
+6. project-file declarations for the generated model's three `simplex2Face*` maps and endpoint
+   comparisons, in `SCTSegalCompositionSkeleton.ModelBridge`.
 
 Still to do:
 
-1. wire these wrappers into `InternalMath/SCT/Model.lean` fields currently using local definitions;
+1. replace the `ModelBridge` declarations by actual curried `min`, `max`, and projection maps;
 2. add any extra square lower/upper-triangle inclusions required by the Segal/square calculus;
 3. connect interval-shaped functors with bicategory natural-transformation 2-cells through the
    `natTransObject` bridge.
@@ -562,38 +583,25 @@ fields may use `NatIso` or `CatEquivData` for packaging, but the main mathematic
 
 ### Classification
 
-**Agent-friendly**. This is one of the best local targets.
+**Completed/reuse**.
 
-### Model field
+### Current status
 
-- `initialStrict`.
+`initialStrict` is implemented in `InternalMath/SCT/Model.lean`. The proof uses reusable local
+helpers showing that a map to the empty-nerve quasicategory forces the source to have no vertices,
+and that maps out of a quasicategory with no vertices are unique. It then packages the two strict
+composite equalities with `natIsoOfEq`.
 
-### Mathematical statement
+### Remaining use
 
-The current `initialCat` is the nerve of the empty category. If a quasicategory `C` admits a map
-`C → initialCat`, then `C` has no vertices. A simplicial set with no vertices has no simplices in
-any dimension, so `C` is strictly isomorphic/equivalent to the empty quasicategory.
+Keep these helpers available for later empty-shape or initiality arguments. This is no longer a
+workshop target unless someone wants to polish or upstream the underlying simplicial-set lemmas.
 
-### Lean plan
-
-Prove reusable simplicial-set lemmas:
-
-```lean
--- schematic only
-lemma noVertices_of_map_to_initialQCat ... : IsEmpty (C.obj _⦋0⦌)
-lemma isEmpty_simplex_of_noVertices (X : SSet.{u}) [IsEmpty (X _⦋0⦌)] (n : ℕ) :
-    IsEmpty (X _⦋n⦌)
-lemma subsingleton_maps_from_noVertices ... : Subsingleton (X ⟶ Y)
-```
-
-Then build `CatEquivData C initialQCat` from the given map, the unique map back, and
-`natIsoOfEq` for the composites.
-
-### Pitfalls
+### Pitfall
 
 Do not eliminate a higher simplex directly. First extract a vertex from it.
 
-## 3.2 Coproducts of quasicategories
+## 3.2 Coproduct closure and coproduct natural-isomorphism calculus
 
 ### Classification
 
@@ -601,9 +609,16 @@ Do not eliminate a higher simplex directly. First extract a vertex from it.
 
 ### Model fields
 
+Implemented modulo the local coproduct-closure assumption:
+
 - `coprodCat`, `coprodIn1`, `coprodIn2`, `coprodCase`;
-- `coprodBeta1`, `coprodBeta2`, `coprodEta`, `coprodUniq`;
-- later: base-change and disjointness equivalences.
+- `coprodBeta1`, `coprodBeta2`, `coprodEta`.
+
+Still open:
+
+- proof of `quasicategoryCoprod`, currently a local helper `sorry`;
+- `coprodUniq`;
+- base-change and disjointness equivalences.
 
 ### Mathematical statement
 
@@ -613,11 +628,10 @@ back into the coproduct.
 
 ### Lean plan
 
-1. Identify mathlib's coproduct API for simplicial sets.
-2. Prove or add a reusable closure lemma for quasicategory coproducts.
-3. Wrap injections and case maps in `SSet.QCat`.
-4. Close β/η fields by strict equality and `natIsoOfEq`.
-5. Use Section 2.2-style coproduct natural-transformation calculus for `coprodUniq`.
+1. Prove or import a reusable closure lemma for quasicategory coproducts.
+2. Keep the existing wrappers for injections, case maps, and β/η comparisons.
+3. Use Section 2.2-style natural-transformation calculus for `coprodUniq`.
+4. Treat base-change and disjointness as later equivalence-data projects, not as strict equalities.
 
 ### Pitfalls
 
@@ -805,11 +819,11 @@ Postpone these unless a participant specifically wants a research/design project
 
 Good agent-heavy projects:
 
-1. Empty-simplicial-set lemmas and `initialStrict` (3.1).
-2. Vertex-spanned full subcomplexes and quasicategory closure (3.3).
-3. Finite ordinary nerve wrappers and face/degeneracy orientation tests (3.6, 3.7).
-4. Equality-to-`NatIso` cleanup and strict-isomorphism bridge (1.3, 1.4).
-5. Basic coproduct package, if the simplicial-set coproduct API is cooperative (3.2).
+1. Vertex-spanned full subcomplexes and quasicategory closure (3.3).
+2. Coproduct closure and `coprodUniq`, with review of the connectedness argument (3.2).
+3. Square/Segal finite-shape orientation tests beyond the already checked base package (2.3, 3.7).
+4. Equality-to-`NatIso` cleanup around remaining strict comparison fields (1.3).
+5. Reuse of `initialStrict` and `qcatCatEquivOfIso` in later fields, rather than new work on them.
 
 Good human-led projects:
 
@@ -823,5 +837,5 @@ Good paired projects:
 
 1. Bridge bicategory 2-cells to functor-quasicategory objects (2.1).
 2. Product natural-transformation calculus and `prodUniq` (2.2).
-3. Finite simplex plus Segal-composition package (2.3, 2.4).
+3. `[2] ≃ Fun([1],[1])` bridge plus Segal-composition package (2.3, 2.4).
 4. Coproduct closure plus universal-property fields (3.2).

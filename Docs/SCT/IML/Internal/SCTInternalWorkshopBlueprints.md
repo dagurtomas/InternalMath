@@ -1,13 +1,14 @@
 # SCT internal workshop project blueprints
 
-Status: synced after SCT spec split, 2026-06-03.
+Status: refreshed after the SCT IML reorganization and lint check, 2026-06-04.
 
 Scope: this note triages `sorry`-admitted internal declarations in the staged modules under
 `InternalMath/SCT/Spec/` and evaluates whether larger internal developments such as Yoneda, limits,
 and colimits are ready for workshop work. It is the internal-theory analogue of
 `Docs/SCT/IML/Model/SCTModelFormalizationBlueprints.md`. The old spec-split plan is historical:
 `InternalMath/SCT/Spec.lean` is the stable aggregate import and the real targets are the staged
-chapter modules.
+chapter modules. The Lean specification has not moved under `InternalMath/SCT/IML`; only these
+workshop blueprints live under `Docs/SCT/IML/Internal/`.
 
 This is about working inside SCT itself. It is separate from the external quasicategory model
 scaffolds in `InternalMath/SCT/IML/Model/MappingAnima.lean`,
@@ -25,12 +26,13 @@ import InternalMath.SCT.Spec
 #check_model_obligations SCT
 ```
 
-currently reports 64 admitted internal declarations through the aggregate `Spec.lean` import.  The
-model-obligation check still reports the generic LF-model backend check; the issue here is internal
-theorem/definition debt, not temporary admitted-definition fields in the generated model interface.
+currently reports 64 admitted internal declarations through the aggregate `Spec.lean` import. This
+count was rechecked on 2026-06-04 after the IML reorganization. The model-obligation check still
+reports the generic LF-model backend check; the issue here is internal theorem/definition debt, not
+temporary admitted-definition fields in the generated model interface.
 
-The older note `Plans/SCTInternalSorriesClassification.md` is still useful, but its count is stale:
-it says 32 internal admissions.  This file uses the current 64-declaration lint output.
+Older local planning notes may have stale counts. This public blueprint uses the current
+64-declaration lint output.
 
 ## Classification labels
 
