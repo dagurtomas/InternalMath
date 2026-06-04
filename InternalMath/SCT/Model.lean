@@ -367,17 +367,20 @@ def functorVertex (C D : SSet.QCat.{u}) (F : C ⟶ D) : (funCat C D).obj _⦋0�
   SSet.unitHomEquiv (funCat C D).obj
     (MonoidalClosed.curry ((ρ_ C.obj).hom ≫ F.hom))
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Natural transformations in the SCT model are 2-cells in mathlib's strict bicategory of
 quasicategories. The separate `natTransObject` model field below will connect these 2-cells with
 objects of the functor quasicategory/internal hom. -/
 abbrev NatTrans (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
   F ⟶ G
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Invertibility evidence for a bicategorical 2-cell, universe-lifted to match the InternalLean
 side-structure field. -/
 abbrev TwoCellIsIso {C D : SSet.QCat.{u}} {F G : C ⟶ D} (α : NatTrans C D F G) : Type u :=
   ULift.{u} (PLift (IsIso α))
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Package an available Lean `IsIso` instance as SCT side-structure data. -/
 def twoCellIsIso {C D : SSet.QCat.{u}} {F G : C ⟶ D} {α : NatTrans C D F G}
     [IsIso α] : TwoCellIsIso α :=
@@ -422,6 +425,7 @@ end EdgeIsIso
 abbrev NatIso (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
   (α : NatTrans C D F G) × TwoCellIsIso α
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The identity natural isomorphism. -/
 def idNatIso (C D : SSet.QCat.{u}) (F : C ⟶ D) : NatIso C D F F :=
   ⟨𝟙 F, twoCellIsIso⟩
@@ -431,11 +435,13 @@ def natIsoOfEq {C D : SSet.QCat.{u}} {F G : C ⟶ D} (h : F = G) : NatIso C D F 
   subst h
   exact idNatIso C D F
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Vertical composition of natural transformations as 2-cells. -/
 def compNatTrans {C D : SSet.QCat.{u}} {F G H : C ⟶ D}
     (α : NatTrans C D F G) (β : NatTrans C D G H) : NatTrans C D F H :=
   α ≫ β
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Invertible 2-cells are closed under vertical composition. -/
 noncomputable def compTwoCellIsIso {C D : SSet.QCat.{u}} {F G H : C ⟶ D}
     {α : NatTrans C D F G} {β : NatTrans C D G H}
@@ -450,24 +456,28 @@ noncomputable def compNatIso (C D : SSet.QCat.{u}) {F G H : C ⟶ D}
     (α : NatIso C D F G) (β : NatIso C D G H) : NatIso C D F H :=
   ⟨compNatTrans α.1 β.1, compTwoCellIsIso α.2 β.2⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Inverse of a natural isomorphism. -/
 noncomputable def invNatIso (C D : SSet.QCat.{u}) {F G : C ⟶ D}
     (α : NatIso C D F G) : NatIso C D G F := by
   letI : IsIso α.1 := α.2.down.down
   exact ⟨inv α.1, twoCellIsIso⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Pre-whiskering of natural isomorphisms in the strict bicategory of quasicategories. -/
 noncomputable def preWhiskerNatIso (B C D : SSet.QCat.{u}) (K : B ⟶ C) {F G : C ⟶ D}
     (α : NatIso C D F G) : NatIso B D (K ≫ F) (K ≫ G) := by
   letI : IsIso α.1 := α.2.down.down
   exact ⟨Bicategory.whiskerLeft K α.1, twoCellIsIso⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Post-whiskering of natural isomorphisms in the strict bicategory of quasicategories. -/
 noncomputable def postWhiskerNatIso (B C D : SSet.QCat.{u}) {F G : B ⟶ C} (K : C ⟶ D)
     (α : NatIso B C F G) : NatIso B D (F ≫ K) (G ≫ K) := by
   letI : IsIso α.1 := α.2.down.down
   exact ⟨Bicategory.whiskerRight α.1 K, twoCellIsIso⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Horizontal composition of natural isomorphisms in the strict bicategory of quasicategories. -/
 noncomputable def horizCompNatIso (B C D : SSet.QCat.{u}) {F G : B ⟶ C} {H K : C ⟶ D}
     (α : NatIso B C F G) (β : NatIso C D H K) : NatIso B D (F ≫ H) (G ≫ K) := by
@@ -533,18 +543,19 @@ noncomputable def qcatCoprodBeta2 (C D Γ : SSet.QCat.{u}) (F : C ⟶ Γ) (G : D
       Limits.coprod.desc F.hom G.hom = G.hom
     rw [Limits.coprod.inr_desc])
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Coproduct η-comparison. -/
 noncomputable def qcatCoprodEta (C D Γ : SSet.QCat.{u}) (H : qcatCoprod C D ⟶ Γ) :
     NatIso (qcatCoprod C D) Γ
       (qcatCoprodDesc C D Γ (qcatCoprodIn1 C D ≫ H) (qcatCoprodIn2 C D ≫ H)) H :=
   natIsoOfEq (by
     apply ObjectProperty.hom_ext
-    dsimp [qcatCoprodDesc, qcatCoprodIn1, qcatCoprodIn2]
+    change Limits.coprod.desc
+      ((Limits.coprod.inl : C.obj ⟶ C.obj ⨿ D.obj) ≫ H.hom)
+      ((Limits.coprod.inr : D.obj ⟶ C.obj ⨿ D.obj) ≫ H.hom) = H.hom
     apply Limits.coprod.hom_ext
     · rw [Limits.coprod.inl_desc]
-      rfl
-    · rw [Limits.coprod.inr_desc]
-      rfl)
+    · rw [Limits.coprod.inr_desc])
 
 /-- Strict initiality of the empty-nerve quasicategory, packaged as equivalence data. -/
 def initialStrict (C : SSet.QCat.{u}) (F : C ⟶ initialQCat) : CatEquivData C initialQCat :=
@@ -668,6 +679,7 @@ end UpstreamFunctorQuasicategorySkeleton
 
 end SCTModelHelpers
 
+set_option backward.isDefEq.respectTransparency false in
 noncomputable def sctModel.{u} : SCTModel.{u} where
   Anima := SSet.Kan.{u}
   SCat := SSet.QCat.{u}

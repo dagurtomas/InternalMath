@@ -59,6 +59,7 @@ lemma simplexMap_hom {m n : ℕ} (f : ⦋m⦌ ⟶ ⦋n⦌) :
     (simplexMap f).hom = SSet.stdSimplex.map f :=
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma simplexMap_id (n : ℕ) : simplexMap (𝟙 ⦋n⦌) = 𝟙 (simplex n) := by
   apply ObjectProperty.hom_ext
@@ -241,11 +242,13 @@ abbrev squarePr2 : square.{u} ⟶ interval := productPr2 interval interval
 def intervalConst (i : Fin 2) : interval.{u} ⟶ interval :=
   intervalDegeneracy ≫ vertex 1 i
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma intervalConst_vertex_zero (i : Fin 2) :
     vertex.{u} 1 0 ≫ intervalConst i = vertex 1 i := by
   rw [intervalConst, ← Category.assoc, intervalDegeneracy_vertex_zero, Category.id_comp]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma intervalConst_vertex_one (i : Fin 2) :
     vertex.{u} 1 1 ≫ intervalConst i = vertex 1 i := by

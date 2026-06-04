@@ -49,12 +49,14 @@ def target {C : SSet.QCat.{u}} (f : Arrow C) : SCTFiniteShapes.point ⟶ C :=
 def idAt {C : SSet.QCat.{u}} (x : SCTFiniteShapes.point ⟶ C) : Arrow C :=
   SCTFiniteShapes.intervalDegeneracy ≫ x
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma source_idAt {C : SSet.QCat.{u}} (x : SCTFiniteShapes.point ⟶ C) :
     source (idAt x) = x := by
   unfold source idAt
   rw [← Category.assoc, SCTFiniteShapes.intervalDegeneracy_vertex_zero, Category.id_comp]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma target_idAt {C : SSet.QCat.{u}} (x : SCTFiniteShapes.point ⟶ C) :
     target (idAt x) = x := by
@@ -103,6 +105,7 @@ namespace TriangleFiller
 def composite {C : SSet.QCat.{u}} {p : ComposablePair C} (t : TriangleFiller p) : Arrow C :=
   SCTFiniteShapes.simplex2Face02 ≫ t.simplex
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The composite has the source of the first arrow in the chosen triangle. -/
 lemma composite_source {C : SSet.QCat.{u}} {p : ComposablePair C} (t : TriangleFiller p) :
     source (composite t) = source p.first := by
@@ -111,6 +114,7 @@ lemma composite_source {C : SSet.QCat.{u}} {p : ComposablePair C} (t : TriangleF
   rw [← t.face01]
   rw [← Category.assoc, SCTFiniteShapes.simplex2Face01_vertex_zero]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The composite has the target of the second arrow in the chosen triangle. -/
 lemma composite_target {C : SSet.QCat.{u}} {p : ComposablePair C} (t : TriangleFiller p) :
     target (composite t) = target p.second := by
