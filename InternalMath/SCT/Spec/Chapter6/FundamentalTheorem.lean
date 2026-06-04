@@ -25,12 +25,24 @@ extend_type_theory SCT where
             (stronglySurjectiveSection C D F surj) (coreFunctor C D F))
           (idFunctor (coreCat D)) :=
     fun C D F surj => snd surj
+
+namespace SCT
+
+/- Projection API for the admitted objectwise natural-isomorphism package. -/
+internal_defs where
   /-- Componentwise invertibility stored in objectwise natural-isomorphism evidence; the package
   form follows Theorem 6.2.11. -/
-  lf_opaque objectwiseNatIsoComponent (A : SCat) (C : SCat)
+  def objectwiseNatIsoComponent (A : SCat) (C : SCat)
     (F : Functor A C) (G : Functor A C) (α : NatTrans A C F G)
     (h : ObjectwiseNatIso A C F G α) (x : Obj A) :
-    InvertibleMorphism C (natTransComponent A C F G α x)
+    InvertibleMorphism C (natTransComponent A C F G α x) := sorry
+
+end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter6
+
   /-- Componentwise invertibility of a natural isomorphism, by projecting the public package. -/
   lf_def natIsoObjectwiseComponent :
       (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒ (G : Functor A C) ⇒

@@ -22,20 +22,28 @@ extend_type_theory SCT where
   /-- Cocone category under a diagram.  Book context: Chapter 5 of the SCT book. -/
   lf_opaque coconeCat (J : SCat) (C : SCat) (D : Diagram J C) : SCat
   /-- Limit-cone witness.  Book context: Chapter 5 of the SCT book. -/
-  syntax_sort LimitCone (J : SCat) (C : SCat) (D : Diagram J C) : Type u
+  syntax_def LimitCone (J : SCat) (C : SCat) (D : Diagram J C) : Type u := sorry
   /-- Colimit-cocone witness.  Book context: Chapter 5 of the SCT book. -/
-  syntax_sort ColimitCocone (J : SCat) (C : SCat) (D : Diagram J C) : Type u
+  syntax_def ColimitCocone (J : SCat) (C : SCat) (D : Diagram J C) : Type u := sorry
   /-- `C` admits limits of shape `J`.  Book context: Chapter 5 of the SCT book. -/
-  syntax_sort HasLimitsOfShape (J : SCat) (C : SCat) : Type u
+  syntax_def HasLimitsOfShape (J : SCat) (C : SCat) : Type u := sorry
   /-- `C` admits colimits of shape `J`.  Book context: Chapter 5 of the SCT book. -/
-  syntax_sort HasColimitsOfShape (J : SCat) (C : SCat) : Type u
+  syntax_def HasColimitsOfShape (J : SCat) (C : SCat) : Type u := sorry
+
+namespace SCT
+
+/- Projection API for the admitted limit and colimit packages. -/
+internal_defs where
   /-- Right adjoint limit functor to constant diagrams.  Book context: Chapter 5 of the SCT book. -/
-  lf_opaque limitFunctor (J : SCat) (C : SCat) (h : HasLimitsOfShape J C) :
-    Functor (funCat J C) C
+  def limitFunctor (J : SCat) (C : SCat) (h : HasLimitsOfShape J C) :
+    Functor (funCat J C) C := sorry
   /-- Left adjoint colimit functor to constant diagrams.
   Book context:Chapter 5 of the SCT book. -/
-  lf_opaque colimitFunctor (J : SCat) (C : SCat) (h : HasColimitsOfShape J C) :
-    Functor (funCat J C) C
+  def colimitFunctor (J : SCat) (C : SCat) (h : HasColimitsOfShape J C) :
+    Functor (funCat J C) C := sorry
+
+end SCT
+
 
 extend_type_theory SCT where
 

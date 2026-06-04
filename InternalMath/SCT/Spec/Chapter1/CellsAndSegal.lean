@@ -371,39 +371,57 @@ extend_type_theory SCT where
   definition of invertibility through `Iso(C)`: the category `Iso(C)` should eventually be built
   from this data, while Axiom F still supplies the Rezk equivalence for that category.
   -/
-  syntax_sort InvertibleMorphismData (C : SCat) (f : Functor intervalCat C) : Type u
+  syntax_def InvertibleMorphismData (C : SCat) (f : Functor intervalCat C) : Type u :=
+    Σ inv : Functor intervalCat C,
+      Σ inv_source : NatIso terminalCat C (sourceObj C inv) (targetObj C f),
+        Σ inv_target : NatIso terminalCat C (targetObj C inv) (sourceObj C f),
+          Σ left_unit : NatIso intervalCat C
+              (composeComposableMorphism C f inv
+                (invNatIso terminalCat C (sourceObj C inv) (targetObj C f) inv_source))
+              (identityMorphism C (sourceObj C f)),
+            NatIso intervalCat C
+              (composeComposableMorphism C inv f inv_target)
+              (identityMorphism C (targetObj C f))
   syntax_sort_role InvertibleMorphismData : side_structure
   /-- Predicate-like witness that an interval-shaped morphism is invertible.  Book target:
   Definition 1.8.2, before packaging invertible morphisms into `Iso(C)`.
   -/
   syntax_abbrev InvertibleMorphism (C : SCat) (f : Functor intervalCat C) :=
     InvertibleMorphismData C f
+
+namespace SCT
+
+/- Projection API for the invertible-morphism package. -/
+internal_defs where
   /-- Chosen inverse arrow of an invertible interval-shaped morphism. -/
-  lf_opaque invertibleMorphismInverse (C : SCat) (f : Functor intervalCat C)
-    (h : InvertibleMorphism C f) : Functor intervalCat C
+  def invertibleMorphismInverse (C : SCat) (f : Functor intervalCat C)
+    (h : InvertibleMorphism C f) : Functor intervalCat C := sorry
   /-- The inverse arrow starts at the target of the original morphism. -/
-  lf_opaque invertibleMorphismInverseSource (C : SCat) (f : Functor intervalCat C)
+  def invertibleMorphismInverseSource (C : SCat) (f : Functor intervalCat C)
     (h : InvertibleMorphism C f) :
-    NatIso terminalCat C (sourceObj C (invertibleMorphismInverse C f h)) (targetObj C f)
+    NatIso terminalCat C (sourceObj C (invertibleMorphismInverse C f h)) (targetObj C f) := sorry
   /-- The inverse arrow ends at the source of the original morphism. -/
-  lf_opaque invertibleMorphismInverseTarget (C : SCat) (f : Functor intervalCat C)
+  def invertibleMorphismInverseTarget (C : SCat) (f : Functor intervalCat C)
     (h : InvertibleMorphism C f) :
-    NatIso terminalCat C (targetObj C (invertibleMorphismInverse C f h)) (sourceObj C f)
+    NatIso terminalCat C (targetObj C (invertibleMorphismInverse C f h)) (sourceObj C f) := sorry
   /-- Composing a morphism with its inverse on the right gives the identity at its source. -/
-  lf_opaque invertibleMorphismLeftUnit (C : SCat) (f : Functor intervalCat C)
+  def invertibleMorphismLeftUnit (C : SCat) (f : Functor intervalCat C)
     (h : InvertibleMorphism C f) :
     NatIso intervalCat C
       (composeComposableMorphism C f (invertibleMorphismInverse C f h)
         (invNatIso terminalCat C (sourceObj C (invertibleMorphismInverse C f h))
           (targetObj C f) (invertibleMorphismInverseSource C f h)))
-      (identityMorphism C (sourceObj C f))
+      (identityMorphism C (sourceObj C f)) := sorry
   /-- Composing an inverse on the left with the morphism gives the identity at its target. -/
-  lf_opaque invertibleMorphismRightUnit (C : SCat) (f : Functor intervalCat C)
+  def invertibleMorphismRightUnit (C : SCat) (f : Functor intervalCat C)
     (h : InvertibleMorphism C f) :
     NatIso intervalCat C
       (composeComposableMorphism C (invertibleMorphismInverse C f h) f
         (invertibleMorphismInverseTarget C f h))
-      (identityMorphism C (targetObj C f))
+      (identityMorphism C (targetObj C f)) := sorry
+
+end SCT
+
 
 extend_type_theory SCT where
 

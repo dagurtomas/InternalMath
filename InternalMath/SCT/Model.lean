@@ -40,12 +40,12 @@ in the `emilyriehl/infinity-cosmos` project and mathlib PR #35287. The skeleton 
 simplicial internal hom and assumes/sorries quasicategory closure. Natural transformations are
 modeled as 2-cells in mathlib's strict bicategory of quasicategories; the remaining bridge from
 those 2-cells to objects of the functor quasicategory is the `natTransObject` field below.
-The finite-shape package lives in `InternalMath.SCT.IML.Model.FiniteShapes`; the Segal-composition
-scaffold lives in `InternalMath.SCT.IML.Model.SegalComposition`; the invertible-arrow/Rezk scaffold lives in
-`InternalMath.SCT.IML.Model.IsoRezkModel`; the maximal-core/mapping-anima workshop scaffold lives in
-`InternalMath.SCT.IML.Model.MappingAnima`; the fibration-stable pullback scaffold lives in
-`InternalMath.SCT.IML.Model.FibrationPullbacks`; the inverting-functor/localization scaffold lives in
-`InternalMath.SCT.IML.Model.Localization`.
+The finite-shape package lives in `InternalMath.SCT.IML.Model.FiniteShapes`; the
+Segal-composition scaffold lives in `InternalMath.SCT.IML.Model.SegalComposition`; the
+invertible-arrow/Rezk scaffold lives in `InternalMath.SCT.IML.Model.IsoRezkModel`; the
+maximal-core/mapping-anima workshop scaffold lives in `InternalMath.SCT.IML.Model.MappingAnima`;
+the fibration-stable pullback scaffold lives in `InternalMath.SCT.IML.Model.FibrationPullbacks`;
+the inverting-functor/localization scaffold lives in `InternalMath.SCT.IML.Model.Localization`.
 -/
 
 @[expose] public section
@@ -679,18 +679,39 @@ end UpstreamFunctorQuasicategorySkeleton
 
 end SCTModelHelpers
 
+namespace SCTModelHelpers
+
+/-- Model-side interpretation of `NatIso` after `ObjectwiseNatIsoData` became an admitted
+`syntax_def`.  The natural-transformation component is kept from the quasicategory skeleton; the
+objectwise package remains admitted SCT debt. -/
+abbrev ModelObjectwiseNatIsoData (C D : SSet.QCat.{u}) (F G : C ⟶ D)
+    (α : NatTrans C D F G) : Type u :=
+  SCTModel_ObjectwiseNatIsoData_syntaxDef SSet.QCat (fun C D => C ⟶ D) NatTrans C D F G α
+
+/-- The generated model type for natural isomorphisms. -/
+abbrev ModelNatIso (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
+  Σ natIsoTrans : NatTrans C D F G, ModelObjectwiseNatIsoData C D F G natIsoTrans
+
+/-- Convert the existing quasicategory natural-isomorphism skeleton to the generated model type. -/
+noncomputable def toModelNatIso {C D : SSet.QCat.{u}} {F G : C ⟶ D}
+    (α : NatIso C D F G) : ModelNatIso C D F G :=
+  ⟨α.1, sorry⟩
+
+/-- Convert generated model natural-isomorphism data back to the local skeleton type. -/
+noncomputable def ofModelNatIso {C D : SSet.QCat.{u}} {F G : C ⟶ D}
+    (α : ModelNatIso C D F G) : NatIso C D F G :=
+  ⟨α.1, sorry⟩
+
+end SCTModelHelpers
+
 set_option backward.isDefEq.respectTransparency false in
 noncomputable def sctModel.{u} : SCTModel.{u} where
   Anima := SSet.Kan.{u}
   SCat := SSet.QCat.{u}
   Functor C D := C ⟶ D
   NatTrans := SCTModelHelpers.NatTrans
-  /- This is invertibility data for a bicategorical 2-cell. The bridge to objectwise
-  interpretation is the theorem supplied by `objectwiseNatIsoComponent` below. -/
-  ObjectwiseNatIsoData _ _ _ _ α := SCTModelHelpers.TwoCellIsIso α
   CatEquiv := SCTModelHelpers.CatEquivData
   AnimaIndexedCat := sorry
-  InvertibleMorphismData := SCTModelHelpers.InvertibleMorphismData
   GroupoidWitness C := ULift.{u} (PLift (SSet.KanComplex C.obj))
   ExponentiableFunctor := sorry
   ContextCat := sorry
@@ -702,9 +723,7 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   ContextMorphismCollection := sorry
   ContextObjectCollection := sorry
   IsofibrationWitness := sorry
-  Adjunction := SCTModelHelpers.AdjunctionData
-  LeftAdjointSection := sorry
-  RightAdjointSection := sorry
+  leftAdjointSectionFunctor := sorry
   LeftFibrationWitness := sorry
   RightFibrationWitness := sorry
   LocallyCocartesianFibrationWitness := sorry
@@ -715,10 +734,6 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   ContextFibration := sorry
   ContextCartesianFibrationWitness := sorry
   ContextCocartesianFibrationWitness := sorry
-  LimitCone := sorry
-  ColimitCocone := sorry
-  HasLimitsOfShape := sorry
-  HasColimitsOfShape := sorry
   DirectedUnivalenceWitness := sorry
   UniverseWitness := sorry
   SmallWitness := sorry
@@ -733,47 +748,58 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   sigmaAnimaIndexedProjection := sorry
   idFunctor C := 𝟙 C
   compFunctor _ _ _ F G := F ≫ G
-  idNatIso := SCTModelHelpers.idNatIso
-  compNatIso C D _ _ _ α β := SCTModelHelpers.compNatIso C D α β
-  invNatIso C D _ _ α := SCTModelHelpers.invNatIso C D α
-  leftUnitor _ _ _ := SCTModelHelpers.natIsoOfEq (by simp)
-  rightUnitor _ _ _ := SCTModelHelpers.natIsoOfEq (by simp)
-  assocFunctor _ _ _ _ _ _ _ := SCTModelHelpers.natIsoOfEq (by simp [Category.assoc])
-  preWhiskerNatIso B C D K _ _ α := SCTModelHelpers.preWhiskerNatIso B C D K α
-  postWhiskerNatIso B C D _ _ K α := SCTModelHelpers.postWhiskerNatIso B C D K α
-  horizCompNatIso B C D _ _ _ _ α β := SCTModelHelpers.horizCompNatIso B C D α β
-  catEquivOfData _ _ F G η ε := ⟨F, G, η, ε⟩
+  idNatIso C D F := SCTModelHelpers.toModelNatIso (SCTModelHelpers.idNatIso C D F)
+  compNatIso C D _ _ _ α β := SCTModelHelpers.toModelNatIso
+    (SCTModelHelpers.compNatIso C D (SCTModelHelpers.ofModelNatIso α)
+      (SCTModelHelpers.ofModelNatIso β))
+  invNatIso C D _ _ α := SCTModelHelpers.toModelNatIso
+    (SCTModelHelpers.invNatIso C D (SCTModelHelpers.ofModelNatIso α))
+  leftUnitor _ _ _ := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq (by simp))
+  rightUnitor _ _ _ := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq (by simp))
+  assocFunctor _ _ _ _ _ _ _ := SCTModelHelpers.toModelNatIso
+    (SCTModelHelpers.natIsoOfEq (by simp [Category.assoc]))
+  preWhiskerNatIso B C D K _ _ α := SCTModelHelpers.toModelNatIso
+    (SCTModelHelpers.preWhiskerNatIso B C D K (SCTModelHelpers.ofModelNatIso α))
+  postWhiskerNatIso B C D _ _ K α := SCTModelHelpers.toModelNatIso
+    (SCTModelHelpers.postWhiskerNatIso B C D K (SCTModelHelpers.ofModelNatIso α))
+  horizCompNatIso B C D _ _ _ _ α β := SCTModelHelpers.toModelNatIso
+    (SCTModelHelpers.horizCompNatIso B C D (SCTModelHelpers.ofModelNatIso α)
+      (SCTModelHelpers.ofModelNatIso β))
+  catEquivOfData _ _ F G η ε :=
+    ⟨F, G, SCTModelHelpers.ofModelNatIso η, SCTModelHelpers.ofModelNatIso ε⟩
   catEquivForward _ _ e := e.forward
   catEquivBackward _ _ e := e.backward
-  catEquivUnit _ _ e := e.unitIso
-  catEquivCounit _ _ e := e.counitIso
+  catEquivUnit _ _ e := SCTModelHelpers.toModelNatIso e.unitIso
+  catEquivCounit _ _ e := SCTModelHelpers.toModelNatIso e.counitIso
   terminalAnima := SCTModelHelpers.terminalAnima
   terminalProjection := SCTModelHelpers.terminalProjection
-  terminalUnique _ _ _ := SCTModelHelpers.natIsoOfEq (by
+  terminalUnique _ _ _ := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq (by
     apply ObjectProperty.hom_ext
-    exact SSet.stdSimplex.ext₀)
+    exact SSet.stdSimplex.ext₀))
   initialCat := SCTModelHelpers.initialQCat
   initialElim := SCTModelHelpers.initialMap
-  initialUnique _ _ _ := SCTModelHelpers.natIsoOfEq (by
+  initialUnique _ _ _ := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq (by
     apply ObjectProperty.hom_ext
     ext n x
-    exact False.elim (x.obj ⟨0, by simp⟩).down.elim)
+    exact False.elim (x.obj ⟨0, by simp⟩).down.elim))
   initialStrict := SCTModelHelpers.initialStrict
   prodCat := SCTModelHelpers.qcatProduct
   prodPr1 := SCTModelHelpers.qcatProdPr1
   prodPr2 := SCTModelHelpers.qcatProdPr2
   prodPair := SCTModelHelpers.qcatProdPair
-  prodBeta1 _ _ _ _ _ := SCTModelHelpers.natIsoOfEq rfl
-  prodBeta2 _ _ _ _ _ := SCTModelHelpers.natIsoOfEq rfl
-  prodEta _ _ _ _ := SCTModelHelpers.natIsoOfEq rfl
+  prodBeta1 _ _ _ _ _ := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq rfl)
+  prodBeta2 _ _ _ _ _ := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq rfl)
+  prodEta _ _ _ _ := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq rfl)
   prodUniq := sorry
   coprodCat := SCTModelHelpers.qcatCoprod
   coprodIn1 := SCTModelHelpers.qcatCoprodIn1
   coprodIn2 := SCTModelHelpers.qcatCoprodIn2
   coprodCase := SCTModelHelpers.qcatCoprodDesc
-  coprodBeta1 := SCTModelHelpers.qcatCoprodBeta1
-  coprodBeta2 := SCTModelHelpers.qcatCoprodBeta2
-  coprodEta := SCTModelHelpers.qcatCoprodEta
+  coprodBeta1 C D Γ F G :=
+    SCTModelHelpers.toModelNatIso (SCTModelHelpers.qcatCoprodBeta1 C D Γ F G)
+  coprodBeta2 C D Γ F G :=
+    SCTModelHelpers.toModelNatIso (SCTModelHelpers.qcatCoprodBeta2 C D Γ F G)
+  coprodEta C D Γ H := SCTModelHelpers.toModelNatIso (SCTModelHelpers.qcatCoprodEta C D Γ H)
   coprodUniq := sorry
   /- Missing: the SCT pullback should be a homotopy/∞-categorical pullback in `Cat_∞`.
   Strict pullbacks of simplicial sets along arbitrary maps do not supply this field. -/
@@ -800,14 +826,18 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   evalFunctor := SCTModelHelpers.evalFunctor
   curryFunctor := SCTModelHelpers.curryFunctor
   uncurryFunctor := SCTModelHelpers.uncurryFunctor
-  curryBeta := SCTModelHelpers.curryBeta
-  curryEta := SCTModelHelpers.curryEta
-  curryNatIso Γ C D _ _ α := SCTModelHelpers.curryNatIso Γ C D α
-  uncurryNatIso Γ C D _ _ α := SCTModelHelpers.uncurryNatIso Γ C D α
+  curryBeta Γ C D F := SCTModelHelpers.toModelNatIso (SCTModelHelpers.curryBeta Γ C D F)
+  curryEta Γ C D F := SCTModelHelpers.toModelNatIso (SCTModelHelpers.curryEta Γ C D F)
+  curryNatIso Γ C D _ _ α := SCTModelHelpers.toModelNatIso
+    (SCTModelHelpers.curryNatIso Γ C D (SCTModelHelpers.ofModelNatIso α))
+  uncurryNatIso Γ C D _ _ α := SCTModelHelpers.toModelNatIso
+    (SCTModelHelpers.uncurryNatIso Γ C D (SCTModelHelpers.ofModelNatIso α))
   curryUncurryForward := SCTModelHelpers.curryUncurryForward
   curryUncurryBackward := SCTModelHelpers.curryUncurryBackward
-  curryUncurryUnit := SCTModelHelpers.curryUncurryUnit
-  curryUncurryCounit := SCTModelHelpers.curryUncurryCounit
+  curryUncurryUnit Γ C D :=
+    SCTModelHelpers.toModelNatIso (SCTModelHelpers.curryUncurryUnit Γ C D)
+  curryUncurryCounit Γ C D :=
+    SCTModelHelpers.toModelNatIso (SCTModelHelpers.curryUncurryCounit Γ C D)
   intervalCat := SCTModelHelpers.intervalQCat
   intervalZero := SCTModelHelpers.intervalVertex 0
   intervalOne := SCTModelHelpers.intervalVertex 1
@@ -821,26 +851,26 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   simplex2Face02 := SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02
   simplex2Deg0 := SCTModelHelpers.simplex2Deg0
   simplex2Deg1 := SCTModelHelpers.simplex2Deg1
-  simplex2Face01Zero :=
-    SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01Zero
-      SCTModelHelpers.simplex2Id0 (SCTModelHelpers.intervalVertex 0)
-  simplex2Face01One :=
-    SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01One
-      SCTModelHelpers.simplex2Can (SCTModelHelpers.intervalVertex 1)
-  simplex2Face12Zero :=
-    SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12Zero
-      SCTModelHelpers.simplex2Can (SCTModelHelpers.intervalVertex 0)
-  simplex2Face12One :=
-    SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12One
-      SCTModelHelpers.simplex2Id1 (SCTModelHelpers.intervalVertex 1)
-  simplex2Face02Zero :=
-    SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02Zero
-      SCTModelHelpers.simplex2Id0 (SCTModelHelpers.intervalVertex 0)
-  simplex2Face02One :=
-    SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02One
-      SCTModelHelpers.simplex2Id1 (SCTModelHelpers.intervalVertex 1)
-  simplex2Deg0Beta := SCTModelHelpers.natIsoOfEq rfl
-  simplex2Deg1Beta := SCTModelHelpers.natIsoOfEq rfl
+  simplex2Face01Zero := SCTModelHelpers.toModelNatIso
+    (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01Zero
+      SCTModelHelpers.simplex2Id0 (SCTModelHelpers.intervalVertex 0))
+  simplex2Face01One := SCTModelHelpers.toModelNatIso
+    (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01One
+      SCTModelHelpers.simplex2Can (SCTModelHelpers.intervalVertex 1))
+  simplex2Face12Zero := SCTModelHelpers.toModelNatIso
+    (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12Zero
+      SCTModelHelpers.simplex2Can (SCTModelHelpers.intervalVertex 0))
+  simplex2Face12One := SCTModelHelpers.toModelNatIso
+    (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12One
+      SCTModelHelpers.simplex2Id1 (SCTModelHelpers.intervalVertex 1))
+  simplex2Face02Zero := SCTModelHelpers.toModelNatIso
+    (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02Zero
+      SCTModelHelpers.simplex2Id0 (SCTModelHelpers.intervalVertex 0))
+  simplex2Face02One := SCTModelHelpers.toModelNatIso
+    (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02One
+      SCTModelHelpers.simplex2Id1 (SCTModelHelpers.intervalVertex 1))
+  simplex2Deg0Beta := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq rfl)
+  simplex2Deg1Beta := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq rfl)
   functorObjectSourceCompat := sorry
   functorObjectTargetCompat := sorry
   natTransObject := sorry
@@ -864,11 +894,6 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   composeLeftUnit := sorry
   composeRightUnit := sorry
   composeAssoc := sorry
-  invertibleMorphismInverse := sorry
-  invertibleMorphismInverseSource := sorry
-  invertibleMorphismInverseTarget := sorry
-  invertibleMorphismLeftUnit := sorry
-  invertibleMorphismRightUnit := sorry
   rezkEquiv := sorry
   groupoidOfAnima A := ULift.up (PLift.up A.property)
   animaOfGroupoid C g := ⟨C.obj, g.down.down⟩
@@ -966,8 +991,6 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   sigmaFunctorPullbackSquare := sorry
   sigmaSecondProjectionPullbackSquare := sorry
   sigmaPreservesPullbackEquiv := sorry
-  leftAdjointSectionFunctor := sorry
-  rightAdjointSectionFunctor := sorry
   directedPullbackCat := sorry
   directedPullbackPr1 := sorry
   directedPullbackPr2 := sorry
@@ -989,8 +1012,6 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   beckChevalleyTransformation := sorry
   idCocartesianFunctor := sorry
   compCocartesianFunctor := sorry
-  adjunctionUnit := SCTModelHelpers.adjunctionUnit
-  adjunctionCounit := SCTModelHelpers.adjunctionCounit
   leftFibrationCocartesian := sorry
   rightFibrationCartesian := sorry
   universal_left_adjoint_section := sorry
@@ -1004,8 +1025,6 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   locallyCartesianOfCartesian := sorry
   coneCat := sorry
   coconeCat := sorry
-  limitFunctor := sorry
-  colimitFunctor := sorry
   postcompEndpointFunctorCompat := sorry
   cocartesianFunctorCategoryPackage := sorry
   universeTotalCat := sorry
@@ -1061,4 +1080,3 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   /- Missing/API target: evaluation at an object maps an equivalence edge in `Fun(A,C)` to an
   invertible edge in `C`. This is the objectwise-isomorphism theorem expected from the
   infinity-cosmos/mathlib equivalence-edge API. -/
-  objectwiseNatIsoComponent := sorry

@@ -62,8 +62,8 @@ declare_type_theory SCT{u} where
   /-- Natural transformations between parallel functors; Axioms A.1' and A.2'. -/
   syntax_sort NatTrans (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D) : Type u
   /-- Componentwise invertibility evidence for a natural transformation. -/
-  syntax_sort ObjectwiseNatIsoData (C : SCat) (D : SCat)
-    (F : Functor C D) (G : Functor C D) (α : NatTrans C D F G) : Type u
+  syntax_def ObjectwiseNatIsoData (C : SCat) (D : SCat)
+    (F : Functor C D) (G : Functor C D) (α : NatTrans C D F G) : Type u := sorry
   syntax_sort_role ObjectwiseNatIsoData : side_structure
   /-- Objectwise natural-isomorphism evidence for a natural transformation. -/
   syntax_abbrev ObjectwiseNatIso (C : SCat) (D : SCat)

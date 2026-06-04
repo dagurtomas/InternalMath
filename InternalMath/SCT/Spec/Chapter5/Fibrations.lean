@@ -19,22 +19,40 @@ extend_type_theory SCT where
   syntax_sort IsofibrationWitness (E : SCat) (B : SCat) (p : Functor E B) : Type u
   /-- Chapter 5 fibration vocabulary is the book's isofibration condition. -/
   syntax_abbrev Fibration (E : SCat) (B : SCat) (p : Functor E B) := IsofibrationWitness E B p
+  /-- Adjunction data between two functors; Chapter 5. -/
+  syntax_def Adjunction (C : SCat) (D : SCat) (L : Functor C D) (R : Functor D C) : Type u :=
+    sorry
   /-- A section of a functor that is left adjoint to it.
   Book context:Chapter 5 of the SCT book. -/
-  syntax_sort LeftAdjointSection (C : SCat) (D : SCat) (p : Functor C D) : Type u
+  syntax_def LeftAdjointSection (C : SCat) (D : SCat) (p : Functor C D) : Type u :=
+    Σ s : Functor D C,
+      Σ sec : NatIso D D (compFunctor D C D s p) (idFunctor D), Adjunction D C s p
   /-- A section of a functor that is right adjoint to it.  Book context: Chapter 5 of the SCT book.
   -/
-  syntax_sort RightAdjointSection (C : SCat) (D : SCat) (p : Functor C D) : Type u
+  syntax_def RightAdjointSection (C : SCat) (D : SCat) (p : Functor C D) : Type u :=
+    Σ s : Functor D C,
+      Σ sec : NatIso D D (compFunctor D C D s p) (idFunctor D), Adjunction C D p s
+
+namespace SCT
+
+/- Projection API for the adjoint-section packages. -/
+internal_defs where
   /-- Underlying section functor of a left-adjoint-section witness.  Book context: Chapter 5 of the
   SCT book.
   -/
-  lf_opaque leftAdjointSectionFunctor (C : SCat) (D : SCat) (p : Functor C D)
-    (s : LeftAdjointSection C D p) : Functor D C
+  def leftAdjointSectionFunctor (C : SCat) (D : SCat) (p : Functor C D)
+    (s : LeftAdjointSection C D p) : Functor D C := sorry
   /-- Underlying section functor of a right-adjoint-section witness.  Book context: Chapter 5 of the
   SCT book.
   -/
-  lf_opaque rightAdjointSectionFunctor (C : SCat) (D : SCat) (p : Functor C D)
-    (s : RightAdjointSection C D p) : Functor D C
+  def rightAdjointSectionFunctor (C : SCat) (D : SCat) (p : Functor C D)
+    (s : RightAdjointSection C D p) : Functor D C := sorry
+
+end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter5
 
   /-- Directed/lax pullback of `f : A → C` and `g : B → C`; triples `(a,b,f a → g b)`.  Book
   context: Chapter 5 of the SCT book.
@@ -119,8 +137,6 @@ extend_type_theory SCT where
   -/
   lf_opaque lift1Cat (E : SCat) (B : SCat) (p : Functor E B)
     (v : Obj (directedPullbackCat B E B (idFunctor B) p)) : SCat
-  /-- Adjunction data between two functors; Chapter 5. -/
-  syntax_sort Adjunction (C : SCat) (D : SCat) (L : Functor C D) (R : Functor D C) : Type u
 
 extend_type_theory SCT where
 
@@ -150,16 +166,25 @@ extend_type_theory SCT where
     CocartesianFibrationWitness (pullbackCat B' E B q p) B'
       (pullbackPr1 B' E B q p) (baseChangeFibration E B p fib B' q)
 
+namespace SCT
+
+/- Projection API for the admitted adjunction package. -/
+internal_defs where
+  /-- Unit natural transformation of an adjunction.  Book context: Chapter 5 of the SCT book. -/
+  def adjunctionUnit (C : SCat) (D : SCat) (L : Functor C D) (R : Functor D C)
+    (adj : Adjunction C D L R) : NatTrans C C (idFunctor C) (compFunctor C D C L R) :=
+    sorry
+  /-- Counit natural transformation of an adjunction.  Book context: Chapter 5 of the SCT book. -/
+  def adjunctionCounit (C : SCat) (D : SCat) (L : Functor C D) (R : Functor D C)
+    (adj : Adjunction C D L R) : NatTrans D D (compFunctor D C D R L) (idFunctor D) :=
+    sorry
+
+end SCT
+
 extend_type_theory SCT where
 
   model_section Chapter5
 
-  /-- Unit natural transformation of an adjunction.  Book context: Chapter 5 of the SCT book. -/
-  lf_opaque adjunctionUnit (C : SCat) (D : SCat) (L : Functor C D) (R : Functor D C)
-    (adj : Adjunction C D L R) : NatTrans C C (idFunctor C) (compFunctor C D C L R)
-  /-- Counit natural transformation of an adjunction.  Book context: Chapter 5 of the SCT book. -/
-  lf_opaque adjunctionCounit (C : SCat) (D : SCat) (L : Functor C D) (R : Functor D C)
-    (adj : Adjunction C D L R) : NatTrans D D (compFunctor D C D R L) (idFunctor D)
   /-- Cocartesian structure supplies a left adjoint section of `directedEval0`.  Book context:
   Chapter 5 of the SCT book.
   -/
