@@ -41,8 +41,8 @@ extend_type_theory SCT where
       (landsInObjectCollectionPreservesFull D C P F h) K β
 
   /-- Evidence that a functor sends a morphism collection to isomorphisms; Axiom I. -/
-  syntax_sort InvertsMorphismCollection (C : SCat) (D : SCat)
-    (W : MorphismCollection C) (F : Functor C D) : Type u
+  syntax_def InvertsMorphismCollection (C : SCat) (D : SCat)
+    (W : MorphismCollection C) (F : Functor C D) : Type u := sorry
   syntax_sort_role InvertsMorphismCollection : side_structure
   /-- Localization at a morphism collection; Axiom I. -/
   lf_opaque localizationCat (C : SCat) (W : MorphismCollection C) : SCat

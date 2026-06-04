@@ -1051,11 +1051,6 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   anima_cat_is_anima A := PLift.up A.property
   equiv_to_anima_is_anima := sorry
   sigma_anima_indexed_is_anima := sorry
-  containsIdentities := sorry
-  closedUnderComposition := sorry
-  PreservesMorphismCollection := sorry
-  LandsInObjectCollection := sorry
-  InvertsMorphismCollection := sorry
   CocartesianMorphism := sorry
   CartesianMorphism := sorry
   animaIndexedFiber := sorry

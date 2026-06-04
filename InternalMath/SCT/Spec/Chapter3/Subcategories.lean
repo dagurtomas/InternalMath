@@ -73,18 +73,18 @@ extend_type_theory SCT where
       Functor (objectCollectionCat C P) (coreCat C) :=
     fun C P => subobjectIncl (coreAnima C) P
   /-- Evidence that a functor lands in a chosen object collection; Axiom H. -/
-  syntax_sort LandsInObjectCollection (D : SCat) (C : SCat)
-    (P : ObjectCollection C) (F : Functor D C) : Type u
+  syntax_def LandsInObjectCollection (D : SCat) (C : SCat)
+    (P : ObjectCollection C) (F : Functor D C) : Type u := sorry
   syntax_sort_role LandsInObjectCollection : side_structure
   /-- Membership of an absolute object in an object collection. -/
   syntax_abbrev ObjectCollectionMember (C : SCat) (P : ObjectCollection C) (x : Obj C) :=
     LandsInObjectCollection terminalCat C P x
 
   /-- Evidence that a morphism collection contains identities; Axiom H. -/
-  syntax_sort containsIdentities (C : SCat) (W : MorphismCollection C) : Type u
+  syntax_def containsIdentities (C : SCat) (W : MorphismCollection C) : Type u := sorry
   syntax_sort_role containsIdentities : side_structure
   /-- Evidence that a morphism collection is closed under composition; Axiom H. -/
-  syntax_sort closedUnderComposition (C : SCat) (W : MorphismCollection C) : Type u
+  syntax_def closedUnderComposition (C : SCat) (W : MorphismCollection C) : Type u := sorry
   syntax_sort_role closedUnderComposition : side_structure
 
   /-- The collection of all morphisms; Example 3.1.7. -/
@@ -94,8 +94,8 @@ extend_type_theory SCT where
 
   /-- Evidence that a functor's morphisms factor through a chosen collection; Definition 3.1.14.
   -/
-  syntax_sort PreservesMorphismCollection (D : SCat) (C : SCat)
-    (W : MorphismCollection C) (F : Functor D C) : Type u
+  syntax_def PreservesMorphismCollection (D : SCat) (C : SCat)
+    (W : MorphismCollection C) (F : Functor D C) : Type u := sorry
   syntax_sort_role PreservesMorphismCollection : side_structure
 
   /-- Universal package for Axiom H.  For a closed morphism collection it stores the
@@ -128,7 +128,6 @@ extend_type_theory SCT where
         PreservesMorphismCollection (subcategory C W ids comp) C W
           (subcategoryIncl C W ids comp) :=
     fun C W ids comp => fst (snd (snd (subcategoryPackage C W ids comp)))
-
 namespace SCT
 
 /- Corollary 3.1.11 is admitted temporarily while kept out of the model interface. -/

@@ -10,7 +10,7 @@ rev = "v4.31.0-rc1"
 [[require]]
 name = "InternalLean"
 git = "https://github.com/dagurtomas/InternalLean.git"
-rev = "v4.31.0-rc1"
+rev = "main"
 
 [[lean_lib]]
 name = "InternalMath"
