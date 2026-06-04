@@ -14,6 +14,7 @@ Keep this directory tool-neutral:
 
 - `docs/SCTDevelopmentNotes.md` — detailed SCT/InternalLean guidance that is too verbose for the
   public tutorial.
+- `skills/internalmath-docs/SKILL.md` — shared workflow notes for documentation edits.
 - `skills/internalmath-sct/SKILL.md` — shared workflow notes for SCT edits.
 - `skills/internallean-downstream/SKILL.md` — shared workflow notes for projects using
   InternalLean.
