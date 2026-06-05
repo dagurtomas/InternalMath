@@ -370,8 +370,8 @@ Reasons:
   category of groupoids suitable for presheaves.
 - The mapping-anima/core story is still under construction.  Yoneda should use mapping objects
   coherently, not bare strict hom sets.
-- Natural transformations and objectwise criteria still rely on primitive data; the Chapter 6
-  objectwise/functor-category theory is not yet robust enough for a clean Yoneda proof.
+- Objectwise natural-isomorphism criteria are now admitted `syntax_def` package debt; the Chapter 6
+  objectwise/functor-category theory still needs checked projections for a clean Yoneda proof.
 - Slices and over-categories exist only partially.  Many synthetic proofs of Yoneda use slice or
   comma-category reasoning.
 
@@ -409,9 +409,11 @@ limitFunctor J C h
 colimitFunctor J C h
 ```
 
-This is enough to state that a category admits limits or colimits of a shape, but it is too coarse
-for serious internal theorem proving.  It lacks explicit cone/cocone universal properties, constant
-diagram functors, β/η rules, uniqueness clauses, and adjunction data.
+`LimitCone`, `ColimitCocone`, `HasLimitsOfShape`, and `HasColimitsOfShape` are now admitted
+`syntax_def` packages.  This is enough to state that a category admits limits or colimits of a
+shape, but it is too coarse for serious internal theorem proving.  It lacks checked cone/cocone
+universal properties, constant diagram functors, β/η rules, uniqueness clauses, and adjunction
+data.
 
 Feasible now:
 

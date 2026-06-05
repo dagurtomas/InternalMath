@@ -98,16 +98,18 @@ a docstring explaining what data remains.
 
 ## Subcategory and side-structure debt
 
-Several Chapter 3 notions are currently primitive side structures:
+Several Chapter 3 notions are admitted `syntax_def` packages rather than primitive model fields:
 
 ```lean
 LandsInObjectCollection
 containsIdentities
 closedUnderComposition
 PreservesMorphismCollection
+InvertsMorphismCollection
 ```
 
-This staging is useful, but it lacks data needed for some internal proofs. For example,
+This staging keeps package-shaped proof debt out of model-provider data, but the admitted bodies
+still need checked Sigma packages before some internal proofs can use projections. For example,
 `LandsInObjectCollection D C P F` should eventually expose that the induced map on cores factors
 through the object-collection inclusion:
 
@@ -121,8 +123,8 @@ coreCat D  --coreFunctor D C F-->  coreCat C
 Similarly, `PreservesMorphismCollection D C W F` should expose factorization data for the arrow map
 induced by `F` through the selected morphism collection `W`.
 
-Before adding a new primitive field, ask whether the missing fact should instead follow from an
-explicit package already present in the book's formulation.
+Before adding a new primitive field, ask whether the missing fact should instead be an admitted or
+checked `syntax_def` package already present in the book's formulation.
 
 ## Checks
 

@@ -22,14 +22,17 @@ isomorphism simplicial set. It does not construct `Iso(C)` or prove the Rezk equ
 
 ## Existing SCT declarations involved
 
-Chapter 1 interval and invertible-arrow fields:
+Chapter 1 interval and invertible-arrow declarations:
 
-- `InvertibleMorphismData` / `InvertibleMorphism`;
+- `InvertibleMorphismData` / `InvertibleMorphism`, now a checked `syntax_def` Sigma package;
 - `invertibleMorphismInverse`;
 - `invertibleMorphismInverseSource`;
 - `invertibleMorphismInverseTarget`;
 - `invertibleMorphismLeftUnit`;
 - `invertibleMorphismRightUnit`.
+
+The projection declarations are currently admitted internal definitions while the package-projection
+API is refined; they are no longer primitive model fields.
 
 Chapter 1 `Iso(C)` and Rezk fields:
 
@@ -41,12 +44,12 @@ Chapter 1 `Iso(C)` and Rezk fields:
 - `rezkEquiv`;
 - `identityIsoFunctor`, `isoProjectionFunctor`, `rezkUnit`, `rezkCounit`.
 
-Related model fields and scaffolds:
+Related model scaffolds:
 
 - finite shape maps from `InternalMath/SCT/IML/Model/FiniteShapes.lean`;
-- Segal composition fields from the future `InternalMath/SCT/IML/Model/SegalComposition.lean`;
+- Segal composition helpers from `InternalMath/SCT/IML/Model/SegalComposition.lean`;
 - maximal-core/equivalence-edge work in `InternalMath/SCT/IML/Model/MappingAnima.lean`;
-- the bicategorical `NatTrans`/`NatIso` representation in `InternalMath/SCT/Model.lean`.
+- the bicategorical `NatTrans`/local `NatIso` skeleton in `InternalMath/SCT/Model.lean`.
 
 ## What PR #35287 covers
 

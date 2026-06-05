@@ -91,7 +91,7 @@ This is a good source-facing representation: collections are subobjects of the r
 
 ### Current blocked side structures
 
-These are currently primitive side sorts:
+These are now admitted `syntax_def` packages rather than primitive side sorts:
 
 ```lean
 LandsInObjectCollection
@@ -100,8 +100,8 @@ closedUnderComposition
 PreservesMorphismCollection
 ```
 
-Because they are primitive sorts, there is no internal constructor for the obvious cases such as
-"the total morphism collection contains identities".  That is the central representation issue.
+The remaining issue is that their bodies are still admitted, so there are no checked projections or
+constructors for obvious cases such as "the total morphism collection contains identities".
 
 ## Recommended project phases
 
@@ -125,8 +125,8 @@ lake build InternalMath.SCT.Spec
 
 ## Phase 1: expose the factorization data
 
-This is the highest-value design step.  The goal is to replace primitive side sorts by definitions or
-packages that expose the factorization data used in the book.
+This is the highest-value design step.  The goal is to replace the admitted package bodies by
+checked `syntax_def` packages that expose the factorization data used in the book.
 
 ### `LandsInObjectCollection`
 
@@ -147,8 +147,8 @@ D^≃ --F^≃--> C^≃
 Possible definition shape:
 
 ```lean
-syntax_abbrev LandsInObjectCollection (D : SCat) (C : SCat)
-    (P : ObjectCollection C) (F : Functor D C) :=
+syntax_def LandsInObjectCollection (D : SCat) (C : SCat)
+    (P : ObjectCollection C) (F : Functor D C) : Type u :=
   Σ L : Functor (coreCat D) (objectCollectionCat C P),
     NatIso (coreCat D) (coreCat C)
       (compFunctor (coreCat D) (objectCollectionCat C P) (coreCat C)
@@ -177,8 +177,8 @@ factors through `W`.
 Possible definition shape:
 
 ```lean
-syntax_abbrev PreservesMorphismCollection (D : SCat) (C : SCat)
-    (W : MorphismCollection C) (F : Functor D C) :=
+syntax_def PreservesMorphismCollection (D : SCat) (C : SCat)
+    (W : MorphismCollection C) (F : Functor D C) : Type u :=
   Σ L : Functor (coreCat (funCat intervalCat D)) (morphismCollectionCat C W),
     NatIso (coreCat (funCat intervalCat D)) (coreCat (funCat intervalCat C))
       (compFunctor (coreCat (funCat intervalCat D)) (morphismCollectionCat C W)
@@ -291,9 +291,9 @@ After Phase 1, these should be easy:
 - every map into `morphismAnima C` factors through the identity inclusion of the total subobject;
 - identity arrows and composites therefore land in `allMorphisms C`.
 
-If `closedUnderComposition` remains primitive, these cannot honestly be proved.  Do not add ad hoc
-opaque fields just to close them unless the project explicitly decides that these examples are part
-of source axiom data.
+While `closedUnderComposition` remains an admitted package, these cannot honestly be proved.  Do
+not add ad hoc opaque fields just to close them unless the project explicitly decides that these
+examples are part of source axiom data.
 
 ## Phase 4: close full-subcategory landing and preservation
 
@@ -323,7 +323,7 @@ to show the image arrow belongs to `fullSubcategoryMorphismCollection C P`.  Thi
 `PreservesMorphismCollection D C (fullSubcategoryMorphismCollection C P) F`.
 
 This proof becomes formal only after `LandsInObjectCollection` and `PreservesMorphismCollection`
-expose factorization data.
+have checked package bodies exposing factorization data.
 
 ### `fullSubcategoryInclLands`
 
@@ -481,8 +481,8 @@ This should be later than `fullSubcategoryCoreEquiv`.  It is probably not a firs
 | Declaration | Priority | Main blocker | Suggested action |
 | --- | --- | --- | --- |
 | `subcategoryInclWitness` | very high | not projected by `subcategoryPackage` | add `SubcategoryWitness` to Axiom H package |
-| `all_morphisms_contains_identities` | high | primitive `containsIdentities` | define identity-factorization structure |
-| `all_morphisms_closed` | high | primitive `closedUnderComposition` | define composite-factorization structure |
+| `all_morphisms_contains_identities` | high | admitted `containsIdentities` package | define identity-factorization structure |
+| `all_morphisms_closed` | high | admitted `closedUnderComposition` package | define composite-factorization structure |
 | `landsInObjectCollectionPreservesFull` | high | primitive landing/preservation structures | expose factorization data |
 | `fullSubcategoryInclLands` | high | same, plus identity-arrow coherence | prove after landing/preservation refactor |
 | `fullSubcategoryCoreEquiv` | medium/high | needs full-subcategory landing and core calculus | later theorem |

@@ -375,13 +375,13 @@ abbrev NatTrans (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
   F ⟶ G
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Invertibility evidence for a bicategorical 2-cell, universe-lifted to match the InternalLean
-side-structure field. -/
+/-- Invertibility evidence for a bicategorical 2-cell, used by the local quasicategory
+natural-isomorphism skeleton. -/
 abbrev TwoCellIsIso {C D : SSet.QCat.{u}} {F G : C ⟶ D} (α : NatTrans C D F G) : Type u :=
   ULift.{u} (PLift (IsIso α))
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Package an available Lean `IsIso` instance as SCT side-structure data. -/
+/-- Package an available Lean `IsIso` instance for the local natural-isomorphism skeleton. -/
 def twoCellIsIso {C D : SSet.QCat.{u}} {F G : C ⟶ D} {α : NatTrans C D F G}
     [IsIso α] : TwoCellIsIso α :=
   ULift.up (PLift.up inferInstance)
@@ -654,26 +654,6 @@ def intervalEdge : SSet.Edge intervalZeroSimplex.{u} intervalOneSimplex.{u} wher
 def intervalFunctorEdge (C : SSet.QCat.{u}) (f : intervalQCat ⟶ C) :
     SSet.Edge (f.hom.app _ intervalZeroSimplex) (f.hom.app _ intervalOneSimplex) :=
   intervalEdge.map f.hom
-
-/-- Invertible interval-shaped morphisms are represented by invertible edges in the target
-quasicategory. -/
-abbrev InvertibleMorphismData (C : SSet.QCat.{u}) (f : intervalQCat ⟶ C) : Type u :=
-  EdgeIsIso (intervalFunctorEdge C f)
-
-/-- Adjunction data between quasicategory functors, supplied by the bicategory of
-quasicategories. -/
-abbrev AdjunctionData (C D : SSet.QCat.{u}) (L : C ⟶ D) (R : D ⟶ C) : Type u :=
-  Bicategory.Adjunction L R
-
-/-- Unit 2-cell of a bicategorical adjunction. -/
-def adjunctionUnit (C D : SSet.QCat.{u}) (L : C ⟶ D) (R : D ⟶ C)
-    (adj : AdjunctionData C D L R) : NatTrans C C (𝟙 C) (L ≫ R) :=
-  adj.unit
-
-/-- Counit 2-cell of a bicategorical adjunction. -/
-def adjunctionCounit (C D : SSet.QCat.{u}) (L : C ⟶ D) (R : D ⟶ C)
-    (adj : AdjunctionData C D L R) : NatTrans D D (R ≫ L) (𝟙 D) :=
-  adj.counit
 
 end UpstreamFunctorQuasicategorySkeleton
 

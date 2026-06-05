@@ -73,12 +73,23 @@ syntax_sort CatEquiv (C : SCat) (D : SCat) : Type u
 The result universe controls the Lean universe of the corresponding model field. In SCT,
 `SCat : Type (u+1)` and `Functor C D : Type u` match the intended quasicategory semantics.
 
-### `syntax_sort_role`
+### `syntax_def`
 
-A role is metadata for tools:
+A `syntax_def` declares a derived family. The body may be a checked package or an admitted package
+while the projections are still being designed:
 
 ```lean
-syntax_sort_role ObjectwiseNatIsoData : side_structure
+syntax_def containsIdentities (C : SCat) (W : MorphismCollection C) : Type u := sorry
+```
+
+Admitted `syntax_def`s are lint-visible source debt. They do not become model-provider fields.
+
+### `syntax_sort_role`
+
+A role is metadata for tools. Despite the command name, SCT also uses it for `syntax_def` packages:
+
+```lean
+syntax_sort_role containsIdentities : side_structure
 ```
 
 It does not add constructors, proofs, or equations.
