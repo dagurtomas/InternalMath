@@ -55,10 +55,10 @@ import InternalMath.SCT.Spec
 #lint_type_theory_sorries SCT
 ```
 
-Expected current status:
+Expected status:
 
-- the SCT specification still has admitted internal declarations;
-- `InternalMath/SCT/Model.lean` still has model placeholders;
+- the SCT specification has admitted internal declarations;
+- `InternalMath/SCT/Model.lean` has model placeholders;
 - project scaffolds record real semantic gaps for future work.
 
 Unexpected status:
@@ -80,9 +80,9 @@ The intended semantics is the infinity-category of small quasicategories, with:
 Do not mark the semantic model complete until these assumptions are proved in Lean or recorded as
 explicit external theorem assumptions with clear hypotheses.
 
-## Current SCT project scaffolds
+## SCT project scaffolds
 
-The current project files separate model gaps by topic:
+The project files separate model gaps by topic:
 
 - `InternalMath/SCT/IML/Model/FiniteShapes.lean`: checked finite-shape bookkeeping.
 - `InternalMath/SCT/IML/Model/SegalComposition.lean`: Segal composition and the bridge between
@@ -94,11 +94,11 @@ The current project files separate model gaps by topic:
 - `InternalMath/SCT/IML/Model/Localization.lean`: inverting functors and localization.
 
 When moving a gap out of `Model.lean`, put it in the project file that owns the mathematics and add
-a docstring explaining what data remains.
+a docstring explaining the mathematical data to supply.
 
 ## Subcategory and side-structure debt
 
-Several Chapter 3 notions are admitted `syntax_def` packages rather than primitive model fields:
+Several Chapter 3 notions are admitted `syntax_def` packages with no model-provider fields:
 
 ```lean
 LandsInObjectCollection
@@ -108,10 +108,10 @@ PreservesMorphismCollection
 InvertsMorphismCollection
 ```
 
-This staging keeps package-shaped proof debt out of model-provider data, but the admitted bodies
-still need checked Sigma packages before some internal proofs can use projections. For example,
-`LandsInObjectCollection D C P F` should eventually expose that the induced map on cores factors
-through the object-collection inclusion:
+This keeps package-shaped proof debt out of model-provider data. The admitted bodies need checked
+Sigma packages before some internal proofs can use projections. For example,
+`LandsInObjectCollection D C P F` should expose that the induced map on cores factors through the
+object-collection inclusion:
 
 ```text
 coreCat D  --coreFunctor D C F-->  coreCat C

@@ -4,7 +4,7 @@ This guide describes the STLC development in `InternalMath/LambdaCalculus`. It i
 example in this repository: it starts from an InternalLean declaration of a type theory, builds
 semantic models, and constructs the associated syntactic cartesian closed category.
 
-The implementation is still experimental because it depends on InternalLean's generated model
+The implementation is experimental because it depends on InternalLean's generated model
 interfaces and LF transport machinery. The mathematical scope is simply typed lambda calculus with
 finite products and function types.
 
@@ -33,9 +33,9 @@ The calculus includes:
 - definitional equality judgments `EqTm` and `EqSub`;
 - β/η and congruence rules for products, unit, functions, and substitution.
 
-Several operations are checked LF definitions rather than primitive model obligations. For example,
+Several operations are checked LF definitions computed from earlier declarations. For example,
 `weakenTm`, `substTop`, and one-variable composition `homComp` are all defined internally from
-substitution structure.
+substitution structure, so they do not add primitive model obligations.
 
 ## Context representability
 

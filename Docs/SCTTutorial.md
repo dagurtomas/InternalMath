@@ -5,8 +5,8 @@ used to implement it.
 
 SCT is a work-in-progress implementation of the type theory from the
 Cisinski--Cnossen--Nguyen--Walde **Synthetic Category Theory** book project. The specification
-tracks the book's vocabulary, while the quasicategory model and several theorem proofs are still
-under development.
+tracks the book's vocabulary. The quasicategory model skeleton and several theorem proofs are
+visible development targets.
 
 For hands-on practice, open `InternalMath/SCT/TutorialExercises.lean` in your editor and replace the
 exercise `sorry`s. You can also make a scratch file that imports `InternalMath.SCT.Spec`.
@@ -33,7 +33,7 @@ The main files are:
 - `InternalMath/SCT/Spec.lean`: stable aggregate import for the SCT specification;
 - `InternalMath/SCT/Spec/Prelude.lean`: the initial `declare_type_theory SCT{u}` block;
 - `InternalMath/SCT/Spec/Chapter*/...`: staged extensions of the theory;
-- `InternalMath/SCT/Model.lean`: the generated `SCTModel` interface and current model skeleton;
+- `InternalMath/SCT/Model.lean`: the generated `SCTModel` interface and model skeleton;
 - `InternalMath/SCT/IML/Model/`: workshop project files for SCT model construction.
 
 ## 2. Common SCT declaration forms
@@ -76,7 +76,7 @@ The result universe controls the Lean universe of the corresponding model field.
 ### `syntax_def`
 
 A `syntax_def` declares a derived family. The body may be a checked package or an admitted package
-while the projections are still being designed:
+with projection/theorem debt:
 
 ```lean
 syntax_def containsIdentities (C : SCat) (W : MorphismCollection C) : Type u := sorry
@@ -266,7 +266,7 @@ Add these commands to a scratch file and read the messages in your editor:
 #check_model_obligations SCT
 ```
 
-The linter currently lists admitted SCT declarations. That is expected for this experiment.
+The linter lists admitted SCT declarations. That is expected for this experiment.
 
 ### Exercise 6: find a projection package
 
@@ -290,17 +290,18 @@ Open `InternalMath/SCT/Spec/Chapter6/StrongSurjectivity.lean`. Find:
 Questions:
 
 1. Which declaration is the definition from the book?
-2. Which declarations are currently admitted consequences?
+2. Which declarations are admitted consequences?
 3. What data in `StronglySurjective` should eventually prove them?
 
-## 5. Current status
+## 5. Project status
 
-The SCT specification is still changing. Several Chapter 3 subcategory fields are currently side
-structures and are expected to become more explicit packages. The model file also contains many
-placeholder obligations while the quasicategory interpretation is developed.
+The SCT specification includes admitted internal declarations for theorem and projection debt.
+Several Chapter 3 subcategory notions are admitted `syntax_def` packages whose checked constructors
+and projections are workshop targets. The model file contains placeholder obligations for the
+quasicategory interpretation.
 
-These gaps are part of the current status of the project. They are kept visible so that the
-specification, internal proofs, and model obligations can converge on the book's formulation.
+These gaps are kept visible so that the specification, internal proofs, and model obligations can
+converge on the book's formulation.
 
 ## 6. Common distinctions
 
@@ -331,7 +332,7 @@ Import a split chapter file only when you are editing that part of the specifica
 
 ## 7. Further reading
 
-- `Docs/SCT.md`: current SCT status and expected warnings.
+- `Docs/SCT.md`: SCT status and expected warnings.
 - `Docs/STLC.md`: the complete InternalLean example in this repository.
 - `.lake/packages/InternalLean/Docs/UserGuide.md`: InternalLean workflow.
 - `.lake/packages/InternalLean/Docs/Syntax.md`: full frontend syntax reference.

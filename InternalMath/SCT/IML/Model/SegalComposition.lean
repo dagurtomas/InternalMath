@@ -17,7 +17,7 @@ blueprint is `Docs/SCT/IML/Model/SegalCompositionBlueprint.md`.
 The finite shape maps are provided by `InternalMath.SCT.IML.Model.FiniteShapes`: `[0]`, `[1]`,
 `[2]`, the three faces of `[2]`, the degeneracy `[1] -> [0]`, and the square `[1] × [1]`.
 
-The declarations below are honest interfaces. The chosen filler is noncomputable and currently a
+The declarations below are honest interfaces. The chosen filler is noncomputable and serves as a
 project marker. Unit and associativity comparisons are not strict equalities of fillers; they should
 be packaged as the model's bicategorical `NatIso`/comparison data once the functor-quasicategory
 bridge is available.

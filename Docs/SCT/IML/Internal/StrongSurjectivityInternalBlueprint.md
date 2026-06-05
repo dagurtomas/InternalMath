@@ -1,7 +1,6 @@
 # Strong-surjectivity internal blueprint
 
-Status: detailed workshop blueprint for `InternalMath/SCT/Spec/Chapter6/StrongSurjectivity.lean`,
-2026-05-31.
+Workshop blueprint for `InternalMath/SCT/Spec/Chapter6/StrongSurjectivity.lean`.
 
 Scope: close the two internal admissions that extract ordinary object-level data from the internal
 Definition 6.3.1 representation of strong surjectivity.
@@ -12,7 +11,7 @@ Target module:
 InternalMath/SCT/Spec/Chapter6/StrongSurjectivity.lean
 ```
 
-Current admissions in that module:
+Admissions in that module:
 
 ```lean
 SCT.stronglySurjectivePreimage
@@ -24,7 +23,7 @@ and `#lint_type_theory_sorries SCT` drops from 64 to 62 admitted internal declar
 
 ## Mathematical target
 
-Current definition:
+Definition:
 
 ```lean
 syntax_abbrev StronglySurjective (C : SCat) (D : SCat) (F : Functor C D) :=
@@ -86,8 +85,8 @@ stronglySurjectiveSection
 stronglySurjectiveSectionBeta
 ```
 
-currently live later in `Chapter6/FundamentalTheorem.lean`.  For this project, either use
-`fst surj` and `snd surj` directly, or first move those two projection definitions into
+live in `Chapter6/FundamentalTheorem.lean`.  For this project, either use `fst surj` and `snd surj`
+directly, or first move those two projection definitions into
 `Chapter6/StrongSurjectivity.lean` as a no-semantic-change preparatory edit.
 
 ## Recommended helper definitions

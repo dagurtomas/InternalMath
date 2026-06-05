@@ -1,6 +1,6 @@
 # Invertible arrows, `Iso(C)`, and Rezk equivalence blueprint
 
-Status: new scaffold, 2026-06-03.
+Workshop blueprint for the invertible-arrow and Rezk-equivalence model scaffold.
 
 Scope: this note expands the project around invertible interval-shaped arrows, the category of
 isomorphisms `Iso(C)`, and the Rezk comparison field in `InternalMath/SCT/Model.lean`. The
@@ -16,23 +16,23 @@ Iso(C)                  := full subcategory of Fun([1],C) on invertible arrows
 rezkEquiv(C)            := quasicategorical equivalence C ≃ Iso(C)
 ```
 
-This project should use the incoming edge-level API from mathlib PR #35287, but most SCT work
-remains above that API. The PR supplies inverse-edge data in simplicial sets and the coherent
-isomorphism simplicial set. It does not construct `Iso(C)` or prove the Rezk equivalence.
+This project should use the incoming edge-level API from mathlib PR #35287, but most SCT work uses
+higher-level adapters above that API. The PR supplies inverse-edge data in simplicial sets and the
+coherent isomorphism simplicial set. It does not construct `Iso(C)` or prove the Rezk equivalence.
 
 ## Existing SCT declarations involved
 
 Chapter 1 interval and invertible-arrow declarations:
 
-- `InvertibleMorphismData` / `InvertibleMorphism`, now a checked `syntax_def` Sigma package;
+- `InvertibleMorphismData` / `InvertibleMorphism`, a checked `syntax_def` Sigma package;
 - `invertibleMorphismInverse`;
 - `invertibleMorphismInverseSource`;
 - `invertibleMorphismInverseTarget`;
 - `invertibleMorphismLeftUnit`;
 - `invertibleMorphismRightUnit`.
 
-The projection declarations are currently admitted internal definitions while the package-projection
-API is refined; they are no longer primitive model fields.
+The projection declarations are admitted internal definitions for the package-projection API. The
+generated model interface does not ask model providers for these fields.
 
 Chapter 1 `Iso(C)` and Rezk fields:
 
@@ -95,7 +95,7 @@ f : Functor intervalCat C
 ```
 
 In the model these are maps `[1] -> C`. The PR gives inverse data for an edge of a simplicial set.
-We still need adapters:
+Required adapters:
 
 ```lean
 arrowEdge        : ([1] -> C) -> SSet.Edge x y
@@ -104,7 +104,7 @@ inverseArrow     : Edge.InvStruct (arrowEdge f) -> ([1] -> C)
 ```
 
 The scaffold already defines the easy underlying one-simplex and inverse-arrow construction. The
-remaining endpoint comparisons are:
+endpoint comparisons are:
 
 ```text
 source(inverse f) = target(f)
@@ -200,7 +200,7 @@ This is mostly agent-friendly once the finite-shape endpoint lemmas are stable.
 - Use the Segal-composition scaffold to identify the raw inverse triangles with the chosen
   composites.
 - Prove the left and right unit comparison fields for invertible morphisms.
-- Package the comparisons as bicategorical `NatIso` data, matching the current model decision.
+- Package the comparisons as bicategorical `NatIso` data, matching the SCT model interpretation.
 
 This phase should wait for the Segal-composition project.
 
@@ -233,6 +233,6 @@ This is human-led and should not be attempted by defining `Iso(C)` from the desi
 
 ## Acceptance criteria for the scaffold
 
-The companion file should compile with only honest `sorry` markers for the remaining SCT work. It
+The companion file should compile with only honest `sorry` markers for the SCT work in this scaffold. It
 should explicitly identify which declarations are temporary local shapes for PR #35287 and which
 ones are genuine InternalMath/SCT obligations.

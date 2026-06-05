@@ -61,7 +61,7 @@ This applies especially to:
 - pullbacks and homotopy pullbacks;
 - universe and directed-univalence witnesses.
 
-Placeholder structures should state the mathematical data that remains to be supplied.
+Placeholder structures should state the mathematical data to supply.
 
 ## Workflow
 
@@ -80,6 +80,9 @@ Placeholder structures should state the mathematical data that remains to be sup
 5. Move model gaps into topic-specific project files only when the new location states the real
    mathematical obligation.
 6. Keep public docs concise and human-oriented; put verbose agent guidance in `.agents/`.
+7. Workshop-facing docs should present the state participants should use, not repository edit
+   history. Avoid wording such as "now", "formerly", "old", "stale", "migrated", or "no longer"
+   except in changelogs/work logs.
 
 ## Checks
 

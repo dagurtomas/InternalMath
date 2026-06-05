@@ -20,8 +20,8 @@ homotopy-pullback adapter.
 The intended first theorem is: if one leg of a cospan of quasicategories is an inner fibration,
 then the strict simplicial-set pullback is again a quasicategory and models the homotopy pullback.
 Natural-transformation comparisons in the surrounding SCT model are bicategorical 2-cells; this
-file still uses strict equality only for the special strict-pullback cone where the square commutes
-on the nose.
+file uses strict equality only for the special strict-pullback cone where the square commutes on the
+nose.
 -/
 
 @[expose] public section
@@ -176,7 +176,7 @@ structure Candidate (F : C ⟶ E) (G : D ⟶ E) : Type (u + 1) where
 
 /-- Under an inner-fibration hypothesis, the strict pullback represents the homotopy pullback.
 
-The cone fields are the ordinary strict pullback projections. The remaining proof is the real
+The cone fields are the ordinary strict pullback projections. The main proof is the real
 homotopy-pullback theorem: strict pullbacks along inner fibrations compute homotopy pullbacks in
 `Cat_∞`, equivalently satisfy the mapping-anima universal property for every test quasicategory.
 -/

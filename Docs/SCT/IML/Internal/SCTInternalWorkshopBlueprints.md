@@ -1,21 +1,21 @@
 # SCT internal workshop project blueprints
 
-Status: refreshed after the SCT IML reorganization and lint check, 2026-06-04.
+Workshop blueprint for internal SCT projects, based on the staged modules under
+`InternalMath/SCT/Spec/`.
 
-Scope: this note triages `sorry`-admitted internal declarations in the staged modules under
-`InternalMath/SCT/Spec/` and evaluates whether larger internal developments such as Yoneda, limits,
-and colimits are ready for workshop work. It is the internal-theory analogue of
-`Docs/SCT/IML/Model/SCTModelFormalizationBlueprints.md`. The old spec-split plan is historical:
-`InternalMath/SCT/Spec.lean` is the stable aggregate import and the real targets are the staged
-chapter modules. The Lean specification has not moved under `InternalMath/SCT/IML`; only these
-workshop blueprints live under `Docs/SCT/IML/Internal/`.
+Scope: this note triages `sorry`-admitted internal declarations and evaluates whether larger
+internal developments such as Yoneda, limits, and colimits are ready for workshop work. It is the
+internal-theory analogue of `Docs/SCT/IML/Model/SCTModelFormalizationBlueprints.md`.
+`InternalMath/SCT/Spec.lean` is the stable aggregate import, and the staged chapter modules are the
+main proof targets. The Lean specification lives under `InternalMath/SCT/Spec`; these workshop
+blueprints live under `Docs/SCT/IML/Internal/`.
 
 This is about working inside SCT itself. It is separate from the external quasicategory model
 scaffolds in `InternalMath/SCT/IML/Model/MappingAnima.lean`,
 `InternalMath/SCT/IML/Model/FibrationPullbacks.lean`, and
 `InternalMath/SCT/IML/Model/Localization.lean`.
 
-## Current baseline
+## Baseline diagnostics
 
 The diagnostic command
 
@@ -26,13 +26,10 @@ import InternalMath.SCT.Spec
 #check_model_obligations SCT
 ```
 
-currently reports 64 admitted internal declarations through the aggregate `Spec.lean` import. This
-count was rechecked on 2026-06-04 after the IML reorganization. The model-obligation check still
-reports the generic LF-model backend check; the issue here is internal theorem/definition debt, not
-temporary admitted-definition fields in the generated model interface.
-
-Older local planning notes may have stale counts. This public blueprint uses the current
-64-declaration lint output.
+reports 64 admitted internal declarations through the aggregate `Spec.lean` import. The
+model-obligation check reports the generic LF-model backend check; the issue here is internal
+theorem/definition debt, not temporary admitted-definition fields in the generated model interface.
+This blueprint uses the 64-declaration lint output.
 
 ## Classification labels
 
@@ -40,7 +37,7 @@ Use these labels when selecting workshop projects.
 
 - **Foundation blocker**: closes prerequisites used by many downstream theorems.
 - **High-value theorem**: directly proves a book theorem or important internal adapter.
-- **Design project**: the current statement is too coarse; first decide the source-faithful API.
+- **Design project**: the statement is too coarse; first decide the source-faithful API.
 - **Agent-after-design**: good for implementation once a human fixes the statement and proof plan.
 - **Downstream/VH**: valuable, but depends on several earlier workshop projects.
 - **Model-adjacent**: best coordinated with the quasicategory model scaffolds.
@@ -54,8 +51,8 @@ Best near-term human projects:
    This unlocks many Chapter 3, Rezk/Iso, localization, and Chapter 6 statements.
 2. **Strong-surjectivity object extraction.**
    Detailed blueprint: `Docs/SCT/IML/Internal/StrongSurjectivityInternalBlueprint.md`.
-   A focused Chapter 6 target with only two current admissions and a clear proof idea from the
-   definition of strong surjectivity.
+   A focused Chapter 6 target with two admissions and a clear proof idea from the definition of
+   strong surjectivity.
 3. **Core/mapping-anima internal adapters.**
    These should follow the maximal-Kan-core workshop project and would simplify many groupoid/core
    proofs.
@@ -74,11 +71,11 @@ Projects to avoid as first workshop targets:
 Those topics are feasible as **blueprint/API-design projects**, but not as direct sorry-closing
 projects yet.
 
-## Current admitted declarations by cluster
+## Admitted declarations by cluster
 
 ### Chapter 2: cores, mapping anima, and groupoids
 
-Current admissions:
+Admissions:
 
 - `mapAnimaCoreEquiv`;
 - `funCatTargetGroupoid`;
@@ -115,7 +112,7 @@ intervalCoreEndpointEquiv / simplex2CoreEndpointEquiv
 
 ### Chapter 3: subcategories, full subcategories, and all morphisms
 
-Current admissions:
+Admissions:
 
 - `idSubcategoryWitness`;
 - `initialSubcategoryWitness`;
@@ -130,14 +127,14 @@ Current admissions:
 
 Classification: **Foundation blocker**, with some **Agent-after-design** components.
 
-This is probably the best high-value internal workshop target.  The key issue is that the current
+This is probably the best high-value internal workshop target.  The key issue is that the
 subcategory/full-subcategory interface stores enough data to use the constructions, but not enough
 of the book's projection data to prove all expected consequences cleanly.
 
 Recommended split:
 
-1. Revisit `SubcategoryWitness` and decide whether it should be an explicit structure matching the
-   book's criterion rather than an opaque witness sort.
+1. Revisit `SubcategoryWitness` and decide whether an explicit structure should record the book's
+   criterion for subcategory witnesses.
 2. Make `subcategoryInclWitness` a projection of the subcategory package if the package really
    contains the book universal property.
 3. Prove `subcategoryWitnessEmbedding` from the book's subcategory criterion.
@@ -155,7 +152,7 @@ High-value outcomes:
 
 ### Chapter 3: inverting functors, localization, and realization
 
-Current admissions:
+Admissions:
 
 - `invertingFunctorTargetGroupoidEquiv`;
 - `localizationPushoutSquare`;
@@ -181,7 +178,7 @@ settled their APIs.
 
 ### Chapter 3/4: over categories, dependent products, relative joins, and contexts
 
-Current admissions:
+Admissions:
 
 - `overCat`;
 - `overPullbackFunctor`;
@@ -216,7 +213,7 @@ anima/fibration/localization scaffolds, before trying to close these admissions.
 
 ### Chapter 6: fully faithful, conservative, and strongly surjective functors
 
-Current admissions:
+Admissions:
 
 - `fullyFaithfulHomEquiv`;
 - `fullyFaithfulConservative`;
@@ -266,11 +263,11 @@ Recommended later order:
 
 The Fundamental Theorem should not be the first project.  It depends on objectwise natural
 isomorphism, full faithfulness on hom categories, strong-surjectivity extraction, conservativity,
-and the current `CatEquiv` calculus.
+and the available `CatEquiv` calculus.
 
 ### Chapter 7: cocartesian functor categories and straightening over `[1]`
 
-Current admissions:
+Admissions:
 
 - `isCocartesianFunctorCat`;
 - `cocartesianFunctorCatSubcategory`;
@@ -291,7 +288,7 @@ not a direct proof attempt.
 
 ### Chapter 7: internal category universe and universe closure
 
-Current admissions:
+Admissions:
 
 - `catInternalInitial`;
 - `catInternalProduct`;
@@ -364,14 +361,13 @@ Yoneda is not ready as a direct formalization target.
 
 Reasons:
 
-- `Spec.lean` currently has no Yoneda, presheaf, representable, or opposite-category API.
+- `Spec.lean` has no Yoneda, presheaf, representable, or opposite-category API.
 - A presheaf category should be something like `Fun(Cᵒᵖ, Anima)` or `Fun(Cᵒᵖ, Grpd)`.  The file
   does not yet have `opCat`, a category of anima as an internal target, or a settled internal
   category of groupoids suitable for presheaves.
-- The mapping-anima/core story is still under construction.  Yoneda should use mapping objects
-  coherently, not bare strict hom sets.
-- Objectwise natural-isomorphism criteria are now admitted `syntax_def` package debt; the Chapter 6
-  objectwise/functor-category theory still needs checked projections for a clean Yoneda proof.
+- The mapping-anima/core APIs do not yet supply the coherent mapping objects needed for Yoneda.
+- Objectwise natural-isomorphism criteria are admitted `syntax_def` package debt; the Chapter 6
+  objectwise/functor-category theory needs checked projections for a clean Yoneda proof.
 - Slices and over-categories exist only partially.  Many synthetic proofs of Yoneda use slice or
   comma-category reasoning.
 
@@ -409,13 +405,13 @@ limitFunctor J C h
 colimitFunctor J C h
 ```
 
-`LimitCone`, `ColimitCocone`, `HasLimitsOfShape`, and `HasColimitsOfShape` are now admitted
+`LimitCone`, `ColimitCocone`, `HasLimitsOfShape`, and `HasColimitsOfShape` are admitted
 `syntax_def` packages.  This is enough to state that a category admits limits or colimits of a
 shape, but it is too coarse for serious internal theorem proving.  It lacks checked cone/cocone
 universal properties, constant diagram functors, β/η rules, uniqueness clauses, and adjunction
 data.
 
-Feasible now:
+Feasible workshop projects:
 
 - finite examples using the existing terminal/product/pullback and initial/coproduct primitives;
 - a blueprint for source-faithful cone and cocone categories;
@@ -445,7 +441,8 @@ Recommended workshop target:
 General limits and colimits API blueprint
 ```
 
-rather than attempting to close `limitFunctor` or `colimitFunctor`, which are current axiom data.
+before attempting to close `limitFunctor` or `colimitFunctor`, which are axiom data in this
+vocabulary layer.
 
 ## Dependency map for ambitious theorems
 
@@ -491,4 +488,4 @@ If workshop participants want more detailed project notes, write these next:
 4. `Docs/SCT/IML/Internal/LimitsColimitsInternalBlueprint.md`.
 5. `Docs/SCT/IML/Internal/YonedaPrerequisitesBlueprint.md`.
 
-The first two are the most realistic for actually closing current internal `sorry`s.
+The first two are the most realistic for closing internal `sorry`s.

@@ -24,10 +24,10 @@ The intended semantics is:
 * this subcomplex is a Kan complex;
 * `Map(C,D)` is the maximal core of the functor quasicategory `Fun(C,D)`.
 
-`InternalMath.SCT.Model` currently interprets `NatTrans` as 2-cells in mathlib's strict bicategory
-of quasicategories. This scaffold is still about raw equivalence edges inside quasicategories and
-maximal cores; the bridge from bicategorical 2-cells to objects/edges of `Fun(C,D)` belongs to the
-future `natTransObject` API.
+`InternalMath.SCT.Model` interprets `NatTrans` as 2-cells in mathlib's strict bicategory of
+quasicategories. This scaffold is about raw equivalence edges inside quasicategories and maximal
+cores; the bridge from bicategorical 2-cells to objects/edges of `Fun(C,D)` belongs to the future
+`natTransObject` API.
 
 The `sorry`s here are project markers for human workshop work, not shortcuts for the SCT model.
 -/

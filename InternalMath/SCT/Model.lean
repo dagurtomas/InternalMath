@@ -27,19 +27,19 @@ This file contains the generated SCT model interface and a quasicategory/Kan-com
 skeleton. The concrete top-level carriers record the intended quasicategory semantics while the
 full model is developed.
 
-The current pass fills the small amount of structure that is already directly available from
-mathlib: Kan complexes embed in quasicategories, `Δ[0]` is a Kan complex, identities and
-composition are the ordinary maps in the full subcategory of quasicategories, and binary products of
-quasicategories are quasicategories. The remaining `sorry`s are genuine semantic gaps in the
-current mathlib/SCT interface: two-cells still need a bridge to objects of functor
-quasicategories, pullbacks should be homotopy/∞-categorical pullbacks, and the fibration/universe
-fields require the universal cocartesian fibration and directed-univalence machinery.
+The model skeleton fills the structure directly available from mathlib: Kan complexes embed in
+quasicategories, `Δ[0]` is a Kan complex, identities and composition are ordinary maps in the full
+subcategory of quasicategories, and binary products of quasicategories are quasicategories. Open
+`sorry`s mark genuine semantic gaps in the mathlib/SCT interface: two-cells need a bridge to
+objects of functor quasicategories, pullbacks should be homotopy/∞-categorical pullbacks, and the
+fibration/universe fields require the universal cocartesian fibration and directed-univalence
+machinery.
 
 For functor quasicategories, this file includes a local skeleton for API that is being developed
 in the `emilyriehl/infinity-cosmos` project and mathlib PR #35287. The skeleton uses the existing
 simplicial internal hom and assumes/sorries quasicategory closure. Natural transformations are
-modeled as 2-cells in mathlib's strict bicategory of quasicategories; the remaining bridge from
-those 2-cells to objects of the functor quasicategory is the `natTransObject` field below.
+modeled as 2-cells in mathlib's strict bicategory of quasicategories; the bridge from those 2-cells
+to objects of the functor quasicategory is the `natTransObject` field below.
 The finite-shape package lives in `InternalMath.SCT.IML.Model.FiniteShapes`; the
 Segal-composition scaffold lives in `InternalMath.SCT.IML.Model.SegalComposition`; the
 invertible-arrow/Rezk scaffold lives in `InternalMath.SCT.IML.Model.IsoRezkModel`; the
@@ -297,9 +297,9 @@ lemma qcatHomExtOfNoVertices {C D : SSet.QCat.{u}} (hC : IsEmpty (C.obj _⦋0⦌
 /-- Assumption/local target: binary coproducts of quasicategories are quasicategories.
 
 The expected proof is by connectedness of inner horns: a map from an inner horn to a binary
-simplicial-set coproduct lands in one summand, where it can be filled. The current mathlib
-coproduct API is enough to package the maps below, but this closure theorem is not yet available as
-an imported theorem.
+simplicial-set coproduct lands in one summand, where it can be filled. The mathlib coproduct API is
+enough to package the maps below, but this closure theorem is not yet available as an imported
+theorem.
 -/
 lemma quasicategoryCoprod (X Y : SSet.{u}) [SSet.Quasicategory X] [SSet.Quasicategory Y] :
     SSet.Quasicategory (X ⨿ Y) := by
@@ -486,7 +486,7 @@ noncomputable def horizCompNatIso (B C D : SSet.QCat.{u}) {F G : B ⟶ C} {H K :
   exact ⟨Bicategory.whiskerRight α.1 H ≫ Bicategory.whiskerLeft G β.1, twoCellIsIso⟩
 
 /-- Equivalence of quasicategories as forward/backward functors with natural-isomorphism unit and
-counit, now using invertible 2-cells from mathlib's strict bicategory of quasicategories.
+counit using invertible 2-cells from mathlib's strict bicategory of quasicategories.
 -/
 structure CatEquivData (C D : SSet.QCat.{u}) : Type u where
   forward : C ⟶ D
@@ -661,9 +661,9 @@ end SCTModelHelpers
 
 namespace SCTModelHelpers
 
-/-- Model-side interpretation of `NatIso` after `ObjectwiseNatIsoData` became an admitted
-`syntax_def`.  The natural-transformation component is kept from the quasicategory skeleton; the
-objectwise package remains admitted SCT debt. -/
+/-- Model-side interpretation of `NatIso` using the admitted `ObjectwiseNatIsoData` `syntax_def`.
+The natural-transformation component is kept from the quasicategory skeleton; the objectwise package
+is admitted SCT debt. -/
 abbrev ModelObjectwiseNatIsoData (C D : SSet.QCat.{u}) (F G : C ⟶ D)
     (α : NatTrans C D F G) : Type u :=
   SCTModel_ObjectwiseNatIsoData_syntaxDef SSet.QCat (fun C D => C ⟶ D) NatTrans C D F G α

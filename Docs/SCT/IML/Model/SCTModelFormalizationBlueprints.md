@@ -1,13 +1,11 @@
 # SCT model formalization blueprints
 
-Status: refreshed after the SCT IML reorganization and model-status audit, 2026-06-04.
-
-Scope: these notes are for closing and organizing work around `InternalMath/SCT/Model.lean` and the
-model workshop files under `InternalMath/SCT/IML/Model/`. They do not propose changes to
+Workshop blueprints for model-side SCT projects around `InternalMath/SCT/Model.lean` and the model
+workshop files under `InternalMath/SCT/IML/Model/`. They do not propose changes to
 `InternalMath/SCT/Spec.lean`; internal-theory projects are tracked in
 `Docs/SCT/IML/Internal/SCTInternalWorkshopBlueprints.md`.
 
-The model file currently has the main carriers and a substantial first layer in place:
+The model file has the main carriers and a substantial first layer in place:
 
 - `Anima` is `SSet.Kan`, the bundled full subcategory of Kan complexes in simplicial sets;
 - `SCat` is `SSet.QCat`, the bundled full subcategory of quasicategories;
@@ -19,17 +17,17 @@ The model file currently has the main carriers and a substantial first layer in 
   ordinary-category nerves, finite shapes, pullback/pushout indexing shapes, strict initiality, and
   several strict comparison fields are already supplied.
 
-Since the previous refresh, the finite-shape package moved to `InternalMath/SCT/IML/Model/`,
-`initialStrict` and `qcatCatEquivOfIso` are implemented, and the generated model's
-`simplex2Face*` fields now refer to `SegalComposition.ModelBridge`. The remaining work there is the
-actual bridge between `[2]` and `Fun([1],[1])`, not basic finite-shape bookkeeping.
+The finite-shape package lives in `InternalMath/SCT/IML/Model/`, `initialStrict` and
+`qcatCatEquivOfIso` are implemented, and the generated model's `simplex2Face*` fields refer to
+`SegalComposition.ModelBridge`. The open work there is the bridge between `[2]` and
+`Fun([1],[1])`, not basic finite-shape bookkeeping.
 
-`Model.lean` still contains a local section named `UpstreamFunctorQuasicategorySkeleton`. Its
-remaining `sorry`s are upstream API assumptions, not local contributor proof obligations. They now
-mainly represent the functor-quasicategory/internal-hom closure, curry/uncurry, and bridge APIs
-being developed in `emilyriehl/infinity-cosmos` and mathlib PRs such as #35287. Local work should
-either build on this adapter or replace it with upstream APIs when they land; contributors should
-not spend workshop time trying to prove those local `sorry`s directly.
+`Model.lean` contains a local section named `UpstreamFunctorQuasicategorySkeleton`. Its `sorry`s are
+upstream API assumptions, not local contributor proof obligations. They represent the
+functor-quasicategory/internal-hom closure, curry/uncurry, and bridge APIs being developed in
+`emilyriehl/infinity-cosmos` and mathlib PRs such as #35287. Local work should either build on this
+adapter or replace it with upstream APIs when they land; contributors should not spend workshop time
+trying to prove those local `sorry`s directly.
 
 ## Classification labels
 
@@ -41,8 +39,7 @@ Use these labels when selecting workshop projects.
   supervise the API shape.
 - **Human-interest**: requires real mathematical/API design, source-faithfulness decisions, or a
   nontrivial upstream theorem.
-- **Upstream-wait**: should be replaced by mathlib/infinity-cosmos material rather than proved
-  locally in this repository.
+- **Upstream-wait**: belongs in mathlib/infinity-cosmos material before local SCT integration.
 - **Completed/reuse**: already implemented locally; keep as background or use the helper in later
   projects.
 
@@ -50,7 +47,7 @@ Use these labels when selecting workshop projects.
 
 | Project | Section | Classification | Suggested role |
 | --- | --- | --- | --- |
-| Replace remaining functor-quasicategory skeleton | 1.1 | Upstream-wait | maintainer/human |
+| Integrate functor-quasicategory skeleton APIs | 1.1 | Upstream-wait | maintainer/human |
 | Wrap upstream functor-category closed structure | 1.2 | Agent-friendly after upstream | agent |
 | Equality-to-`NatIso` comparison fields | 1.3 | Agent-friendly | agent |
 | Strict isomorphism to `CatEquivData` bridge | 1.4 | Completed/reuse | reference |
@@ -69,9 +66,9 @@ Use these labels when selecting workshop projects.
 | Finite ordinary nerve wrappers and shape maps | 3.6 | Agent-friendly | agent |
 | Context-layer semantics | 2.8 | Human-interest design | human |
 
-## Current mathlib coverage notes
+## Mathlib coverage notes
 
-Already available in the current mathlib checkout:
+Available in the mathlib checkout:
 
 - `CategoryTheory.nerve`, `CategoryTheory.nerveMap`;
 - `CategoryTheory.Nerve.quasicategory`;
@@ -86,7 +83,7 @@ Already available in the current mathlib checkout:
   composition, and strict unit/associativity laws;
 - `Bicategory.Adjunction` for bicategorical adjunction data.
 
-Current gaps relevant to the model:
+Gaps relevant to the model:
 
 - cartesian closure of quasicategories under simplicial internal hom;
 - a bridge between bicategory 2-cells and objects/edges of the functor quasicategory;
@@ -102,21 +99,20 @@ Current gaps relevant to the model:
 These projects are the straightforward work related to the local skeleton in `Model.lean`.
 Some are not good local proof projects until upstream mathlib APIs land.
 
-## 1.1 Replace remaining `UpstreamFunctorQuasicategorySkeleton` pieces by upstream APIs
+## 1.1 Integrate `UpstreamFunctorQuasicategorySkeleton` APIs
 
 ### Classification
 
 **Upstream-wait**, with a human maintainer reviewing the replacement.
 
-### Current status
+### Status
 
-The QCat bicategory refactor closed the local natural-transformation composition, invertibility,
-whiskering, horizontal-composition, and adjunction fields. Those are no longer upstream-wait local
-`sorry`s.
+The QCat bicategory supplies local natural-transformation composition, invertibility, whiskering,
+horizontal-composition, and adjunction fields.
 
 ### Model declarations
 
-Remaining local skeleton declarations:
+Local skeleton declarations:
 
 - `quasicategoryInternalHom`;
 - `curryBeta`, `curryEta`, `curryNatIso`, `uncurryNatIso`;
@@ -231,9 +227,9 @@ simplicial-set extensionality.
 
 **Completed/reuse**.
 
-### Current status
+### Status
 
-`InternalMath/SCT/Model.lean` already provides:
+`InternalMath/SCT/Model.lean` provides:
 
 ```lean
 SCTModelHelpers.qcatCatEquivOfIso
@@ -243,7 +239,7 @@ It packages a strict isomorphism of bundled quasicategories as equivalence data,
 isomorphism and its inverse as forward/backward functors and equality-to-`NatIso` for the two
 composites.
 
-### Remaining use
+### Reuse
 
 Keep this helper as a one-way bridge for strict comparison isomorphisms, finite-shape transports,
 and future strict curry/uncurry equivalences. Do not redefine `CatEquiv` as strict isomorphism.
@@ -257,7 +253,7 @@ or design beyond replacing the skeleton.
 
 ### Classification
 
-**Mixed**. This is now the central bridge project for natural transformations: the mathematics is
+**Mixed**. This is the central bridge project for natural transformations: the mathematics is
 standard, but the generated model expression is long and the API should match incoming
 functor-quasicategory work.
 
@@ -270,7 +266,7 @@ functor-quasicategory work.
 
 ### Mathematical statement
 
-In the current model, a natural transformation `α : F ⟶ G` is a morphism in the hom-category
+In the model, a natural transformation `α : F ⟶ G` is a morphism in the hom-category
 `Ho(Fun(A,C))`. The functor-quasicategory API should connect such a 2-cell with an object of the
 explicit natural-transformation category used by SCT, i.e. with the corresponding edge or homotopy
 class of edges in `Fun(A,C)`. Evaluation at an object `x : terminalCat → A` should then produce an
@@ -339,11 +335,11 @@ of projections, not equalities.
 ## 2.3 Finite shapes and the `[2] ≃ Fun([1],[1])` bridge
 
 Status: finite-shape package implemented in `InternalMath/SCT/IML/Model/FiniteShapes.lean`; the
-model-facing `[2]`/`Fun([1],[1])` gap is now isolated in `SegalComposition.ModelBridge`.
+model-facing `[2]`/`Fun([1],[1])` gap is isolated in `SegalComposition.ModelBridge`.
 
 ### Classification
 
-**Mixed**. The finite-shape bookkeeping is checked; the remaining bridge is a small but real
+**Mixed**. The finite-shape bookkeeping is checked; the open bridge is a small but real
 mathematical identification.
 
 ### Model fields
@@ -368,7 +364,7 @@ categories. Their maps are induced by monotone maps of finite ordinals. These wr
 coordinate system for natural transformations, squares, and Segal restrictions.
 
 The generated SCT model presents `simplex2Cat` as `Fun([1],[1])`, not as the standalone standard
-simplex `[2]`. The remaining bridge identifies the three relevant edges of `Fun([1],[1])` with the
+simplex `[2]`. The open bridge identifies the three relevant edges of `Fun([1],[1])` with the
 curried monotone maps:
 
 ```text
@@ -585,17 +581,17 @@ fields may use `NatIso` or `CatEquivData` for packaging, but the main mathematic
 
 **Completed/reuse**.
 
-### Current status
+### Status
 
 `initialStrict` is implemented in `InternalMath/SCT/Model.lean`. The proof uses reusable local
 helpers showing that a map to the empty-nerve quasicategory forces the source to have no vertices,
 and that maps out of a quasicategory with no vertices are unique. It then packages the two strict
 composite equalities with `natIsoOfEq`.
 
-### Remaining use
+### Reuse
 
-Keep these helpers available for later empty-shape or initiality arguments. This is no longer a
-workshop target unless someone wants to polish or upstream the underlying simplicial-set lemmas.
+Keep these helpers available for later empty-shape or initiality arguments. Use this project only
+for polishing or upstreaming the underlying simplicial-set lemmas.
 
 ### Pitfall
 
@@ -614,9 +610,9 @@ Implemented modulo the local coproduct-closure assumption:
 - `coprodCat`, `coprodIn1`, `coprodIn2`, `coprodCase`;
 - `coprodBeta1`, `coprodBeta2`, `coprodEta`.
 
-Still open:
+Open work:
 
-- proof of `quasicategoryCoprod`, currently a local helper `sorry`;
+- proof of `quasicategoryCoprod`, a local helper `sorry`;
 - `coprodUniq`;
 - base-change and disjointness equivalences.
 
@@ -796,14 +792,14 @@ in arbitrary targets.
 
 ### Classification
 
-**Mostly completed for `NatIso`; still useful for probes.**
+**Mostly completed for `NatIso`; useful for probes.**
 
 ### Purpose
 
-Mathlib's strict bicategory of quasicategories now supplies the model semantics for `NatTrans`,
+Mathlib's strict bicategory of quasicategories supplies the model semantics for `NatTrans`,
 `NatIso`, whiskering, horizontal composition, and bicategorical adjunctions. `hoFunctor` product
-preservation and strict-bicategory probes are still useful for orientation and product behavior, but
-they do not by themselves construct mapping anima or the `natTransObject` bridge.
+preservation and strict-bicategory probes are useful for orientation and product behavior, but they
+do not by themselves construct mapping anima or the `natTransObject` bridge.
 
 # Postponed or non-workshop targets
 
@@ -822,8 +818,8 @@ Good agent-heavy projects:
 1. Vertex-spanned full subcomplexes and quasicategory closure (3.3).
 2. Coproduct closure and `coprodUniq`, with review of the connectedness argument (3.2).
 3. Square/Segal finite-shape orientation tests beyond the already checked base package (2.3, 3.7).
-4. Equality-to-`NatIso` cleanup around remaining strict comparison fields (1.3).
-5. Reuse of `initialStrict` and `qcatCatEquivOfIso` in later fields, rather than new work on them.
+4. Equality-to-`NatIso` cleanup around open strict comparison fields (1.3).
+5. Reuse of `initialStrict` and `qcatCatEquivOfIso` in later fields.
 
 Good human-led projects:
 

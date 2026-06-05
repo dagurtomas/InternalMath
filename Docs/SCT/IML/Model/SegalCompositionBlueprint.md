@@ -1,6 +1,6 @@
 # Segal composition and arrow calculus blueprint
 
-Status: new scaffold, 2026-06-03.
+Workshop blueprint for the Segal-composition model scaffold.
 
 Scope: this note expands the project around the SCT composition fields in
 `InternalMath/SCT/Model.lean`. The companion Lean scaffold is
@@ -19,8 +19,8 @@ or equivalently by extending a strictly composable pair of interval-shaped arrow
 `[2] -> C`. The composite is the `0 -> 2` face of a chosen filler.
 
 The main rule for this project is that filler choices are not unique on the nose. Unit,
-associativity, and naturality fields must be comparison data, matching the book and the current
-model's bicategorical `NatIso` representation.
+associativity, and naturality fields must be comparison data, matching the book and the model's
+bicategorical `NatIso` representation.
 
 ## Existing SCT declarations involved
 
@@ -54,9 +54,9 @@ Invertible-arrow fields depending on this project:
 - `invertibleMorphismLeftUnit`;
 - `invertibleMorphismRightUnit`.
 
-## Current foundation from `FiniteShapes.lean`
+## Foundation from `FiniteShapes.lean`
 
-The finite-shape package now supplies checked Lean declarations for:
+The finite-shape package supplies checked Lean declarations for:
 
 - `[0]`, `[1]`, `[2]` as bundled quasicategories;
 - maps induced by simplex-category morphisms;
@@ -71,11 +71,11 @@ The finite-shape package now supplies checked Lean declarations for:
   with the nerve of the product poset;
 - span and cospan shapes as nerves of mathlib walking shapes.
 
-This removes the finite-shape bookkeeping from the Segal project. The scaffold also has a
-`ModelBridge` namespace for the generated model's presentation `simplex2Cat := Fun([1],[1])`. The
-bridge records the remaining identification between `[2]` and monotone families of endomaps of
-`[1]`; `Model.lean` now refers to those project-file declarations instead of carrying local
-`sorry`s for the three `simplex2Face*` maps and their endpoint comparisons.
+The Segal project can use these declarations without carrying the finite-shape bookkeeping. The
+scaffold also has a `ModelBridge` namespace for the generated model's presentation
+`simplex2Cat := Fun([1],[1])`. The bridge records the identification between `[2]` and monotone
+families of endomaps of `[1]`; `Model.lean` refers to those project-file declarations for the three
+`simplex2Face*` maps and their endpoint comparisons.
 
 ## Mathematical targets
 
@@ -92,8 +92,8 @@ target f = source g
 This is the data of a map from the inner horn `Λ[2,1]` to `C`, with `f` on the `0 -> 1` face and
 `g` on the `1 -> 2` face.
 
-The scaffold currently uses a strict endpoint equality because it is describing a strict horn map.
-This equality should not be generalized into strict equality for synthetic comparison fields.
+The scaffold uses a strict endpoint equality because it describes a strict horn map. This equality
+should not be generalized into strict equality for synthetic comparison fields.
 
 ### Target B: chosen fillers and composites
 

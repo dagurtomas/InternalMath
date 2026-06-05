@@ -1,6 +1,6 @@
 # Fibration-stable pullbacks and homotopy pullbacks blueprint
 
-Status: synced with current fibration-pullback scaffold, 2026-06-03.
+Workshop blueprint for the fibration-stable pullback model scaffold.
 
 Scope: this note expands the project around `pullbackCat`, base-change of fibrations, and directed
 pullbacks in `InternalMath/SCT/Model.lean`.  It is written for human workshop participants.  The
@@ -26,10 +26,10 @@ strict pullback has been shown to represent the derived/homotopy pullback.  The 
 to build this fibration-stable strict-pullback API and document how it can, and cannot yet, close
 SCT model fields.
 
-Current model note: natural transformations are bicategorical 2-cells in mathlib's strict
-bicategory of quasicategories. The fibration-pullback scaffold still uses strict equality for the
-special strict cone where a pullback square commutes on the nose; the eventual homotopy-pullback
-package should expose coherent `NatIso` comparison data for general SCT pullbacks.
+Model note: natural transformations are bicategorical 2-cells in mathlib's strict bicategory of
+quasicategories. The fibration-pullback scaffold uses strict equality for the special strict cone
+where a pullback square commutes on the nose; the homotopy-pullback package should expose coherent
+`NatIso` comparison data for general SCT pullbacks.
 
 ## Why this is a human workshop project
 
@@ -40,7 +40,7 @@ This project is human-led because it requires semantic choices:
 - whether the model should choose strict pullbacks only under fibrancy hypotheses or use a general
   replacement/fibrant-replacement construction;
 - how directed/lax pullbacks in Chapter 5 relate to strict pullbacks and arrow-category pullbacks;
-- which parts should be upstreamed to mathlib/infinity-cosmos rather than encoded locally.
+- which parts belong upstream in mathlib/infinity-cosmos.
 
 Agents can help with typed wrappers, projection lemmas, and strict β-rules after the semantic target
 is fixed.
@@ -95,9 +95,9 @@ innerHornInclusions : MorphismProperty SSet
 InnerFibration (p : E ⟶ B) : Prop := innerHornInclusions.rlp p
 ```
 
-The current scaffold defines this local wrapper directly because this mathlib checkout does not
-appear to have a named `InnerFibration`.  A later pass can replace it by an upstream name and add a
-theorem connecting it to the book's `IsofibrationWitness` interpretation.
+The scaffold defines this local wrapper directly because this mathlib checkout does not appear to
+have a named `InnerFibration`. An upstream name can replace it, together with a theorem connecting
+it to the book's `IsofibrationWitness` interpretation.
 
 Design question: the model's Chapter 5 `Fibration` is the book's isofibration condition, while
 strict-pullback stability of quasicategories is often stated for inner fibrations.  Decide whether
@@ -323,7 +323,7 @@ Good for: human design checkpoint.
 
 ## Lean scaffold
 
-The file `InternalMath/SCT/IML/Model/FibrationPullbacks.lean` currently contains these placeholders and
+The file `InternalMath/SCT/IML/Model/FibrationPullbacks.lean` contains these placeholders and
 wrappers:
 
 ```lean
@@ -351,9 +351,9 @@ The scaffold gives a right-leg strict cone package and leaves the mathematical c
 the precise homotopy-pullback universal-property type, and the proof that the strict pullback
 satisfies that property as human project markers.
 
-## Informal proof or construction for each current Lean `sorry`
+## Informal proof or construction for each Lean `sorry`
 
-This section tracks every `sorry` currently present in `InternalMath/SCT/IML/Model/FibrationPullbacks.lean`.
+This section tracks every `sorry` present in `InternalMath/SCT/IML/Model/FibrationPullbacks.lean`.
 If the Lean scaffold changes, update this list in the same commit.  The local `InnerFibration`
 wrapper is an `abbrev` for `innerHornInclusions.rlp`, so it is not a `sorry`.  The left-leg
 quasicategory theorem is derived from the right-leg theorem by the symmetry isomorphism
@@ -393,7 +393,7 @@ available, this can be spelled as fields rather than an abstract placeholder.
 The strict cone part is constructed directly: take the candidate object to be
 `StrictPullback.qcatOfRightInnerFibration C D E F G hG`, take the projections to be the strict
 pullback projections, and use `StrictPullback.commOfRightInnerFibration` for the comparison.  The
-remaining mathematical proof is the universal-property field.  For every test quasicategory `X`,
+main mathematical proof is the universal-property field. For every test quasicategory `X`,
 postcomposition induces a map from `Map(X, C ×_E D)` to the homotopy pullback
 `Map(X,C) ×^h_{Map(X,E)} Map(X,D)`.  Since `G` is an inner fibration, exponentiation by `X` should
 preserve the relevant fibration/isofibration condition, so `Fun(X,D) → Fun(X,E)` is again a

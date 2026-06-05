@@ -45,7 +45,7 @@ extend_type_theory SCT where
       (natTransSourceFiberTarget C D F) (functorObject C D G)
   /-- A natural transformation, viewed as an object of the explicit natural-transformation
   category.  This records the Chapter 1 identification of natural transformations with arrows in
-  `Fun(C,D)` while `NatTrans` remains primitive vocabulary. -/
+  `Fun(C,D)` while `NatTrans` is primitive vocabulary. -/
   lf_opaque natTransObject (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D)
     (α : NatTrans C D F G) : Obj (natTransCat C D F G)
 
@@ -367,9 +367,8 @@ extend_type_theory SCT where
   /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
   model_section Chapter1
 
-  /-- Explicit inverse data for an interval-shaped morphism.  This breaks the previous circular
-  definition of invertibility through `Iso(C)`: the category `Iso(C)` should eventually be built
-  from this data, while Axiom F still supplies the Rezk equivalence for that category.
+  /-- Explicit inverse data for an interval-shaped morphism.  The category `Iso(C)` is built from
+  this data, while Axiom F supplies the Rezk equivalence for that category.
   -/
   syntax_def InvertibleMorphismData (C : SCat) (f : Functor intervalCat C) : Type u :=
     Σ inv : Functor intervalCat C,

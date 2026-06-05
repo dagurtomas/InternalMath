@@ -27,9 +27,9 @@ The intended semantics is:
   among functors that invert `W`.
 
 The universal property must be quasicategorical, preferably stated through mapping anima.  Ordinary
-localization of the homotopy category is not the intended interpretation.  In the current SCT model,
-natural transformations are bicategorical 2-cells; this scaffold still needs the bridge from those
-2-cells to the functor quasicategory when forming inverting-functor subcategories.
+localization of the homotopy category is not the intended interpretation. In the SCT model, natural
+transformations are bicategorical 2-cells; this scaffold needs the bridge from those 2-cells to the
+functor quasicategory when forming inverting-functor subcategories.
 -/
 
 @[expose] public section
@@ -90,8 +90,8 @@ noncomputable def obj (W : MorphismCollection C) (D : SSet.QCat.{u}) : SSet.QCat
 /-- Inclusion of the inverting-functor category into the ordinary functor quasicategory.
 
 To make this construction correct, use the inclusion supplied by the full-subcategory construction
-for the object collection of functors satisfying `Inverts W`.  Its vertices are the same functors
-`C ⟶ D`, now equipped with evidence that they invert `W`.
+for the object collection of functors satisfying `Inverts W`.  Its vertices are functors `C ⟶ D`
+equipped with evidence that they invert `W`.
 -/
 noncomputable def incl (W : MorphismCollection C) (D : SSet.QCat.{u}) :
     obj W D ⟶ FunctorQuasicategory.obj C D := by

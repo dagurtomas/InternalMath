@@ -1,6 +1,6 @@
 # Maximal Kan cores and mapping anima blueprint
 
-Status: synced with QCat bicategory two-cell model decision, 2026-06-03.
+Workshop blueprint for the maximal-Kan-core and mapping-anima model scaffold.
 
 Scope: this note expands the project around `mapAnima`, groupoid cores, and maximal Kan cores in
 `InternalMath/SCT/Model.lean`.  It is written for human workshop participants.  The companion Lean
@@ -20,10 +20,10 @@ Here `(-)^≃` denotes the maximal Kan subcomplex: it contains all vertices and 
 equivalence edges.  This project should provide a real maximal-core API and then use it to interpret
 the SCT mapping-anima and core fields.
 
-Current model note: `InternalMath.SCT.Model` interprets `NatTrans` as 2-cells in mathlib's strict
+Model note: `InternalMath.SCT.Model` interprets `NatTrans` as 2-cells in mathlib's strict
 bicategory of quasicategories, and `NatIso` as invertible 2-cells.  This blueprint and the scaffold
-still concern raw equivalence edges inside quasicategories and maximal cores.  The bridge from
-bicategory 2-cells to objects or edges of `Fun(C,D)` belongs to the future `natTransObject` API.
+concern raw equivalence edges inside quasicategories and maximal cores.  The bridge from bicategory
+2-cells to objects or edges of `Fun(C,D)` belongs to the future `natTransObject` API.
 
 ## Why this is a human workshop project
 
@@ -86,7 +86,7 @@ Needed operations:
 
 Design question: should the SCT adapter use a proposition, data, or both?  The maximal-core
 subcomplex wants a proposition.  Invertible interval-shaped morphism packages often want data, while
-`NatIso` is now an invertible 2-cell in the QCat bicategory.  One reasonable split is a Prop-valued
+`NatIso` is an invertible 2-cell in the QCat bicategory.  One reasonable split is a Prop-valued
 membership predicate plus a separate structure providing chosen inverse data when needed.
 
 ### Target B: maximal core subcomplex
@@ -173,7 +173,7 @@ Once `Fun(C,D)` is available as a quasicategory, define:
 Map(C,D) := Fun(C,D)^≃.
 ```
 
-For the current model, this probably means:
+For the model, this probably means:
 
 1. use the functor-quasicategory skeleton or its upstream replacement to get `funCat C D`;
 2. apply the maximal-core construction;
@@ -278,7 +278,7 @@ Good for: human + agent after mapping anima and pullback/fiber APIs are stable.
 
 ## Lean scaffold
 
-The file `InternalMath/SCT/IML/Model/MappingAnima.lean` currently contains these placeholders:
+The file `InternalMath/SCT/IML/Model/MappingAnima.lean` contains these placeholders:
 
 ```lean
 SCTMappingAnimaSkeleton.MaximalKanCore.EquivalenceEdge
@@ -299,9 +299,9 @@ SCTMappingAnimaSkeleton.MappingAnima.incl
 The scaffold deliberately stops before filling `sctModel` fields.  It gives names and types for the
 main mathematical seams while leaving the core proof and API choices for workshop participants.
 
-## Informal proof or construction for each current Lean `sorry`
+## Informal proof or construction for each Lean `sorry`
 
-This section tracks every `sorry` currently present in `InternalMath/SCT/IML/Model/MappingAnima.lean`.
+This section tracks every `sorry` present in `InternalMath/SCT/IML/Model/MappingAnima.lean`.
 If the Lean scaffold changes, update this list in the same commit.
 
 ### `MaximalKanCore.EquivalenceEdge`

@@ -11,8 +11,7 @@ internal reasoning in Lean. This is work in progress.
 ## Files
 
 - `InternalMath/SCT/Spec.lean` declares the type theory `SCT`.
-- `InternalMath/SCT/Model.lean` generates `SCTModel` and contains the current quasicategory model
-  skeleton.
+- `InternalMath/SCT/Model.lean` generates `SCTModel` and contains the quasicategory model skeleton.
 - `InternalMath/SCT/IML/Model/` contains workshop project files for SCT model construction.
 - `Docs/SCT/IML/` contains the corresponding workshop blueprints.
 - `Docs/SCTTutorial.md` introduces the SCT/InternalLean syntax.
@@ -33,9 +32,9 @@ internal reasoning in Lean. This is work in progress.
 The declaration is universe-polymorphic. For example, `SCat : Type (u+1)` and `Functor C D : Type u`
 match the intended quasicategory model.
 
-Many internal theorem statements are currently admitted with `sorry`. These admissions are
-visible to `#lint_type_theory_sorries SCT` and are expected to be replaced by checked internal
-proofs or by axiom packages matching the book's formulation.
+Many internal theorem statements are admitted with `sorry`. These admissions are visible to
+`#lint_type_theory_sorries SCT` and are expected to be replaced by checked internal proofs or by
+axiom packages matching the book's formulation.
 
 ## Quasicategory model status
 
@@ -47,21 +46,20 @@ SCat := SSet.QCat.{u}
 Functor := fun C D => C ⟶ D
 ```
 
-The model now implements a substantial first layer: anima categories, terminal and initial
-categories, products, finite shapes, nerves of ordinary categories, strict bicategorical natural
-transformations and natural isomorphisms, and several functor-category operations. Functor
-categories are represented by simplicial internal homs. The remaining API gap there is a proof that
-if `C` and `D` are quasicategories, then the internal hom from `C` to `D` is again a quasicategory
-(this gap will be closed soon by incoming mathlib PRs by Jack McKoen and Joël Riou).
+The model implements a substantial first layer: anima categories, terminal and initial categories,
+products, finite shapes, nerves of ordinary categories, strict bicategorical natural transformations
+and natural isomorphisms, and several functor-category operations. Functor categories are
+represented by simplicial internal homs. The open API gap there is a proof that if `C` and `D` are
+quasicategories, then the internal hom from `C` to `D` is again a quasicategory.
 
-The remaining gaps are concentrated in higher universal properties and later SCT structure:
+The open gaps are concentrated in higher universal properties and later SCT structure:
 objectwise components of natural transformations, product and coproduct uniqueness, homotopy
 pullbacks, Segal composition, Rezk equivalences, mapping anima, subcategories, localization,
 contexts, fibrations, limits, colimits, and universes.
 
 ## Expected warnings
 
-The SCT files currently emit warnings about:
+The SCT files emit warnings about:
 
 - admitted InternalLean declarations in the specification;
 - `sorry` placeholders in the model skeleton and project scaffolds.

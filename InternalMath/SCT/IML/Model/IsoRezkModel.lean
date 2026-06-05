@@ -47,7 +47,7 @@ namespace IncomingPR35287
 /-- Local shape of the inverse-edge data expected from mathlib PR #35287.
 
 Once the PR is available, this should be replaced by `SSet.Edge.InvStruct`. The PR supplies this
-edge-level data and basic operations on it; the rest of this file records the adapters still needed
+edge-level data and basic operations on it; the rest of this file records the required adapters
 for SCT.
 -/
 structure EdgeInvStruct {X : SSet.{u}} {x y : X _⦋0⦌} (hom : SSet.Edge x y) where
@@ -102,7 +102,7 @@ def ofSimplex (C : SSet.QCat.{u}) (s : C.obj _⦋1⦌) : Arrow C :=
 
 /-- Inverse interval arrow obtained from inverse-edge data.
 
-PR #35287 supplies the inverse edge data used here. The remaining SCT work is to prove endpoint
+PR #35287 supplies the inverse edge data used here. The SCT work is to prove endpoint
 compatibility and unit comparisons for the synthetic interval-functor operations.
 -/
 def inverseFromInvStruct {C : SSet.QCat.{u}} (f : Arrow C)
@@ -176,7 +176,7 @@ noncomputable def arrowFunctorQCat (C : SSet.QCat.{u}) : SSet.QCat.{u} := by
 
 /-- Object collection in `Fun([1], C)` spanned by invertible interval arrows.
 
-PR #35287 supplies the raw inverse-edge predicate/data. This object collection still requires the
+PR #35287 supplies the raw inverse-edge predicate/data. This object collection requires the
 functor-quasicategory bridge, object collections/full subcategories, and the adapter between
 vertices of `Fun([1], C)` and interval-shaped arrows.
 -/

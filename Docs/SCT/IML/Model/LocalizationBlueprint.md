@@ -1,6 +1,6 @@
 # Inverting-functor categories and localization blueprint
 
-Status: synced with current localization scaffold, 2026-06-03.
+Workshop blueprint for the localization model scaffold.
 
 Scope: this note expands the project around functors that invert a morphism collection and
 quasicategorical localization in `InternalMath/SCT/Model.lean`.  It is written for human workshop
@@ -90,9 +90,9 @@ Fun(C,D)
 
 For simplicial sets this should be the simplicial internal hom `D^C`, bundled with the theorem that
 it is a quasicategory when `C` and `D` are quasicategories.  This target overlaps with the existing
-functor-quasicategory/internal-hom skeleton in `InternalMath/SCT/Model.lean`.  The model now
-interprets natural transformations as bicategory 2-cells, so localization also needs the bridge from
-those 2-cells to the internal-hom functor quasicategory.
+functor-quasicategory/internal-hom skeleton in `InternalMath/SCT/Model.lean`.  The model interprets
+natural transformations as bicategory 2-cells, so localization also needs the bridge from those
+2-cells to the internal-hom functor quasicategory.
 
 Needed operations:
 
@@ -311,7 +311,7 @@ Deliverables:
 
 ## Companion Lean scaffold
 
-The companion file `InternalMath/SCT/IML/Model/Localization.lean` currently defines the namespace
+The companion file `InternalMath/SCT/IML/Model/Localization.lean` defines the namespace
 `SCTLocalizationSkeleton` with these declarations:
 
 ```lean
@@ -333,9 +333,9 @@ SCTLocalizationSkeleton.Localization.universal
 The scaffold stops before filling `sctModel` fields.  It names the mathematical seams while leaving
 the existence theorem and API choices for workshop participants.
 
-## Informal proof or construction for each current Lean `sorry`
+## Informal proof or construction for each Lean `sorry`
 
-This section tracks every `sorry` currently present in `InternalMath/SCT/IML/Model/Localization.lean`.  If the
+This section tracks every `sorry` present in `InternalMath/SCT/IML/Model/Localization.lean`.  If the
 Lean scaffold changes, update this list in the same commit.
 
 ### `FunctorQuasicategory.obj`

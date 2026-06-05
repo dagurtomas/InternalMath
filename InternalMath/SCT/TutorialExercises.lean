@@ -11,7 +11,7 @@ public import InternalMath.SCT.Spec
 # SCT InternalLean exercises
 
 Open this file in your editor and read it from top to bottom. It accompanies
-`Docs/SCTTutorial.md` and gives small exercises in the current InternalLean implementation of SCT.
+`Docs/SCTTutorial.md` and gives small exercises in the InternalLean implementation of SCT.
 
 How to use the exercises:
 
@@ -21,8 +21,7 @@ How to use the exercises:
 * This file is not imported by `InternalMath.lean`, so the exercise admissions do not affect the
   main library unless you import this file yourself.
 
-SCT is experimental. Several declarations used below are staging interfaces and may change as the
-implementation is refined.
+SCT is experimental. Several declarations used below expose admitted theorem or package debt.
 -/
 
 @[expose] public section
@@ -183,7 +182,7 @@ Questions:
 -/
 
 /-!
-## Exercise 13: inspect the current subcategory staging interface
+## Exercise 13: inspect subcategory package debt
 
 Open `Spec/Chapter3/Subcategories.lean` and find the declarations below:
 
@@ -198,12 +197,13 @@ Questions:
 2. What concrete data would you want to unpack from `LandsInObjectCollection`?
 3. What concrete data would you want to unpack from `PreservesMorphismCollection`?
 
-These declarations are expected to be refined as the subcategory interface is developed further.
+These declarations are admitted `syntax_def` packages. Checked package bodies should expose the
+factorization data needed by the subcategory proofs.
 -/
 
 /-!
-Try uncommenting these commands after filling the exercises. The lint command will still report the
-current core SCT theorem debt; the exercise admissions should disappear from its output.
+Try uncommenting these commands after filling the exercises. The lint command reports SCT theorem
+debt; the exercise admissions should disappear from its output.
 -/
 
 -- #lint_type_theory_sorries SCT

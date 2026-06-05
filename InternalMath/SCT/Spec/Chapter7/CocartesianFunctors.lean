@@ -64,7 +64,7 @@ extend_type_theory SCT where
   model_section Chapter7
 
   /-- Package for `CoCart_B(E,F)` and its inclusion into functors over the base;
-  Definition 7.1.10.  The subcategory witness remains lint-visible theorem debt. -/
+  Definition 7.1.10.  The subcategory witness is lint-visible theorem debt. -/
   lf_opaque cocartesianFunctorCategoryPackage (B : SCat) (E : SCat) (F : SCat)
     (p : Functor E B) (fibp : Fibration E B p)
     (cocartp : CocartesianFibrationWitness E B p fibp)

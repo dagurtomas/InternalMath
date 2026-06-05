@@ -1,6 +1,6 @@
 # Subcategory and full-subcategory internal blueprint
 
-Status: detailed workshop blueprint for the Chapter 3 subcategory cluster, 2026-05-31.
+Workshop blueprint for the Chapter 3 subcategory cluster.
 
 Scope: high-value internal SCT project around subcategory witnesses, all-morphism collections, full
 subcategories, and the object/morphism collection side-structure API.
@@ -23,7 +23,7 @@ InternalMath/SCT/Spec/Chapter1/IsoRezk.lean
 This is probably the best high-value internal workshop target because it unlocks `Iso(C)`, Rezk
 adapters, inverting-functor categories, localization consequences, and several Chapter 6 theorems.
 
-## Current admissions in scope
+## Admissions in scope
 
 ### `Chapter3/Subobjects.lean`
 
@@ -55,8 +55,8 @@ SCT.fullSubcategoryInclLands
 SCT.landsInObjectCollectionPreservesFull
 ```
 
-There are ten admissions in the immediate cluster.  Some are proof obligations; several are blocked
-by representation because the current side structures are primitive sorts with no constructors.
+There are ten admissions in the immediate cluster.  Some are proof obligations; several depend on
+side-structure packages whose admitted bodies do not expose constructors.
 
 ## Existing definitions
 
@@ -89,9 +89,9 @@ ObjectCollection C := AnimaSubobject (coreAnima C)
 
 This is a good source-facing representation: collections are subobjects of the relevant anima.
 
-### Current blocked side structures
+### Side-structure packages
 
-These are now admitted `syntax_def` packages rather than primitive side sorts:
+These Chapter 3 notions are admitted `syntax_def` packages:
 
 ```lean
 LandsInObjectCollection
@@ -100,8 +100,8 @@ closedUnderComposition
 PreservesMorphismCollection
 ```
 
-The remaining issue is that their bodies are still admitted, so there are no checked projections or
-constructors for obvious cases such as "the total morphism collection contains identities".
+Their admitted bodies do not provide checked projections or constructors for obvious cases such as
+"the total morphism collection contains identities".
 
 ## Recommended project phases
 
@@ -114,8 +114,8 @@ module if desired.  Good options:
 Chapter3/SubcategoryWitnesses.lean
 ```
 
-or keep them in `Subobjects.lean` for now and avoid churn.  This is optional.  The main benefit is
-making `Subobjects.lean` contain only definitions of arrow action, mapping anima, and collections.
+or leave them in `Subobjects.lean` to avoid churn.  This is optional.  The main benefit is making
+`Subobjects.lean` contain only definitions of arrow action, mapping anima, and collections.
 
 If a move is done, it should be a no-semantic-change commit checked by:
 
@@ -229,7 +229,7 @@ This may deserve its own small design session.  Do not fake it with an unstructu
 
 ## Phase 2: repair the Axiom H package
 
-Current package:
+Package:
 
 ```lean
 lf_opaque subcategoryPackage (C : SCat) (W : MorphismCollection C)
@@ -291,8 +291,8 @@ After Phase 1, these should be easy:
 - every map into `morphismAnima C` factors through the identity inclusion of the total subobject;
 - identity arrows and composites therefore land in `allMorphisms C`.
 
-While `closedUnderComposition` remains an admitted package, these cannot honestly be proved.  Do
-not add ad hoc opaque fields just to close them unless the project explicitly decides that these
+Until `closedUnderComposition` has a checked package body, these cannot honestly be proved.  Do not
+add ad hoc opaque fields just to close them unless the project explicitly decides that these
 examples are part of source axiom data.
 
 ## Phase 4: close full-subcategory landing and preservation
