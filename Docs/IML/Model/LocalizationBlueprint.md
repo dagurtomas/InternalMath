@@ -7,6 +7,16 @@ morphism collection `W`, the localized category `C[W⁻¹]` should be universal 
 `C` that send every arrow in `W` to an equivalence. This project builds that quasicategorical
 universal property and connects it to the SCT localization fields.
 
+## Project dependencies
+
+- Depends on `Docs/IML/Model/MaximalKanCoreMappingAnimaBlueprint.md` for mapping anima, maximal
+  cores, equivalence edges, and the meaning of `Map_W(C,D)`.
+- Uses the invertible-arrow object collection from `Docs/IML/Model/IsoRezkModelBlueprint.md`, or at
+  least the same equivalence-edge API, to express that a functor sends the arrows of `W` to
+  equivalences.
+- The geometric-realization/groupoid-completion phase should wait until the localization universal
+  property and the groupoid-core adapters are in place.
+
 Workshop blueprint for the localization model scaffold.
 
 Scope: this note expands the project around functors that invert a morphism collection and

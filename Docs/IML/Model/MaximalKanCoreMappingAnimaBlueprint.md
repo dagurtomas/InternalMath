@@ -7,6 +7,17 @@ anima. Mapping anima are the same idea applied to functor categories: `Map(C,D)`
 category of functors from `C` to `D`. This project builds the maximal Kan core API that lets the SCT
 model interpret cores and mapping anima in this way.
 
+## Project dependencies
+
+- Can start independently: maximal cores and mapping anima are foundational for the model
+  blueprints.
+- The fixed-endpoint hom-anima phase depends on
+  `Docs/IML/Model/FibrationStablePullbacksBlueprint.md`, because it uses pullback and fiber APIs for
+  endpoint fibers.
+- Downstream projects depending on this blueprint include `IsoRezkModelBlueprint.md`,
+  `LocalizationBlueprint.md`, and the homotopy-pullback phase of
+  `FibrationStablePullbacksBlueprint.md`.
+
 Workshop blueprint for the maximal-Kan-core and mapping-anima model scaffold.
 
 Scope: this note expands the project around `mapAnima`, groupoid cores, and maximal Kan cores in

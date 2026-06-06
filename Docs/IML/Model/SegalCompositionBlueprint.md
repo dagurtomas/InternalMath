@@ -7,6 +7,14 @@ composable arrows. The composite is the long edge of a chosen filler, while unit
 hold by coherent comparison data rather than by strict equality. This project turns that geometric
 picture into the model fields used for SCT composition.
 
+## Project dependencies
+
+- Can start independently of the other `Docs/IML/Model` blueprints.
+- Uses `InternalMath/SCT/IML/Model/FiniteShapes.lean` for simplex and square shapes, and mathlib's
+  quasicategory horn-filling API for fillers.
+- Downstream projects depending on this blueprint include `IsoRezkModelBlueprint.md`, especially
+  its invertible-arrow unit comparison phase.
+
 Workshop blueprint for the Segal-composition model scaffold.
 
 Scope: this note expands the project around the SCT composition fields in

@@ -7,6 +7,15 @@ a strict pullback has this meaning only when enough fibration hypotheses are pre
 proved to present the derived pullback. This project builds the API that identifies the safe strict
 pullbacks and supplies the comparison data needed by the SCT model.
 
+## Project dependencies
+
+- Can start independently for the strict-pullback and fibration-stability API.
+- The homotopy-pullback comparison phase depends on
+  `Docs/IML/Model/MaximalKanCoreMappingAnimaBlueprint.md`, because the universal property is
+  stated using mapping anima.
+- The directed/lax pullback phase also uses the functor-quasicategory and arrow-endpoint APIs shared
+  with the mapping-anima and Segal-composition projects.
+
 Workshop blueprint for the fibration-stable pullback model scaffold.
 
 Scope: this note expands the project around `pullbackCat`, base-change of fibrations, and directed

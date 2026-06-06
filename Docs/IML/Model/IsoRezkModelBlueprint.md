@@ -7,6 +7,14 @@ axiom says that sending an object of `C` to its identity arrow gives an equivale
 `C ≃ Iso(C)`. This project builds the quasicategory model of invertible arrows and the comparison
 showing that it has the expected Rezk behavior.
 
+## Project dependencies
+
+- Depends on `Docs/IML/Model/SegalCompositionBlueprint.md` for the chosen composition operation and
+  the unit comparison data used by invertible arrows.
+- Depends on `Docs/IML/Model/MaximalKanCoreMappingAnimaBlueprint.md` for equivalence-edge,
+  maximal-core, mapping-anima, and groupoid-core adapters.
+- Also uses the finite-shape scaffold and the incoming inverse-edge API from mathlib PR #35287.
+
 Workshop blueprint for the invertible-arrow and Rezk-equivalence model scaffold.
 
 Scope: this note expands the project around invertible interval-shaped arrows, the category of
