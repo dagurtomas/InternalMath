@@ -106,9 +106,11 @@ lake build InternalMath.SCT.Model
 ## Where to start
 
 Start with [`SCTTutorial.md`](SCTTutorial.md) and
-[`InternalMath/SCT/TutorialExercises.lean`](../InternalMath/SCT/TutorialExercises.lean). For an
-internal proof project, choose a focused blueprint under [`Docs/IML/Internal/`](IML/Internal/). For
-a model project, choose a focused blueprint under [`Docs/IML/Model/`](IML/Model/).
+[`InternalMath/SCT/TutorialExercises.lean`](../InternalMath/SCT/TutorialExercises.lean). The
+[`Docs/IML` project index](IML/README.md) lists the workshop blueprints, suggested order, and
+project dependencies.
+
+Internal project entry points:
 
 - [Subcategory and full subcategory blueprint](IML/Internal/SubcategoryFullSubcategoryInternalBlueprint.md)
 - [Strong surjectivity blueprint](IML/Internal/StrongSurjectivityInternalBlueprint.md)

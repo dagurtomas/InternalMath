@@ -44,7 +44,8 @@ reason internally in the type theory from Lean. This is not yet complete. Many i
 statements are admitted, and most model fields are placeholders.
 
 See [`Docs/SCT.md`](Docs/SCT.md) for SCT status and expected warnings,
-[`Docs/SCTTutorial.md`](Docs/SCTTutorial.md) for a tutorial on SCT's InternalLean syntax, and
+[`Docs/SCTTutorial.md`](Docs/SCTTutorial.md) for a tutorial on SCT's InternalLean syntax,
+[`Docs/IML/README.md`](Docs/IML/README.md) for workshop project blueprints, and
 [`InternalMath/SCT/TutorialExercises.lean`](InternalMath/SCT/TutorialExercises.lean) for beginner
 exercises.
 
@@ -76,7 +77,7 @@ The SCT build emits expected warnings about admitted InternalLean declarations a
 - `InternalMath/SCT/Model.lean` — generated SCT model interface and quasicategory/Kan-complex model
   skeleton.
 - `InternalMath/SCT/IML/Model/` — workshop project files for SCT model construction.
-- `Docs/IML/` — blueprints corresponding to the SCT workshop projects.
+- `Docs/IML/` — project index and blueprints for the SCT workshop projects.
 - `Docs/` — guides for readers and users of this repo.
 
 ## License
