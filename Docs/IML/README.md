@@ -120,12 +120,10 @@ more productive once the foundational projects provide stable APIs.
 
 ## Choosing a project
 
-- Choose an internal project to work in SCT's object language and reduce admitted internal
-  declarations.
-- Choose a model project to work on the quasicategory semantics and mathlib-facing adapters.
-- Prefer projects whose dependency notes match the available participants: focused projection tasks
-  for first InternalLean work, and API-design or theorem-packaging tasks for participants with more
-  quasicategory background.
+- Choose an internal project if you want to work internally in SCT to work towards completing the
+  "declaration" of SCT.
+- Choose a model project if you want to work on the quasicategory semantics and work towards proving
+  that there is a model for SCT (quasicategories).
 
 [intro-exercise-hints]: ../../.lake/packages/InternalLean/Examples/IntroExercisesHints.lean
 [intro-exercise-solutions]: ../../.lake/packages/InternalLean/Examples/IntroExercisesSolutions.lean
