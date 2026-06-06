@@ -27,36 +27,42 @@ checked InternalLean definitions or proofs, without adding model fields.
 
 - Blueprint: [Strong surjectivity blueprint][strong-surjectivity-internal]
 - Suggested role: focused starter project.
-- Dependency notes: uses core API already present in the specification; feeds the Fundamental
-  Theorem project.
+- Dependencies: can start immediately.
+- Later projects: [Fundamental Theorem](#fundamental-theorem).
 
 ### Subcategories and full subcategories
 
 - Blueprint: [subcategory and full subcategory blueprint][subcategory-internal]
 - Suggested role: broad unlocker project.
-- Dependency notes: basic side-structure and subcategory work can start from current Chapters 1--3;
-  later full-subcategory equivalences use more core and Chapter 6 tools.
+- Dependencies: can start immediately.
+- Later parts also depend on [Core and Axiom G](#core-and-axiom-g) or
+  [Fundamental Theorem](#fundamental-theorem).
 
 ### Core and Axiom G
 
 - Blueprint: [Core and Axiom G blueprint][core-axiom-g-internal]
 - Suggested role: foundational core project.
-- Dependency notes: independent of subcategories; improves later subcategory, strong-surjectivity,
-  Fundamental Theorem, and universe work.
+- Dependencies: can start immediately.
+- Later projects: [Subcategories and full subcategories](#subcategories-and-full-subcategories),
+  [Strong surjectivity](#strong-surjectivity), and
+  [Fundamental Theorem](#fundamental-theorem).
 
 ### Objectwise natural isomorphisms
 
 - Blueprint: [objectwise natural isomorphism blueprint][objectwise-nat-iso-internal]
 - Suggested role: interface design project.
-- Dependency notes: requires careful declaration-order design around `NatIso`, components, and
-  invertible arrows.
+- Dependencies: can start immediately; first choose the declaration-order design.
+- Later projects: [Fundamental Theorem](#fundamental-theorem) and
+  [Invertible arrows and Rezk equivalence](#invertible-arrows-and-rezk-equivalence).
 
 ### Fundamental Theorem
 
 - Blueprint: [Fundamental Theorem blueprint][fundamental-theorem-internal]
 - Suggested role: capstone project.
-- Dependency notes: uses strong surjectivity, core/Axiom G, objectwise natural isomorphisms, and
-  subcategory results.
+- Dependencies: [Strong surjectivity](#strong-surjectivity),
+  [Core and Axiom G](#core-and-axiom-g),
+  [Objectwise natural isomorphisms](#objectwise-natural-isomorphisms), and
+  [Subcategories and full subcategories](#subcategories-and-full-subcategories).
 
 A good workshop sequence is to offer strong surjectivity as a small guided project, subcategories as
 the main internal unlocker, and the Core/Axiom G or objectwise natural-isomorphism projects for
@@ -72,36 +78,41 @@ human mathematical choices about which mathlib or infinity-cosmos APIs to use.
 
 - Blueprint: [Segal composition blueprint][segal-composition-model]
 - Suggested role: foundational model project.
-- Dependency notes: can start from finite shapes and horn fillers; later supports invertible-arrow
-  unit comparisons.
+- Dependencies: can start immediately.
+- Later projects: [Invertible arrows and Rezk equivalence](#invertible-arrows-and-rezk-equivalence).
 
 ### Maximal Kan cores and mapping anima
 
 - Blueprint: [maximal Kan core and mapping anima blueprint][mapping-anima-model]
 - Suggested role: foundational model project.
-- Dependency notes: supplies maximal cores, equivalence edges, and mapping anima for several
-  downstream projects.
+- Dependencies: can start immediately.
+- Later projects: [Fibration-stable pullbacks](#fibration-stable-pullbacks),
+  [Invertible arrows and Rezk equivalence](#invertible-arrows-and-rezk-equivalence), and
+  [Localization](#localization).
 
 ### Fibration-stable pullbacks
 
 - Blueprint: [fibration-stable pullbacks blueprint][fibration-pullbacks-model]
 - Suggested role: phased model project.
-- Dependency notes: strict-pullback and fibration-stability work can start separately;
-  homotopy-pullback comparison uses mapping anima.
+- Dependencies: can start immediately.
+- Later parts depend on [Maximal Kan cores and mapping anima](#maximal-kan-cores-and-mapping-anima).
 
 ### Invertible arrows and Rezk equivalence
 
 - Blueprint: [invertible arrows and Rezk equivalence blueprint][iso-rezk-model]
 - Suggested role: downstream model project.
-- Dependency notes: early edge adapters can start from finite shapes and inverse-edge APIs;
-  `Iso(C)` and Rezk comparison use Segal composition and maximal-core work.
+- Dependencies: early edge-adapter parts can start immediately.
+- Later parts depend on [Segal composition](#segal-composition) and
+  [Maximal Kan cores and mapping anima](#maximal-kan-cores-and-mapping-anima).
 
 ### Localization
 
 - Blueprint: [localization blueprint][localization-model]
 - Suggested role: downstream model project.
-- Dependency notes: API audit and universal-property design can start separately; full localization
-  uses mapping anima and equivalence-edge APIs.
+- Dependencies: early API-design parts can start immediately.
+- Later parts depend on [Maximal Kan cores and mapping anima](#maximal-kan-cores-and-mapping-anima).
+- Later parts also use
+  [Invertible arrows and Rezk equivalence](#invertible-arrows-and-rezk-equivalence).
 
 A good model-project sequence is to start Segal composition and maximal cores/mapping anima first.
 The early phases of fibration-stable pullbacks can run in parallel. Iso/Rezk and localization become
