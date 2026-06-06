@@ -10,8 +10,9 @@ cores rather than treating them as opaque objects.
 
 ## Project dependencies
 
-- Can start after the Chapter 1 core inputs are available: terminal categories, interval shapes,
-  functor categories, products, pullbacks, and the basic `NatIso`/`CatEquiv` operations.
+- The needed Chapter 1 prerequisites are already present in the SCT specification: terminal
+  categories, interval shapes, functor categories, products, pullbacks, and the basic
+  `NatIso`/`CatEquiv` operations.
 - Does not depend on the subcategory blueprint, but it unlocks cleaner proofs in the subcategory,
   strong-surjectivity, Fundamental Theorem, and groupoid-universe projects.
 - Some low-dimensional endpoint equivalences use finite shape facts about `[1]`, `[2]`, products,
