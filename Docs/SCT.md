@@ -107,8 +107,11 @@ lake build InternalMath.SCT.Model
 
 Start with [`SCTTutorial.md`](SCTTutorial.md) and
 [`InternalMath/SCT/TutorialExercises.lean`](../InternalMath/SCT/TutorialExercises.lean). For an
-internal proof project, read the subcategory blueprint or the strong surjectivity blueprint. For a
-model project, choose a focused blueprint under [`Docs/IML/Model/`](IML/Model/).
+internal proof project, choose a focused blueprint under [`Docs/IML/Internal/`](IML/Internal/). For
+a model project, choose a focused blueprint under [`Docs/IML/Model/`](IML/Model/).
 
 - [Subcategory and full subcategory blueprint](IML/Internal/SubcategoryFullSubcategoryInternalBlueprint.md)
 - [Strong surjectivity blueprint](IML/Internal/StrongSurjectivityInternalBlueprint.md)
+- [Core and Axiom G blueprint](IML/Internal/CoreAxiomGInternalBlueprint.md)
+- [Objectwise natural isomorphism blueprint](IML/Internal/ObjectwiseNatIsoInternalBlueprint.md)
+- [Fundamental Theorem blueprint](IML/Internal/FundamentalTheoremInternalBlueprint.md)
