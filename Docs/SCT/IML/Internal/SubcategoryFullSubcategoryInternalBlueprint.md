@@ -58,6 +58,35 @@ SCT.landsInObjectCollectionPreservesFull
 The cluster has ten admissions. Some are proof obligations; several depend on side structure
 packages whose admitted bodies do not expose constructors.
 
+## Reading `Σ` packages
+
+InternalLean uses `Σ` for dependent pair packages. A term of
+
+```lean
+Σ x : A, B x
+```
+
+contains two pieces of data:
+
+1. a first component `x : A`;
+2. a second component of type `B x`, which may mention the first component.
+
+The projections are `fst p` and `snd p`. Nested `Σ` packages act like records with named fields:
+
+```lean
+Σ S : SCat,
+  Σ i : Functor S C,
+    PreservesMorphismCollection S C W i
+```
+
+means: choose a category `S`, then choose a functor `i : S → C`, then give evidence that `i`
+preserves `W`. The third field may mention both earlier choices. In projection code,
+`fst p` is `S`, `fst (snd p)` is `i`, and `snd (snd p)` is the preservation evidence.
+
+The blueprint uses `Σ` this way to spell out the data that a definition or axiom package should
+provide. It is often clearer than introducing a Lean structure while the InternalLean interface is
+being designed.
+
 ## Existing definitions
 
 ### Subcategory witness
