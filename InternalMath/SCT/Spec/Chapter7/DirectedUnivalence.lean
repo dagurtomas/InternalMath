@@ -19,9 +19,9 @@ Book guide, paraphrasing the May 2026 draft:
   classifying maps correspond to cocartesian functors between the classified fibrations.
 - `classifiedCocartesianFunctorUnderlying` forgets a cocartesian functor to its underlying functor.
 - The comparison equivalence is `directedUnivalenceMappingEquiv`.
-- The projections `directedUnivalenceCocartesianObject`,
-  `directedUnivalenceToCocartesianFunctor`, `directedUnivalenceToTransformation`, and
-  `directedUnivalenceFunctorCocartesian` expose the two directions and the cocartesian witness.
+- The declarations `directedUnivalenceCocartesianObject`, `directedUnivalenceFunctor`,
+  `directedUnivalenceToTransformation`, and `directedUnivalenceFunctorCocartesian` expose the two
+  directions and the cocartesian witness.
 -/
 
 @[expose] public section
@@ -77,7 +77,7 @@ extend_type_theory SCT where
       (classifiedCocartesianFunctorCat U u B f g) (natTransObject B U f g α)
       (catEquivForward (natTransCat B U f g) (classifiedCocartesianFunctorCat U u B f g)
         (directedUnivalenceMappingEquiv U u du B f g))
-  /-- Underlying functor produced from a classifying transformation; Axiom N. -/
+  /-- Underlying functor produced from a classifying transformation by directed univalence. -/
   lf_def directedUnivalenceFunctor : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (du : DirectedUnivalenceWitness U (universeTotalCat U u) (universeProjection U u)
         (universeFibration U u) (universeCocartesian U u)) ⇒
@@ -91,7 +91,7 @@ extend_type_theory SCT where
         (directedUnivalenceCocartesianObject U u du B f g α)
         (classifiedCocartesianFunctorUnderlying U u B f g))
 
-  /-- Smallness relative to a universe; Axiom N. -/
+  /-- Smallness of a category relative to a universe; §7.3.1 and §7.4. -/
   syntax_sort SmallWitness (U : SCat) (C : SCat) : Type u
 
 extend_type_theory SCT where

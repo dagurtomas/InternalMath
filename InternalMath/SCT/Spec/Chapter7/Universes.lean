@@ -15,9 +15,10 @@ universe closure operations.
 
 Book guide, paraphrasing the May 2026 draft:
 
-- Axiom N classifies small categories and small cocartesian fibrations. The relevant declarations
-  include `SmallWitness`, `smallClassifyingMap`, `smallClassifyingEquiv`,
-  `SmallCocartesianFibrationWitness`, `smallFibrationClassifyingMap`, and
+- `SmallWitness` says a category is small relative to a universe. Its classifier and recovery
+  equivalence are `smallClassifyingMap` and `smallClassifyingEquiv`.
+- `SmallCocartesianFibrationWitness` says a cocartesian fibration is small relative to a universe.
+  Its classifier and recovery equivalence are `smallFibrationClassifyingMap` and
   `smallFibrationClassifyingEquiv`.
 - Definition 7.4.6 names functors with small fibers; this is `SmallFibersWitness`.
 - Axiom M says cartesian and cocartesian fibrations are exponentiable. The witness is
@@ -28,7 +29,10 @@ Book guide, paraphrasing the May 2026 draft:
   `categoryUniverseRegular`, and the `catInternal...`, `catClosure...`, and
   `regularUniverse...` fields.
 - The dependent-product closure part of regularity is represented by `dependentProductTotal`,
-  `dependentProductProjection`, `dependentProductFibration`, and `dependentProductSmall`.
+  `dependentProductProjection`, `dependentProductFibration`, and
+  `smallDependentProductFibration`.
+- The fixed-universe classification field corresponding to Axiom N is
+  `directed_univalence_classifies`, in `Chapter7/ConstructiveRegularity.lean`.
 -/
 
 @[expose] public section
@@ -37,32 +41,32 @@ extend_type_theory SCT where
 
   model_section Chapter7
 
-  /-- Classifying map for a small category; Axiom N. -/
+  /-- Classifying map for a small category; §7.3.1 and §7.4. -/
   lf_opaque smallClassifyingMap (U : SCat) (u : UniverseWitness U)
     (C : SCat) (hC : SmallWitness U C) : Functor terminalCat U
-  /-- Pullback of the universe along the classifier recovers the small category; Axiom N. -/
+  /-- Pullback of the universe along the classifier recovers the small category; §7.3.1. -/
   lf_opaque smallClassifyingEquiv (U : SCat) (u : UniverseWitness U)
     (C : SCat) (hC : SmallWitness U C) :
     CatEquiv C (classifiedTotalCat U u terminalCat (smallClassifyingMap U u C hC))
-  /-- Small cocartesian fibration relative to a universe; Axiom N. -/
+  /-- Small cocartesian fibration relative to a universe; §7.3.1 and §7.4. -/
   syntax_sort SmallCocartesianFibrationWitness (U : SCat) (E : SCat) (B : SCat)
     (p : Functor E B) (fib : Fibration E B p)
     (cocart : CocartesianFibrationWitness E B p fib) : Type u
   /-- Functor with small fibers relative to a universe; Definition 7.4.6. -/
   syntax_sort SmallFibersWitness (U : SCat) (E : SCat) (B : SCat) (p : Functor E B) : Type u
-  /-- Classifying map for a small cocartesian fibration; Axiom N. -/
+  /-- Classifying map for a small cocartesian fibration; §7.3.1. -/
   lf_opaque smallFibrationClassifyingMap (U : SCat) (u : UniverseWitness U)
     (E : SCat) (B : SCat) (p : Functor E B) (fib : Fibration E B p)
     (cocart : CocartesianFibrationWitness E B p fib)
     (h : SmallCocartesianFibrationWitness U E B p fib cocart) : Functor B U
-  /-- The classified pullback recovers a small cocartesian fibration; Axiom N. -/
+  /-- The classified pullback recovers a small cocartesian fibration; §7.3.1. -/
   lf_opaque smallFibrationClassifyingEquiv (U : SCat) (u : UniverseWitness U)
     (E : SCat) (B : SCat) (p : Functor E B) (fib : Fibration E B p)
     (cocart : CocartesianFibrationWitness E B p fib)
     (h : SmallCocartesianFibrationWitness U E B p fib cocart) :
     CatEquiv E (classifiedTotalCat U u B
       (smallFibrationClassifyingMap U u E B p fib cocart h))
-  /-- A regular universe; Axiom N and Definition 7.4.5 (Cat1). -/
+  /-- A regular universe; Definition 7.4.5 (Cat1). -/
   syntax_sort RegularUniverseWitness (U : SCat) (u : UniverseWitness U) : Type u
   /-- Exponentiability witness for cartesian/cocartesian fibrations; Axiom M. -/
   syntax_sort ExponentiableFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)

@@ -19,11 +19,11 @@ Book guide, paraphrasing the May 2026 draft:
   `regularSubuniverseWitness`, `regularSubuniverseIncl`, `regularSubuniverseSmall`,
   `regularSubuniverseRegular`, and `regularSubuniverseLift`.
 - The universe of groupoids is represented by `groupoidUniversePackage`, with projections
-  `groupoidUniverse`, `groupoidUniverseWitness`, `groupoidUniverseClassifyingMap`,
-  `groupoidUniverseIncl`, `groupoidUniverseEmbedding`, `groupoidUniverseRegular`,
-  `groupoidUniverseLeftFibration`, and `groupoidUniverseSmallWitness`.
-- The package connects small anima/categories classified by `categoryUniverse` with the
-  groupoid universe used by straightening/unstraightening.
+  `groupoidUniverse`, `groupoidUniverseWitness`, `coreSmall`, `groupoidUniverseIncl`,
+  `groupoidUniverseEmbedding`, `groupoidUniverseRegular`, `groupoidUniverseLeftFibration`, and
+  `animaSmall`.
+- The classifiers `coreClassifyingMap` and `animaClassifyingMap` connect small categories and
+  primitive anima with the groupoid universe used by straightening/unstraightening.
 -/
 
 @[expose] public section

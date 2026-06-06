@@ -15,10 +15,10 @@ construction over `[1]`.
 
 Book guide, paraphrasing the May 2026 draft:
 
-- Axiom N supplies, for a universe `U`, a universal cocartesian fibration. The split data is
+- A universe `U` carries a universal cocartesian fibration. The split data is
   `universeProjection`, `universeFibration`, `universeCocartesian`, and
   `universeDirectedUnivalence`.
-- Pulling the universe fibration back along a classifying map gives a classified total category,
+- Pulling the universe fibration back along a classifying map gives the classified total category,
   projection, fibration witness, and cocartesian witness. These are `classifiedTotalCat`,
   `classifiedProjection`, `classifiedFibration`, and `classifiedCocartesian`.
 - The Section 7.7 unstraightening aliases are `unstraighteningTotal`,
@@ -34,35 +34,35 @@ extend_type_theory SCT where
 
   model_section Chapter7
 
-  /-- Projection of the universe fibration; Axiom N. -/
+  /-- Projection of the universe fibration; universe structure from Chapter 7. -/
   lf_opaque universeProjection (U : SCat) (u : UniverseWitness U) :
     Functor (universeTotalCat U u) U
-  /-- Fibration structure on the universe projection; Axiom N. -/
+  /-- Fibration structure on the universe projection; universe structure from Chapter 7. -/
   lf_opaque universeFibration (U : SCat) (u : UniverseWitness U) :
     Fibration (universeTotalCat U u) U (universeProjection U u)
-  /-- Cocartesian structure on the universe projection; Axiom N. -/
+  /-- Cocartesian structure on the universe projection; universe structure from Chapter 7. -/
   lf_opaque universeCocartesian (U : SCat) (u : UniverseWitness U) :
     CocartesianFibrationWitness (universeTotalCat U u) U (universeProjection U u)
       (universeFibration U u)
-  /-- Directed univalence of the universe projection; Axiom N. -/
+  /-- Directed univalence of the universe projection; universe structure from Chapter 7. -/
   lf_opaque universeDirectedUnivalence (U : SCat) (u : UniverseWitness U) :
     DirectedUnivalenceWitness U (universeTotalCat U u) (universeProjection U u)
       (universeFibration U u) (universeCocartesian U u)
-  /-- Total category classified by a map into a universe; Axiom N. -/
+  /-- Total category classified by a map into a universe. -/
   lf_def classifiedTotalCat : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (B : SCat) ⇒ Functor B U ⇒ SCat :=
     fun U u B f => pullbackCat B (universeTotalCat U u) U f (universeProjection U u)
-  /-- Projection of a classified fibration; Axiom N. -/
+  /-- Projection of a classified fibration. -/
   lf_def classifiedProjection : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (B : SCat) ⇒ (f : Functor B U) ⇒ Functor (classifiedTotalCat U u B f) B :=
     fun U u B f => pullbackPr1 B (universeTotalCat U u) U f (universeProjection U u)
-  /-- Fibration classified by a universe map; Axiom N. -/
+  /-- Fibration classified by a universe map. -/
   lf_def classifiedFibration : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (B : SCat) ⇒ (f : Functor B U) ⇒
         Fibration (classifiedTotalCat U u B f) B (classifiedProjection U u B f) :=
     fun U u B f => baseChangeFibration (universeTotalCat U u) U
       (universeProjection U u) (universeFibration U u) B f
-  /-- Cocartesian structure classified by a universe map; Axiom N. -/
+  /-- Cocartesian structure classified by a universe map. -/
   lf_def classifiedCocartesian : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (B : SCat) ⇒ (f : Functor B U) ⇒
         CocartesianFibrationWitness (classifiedTotalCat U u B f) B

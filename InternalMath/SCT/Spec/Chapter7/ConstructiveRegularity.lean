@@ -45,7 +45,7 @@ extend_type_theory SCT where
 
   model_section Chapter7
 
-  /-- The fixed universe classifies cocartesian fibrations; Axiom N. -/
+  /-- The fixed-universe form of Axiom N classifies cocartesian fibrations. -/
   lf_opaque directed_univalence_classifies (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
     SmallCocartesianFibrationWitness categoryUniverse E B p fib cocart

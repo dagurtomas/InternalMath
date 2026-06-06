@@ -10,12 +10,15 @@ public import InternalMath.SCT.Spec.Chapter6.FundamentalTheorem
 /-!
 # Chapter 7 cocartesian functors and universe vocabulary
 
-This file starts the Chapter 7 universe and directed-univalence layer.
+This file starts the Chapter 7 universe and directed-univalence layer. Axiom labels use the body
+labels from the May 2026 draft: Axiom M is exponentiability of cartesian/cocartesian fibrations, and
+Axiom N is the directed-univalence/classification axiom.
 
 Book guide, paraphrasing the May 2026 draft:
 
-- `UniverseWitness` names a universe of small categories, and `DirectedUnivalenceWitness` is the
-  directed-univalence structure for its universal cocartesian fibration.
+- `UniverseWitness` names a universe of small categories; its fibration data appears in
+  `Chapter7/Straightening.lean`.
+- `DirectedUnivalenceWitness` is the directed-univalence structure for a cocartesian fibration.
 - `ClassifyingTransformation` is the SCT proxy for transformations between classifying maps.
 - `functorOverBaseCat` and `functorOverBaseIncl` describe functors over a fixed base.
 - The universe fibration starts with `universeTotalCat`; later files add its projection,
@@ -23,7 +26,7 @@ Book guide, paraphrasing the May 2026 draft:
 - Definition 7.1.10 forms the category of cocartesian functors over a base. The package
   `cocartesianFunctorCategoryPackage` exposes `cocartesianFunctorCat` and
   `cocartesianFunctorCatIncl`, while `isCocartesianFunctorCat` and
-  `cocartesianFunctorCatSubcategory` remain theorem debt.
+  `cocartesianFunctorCatSubcategory` remain admitted construction/proof debt.
 -/
 
 @[expose] public section
@@ -34,7 +37,7 @@ extend_type_theory SCT where
   model_section Chapter7
 
 
-  /-- Directed-univalence witness for a cocartesian fibration; Axiom N. -/
+  /-- Directed-univalence witness for a cocartesian fibration; Axiom N/Definition 7.3.10. -/
   syntax_sort DirectedUnivalenceWitness (U : SCat) (Udot : SCat) (p : Functor Udot U)
     (fib : Fibration Udot U p) (cocart : CocartesianFibrationWitness Udot U p fib) : Type u
   /-- Classifying transformations are natural transformations between classifiers, as in Chapter 7
@@ -42,7 +45,7 @@ extend_type_theory SCT where
   -/
   syntax_abbrev ClassifyingTransformation (B : SCat) (U : SCat)
     (f : Functor B U) (g : Functor B U) := NatTrans B U f g
-  /-- Universe-of-categories package; Axiom N and Definition 7.4.5. -/
+  /-- Universe-of-categories package; Chapter 7 universe structure. -/
   syntax_sort UniverseWitness (U : SCat) : Type u
   /-- Category of functors over a fixed base, as the fiber of postcomposition with the target
   projection.  Book context: Chapter 7 of the SCT book.
@@ -59,7 +62,7 @@ extend_type_theory SCT where
         Functor (functorOverBaseCat B E F p q) (funCat E F) :=
     fun B E F p q => pullbackPr1 (funCat E F) terminalCat (funCat E B)
       (postcompFunctor E F B q) (functorObject E B p)
-  /-- Total category of the universe fibration; Axiom N. -/
+  /-- Total category of the universe fibration; Chapter 7 universe structure. -/
   lf_opaque universeTotalCat (U : SCat) (u : UniverseWitness U) : SCat
 
 namespace SCT
