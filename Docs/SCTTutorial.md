@@ -28,6 +28,43 @@ declare_type_theory SCT{u} where
 Here `Anima` and `SCat` are sorts in the type theory `SCT`. InternalLean records this theory and
 can generate Lean model obligations from it.
 
+It helps to keep three layers separate:
+
+- Lean is the host language. It parses commands, runs InternalLean, stores declarations, and checks
+  generated code.
+- InternalLean is the framework language used inside `declare_type_theory`, `extend_type_theory`,
+  `lf_def`, and `internal def`.
+- SCT is the particular type theory declared in InternalLean, with symbols such as `SCat`,
+  `Functor`, and `NatIso`.
+
+Inside an InternalLean block, notation such as `Σ`, `×`, `⇒`, `fun`, `fst`, and `snd` belongs to
+InternalLean's expression language. It behaves like the corresponding Lean notation, but it packages
+and manipulates SCT data rather than ordinary Lean data.
+
+For example:
+
+```lean
+Σ S : SCat,
+  Σ i : Functor S C,
+    PreservesMorphismCollection S C W i
+```
+
+is an InternalLean package. It says: choose an SCT category `S`, then choose an SCT functor
+`i : S → C`, then give evidence that `i` preserves `W`. The projections are written `fst p` and
+`snd p`, just as for dependent pairs in Lean.
+
+Similarly,
+
+```lean
+(C : SCat) ⇒ Functor C C
+```
+
+is an InternalLean function type for an operation assigning to each SCT category `C` an SCT functor
+`C → C`. The arrow in `Functor C C` is part of the SCT notation for functors; the outer `⇒` is the
+framework function space used to describe the operation. When the result type mentions the input,
+as in `(x : A) ⇒ B x`, this is an InternalLean dependent function type, analogous to Lean's
+dependent function type.
+
 The main files are:
 
 - `InternalMath/SCT/Spec.lean`: stable aggregate import for the SCT specification;
