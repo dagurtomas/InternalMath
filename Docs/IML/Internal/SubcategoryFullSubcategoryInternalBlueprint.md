@@ -138,7 +138,12 @@ SubcategoryPullbackCriterion A C i :=
   (X : SCat) → SubcategoryPullbackSquare A C i X
 ```
 
-This matches the book's replete subcategory criterion closely enough to keep as a real definition.
+Informally, this witness says that `i : A → C` behaves like the inclusion of a replete
+subcategory. The first component says that arrows of `A` embed into arrows of `C` after applying
+`i`. The second component says the same condition is stable in every parameter category `X`: maps
+`X → A` are recovered from maps `X → C` together with the induced arrow data. Thus the witness
+controls both arrows and families of objects, using pullback and embedding data rather than strict
+equality with a subcategory of `C`.
 
 ### Morphism and object collections
 
