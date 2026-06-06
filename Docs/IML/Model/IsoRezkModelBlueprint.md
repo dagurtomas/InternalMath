@@ -1,5 +1,12 @@
 # Invertible arrows, `Iso(C)`, and Rezk equivalence blueprint
 
+## Project overview
+
+The category `Iso(C)` should collect the invertible arrows of a synthetic category `C`. The Rezk
+axiom says that sending an object of `C` to its identity arrow gives an equivalence
+`C ≃ Iso(C)`. This project builds the quasicategory model of invertible arrows and the comparison
+showing that it has the expected Rezk behavior.
+
 Workshop blueprint for the invertible-arrow and Rezk-equivalence model scaffold.
 
 Scope: this note expands the project around invertible interval-shaped arrows, the category of

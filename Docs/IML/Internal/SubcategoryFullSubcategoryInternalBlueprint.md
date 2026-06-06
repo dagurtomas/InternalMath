@@ -1,5 +1,12 @@
 # Subcategory and full subcategory internal blueprint
 
+## Project overview
+
+A subcategory should be determined by the arrows it contains, provided those arrows contain
+identities and are closed under composition. A full subcategory should be determined by the objects
+it contains, with all arrows between those objects included. This project fills in the internal data
+that makes those two familiar ideas work inside SCT.
+
 Workshop blueprint for the Chapter 3 subcategory cluster.
 
 Scope: workshop project on subcategory witnesses, the collection of all morphisms, full

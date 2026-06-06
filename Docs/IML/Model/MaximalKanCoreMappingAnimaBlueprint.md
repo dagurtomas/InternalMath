@@ -1,5 +1,12 @@
 # Maximal Kan cores and mapping anima blueprint
 
+## Project overview
+
+The core of an ∞-category keeps all objects and only the invertible arrows, forming a space or
+anima. Mapping anima are the same idea applied to functor categories: `Map(C,D)` is the core of the
+category of functors from `C` to `D`. This project builds the maximal Kan core API that lets the SCT
+model interpret cores and mapping anima in this way.
+
 Workshop blueprint for the maximal-Kan-core and mapping-anima model scaffold.
 
 Scope: this note expands the project around `mapAnima`, groupoid cores, and maximal Kan cores in

@@ -1,5 +1,12 @@
 # Segal composition and arrow calculus blueprint
 
+## Project overview
+
+Composition in a quasicategory is encoded by filling a triangle whose two short edges are
+composable arrows. The composite is the long edge of a chosen filler, while units and associativity
+hold by coherent comparison data rather than by strict equality. This project turns that geometric
+picture into the model fields used for SCT composition.
+
 Workshop blueprint for the Segal-composition model scaffold.
 
 Scope: this note expands the project around the SCT composition fields in

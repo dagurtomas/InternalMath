@@ -1,5 +1,12 @@
 # Fibration-stable pullbacks and homotopy pullbacks blueprint
 
+## Project overview
+
+Pullbacks in SCT should behave like homotopy pullbacks of ∞-categories. In a quasicategory model,
+a strict pullback has this meaning only when enough fibration hypotheses are present, or when it is
+proved to present the derived pullback. This project builds the API that identifies the safe strict
+pullbacks and supplies the comparison data needed by the SCT model.
+
 Workshop blueprint for the fibration-stable pullback model scaffold.
 
 Scope: this note expands the project around `pullbackCat`, base-change of fibrations, and directed

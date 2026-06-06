@@ -1,5 +1,12 @@
 # Inverting-functor categories and localization blueprint
 
+## Project overview
+
+Localization freely turns a chosen collection of arrows into equivalences. For a category `C` and a
+morphism collection `W`, the localized category `C[W⁻¹]` should be universal for functors out of
+`C` that send every arrow in `W` to an equivalence. This project builds that quasicategorical
+universal property and connects it to the SCT localization fields.
+
 Workshop blueprint for the localization model scaffold.
 
 Scope: this note expands the project around functors that invert a morphism collection and

@@ -1,5 +1,11 @@
 # Strong-surjectivity internal blueprint
 
+## Project overview
+
+Strong surjectivity says that every object of the target category is represented, up to equivalence,
+by an object coming from the source category. This project turns that abstract section of cores into
+ordinary data: given `y` in `D`, choose an object `x` in `C` and build the comparison `F x ≅ y`.
+
 Workshop blueprint for `InternalMath/SCT/Spec/Chapter6/StrongSurjectivity.lean`.
 
 Scope: close the two internal admissions that extract ordinary object-level data from the internal
