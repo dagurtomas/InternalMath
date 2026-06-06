@@ -6,7 +6,9 @@ Cisinski--Cnossen--Nguyen--Walde **Synthetic Category Theory** book project:
 https://drive.google.com/file/d/1lKaq7watGGl3xvjqw9qHjm6SDPFJ2-0o/view
 
 The goals are to implement the type theory, prove that quasicategories form a model, and support
-internal reasoning in Lean. This is work in progress.
+internal reasoning in Lean. This is work in progress actively being worked on at the
+Institut Mittag Leffler workshop on Formalizing Higher Category Theory (this is what `IML` refers
+to in file names).
 
 ## Files
 
