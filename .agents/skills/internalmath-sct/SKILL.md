@@ -83,6 +83,9 @@ Placeholder structures should state the mathematical data to supply.
 7. Workshop-facing docs should present the state participants should use, not repository edit
    history. Avoid wording such as "now", "formerly", "old", "stale", "migrated", or "no longer"
    except in changelogs/work logs.
+8. Do not add command-line acceptance checklists to workshop blueprints. Participants usually work
+   in an editor and see whether the relevant Lean file compiles; keep command-line checks in agent
+   guidance or handoff reports.
 
 ## Checks
 

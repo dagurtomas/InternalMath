@@ -415,7 +415,7 @@ Do not use any of these as shortcuts:
 - using ordinary categorical pullbacks in the homotopy category as the SCT pullback;
 - filling base-change fields before deciding the interpretation of `IsofibrationWitness`.
 
-## Acceptance checks for a serious implementation
+## Expected implementation
 
 A completed implementation should provide:
 

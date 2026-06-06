@@ -36,6 +36,9 @@ Keep `.agents/` tool-neutral:
   such as "now", "formerly", "old", "stale", "migrated", or "no longer" unless writing a changelog
   or work log. Prefer direct state descriptions such as "These notions are admitted `syntax_def`
   packages."
+- Do not put command-line acceptance checklists in workshop blueprints. Participants usually work in
+  an editor and see whether the relevant Lean file compiles. Keep command-line checks in `.agents/`
+  or handoff reports.
 - Keep README links synchronized with major public docs.
 - Preserve the README warning that most code in the repository was written by AI coding agents.
 

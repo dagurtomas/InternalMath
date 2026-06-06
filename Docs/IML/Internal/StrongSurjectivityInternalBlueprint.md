@@ -18,8 +18,8 @@ SCT.stronglySurjectivePreimage
 SCT.stronglySurjectiveBeta
 ```
 
-Expected result of a successful project: these two declarations become checked internal definitions,
-and `#lint_type_theory_sorries SCT` drops from 64 to 62 admitted internal declarations.
+Expected result of a successful project: these two declarations become checked internal definitions
+and disappear from the admitted declaration list.
 
 ## Mathematical target
 
@@ -232,42 +232,20 @@ stronglySurjectiveSection
 stronglySurjectiveSectionBeta
 ```
 
-This is a clean no-semantic-change move.  It lets the proof use named projections rather than
+This is a clean move with no semantic change. It lets the proof use named projections rather than
 `fst surj` and `snd surj`, and it makes the module boundary match the subject matter.
-
-If moved, check:
-
-```bash
-lake env lean InternalMath/SCT/Spec/Chapter6/StrongSurjectivity.lean
-lake build InternalMath.SCT.Spec
-```
 
 ## Pitfalls
 
-- Do not reinterpret strong surjectivity as a mere Lean-level surjection on object terms.  The source
+- Do not reinterpret strong surjectivity as a mere Lean-level surjection on object terms. The
   definition is a section on cores.
-- Do not use strict equality for the beta comparison.  The goal is a `NatIso`.
-- Do not bypass the core inclusion.  The chosen preimage object should be obtained by applying the
+- Do not use strict equality for the beta comparison. The goal is a `NatIso`.
+- Do not bypass the core inclusion. The chosen preimage object should be obtained by applying the
   section on cores and then including into `C`.
-- Do not add a new primitive projection field for this theorem.  The data is already present in the
+- Do not add a new primitive projection field for this theorem. The data is already present in the
   definition of `StronglySurjective`.
 
-## Acceptance checks
+## Expected result
 
-A completed implementation should satisfy:
-
-```bash
-lake env lean InternalMath/SCT/Spec/Chapter6/StrongSurjectivity.lean
-lake build InternalMath.SCT.Spec
-lake build InternalMath.SCT.Model
-```
-
-And the diagnostic file
-
-```lean
-import InternalMath.SCT.Spec
-#lint_type_theory_sorries SCT
-```
-
-should report 62 admitted internal declarations, with neither
-`SCT.stronglySurjectivePreimage` nor `SCT.stronglySurjectiveBeta` listed.
+`SCT.stronglySurjectivePreimage` and `SCT.stronglySurjectiveBeta` should be proved rather than
+admitted.

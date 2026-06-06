@@ -146,11 +146,7 @@ Chapter3/SubcategoryWitnesses.lean
 Leaving them in `Subobjects.lean` is also fine. The benefit of a move is that `Subobjects.lean`
 would contain only definitions of arrow action, mapping anima, and collections.
 
-If a move is done, it should be a commit with no semantic change, checked by:
-
-```bash
-lake build InternalMath.SCT.Spec
-```
+If a move is done, keep it separate from proof work.
 
 ## Phase 1: expose the factorization data
 
@@ -534,32 +530,8 @@ This should come after `fullSubcategoryCoreEquiv`. It is probably not an opening
   cores.
 - Do not combine the representation refactor with large theorem proofs in one commit.
 
-## Acceptance checks
+## Expected result
 
-For a representation refactor:
-
-```bash
-lake env lean InternalMath/SCT/Spec/Chapter3/Subcategories.lean
-lake env lean InternalMath/SCT/Spec/Chapter3/FullSubcategoryLifts.lean
-lake build InternalMath.SCT.Spec
-lake build InternalMath.SCT.Model
-```
-
-For a proof change in a split module, check that module and the aggregate:
-
-```bash
-lake env lean InternalMath/SCT/Spec/Chapter3/FullSubcategoryLifts.lean
-lake build InternalMath.SCT.Spec
-```
-
-After any completed tranche, run:
-
-```lean
-import InternalMath.SCT.Spec
-#lint_type_theory_sorries SCT
-#check_model_obligations SCT
-```
-
-Expected progress should be stated by naming which admitted declarations disappeared from the lint
-output. If model obligations change, explain which new field is book axiom data and which book
-statement it represents.
+A completed tranche should remove the named admissions or expose clearer package data. If the
+generated model obligations change, the new field should be tied to a specific axiom or construction
+from the book.

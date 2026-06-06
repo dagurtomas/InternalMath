@@ -209,13 +209,13 @@ Still needed:
   quasicategory filler data.
 - Keep interval endpoint equalities limited to strict shape maps and horn construction.
 
-## Acceptance criteria for the scaffold
+## Expected scaffold shape
 
-The companion file should compile with honest `sorry` markers for:
+The companion file should reserve its `sorry` markers for the mathematical gaps in this project:
 
 - chosen horn fillers;
-- arrow-comparison data;
+- arrow comparison data;
 - associativity comparison data.
 
-All finite-shape orientation lemmas used by the scaffold should be checked in
-`InternalMath/SCT/IML/Model/FiniteShapes.lean`, not re-admitted in the Segal file.
+Finite shape orientation lemmas belong in `InternalMath/SCT/IML/Model/FiniteShapes.lean`, not as
+new admissions in the Segal file.

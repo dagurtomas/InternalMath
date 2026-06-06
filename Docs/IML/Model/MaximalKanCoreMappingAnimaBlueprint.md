@@ -104,7 +104,7 @@ Properties:
 1. every vertex of `C` lies in `C^≃`;
 2. a 1-simplex lies in `C^≃` iff it is an equivalence edge;
 3. higher simplices are included exactly when all edges are equivalences, or by an equivalent
-   source-faithful characterization;
+   characterization matching the book;
 4. the inclusion is a monomorphism/subcomplex inclusion.
 
 Human choice: decide whether higher-simplex membership should be defined by all edges, all spine
@@ -126,8 +126,8 @@ Possible routes:
 2. port the standard proof that the largest Kan subcomplex of a quasicategory is Kan;
 3. define the core via an upstream construction already known to be Kan.
 
-Acceptance criterion: the result should not assume `SSet.KanComplex C.obj` for an arbitrary
-quasicategory.  That would make every quasicategory a groupoid and is semantically wrong.
+Requirement: the result should not assume `SSet.KanComplex C.obj` for an arbitrary quasicategory.
+That would make every quasicategory a groupoid and is semantically wrong.
 
 ### Target D: universal property for maps from anima/Kan complexes
 
@@ -389,7 +389,7 @@ Do not use any of these as shortcuts:
 - a separate primitive fixed-endpoint hom anima when it can be derived from `mapAnima` and
   endpoint fibers.
 
-## Acceptance checks for a serious implementation
+## Expected implementation
 
 A completed implementation should provide:
 

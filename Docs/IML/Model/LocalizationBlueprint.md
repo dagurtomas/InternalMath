@@ -444,7 +444,7 @@ Do not use any of these as shortcuts:
 - adding derived-category claims before chain complexes, quasi-isomorphisms, and stable
   ∞-categorical structure are present.
 
-## Acceptance checks for a serious implementation
+## Expected implementation
 
 A completed implementation should provide:
 

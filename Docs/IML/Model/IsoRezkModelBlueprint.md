@@ -231,8 +231,8 @@ This is human-led and should not be attempted by defining `Iso(C)` from the desi
 - Do not treat the coherent isomorphism simplicial set as a replacement for the full maximal-core or
   mapping-anima construction.
 
-## Acceptance criteria for the scaffold
+## Expected scaffold shape
 
-The companion file should compile with only honest `sorry` markers for the SCT work in this scaffold. It
-should explicitly identify which declarations are temporary local shapes for PR #35287 and which
-ones are genuine InternalMath/SCT obligations.
+The companion file should reserve its `sorry` markers for the SCT work in this scaffold. It should
+identify which declarations are local shapes for PR #35287 and which ones are genuine
+InternalMath/SCT obligations.
