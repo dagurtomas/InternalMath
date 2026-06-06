@@ -9,8 +9,10 @@ invertibility evidence, without turning the statement into a strict equality or 
 
 ## Project dependencies
 
-- Depends on the Chapter 1 natural-transformation component API, especially `natTransComponent`.
-- Depends on the invertible-arrow package from `Chapter1/CellsAndSegal.lean`.
+- The needed Chapter 1 APIs already exist in the SCT specification: `natTransComponent` and the
+  invertible-arrow package from `Chapter1/CellsAndSegal.lean`.
+- This dependency is about declaration order and package design, not about starting a separate
+  Chapter 1 project.
 - The package design has a circularity hazard: `NatIso` is used early in the specification, while
   invertible interval-shaped morphisms are defined later using `NatIso` comparisons. The first task
   is to choose a non-circular organization for the objectwise criterion.
@@ -85,10 +87,10 @@ So the natural package shape one wants is morally:
 (x : Obj A) → InvertibleMorphism C (natTransComponent A C F G α x)
 ```
 
-The difficulty is that this expression mentions declarations from Chapter 1, while `NatIso` is used
-in the prelude before Chapter 1 is available. The project is therefore partly a design project: make
-this objectwise content explicit while keeping the early SCT vocabulary book-faithful and
-non-circular.
+The difficulty is import and declaration order: this expression mentions declarations from Chapter
+1, while `NatIso` is introduced in the prelude before those declarations are in scope. The project is
+therefore partly a design project: make this objectwise content explicit while keeping the early SCT
+vocabulary book-faithful and non-circular.
 
 ## Design options
 

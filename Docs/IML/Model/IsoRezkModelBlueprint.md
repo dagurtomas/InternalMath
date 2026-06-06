@@ -9,11 +9,13 @@ showing that it has the expected Rezk behavior.
 
 ## Project dependencies
 
-- Depends on `Docs/IML/Model/SegalCompositionBlueprint.md` for the chosen composition operation and
-  the unit comparison data used by invertible arrows.
-- Depends on `Docs/IML/Model/MaximalKanCoreMappingAnimaBlueprint.md` for equivalence-edge,
-  maximal-core, mapping-anima, and groupoid-core adapters.
-- Also uses the finite-shape scaffold and the incoming inverse-edge API from mathlib PR #35287.
+- The edge-level audit and interval-arrow adapter phases can start from the finite-shape scaffold
+  and the incoming inverse-edge API from mathlib PR #35287.
+- The unit comparison phase depends on `Docs/IML/Model/SegalCompositionBlueprint.md`, because it
+  uses the chosen composition operation for invertible arrows.
+- The object collection, `Iso(C)`, and Rezk comparison phases depend on
+  `Docs/IML/Model/MaximalKanCoreMappingAnimaBlueprint.md` for equivalence-edge, maximal-core,
+  mapping-anima, and groupoid-core adapters.
 
 Workshop blueprint for the invertible-arrow and Rezk-equivalence model scaffold.
 

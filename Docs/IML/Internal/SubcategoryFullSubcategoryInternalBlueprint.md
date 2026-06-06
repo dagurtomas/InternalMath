@@ -7,6 +7,16 @@ identities and are closed under composition. A full subcategory should be determ
 it contains, with all arrows between those objects included. This project fills in the internal data
 that makes those two familiar ideas work inside SCT.
 
+## Project dependencies
+
+- The first phase can start from declarations already present in Chapters 1--3: arrow categories,
+  cores, morphism anima, object and morphism collections, and `subcategoryPackage`.
+- Does not depend on the Core/Axiom G or Fundamental Theorem blueprints for the side-structure
+  packages, all-morphism collection, or basic subcategory witness work.
+- Later declarations in this file have extra dependencies: `fullSubcategoryCoreEquiv` uses more core
+  calculus, and `fullSubcategoryAllObjectsEquiv` may use either a direct inverse construction or
+  Chapter 6 equivalence recognition.
+
 Workshop blueprint for the Chapter 3 subcategory cluster.
 
 Scope: workshop project on subcategory witnesses, the collection of all morphisms, full

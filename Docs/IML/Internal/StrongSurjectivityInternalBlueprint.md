@@ -6,6 +6,15 @@ Strong surjectivity says that every object of the target category is represented
 by an object coming from the source category. This project turns that abstract section of cores into
 ordinary data: given `y` in `D`, choose an object `x` in `C` and build the comparison `F x ≅ y`.
 
+## Project dependencies
+
+- The required core API is already present in the SCT specification: `coreLiftFromGroupoid`,
+  `coreLiftFromGroupoidBeta`, `coreFunctor`, `coreFunctorBeta`, and the basic `NatIso` operations.
+- Does not require the Fundamental Theorem. This project supplies object-level data that the
+  Fundamental Theorem blueprint later uses.
+- Pairs well with the Core/Axiom G blueprint, but the two admissions in this file are a focused
+  projection exercise from the existing strong-surjectivity package.
+
 Workshop blueprint for `InternalMath/SCT/Spec/Chapter6/StrongSurjectivity.lean`.
 
 Scope: close the two internal admissions that extract ordinary object-level data from the internal
