@@ -13,7 +13,7 @@ public import InternalMath.SCT.IML.Model.MappingAnima
 
 This file gives a model-side scaffold for the SCT project that builds the category of invertible
 arrows `Iso(C)` and relates it to Rezk completeness. It is a companion to
-`Docs/SCT/IML/Model/IsoRezkModelBlueprint.md`.
+`Docs/IML/Model/IsoRezkModelBlueprint.md`.
 
 The scaffold separates the pieces supplied by mathlib PR #35287 from the SCT-specific work.
 

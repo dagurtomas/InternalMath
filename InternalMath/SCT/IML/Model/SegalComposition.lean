@@ -12,7 +12,7 @@ public import InternalMath.SCT.IML.Model.FiniteShapes
 
 This file gives a model-side scaffold for the SCT project that interprets composition of
 interval-shaped arrows by filling the inner horn `Λ[2,1] -> C` in a quasicategory. The companion
-blueprint is `Docs/SCT/IML/Model/SegalCompositionBlueprint.md`.
+blueprint is `Docs/IML/Model/SegalCompositionBlueprint.md`.
 
 The finite shape maps are provided by `InternalMath.SCT.IML.Model.FiniteShapes`: `[0]`, `[1]`,
 `[2]`, the three faces of `[2]`, the degeneracy `[1] -> [0]`, and the square `[1] × [1]`.

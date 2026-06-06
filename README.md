@@ -76,7 +76,7 @@ The SCT build emits expected warnings about admitted InternalLean declarations a
 - `InternalMath/SCT/Model.lean` — generated SCT model interface and quasicategory/Kan-complex model
   skeleton.
 - `InternalMath/SCT/IML/Model/` — workshop project files for SCT model construction.
-- `Docs/SCT/IML/` — blueprints corresponding to the SCT workshop projects.
+- `Docs/IML/` — blueprints corresponding to the SCT workshop projects.
 - `Docs/` — guides for readers and users of this repo.
 
 ## License
