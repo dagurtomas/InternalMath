@@ -7,6 +7,25 @@ module
 
 public import InternalMath.SCT.Spec.Chapter7.Universes
 
+/-!
+# Chapter 7 regular subuniverses and the groupoid universe
+
+This file records the groupoid-universe layer and the regular-subuniverse construction.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Definition 7.4.5 (Cat8) supplies a regular subuniverse generated above a small subcategory. The
+  package is `regularSubuniversePackage`; its projections are `regularSubuniverseCat`,
+  `regularSubuniverseWitness`, `regularSubuniverseIncl`, `regularSubuniverseSmall`,
+  `regularSubuniverseRegular`, and `regularSubuniverseLift`.
+- The universe of groupoids is represented by `groupoidUniversePackage`, with projections
+  `groupoidUniverse`, `groupoidUniverseWitness`, `groupoidUniverseClassifyingMap`,
+  `groupoidUniverseIncl`, `groupoidUniverseEmbedding`, `groupoidUniverseRegular`,
+  `groupoidUniverseLeftFibration`, and `groupoidUniverseSmallWitness`.
+- The package connects small anima/categories classified by `categoryUniverse` with the
+  groupoid universe used by straightening/unstraightening.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

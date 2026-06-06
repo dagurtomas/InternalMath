@@ -7,6 +7,33 @@ module
 
 public import InternalMath.SCT.Spec.Chapter4.Contexts
 
+/-!
+# Chapter 5 fibration vocabulary and Axiom L
+
+This file records the main fibration vocabulary from Chapter 5 and the functoriality of universal
+objects.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- `IsofibrationWitness` is the Chapter 5 isofibration condition; `Fibration` is its public
+  abbreviation.
+- `Adjunction`, `LeftAdjointSection`, and `RightAdjointSection` package the adjunction data used for
+  initial and terminal objects in fibers.
+- Directed or lax pullbacks are represented by `directedPullbackCat` and the associated projection
+  and arrow data.
+- Left/right/cartesian/cocartesian fibration witnesses are represented by
+  `LeftFibrationWitness`, `RightFibrationWitness`, `CartesianFibrationWitness`, and
+  `CocartesianFibrationWitness`.
+- Source and target fibrations for arrow categories are `sourceFibration`, `targetFibration`,
+  `sourceCartesian`, and `targetCocartesian`.
+- Axiom L says universal objects vary functorially. The declarations include
+  `fiberwiseInitialObject`, `fiberwiseTerminalObject`, `leftFibrationSectionFunctor`,
+  `rightFibrationSectionFunctor`, and the base-compatibility fields.
+- Locally cartesian/cocartesian fibrations and cocartesian functors are represented by
+  `LocallyCartesianFibrationWitness`, `LocallyCocartesianFibrationWitness`,
+  `CocartesianFunctorWitness`, `idCocartesianFunctor`, and `compCocartesianFunctor`.
+-/
+
 @[expose] public section
 
 /-- Chapter 5: cartesian and cocartesian fibrations; Axiom L. -/

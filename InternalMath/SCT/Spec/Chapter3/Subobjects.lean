@@ -7,6 +7,25 @@ module
 
 public import InternalMath.SCT.Spec.Chapter2.Cores
 
+/-!
+# Chapter 3 subcategory witnesses and arrow action
+
+This file prepares the criterion for a functor to be a subcategory in the sense of Chapter 3.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Construction 3.1.1 sends a functor `F : X ⟶ C` and an arrow of `X` to the image arrow in `C`.
+  The declarations `arrowActionContext`, `arrowActionTotalContext`, `arrowActionEvalFunctor`,
+  `arrowActionObjectFunctor`, and `arrowActionFunctor` spell out this arrow action.
+- Definition 3.1.2 characterizes subcategory inclusions by an embedding condition on arrows and a
+  pullback criterion. This is represented by `SubcategoryArrowEmbedding`,
+  `SubcategoryPullbackSquare`, `SubcategoryPullbackCriterion`, and `SubcategoryWitness`.
+- `AnimaSubobject` packages an anima, its inclusion into another anima, and embedding data. This
+  package is used by Chapter 3 morphism and object collections.
+- The admitted internal declarations `idSubcategoryWitness`, `initialSubcategoryWitness`, and
+  `subcategoryWitnessEmbedding` are theorem debt for the basic examples and Lemma 3.1.5.
+-/
+
 @[expose] public section
 
 /-- Chapter 3: subcategories, localizations, realizations, joins, and slices; Axioms H--J.2. -/

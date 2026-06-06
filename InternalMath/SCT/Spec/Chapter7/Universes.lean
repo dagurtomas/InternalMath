@@ -7,6 +7,30 @@ module
 
 public import InternalMath.SCT.Spec.Chapter7.DirectedUnivalence
 
+/-!
+# Chapter 7 smallness, Axiom M, and regular universes
+
+This file records smallness relative to a universe, exponentiability of fibrations, and the regular
+universe closure operations.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Axiom N classifies small categories and small cocartesian fibrations. The relevant declarations
+  include `SmallWitness`, `smallClassifyingMap`, `smallClassifyingEquiv`,
+  `SmallCocartesianFibrationWitness`, `smallFibrationClassifyingMap`, and
+  `smallFibrationClassifyingEquiv`.
+- Definition 7.4.6 names functors with small fibers; this is `SmallFibersWitness`.
+- Axiom M says cartesian and cocartesian fibrations are exponentiable. The witness is
+  `ExponentiableFibrationWitness`, with constructors `cartesianFibrationExponentiable` and
+  `cocartesianFibrationExponentiable`.
+- Definition 7.4.5 describes regular universes and closure operations. The declarations include
+  `RegularUniverseWitness`, `categoryUniverse`, `categoryUniverseWitness`,
+  `categoryUniverseRegular`, and the `catInternal...`, `catClosure...`, and
+  `regularUniverse...` fields.
+- The dependent-product closure part of regularity is represented by `dependentProductTotal`,
+  `dependentProductProjection`, `dependentProductFibration`, and `dependentProductSmall`.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

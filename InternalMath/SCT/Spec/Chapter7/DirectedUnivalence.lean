@@ -7,6 +7,23 @@ module
 
 public import InternalMath.SCT.Spec.Chapter7.Straightening
 
+/-!
+# Chapter 7 directed univalence
+
+This file records the directed-univalence comparison between transformations of classifying maps
+and cocartesian functors.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Directed univalence says that, for the universal cocartesian fibration, transformations between
+  classifying maps correspond to cocartesian functors between the classified fibrations.
+- `classifiedCocartesianFunctorUnderlying` forgets a cocartesian functor to its underlying functor.
+- The comparison equivalence is `directedUnivalenceMappingEquiv`.
+- The projections `directedUnivalenceCocartesianObject`,
+  `directedUnivalenceToCocartesianFunctor`, `directedUnivalenceToTransformation`, and
+  `directedUnivalenceFunctorCocartesian` expose the two directions and the cocartesian witness.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

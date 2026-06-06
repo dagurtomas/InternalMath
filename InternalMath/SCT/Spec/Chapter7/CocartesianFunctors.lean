@@ -7,6 +7,25 @@ module
 
 public import InternalMath.SCT.Spec.Chapter6.FundamentalTheorem
 
+/-!
+# Chapter 7 cocartesian functors and universe vocabulary
+
+This file starts the Chapter 7 universe and directed-univalence layer.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- `UniverseWitness` names a universe of small categories, and `DirectedUnivalenceWitness` is the
+  directed-univalence structure for its universal cocartesian fibration.
+- `ClassifyingTransformation` is the SCT proxy for transformations between classifying maps.
+- `functorOverBaseCat` and `functorOverBaseIncl` describe functors over a fixed base.
+- The universe fibration starts with `universeTotalCat`; later files add its projection,
+  fibration, cocartesian structure, and directed-univalence witness.
+- Definition 7.1.10 forms the category of cocartesian functors over a base. The package
+  `cocartesianFunctorCategoryPackage` exposes `cocartesianFunctorCat` and
+  `cocartesianFunctorCatIncl`, while `isCocartesianFunctorCat` and
+  `cocartesianFunctorCatSubcategory` remain theorem debt.
+-/
+
 @[expose] public section
 
 /-- Chapter 7: universes and directed univalence; Axioms M and N. -/

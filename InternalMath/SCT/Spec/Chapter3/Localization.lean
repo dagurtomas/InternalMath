@@ -7,6 +7,28 @@ module
 
 public import InternalMath.SCT.Spec.Chapter3.FullSubcategoryLifts
 
+/-!
+# Chapter 3 full-subcategory lifts, localizations, and geometric realization
+
+This file specializes the full-subcategory universal property and records Axioms I and J.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Full subcategory lifts are derived from the Axiom H subcategory lift. See `fullSubcategoryLift`,
+  `fullSubcategoryLiftBeta`, and `fullSubcategoryLiftUniq`.
+- Axiom I localizes a category `C` at a morphism collection `W`. A functor inverts `W` when it sends
+  selected arrows to isomorphisms; this is the admitted package `InvertsMorphismCollection`.
+- `invertingFunctorObjectPackage` builds the object collection in `Fun(C,D)` of functors inverting
+  `W`. Its projections define `invertingFunctorObjects`, `invertingFunctorCat`,
+  `invertingFunctorIncl`, and `invertingFunctorSubcategoryWitness`.
+- The localization data is `localizationCat`, `localizationFunctor`, `localizationInverts`, and the
+  universal package `localizationUniversalPackage`. The projections are `localizationDesc`,
+  `localizationDescBeta`, `localizationDescUniq`, and `localizationUniversalEquiv`.
+- Axiom J identifies geometric realization with localization at all morphisms. This file defines
+  `geometricRealization`, `geometricRealizationFunctor`, and the comparison fields for the
+  groupoid completion universal property.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

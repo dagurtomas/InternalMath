@@ -7,6 +7,31 @@ module
 
 public import InternalMath.SCT.Spec.Chapter1.CellsAndSegal
 
+/-!
+# Chapter 2 groupoids, anima, and Axiom G
+
+This file records Axiom G and the groupoid-core construction.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- A category is a groupoid when the constant-arrow comparison `C ⟶ Fun([1], C)` is an equivalence.
+  This interface represents the witness by `GroupoidWitness`, with comparison data
+  `groupoidConstArrowFunctor` and `groupoidIntervalEquiv`.
+- Axiom G identifies groupoids with anima. Primitive anima give groupoids by `groupoidOfAnima`;
+  groupoids give anima by `animaOfGroupoid`; the comparison equivalence is
+  `animaOfGroupoidEquiv`, with reverse direction `groupoid_anima_equiv`.
+- The core `C^≃` is `Map(*, C)`. The declarations `coreAnima`, `coreCat`, `coreGroupoid`, and
+  `coreIncl` expose it as a groupoid mapping into `C`.
+- The core has the universal property of receiving every map from an anima. The package
+  `coreUniversalPackage` stores the embedding of `coreIncl` and the lift, β comparison, and
+  uniqueness for anima-indexed objects. The projections are `coreInclEmbedding`,
+  `coreLiftPackage`, `coreLift`, `coreLiftBeta`, and `coreLiftUniq`.
+- The file also derives groupoid-source versions of the core lift and records closure/comparison
+  data for groupoids and low-dimensional cores, such as `coreOfGroupoidEquiv`,
+  `funCatTargetGroupoid`, `intervalCoreEndpointEquiv`, `coreProductEquiv`, and
+  `corePullbackEquiv`.
+-/
+
 @[expose] public section
 
 /-- Chapter 2: groupoids, anima, and the groupoid core; Axiom G. -/
@@ -35,8 +60,8 @@ extend_type_theory SCT where
         CatEquiv C (animaCat (animaOfGroupoid C g)) :=
     fun C g => catEquivSymm (animaCat (animaOfGroupoid C g)) C
       (animaOfGroupoidEquiv C g)
-  /-- The groupoid core of a synthetic category, source-faithfully `Map(*, C)`.  Book context:
-  Chapter 2 of the SCT book.
+  /-- The groupoid core of a synthetic category, represented by `Map(*, C)`.
+  Book context: Chapter 2 of the SCT book.
   -/
   lf_def coreAnima : SCat ⇒ Anima := fun C => mapAnima terminalCat C
   /-- Underlying category of the groupoid core; Axiom G. -/

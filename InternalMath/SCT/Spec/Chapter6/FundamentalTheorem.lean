@@ -7,6 +7,26 @@ module
 
 public import InternalMath.SCT.Spec.Chapter6.Retracts
 
+/-!
+# Chapter 6 Fundamental Theorem and objectwise natural isomorphisms
+
+This file collects the main theorem statements and adapters needed for Chapter 6.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Strong surjectivity is a section of the induced map on cores. The projections are
+  `stronglySurjectiveSection` and `stronglySurjectiveSectionBeta`.
+- The objectwise criterion says a natural transformation is a natural isomorphism exactly when its
+  components are invertible. The relevant declarations are `objectwiseNatIsoComponent`,
+  `natIsoObjectwise`, `natIsoOfObjectwise`, and `objectwiseNatIsoComponentInvertible`.
+- The Fundamental Theorem says a fully faithful and strongly surjective functor is an equivalence;
+  this is `fundamental_theorem_equiv` and the public alias `fundamentalTheoremEquiv`.
+- The reverse direction for equivalences is recorded by `equivalenceFullyFaithful` and
+  `equivalenceStronglySurjective`.
+- Later applications in this file include `fullSubcategoryEquivOfStronglySurjective`,
+  `cocartesianFunctorFiberwiseEquiv`, and `funCatPostcompFullyFaithful`.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

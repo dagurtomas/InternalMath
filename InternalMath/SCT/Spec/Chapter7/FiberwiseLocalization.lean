@@ -7,6 +7,22 @@ module
 
 public import InternalMath.SCT.Spec.Chapter7.GroupoidUniverse
 
+/-!
+# Chapter 7 fiberwise localization
+
+This file records fiberwise localization statements for small cocartesian fibrations.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Geometric realization of a small category is a small groupoid; this is
+  `geometricRealizationSmall`.
+- A cocartesian fibration can be localized fiberwise. The admitted declarations are
+  `fiberwiseLocalizationTotal`, `fiberwiseLocalizationProjection`,
+  `fiberwiseLocalizationFibration`, and `fiberwiseLocalizationCocartesian`.
+- These declarations are prerequisites for the groupoid-universe and straightening material in the
+  following files.
+-/
+
 @[expose] public section
 
 namespace SCT

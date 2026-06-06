@@ -7,6 +7,23 @@ module
 
 public import InternalMath.SCT.Spec.Chapter1.IsoRezk
 
+/-!
+# Chapter 3 lifts through subcategories and full subcategories
+
+This file exposes the universal property of the Axiom H subcategory and its full-subcategory
+specialization.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Axiom H gives a universal lift for any functor preserving the selected morphism collection. The
+  projections are `subcategoryLift`, `subcategoryLiftBeta`, and `subcategoryLiftUniq`.
+- For full subcategories, `fullSubcategoryInclLands` should say that the inclusion lands in the
+  chosen object collection.
+- A functor landing in an object collection should preserve the endpoint-restricted morphism
+  collection; this is the admitted theorem `landsInObjectCollectionPreservesFull`.
+- `Chapter3/Localization.lean` uses these declarations to define lifts through full subcategories.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

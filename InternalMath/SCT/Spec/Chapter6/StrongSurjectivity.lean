@@ -7,6 +7,22 @@ module
 
 public import InternalMath.SCT.Spec.Chapter6.Conservativity
 
+/-!
+# Chapter 6 strong surjectivity consequences
+
+This file contains the object-level consequences of the strong-surjectivity package.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- A strongly surjective functor has a section on cores. The definition itself is in
+  `Chapter6/Definitions.lean`.
+- Remark 6.3.2 extracts a chosen preimage object and a comparison to the target object. These are
+  `stronglySurjectivePreimage` and `stronglySurjectiveBeta`.
+
+Both declarations are admitted internal definitions and should be projections or short derivations
+from `StronglySurjective`.
+-/
+
 @[expose] public section
 
 namespace SCT

@@ -7,6 +7,33 @@ module
 
 public import InternalMath.SCT.Spec.Chapter3.OverJoinSlice
 
+/-!
+# Chapter 4 Axiom K: synthetic categories in context
+
+This file records contextual versions of the SCT vocabulary and constructions.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Axiom K.1 supplies categories, functors, natural isomorphisms, and equivalences in a fixed
+  context. See `ContextCat`, `ContextFunctor`, `ContextNatIso`, `ContextCatEquiv`, and the
+  contextual identity, composition, unitor, associator, whiskering, and equivalence projections.
+- Axiom K.2 says the underlined axioms hold in any context and all axioms hold in groupoidal
+  contexts. The arbitrary-context finite constructions include `contextTerminalCat`,
+  `contextInitialCat`, `contextProdCat`, `contextCoprodCat`, and `contextPullbackCat`. The
+  groupoidal-context constructions include `contextFunCat`, `contextCoreCat`,
+  `contextSubcategory`, `contextLocalization`, `contextGeometricRealization`, `contextJoinCat`,
+  and `contextSliceCat`.
+- Axiom K.3 gives weakening and reindexing. See `weakenContextCat`, `weakenContextFunctor`,
+  `reindexContextCat`, `reindexContextFunctor`, `reindexId`, and `reindexComp`.
+- Axiom K.4 gives dependent sums in context. The key declarations are `sigmaCat`, `sigmaPair`,
+  `sigmaTranspose`, `sigmaTransposeBeta`, `sigmaTransposeUniq`, `sigmaProjection`, and `sigmaLift`.
+- Axiom K.5 says `Σ_Γ *` is equivalent to `Γ`; the split data is `sigmaTerminalUnit`,
+  `sigmaTerminalCounit`, and `sigmaTerminalEquiv`.
+- Axiom K.6 states compatibility of dependent sums with pullback/reindexing; this file records the
+  split data as `sigmaReindexPullbackEquiv`, `sigmaFunctorPullbackSquare`,
+  `sigmaSecondProjectionPullbackSquare`, and `sigmaPreservesPullbackEquiv`.
+-/
+
 @[expose] public section
 
 /-- Chapter 4: synthetic categories in context and dependent sums; Axiom K. -/

@@ -7,6 +7,25 @@ module
 
 public import InternalMath.SCT.Spec.Chapter5.Fibrations
 
+/-!
+# Chapter 5 limits, colimits, and local fibration structure
+
+This file adds a thin vocabulary layer for limits and colimits and connects absolute fibration
+structure to its local version in context.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- A diagram of shape `J` in `C` is a functor `J ⟶ C`; this is `Diagram`.
+- `coneCat` and `coconeCat` are the cone and cocone categories over a diagram.
+- `LimitCone`, `ColimitCocone`, `HasLimitsOfShape`, and `HasColimitsOfShape` are admitted
+  `syntax_def` packages. They give names to the limit/colimit vocabulary while the universal
+  property packages are still being designed.
+- `limitFunctor` and `colimitFunctor` are admitted projections from the corresponding
+  has-limits/has-colimits packages.
+- `locallyCocartesianOfCocartesian` and `locallyCartesianOfCartesian` connect absolute fibration
+  witnesses with the contextual fibration vocabulary of Chapter 4.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

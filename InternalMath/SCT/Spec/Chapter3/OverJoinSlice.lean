@@ -7,6 +7,28 @@ module
 
 public import InternalMath.SCT.Spec.Chapter3.Localization
 
+/-!
+# Chapter 3 exponentiable functors, joins, and slices
+
+This file records the Chapter 3 structures after localization: exponentiable functors, joins,
+relative joins, and over/slice categories.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Definition 3.5.7 introduces exponentiable functors. The witness is `ExponentiableFunctor`; the
+  dependent-product package is `dependentProductOverPackage`, with projections
+  `dependentProductOverCat` and `dependentProductOverProjection`.
+- Axioms J.1 and J.2 give joins. The basic constructor is `joinCat`, with inclusions `joinInl` and
+  `joinInr`, pushout comparison `joinPushoutSquare`, mapping-out equivalence
+  `joinMappingEquiv`, and descender data `joinDesc`, `joinDescBetaLeft`, `joinDescBetaRight`, and
+  `joinDescUniq`.
+- The interval is the join of two terminal categories; the comparison is
+  `intervalJoinEquiv` with its forward/backward maps and unit/counit.
+- `dependentProductFunctor`, `dependentProductBeckChevalley`, `relativeJoinCat`,
+  `relativeJoinInl`, and `relativeJoinInr` are admitted internal declarations for the over-category
+  and relative-join API.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

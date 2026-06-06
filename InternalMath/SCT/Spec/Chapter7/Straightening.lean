@@ -7,6 +7,27 @@ module
 
 public import InternalMath.SCT.Spec.Chapter7.CocartesianFunctors
 
+/-!
+# Chapter 7 universe fibrations and straightening over `[1]`
+
+This file records the split data for the universe fibration and the special straightening
+construction over `[1]`.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Axiom N supplies, for a universe `U`, a universal cocartesian fibration. The split data is
+  `universeProjection`, `universeFibration`, `universeCocartesian`, and
+  `universeDirectedUnivalence`.
+- Pulling the universe fibration back along a classifying map gives a classified total category,
+  projection, fibration witness, and cocartesian witness. These are `classifiedTotalCat`,
+  `classifiedProjection`, `classifiedFibration`, and `classifiedCocartesian`.
+- The Section 7.7 unstraightening aliases are `unstraighteningTotal`,
+  `unstraighteningProjection`, `unstraighteningFibration`, and `unstraighteningCocartesian`.
+- For a cocartesian fibration over `[1] × B`, the straightening source and target are built by
+  pulling back along the endpoints of `[1]`. The admitted straightening data is
+  `straighteningFunctor` and `straighteningFunctorCocartesian`.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

@@ -7,6 +7,20 @@ module
 
 public import InternalMath.SCT.Spec.Chapter6.Definitions
 
+/-!
+# Chapter 6 conservativity consequences
+
+This file contains theorem statements about conservativity.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Fully faithful functors are conservative; this is `fullyFaithfulConservative`.
+- Conservative functors reflect invertible morphisms; this is `conservativeReflectsIso`.
+
+Both declarations are admitted internal definitions, not model fields. They should be proved from
+the fully faithful and conservative criteria in `Chapter6/Definitions.lean`.
+-/
+
 @[expose] public section
 
 namespace SCT

@@ -7,6 +7,32 @@ module
 
 public import InternalMath.SCT.Spec.Chapter1.BasicConstructions
 
+/-!
+# Chapter 1 cells, squares, Segal composition, and invertible arrows
+
+This file connects natural transformations with arrows in functor categories and then records the
+square and Segal axioms used for composition.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Natural transformations `F ⟶ G` are arrows in `Fun(C,D)`. The file makes this explicit with
+  `natTransCat`, `natTransObject`, `natTransUnderlyingArrow`, and `natTransComponent`.
+- Axiom D says that restricting a square `[1] × [1] ⟶ C` to two compatible triangles gives an
+  equivalence. The split data is `squareRestriction`, `squareExtension`,
+  `squareRestrictionUnit`, and `squareRestrictionCounit`; `squareRestrictionEquiv` packages it.
+- Axiom E says restriction from `[2]`-diagrams to composable pairs is an equivalence. The split data
+  is `segalRestriction`, `segalExtension`, `segalUnit`, and `segalCounit`; `segalEquiv` packages it.
+- Composition of interval-shaped arrows is extracted from Axiom E via `composablePair`,
+  `compositeOfComposablePair`, and `composeComposableMorphism`. The unit and associativity fields
+  are the split coherence data for this chosen composition.
+- Invertible interval-shaped morphisms are represented by the checked package
+  `InvertibleMorphismData`: an inverse arrow, endpoint comparisons, and left/right unit
+  comparisons.
+
+The Rezk category `Iso(C)` and the Rezk equivalence are built in `Chapter1/IsoRezk.lean` from this
+invertible-arrow package and the Chapter 3 full-subcategory API.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

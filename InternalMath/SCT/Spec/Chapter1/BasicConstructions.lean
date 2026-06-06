@@ -7,6 +7,32 @@ module
 
 public import InternalMath.SCT.Spec.Prelude
 
+/-!
+# Chapter 1 basic constructions: Axiom B and interval shapes
+
+This file adds the basic categorical constructors and low-dimensional shapes from Chapter 1.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Axiom A.1(3) says dependent sums of anima-indexed anima fibers are anima. This file packages the
+  fiber evidence as `allFibersAnima` and registers `sigma_anima_indexed_is_anima`.
+- Axiom A.2 treats terms of `C` in context `Γ` as functors `Γ ⟶ C`. See `Term`, `universalTerm`,
+  `objectFunctor`, and `objectOfFunctor`.
+- Axioms B.1 and B.2 give terminal and initial categories, with uniqueness data. B.2' adds strict
+  initiality.
+- Axioms B.3--B.5 give products, coproducts, pullbacks, and their β/η or componentwise natural
+  isomorphism data.
+- Axiom B.4' gives coproduct base change and disjointness.
+- Axiom B.6 gives functor categories, pre/postcomposition, evaluation, currying, uncurrying, and
+  the currying equivalence.
+- Axiom C supplies `[1]`, its endpoints, source/target evaluation for interval-shaped arrows, and
+  the basic `[2]` shape used later by the square and Segal axioms.
+
+Key declarations below include `terminalProjection`, `initialCat`, `prodCat`, `coprodCat`,
+`pullbackCat`, `funCat`, `intervalCat`, `sourceFunctor`, `targetFunctor`, `identityMorphism`,
+`simplex2Cat`, and `squareCat`.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

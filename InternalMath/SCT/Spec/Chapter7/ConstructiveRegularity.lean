@@ -7,6 +7,22 @@ module
 
 public import InternalMath.SCT.Spec.Chapter7.StraighteningUnstraightening
 
+/-!
+# Chapter 7 constructive regularity
+
+This file records the final Chapter 7 constructive-regularity vocabulary.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Section 7.8 studies a constructive approach to universes through a universal category of
+  composable pairs of small cocartesian fibrations. The admitted declarations are
+  `universalComposablePairCat` and `universalComposablePairProjection`.
+- The fixed universe of categories classifies cocartesian fibrations through
+  `directed_univalence_classifies`.
+- `ConstructiveRegularUniverseWitness` names the constructive regularity witness, and
+  `regularOfConstructiveRegular` is the theorem that constructive regularity implies regularity.
+-/
+
 @[expose] public section
 
 namespace SCT

@@ -7,6 +7,25 @@ module
 
 public import InternalMath.SCT.Spec.Chapter3.FullSubcategories
 
+/-!
+# Chapter 1 Rezk axiom and the category of isomorphisms
+
+This file builds the category `Iso(C)` of invertible interval-shaped morphisms and records the Rezk
+axiom.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Axiom F says every synthetic category `C` is equivalent to the category `Iso(C)` of isomorphisms
+  in `C`.
+- The object collection for `Iso(C)` is `invertibleMorphismObjects`; its membership directions are
+  `invertibleMorphismObjectIntro` and `invertibleMorphismObjectElim`.
+- `isoCat` is the full subcategory of `Fun([1], C)` selected by this object collection.
+- `isoProjection` and `isoProjectionEmbedding` are the projection to the arrow category and its
+  subcategory witness.
+- `rezkEquiv` is the Axiom F equivalence `C ≃ Iso(C)`. The derived names
+  `identityIsoFunctor`, `isoProjectionFunctor`, `rezkUnit`, and `rezkCounit` are its projections.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

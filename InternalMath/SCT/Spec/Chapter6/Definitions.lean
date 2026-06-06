@@ -7,6 +7,23 @@ module
 
 public import InternalMath.SCT.Spec.Chapter5.LimitsColimits
 
+/-!
+# Chapter 6 definitions for the Fundamental Theorem
+
+This file introduces the three hypotheses used in the Fundamental Theorem of category theory.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- Fully faithful functors are characterized by a pullback condition comparing arrows in `C` with
+  arrows in `D` over pairs of objects. The declarations `arrowEndpointFunctor`, `objectPairFunctor`,
+  and `arrowMapFunctor` build this comparison, and `FullyFaithful` packages it as a pullback square.
+- Conservative functors are characterized by a pullback condition on cores; this is `Conservative`.
+- Strongly surjective functors have a section of the induced functor on cores, up to natural
+  isomorphism; this is `StronglySurjective`.
+- `fullyFaithfulHomEquiv` is theorem debt saying the fully faithful criterion gives equivalences on
+  fixed-endpoint hom categories.
+-/
+
 @[expose] public section
 
 /-- Chapter 6: the Fundamental Theorem of category theory. -/

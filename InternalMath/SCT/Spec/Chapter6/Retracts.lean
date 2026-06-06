@@ -7,6 +7,20 @@ module
 
 public import InternalMath.SCT.Spec.Chapter6.StrongSurjectivity
 
+/-!
+# Chapter 6 retracts and conservativity
+
+This file records the theorem that a retract makes a functor conservative.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- If `F : C ⟶ D` has a retraction `R : D ⟶ C` with `F ⋙ R ≅ id_C`, then `F` is conservative.
+- The declaration is `conservativeOfRetract`.
+
+The proof should use the core-pullback characterization of conservativity from
+`Chapter6/Definitions.lean`.
+-/
+
 @[expose] public section
 
 namespace SCT

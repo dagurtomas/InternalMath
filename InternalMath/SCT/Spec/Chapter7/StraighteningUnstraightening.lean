@@ -7,6 +7,22 @@ module
 
 public import InternalMath.SCT.Spec.Chapter7.FiberwiseLocalization
 
+/-!
+# Chapter 7 straightening and unstraightening
+
+This file records the straightening/unstraightening comparison for small cocartesian fibrations.
+
+Book guide, paraphrasing the May 2026 draft:
+
+- The groupoid universe classifies anima: `animaClassifyingMap` classifies `A`, and
+  `animaClassifyingEquiv` compares the classified category with `animaCat A`.
+- The category of small cocartesian fibrations over a base is `cocartesianFibrationsOverCat`.
+- The straightening/unstraightening equivalence over a base is
+  `straighteningUnstraighteningEquiv`.
+- The two directions are exposed as `straighteningClassifyingFunctor` and
+  `unstraighteningClassifyingFunctor`.
+-/
+
 @[expose] public section
 
 extend_type_theory SCT where

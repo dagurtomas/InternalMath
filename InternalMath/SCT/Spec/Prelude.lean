@@ -8,22 +8,33 @@ module
 public import InternalLean.Command
 
 /-!
-# Book-structured intrinsic Synthetic Category Theory interface
+# SCT prelude: Axiom A and the ambient vocabulary
 
-This file is a source-facing `InternalLean` presentation of the primitives, axioms, constructors,
-and theorem-shaped declarations needed for Chapters 1--7 of the May 2026 Synthetic Category Theory
-book project by Cisinski, Cnossen, Nguyen, and Walde. It uses one theory reopened by
-`extend_type_theory` blocks, rather than a single large declaration or a chain of separate theories.
+This file opens the InternalLean type theory `SCT`. It introduces the primitive vocabulary used by
+all later chapter files. The interface is intrinsic: object sorts contain valid data by
+construction, so there are no generic `wf...` judgments. Mathematical properties that are not part
+of a sort remain explicit witness sorts or packages.
 
-The guiding convention is intrinsic: object sorts contain valid data by construction, so there are
-no generic `wf...` judgments. Mathematical properties that are not part of a sort remain explicit
-witness sorts or judgments. In particular, anima are primitive and have an underlying synthetic
-category; the judgment `isAnimaCat` records that the underlying category is an anima-category.
+Book guide, paraphrasing the May 2026 draft:
 
-Axiom A policy: functors, natural transformations, natural-isomorphism evidence, equivalence data,
-and the unitality/associativity/whiskering operations are primitive book-facing structure. The
-interface does not try to force strict functorial laws into definitional equality.
+- Axiom A.1 supplies synthetic categories, functors, natural isomorphisms, mapping anima, and
+  families of categories indexed by anima.
+- Axiom A.2 identifies terms of a category `C` in context `Γ` with functors `Γ ⟶ C`; absolute
+  objects are functors from the terminal category.
+- Axiom A.3 supplies identity functors, composition, unitors, associators, whiskering, and
+  horizontal composition. These laws are isomorphism data, not strict definitional equalities.
+- Axiom A.4 says a category equivalent to an anima is again an anima.
 
+Key declarations below:
+
+- `Anima`, `SCat`, `animaCat`, `isAnimaCat`, `anima_cat_is_anima`,
+  `equiv_to_anima_is_anima`;
+- `Functor`, `NatTrans`, `ObjectwiseNatIsoData`, `NatIso`, `CatEquiv`, `mapAnima`;
+- `AnimaIndexedCat`, `animaIndexedFiber`, `sigmaAnimaIndexed`,
+  `sigmaAnimaIndexedProjection`;
+- `idFunctor`, `compFunctor`, `idNatIso`, `compNatIso`, `invNatIso`, `leftUnitor`,
+  `rightUnitor`, `assocFunctor`, `preWhiskerNatIso`, `postWhiskerNatIso`, and
+  `horizCompNatIso`.
 -/
 
 @[expose] public section
