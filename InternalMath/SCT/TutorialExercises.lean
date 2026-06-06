@@ -206,8 +206,10 @@ Try uncommenting these commands after filling the exercises. The lint command re
 debt; the exercise admissions should disappear from its output.
 -/
 
--- #lint_type_theory_sorries SCT
--- #print_internal_registration_profile SCT
 -- #check_theory SCT
+-- #print_type_theory_anchor SCT
+-- #lint_type_theory_sorries SCT
+-- #check_model_obligations SCT
+-- #print_internal_registration_profile SCT
 
 end SCT

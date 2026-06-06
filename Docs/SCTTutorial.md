@@ -9,7 +9,7 @@ tracks the book's vocabulary. The quasicategory model skeleton and several theor
 visible development targets.
 
 For hands-on practice, open `InternalMath/SCT/TutorialExercises.lean` in your editor and replace the
-exercise `sorry`s. You can also make a scratch file that imports `InternalMath.SCT.Spec`.
+exercise `sorry`s. The file imports `InternalMath.SCT.Spec` and opens the SCT namespace for you.
 
 ## 1. Lean and InternalLean
 
@@ -228,17 +228,8 @@ AnimaSubobject A :=
 
 ## 4. Exercises
 
-Create a scratch file with:
-
-```lean
-import InternalMath.SCT.Spec
-
-namespace SCT
-
--- exercises go here
-
-end SCT
-```
+Open `InternalMath/SCT/TutorialExercises.lean` in your editor. The exercises below are already set
+up there as declarations ending in `sorry`.
 
 The first exercises can be solved by reading `Spec/Prelude.lean` and
 `Spec/Chapter1/BasicConstructions.lean`.
@@ -294,7 +285,8 @@ extend_type_theory SCT where
 
 ### Exercise 5: inspect the theory
 
-Add these commands to a scratch file and read the messages in your editor:
+In `InternalMath/SCT/TutorialExercises.lean`, uncomment the inspection commands near the end of the
+file and read the messages in your editor:
 
 ```lean
 #check_theory SCT
