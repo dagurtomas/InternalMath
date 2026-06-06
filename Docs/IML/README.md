@@ -1,6 +1,6 @@
 # IML workshop project index
 
-This directory contains blueprints for SCT workshop projects. Each blueprint explains the
+This directory contains blueprints for IML workshop projects. Each blueprint explains the
 mathematical goal, the relevant Lean files, dependencies between projects, and the expected shape of
 a successful implementation.
 
@@ -8,6 +8,15 @@ Start with the SCT tutorial and exercise file if the InternalLean syntax is unfa
 
 - [`Docs/SCTTutorial.md`](../SCTTutorial.md)
 - [`InternalMath/SCT/TutorialExercises.lean`](../../InternalMath/SCT/TutorialExercises.lean)
+
+For a smaller InternalLean warmup, open the local copy of the upstream intro exercises:
+
+- [`InternalMath/IML/IntroExercises.lean`](../../InternalMath/IML/IntroExercises.lean)
+
+Hints and worked solutions live in the InternalLean dependency checkout:
+
+- [Intro exercise hints][intro-exercise-hints]
+- [Intro exercise solutions][intro-exercise-solutions]
 
 ## Internal proof projects
 
@@ -107,6 +116,8 @@ more productive once the foundational projects provide stable APIs.
   for first InternalLean work, and API-design or theorem-packaging tasks for participants with more
   quasicategory background.
 
+[intro-exercise-hints]: ../../.lake/packages/InternalLean/Examples/IntroExercisesHints.lean
+[intro-exercise-solutions]: ../../.lake/packages/InternalLean/Examples/IntroExercisesSolutions.lean
 [strong-surjectivity-internal]: Internal/StrongSurjectivityInternalBlueprint.md
 [subcategory-internal]: Internal/SubcategoryFullSubcategoryInternalBlueprint.md
 [core-axiom-g-internal]: Internal/CoreAxiomGInternalBlueprint.md
