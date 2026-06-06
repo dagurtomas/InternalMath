@@ -25,6 +25,9 @@ categories, localization consequences, and several Chapter 6 theorems.
 
 ## Admissions in scope
 
+The immediate cluster has fourteen admissions: four admitted `syntax_def` packages and ten admitted
+internal definitions or theorem packages.
+
 ### `Chapter3/Subobjects.lean`
 
 ```lean
@@ -34,6 +37,17 @@ SCT.subcategoryWitnessEmbedding
 ```
 
 ### `Chapter3/Subcategories.lean`
+
+Admitted `syntax_def` packages:
+
+```lean
+SCT.LandsInObjectCollection
+SCT.containsIdentities
+SCT.closedUnderComposition
+SCT.PreservesMorphismCollection
+```
+
+Admitted internal definitions:
 
 ```lean
 SCT.all_morphisms_contains_identities
@@ -55,8 +69,8 @@ SCT.fullSubcategoryInclLands
 SCT.landsInObjectCollectionPreservesFull
 ```
 
-The cluster has ten admissions. Some are proof obligations; several depend on side structure
-packages whose admitted bodies do not expose constructors.
+The `syntax_def` admissions are part of the problem, not just prerequisites for later proofs. Their
+checked bodies should expose the factorization data used by the internal definitions listed above.
 
 ## Reading `Σ` packages
 
@@ -133,20 +147,6 @@ Their admitted bodies do not provide checked projections or constructors for obv
 "the total morphism collection contains identities".
 
 ## Recommended project phases
-
-## Phase 0: module cleanup before proof work
-
-Move the three `SubcategoryWitness` theorem admissions out of `Subobjects.lean` only if a smaller
-module would help. A possible target is:
-
-```text
-Chapter3/SubcategoryWitnesses.lean
-```
-
-Leaving them in `Subobjects.lean` is also fine. The benefit of a move is that `Subobjects.lean`
-would contain only definitions of arrow action, mapping anima, and collections.
-
-If a move is done, keep it separate from proof work.
 
 ## Phase 1: expose the factorization data
 
