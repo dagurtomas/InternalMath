@@ -11,7 +11,7 @@ that makes those two familiar ideas work inside SCT.
 
 - The first phase can start from declarations already present in Chapters 1--3: arrow categories,
   cores, morphism anima, object and morphism collections, and `subcategoryPackage`.
-- Does not depend on the Core/Axiom G or Fundamental Theorem blueprints for the side-structure
+- Does not depend on the Core/Axiom G or Fundamental Theorem blueprints for the collection evidence
   packages, all-morphism collection, or basic subcategory witness work.
 - Later declarations in this file have extra dependencies: `fullSubcategoryCoreEquiv` uses more core
   calculus, and `fullSubcategoryAllObjectsEquiv` may use either a direct inverse construction or
@@ -20,7 +20,7 @@ that makes those two familiar ideas work inside SCT.
 Workshop blueprint for the Chapter 3 subcategory cluster.
 
 Scope: workshop project on subcategory witnesses, the collection of all morphisms, full
-subcategories, and the API for object and morphism collection side structures.
+subcategories, and the API for object and morphism collection evidence packages.
 
 Target modules:
 
@@ -264,10 +264,9 @@ The factorization through `morphismCollectionIncl C W` is the desired evidence.
 
 Target meaning: composable pairs of arrows in `W` have composite in `W`.
 
-This is the hardest of these side structures to define cleanly. It should be a factorization
-statement for
-the composite arrow map out of the category of pairs of composable arrows selected by `W`. A
-plausible shape is:
+This is the hardest of these evidence packages to define cleanly. It should be a factorization
+statement for the composite arrow map out of the category of pairs of composable arrows selected by
+`W`. A plausible shape is:
 
 1. build a category of composable selected arrows by pulling back two copies of `W` over endpoints;
 2. map it to `composableMorphismsCat C`;
@@ -543,7 +542,7 @@ This should come after `fullSubcategoryCoreEquiv`. It is probably not an opening
 
 ## Things to avoid
 
-- Do not close side structure goals with arbitrary primitive inhabitants.
+- Do not close evidence-package goals with arbitrary primitive inhabitants.
 - Do not turn every theorem in this cluster into a new `lf_opaque` field. Add axiom data only when
   it is genuinely part of Axiom H or the full subcategory construction.
 - Do not define full subcategories as strict equalities on objects. The object collection is a
