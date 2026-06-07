@@ -16,15 +16,45 @@ syntax sorts, so external formation and typing judgments are absent.  Object-the
 propositions remain as judgments, with first-class evidence sorts where term constructors
 need to consume a side condition.
 
-The declaration is a research skeleton, not a complete encoding of the paper.  It keeps the
+The declaration is a research skeleton rather than a complete encoding of the paper.  It keeps the
 three-layer structure used by sHoTT/Rzk, the strict interval and tope calculus, ordinary HoTT
 constructors needed by the paper, disjunctive gluing, and dependent extension types.  The notes
 under `Plans/SHoTTResearch/` track paper faithfulness and the remaining gaps.
+
+This file also serves as a specification-debt map.  The seven internal admissions near the end are
+only the checked placeholders.  A complete theory specification still needs more object-theory
+structure before any semantic interpretation is considered:
+
+* a general structural calculus for cube substitutions, tope restrictions, ordinary substitutions,
+  and their coherence laws;
+* first-class proof/evidence constructors for entailment, shape inclusion, and conversion evidence,
+  not just bridge rules from evidence to judgments;
+* properly guarded conversion and substitution operations, so casts and point substitutions consume
+  the equality or membership evidence that the paper requires;
+* full ordinary HoTT rules with dependent eliminators, η/computation principles, equivalences,
+  function extensionality, and universe discipline;
+* the complete extension-type rule package, including pointwise substitution and boundary
+  computation;
+* definitions of hom types, Segal conditions, Rezk completeness, covariance, and the derived
+  simplicial constructions as object-theory data.
 -/
 
 @[expose] public section
 
 /-- Intrinsic cube layer: cube contexts, cubes, cube terms, and strict cube-term equality. -/
+/-
+Specification gaps in the cube layer:
+
+* Cubes are presented by `unit`, binary products, and the interval introduced later.  The paper uses
+  finite cube contexts and substitutions between them.  A fuller signature should expose general
+  cube substitutions/renamings and prove identity, composition, weakening, and substitution laws.
+* `eqCubeTm` has product β/η and equivalence rules, but the layer lacks congruence for every later
+  operation that consumes cube terms.  The later tope/type/term substitution declarations should be
+  functorial for this equality.
+* Variables are represented by `CubeVar`; the complete specification should say whether variables
+  are de Bruijn-style structural artifacts or part of the object grammar, and should include the
+  expected weakening/substitution equations for them.
+-/
 declare_type_theory CubeLayer where
   syntax_sort CubeCtx
   syntax_sort Cube
@@ -93,6 +123,20 @@ declare_type_theory CubeLayer where
     conclusion : eqCubeTm Ξ unit t (star Ξ)
 
 /-- Intrinsic tope layer: tope contexts, topes, and entailment. -/
+/-
+Specification gaps in the tope layer:
+
+* The paper's tope calculus is a logic of constraints over cube variables.  This skeleton has the
+  connectives and basic entailment rules, but it still needs a proper cut/substitution theorem for
+  entailment and explicit stability under cube substitution.
+* `EntailsEvidence` is a first-class side-condition sort, but only the bridge from evidence to the
+  judgment is declared.  To use evidence without admissions, the signature needs constructors or
+  checked internal definitions mirroring the entailment rules below.
+* Equality topes should support replacement throughout topes, types, terms, and evidence.  The
+  later `substTyTopeEq` and `substTmTopeEq` declarations cover only a small part of this.
+* Disjunction in the tope layer should connect to term-level gluing.  Entailment elimination for
+  `φ ∨ ψ` is present, but term computation over disjunctive tope contexts is incomplete below.
+-/
 declare_type_theory TopeLayer extends CubeLayer where
   syntax_sort TopeCtx (Ξ : CubeCtx)
   syntax_sort Tope (Ξ : CubeCtx)
@@ -181,6 +225,19 @@ declare_type_theory TopeLayer extends CubeLayer where
   rule_role tope_assumption : structural
 
 /- Core sHoTT logical-framework signature. -/
+/-
+Specification gaps at the start of the ordinary layer:
+
+* `Shape` is still a primitive sort.  The intended package is close to
+  `Σ I : Cube, Tope (extendCubeCtx Ξ I)`, with appropriate equality or presentation rules.  Making
+  that package explicit would let shape inclusions compute from tope entailments more often.
+* `TyCtx`, `Ty`, and `Tm` are intrinsic sorts, which is the desired architecture.  The missing part
+  is the structural calculus: reindexing along cube substitutions, restriction along topes,
+  ordinary substitution, and all coherence laws between these actions.
+* `shapeIncl`, `eqType`, and `eqTerm` are judgments.  Constructors that consume such facts use the
+  evidence sorts below, but the evidence layer still lacks enough constructors to avoid admitting
+  ordinary side conditions.
+-/
 declare_type_theory SHoTT extends TopeLayer where
   syntax_sort Shape (Ξ : CubeCtx)
   syntax_sort TyCtx (Ξ : CubeCtx) (Φ : TopeCtx Ξ)
@@ -235,9 +292,29 @@ declare_type_theory SHoTT extends TopeLayer where
       (p : EqTermEvidence Ξ Φ Γ A a b) where
     conclusion : eqTerm Ξ Φ Γ A a b
 
+  /-
+  Missing evidence constructors:
+
+  The bridge rules above let first-class evidence produce judgments.  The reverse direction is not
+  available in general, and none of the equivalence/congruence rules below produces first-class
+  evidence.  For a complete specification, each theorem that term constructors need as data should
+  either produce evidence directly or have a checked internal definition converting the corresponding
+  judgment proof into evidence.  This matters for extension boundaries, branch overlaps, point
+  membership, and future hom/Segal/Rezk side conditions.
+  -/
+
   conversion_plugin shott_conversion
 
   /-- Directed interval and its order topes. -/
+  /-
+  Missing interval/tope specification:
+
+  The interval rules below give a preorder with endpoints, totality, and antisymmetry, plus
+  incompatibility of `0 = 1`.  A full paper-level presentation should also include the substitution
+  and congruence principles needed to push `≤` and endpoint equations through cube products and
+  shape presentations.  If additional interval algebra appears in the paper or Rzk rules, those
+  laws should live here rather than inside low-dimensional special cases.
+  -/
   lf_opaque interval : Cube
   lf_opaque zero {Ξ : CubeCtx} : CubeTm Ξ interval
   lf_opaque one {Ξ : CubeCtx} : CubeTm Ξ interval
@@ -277,6 +354,15 @@ declare_type_theory SHoTT extends TopeLayer where
     conclusion : entails Ξ Φ (topeEq Ξ interval i j)
 
   /-- Shapes are topes in a fresh cube variable; inclusions are induced by tope entailment. -/
+  /-
+  Missing shape calculus:
+
+  `shapeOf I φ` is the intended presentation `{t : I | φ}`.  The specification still needs the
+  general operations on shapes used by extension types and simplicial examples: pullback/reindexing
+  of shapes along cube substitutions, equality or isomorphism of alternative presentations, unions
+  and intersections when they are used by boundaries, and reusable face/horn inclusions.  Shape
+  inclusion evidence should compose with all of these operations.
+  -/
   lf_opaque shapeOf {Ξ : CubeCtx} (I : Cube) (φ : Tope (extendCubeCtx Ξ I)) : Shape Ξ
   rule shape_inclusion_refl (Ξ : CubeCtx) (S : Shape Ξ) where
     conclusion : shapeIncl Ξ S S
@@ -302,6 +388,15 @@ declare_type_theory SHoTT extends TopeLayer where
     ShapeInclEvidence (shapeOf I φ) (shapeOf I ψ)
 
   /-- Ordinary dependent type-theory contexts, structural operations, and conversions. -/
+  /-
+  Missing ordinary structural calculus:
+
+  This block gives the first variables, weakening, single-variable substitution, and conversion
+  judgments.  A complete dependent type theory specification needs multi-substitutions,
+  substitution into contexts, variable β/η equations, weakening/substitution interchange,
+  associativity, identity laws, and congruence for every type and term former.  These are required
+  before the later hom and Segal definitions can be written without opaque casts.
+  -/
   lf_opaque emptyTyCtx (Ξ : CubeCtx) (Φ : TopeCtx Ξ) : TyCtx Ξ Φ
   lf_opaque extendTyCtx (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
     (A : Ty Ξ Φ Γ) : TyCtx Ξ Φ
@@ -324,6 +419,12 @@ declare_type_theory SHoTT extends TopeLayer where
     (A : Ty Ξ Φ Γ) (B : Ty Ξ Φ (extendTyCtx Ξ Φ Γ A))
     (b : Tm Ξ Φ (extendTyCtx Ξ Φ Γ A) B) (a : Tm Ξ Φ Γ A) :
       Tm Ξ Φ Γ (substTy Ξ Φ Γ A B a)
+  /-
+  Specification hole: `convTm` should be guarded by `eqType` or `EqTypeEvidence`.  As written it
+  coerces a term of any type `A` to any type `B`.  It is kept as a marker for the conversion rule,
+  but a complete signature should replace it with an evidence-indexed cast and propagate that
+  evidence through all β/η rules that use conversion.
+  -/
   lf_opaque convTm (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
     (A : Ty Ξ Φ Γ) (B : Ty Ξ Φ Γ) (a : Tm Ξ Φ Γ A) : Tm Ξ Φ Γ B
 
@@ -360,6 +461,16 @@ declare_type_theory SHoTT extends TopeLayer where
     conclusion : eqTerm Ξ Φ Γ A a c
 
   /-- Ordinary HoTT constructors used in the paper. -/
+  /-
+  Missing ordinary HoTT specification:
+
+  The constructors below are enough to name many paper ingredients, but they are not a full HoTT
+  theory.  The missing rules include dependent eliminators for coproducts and identity types,
+  `Π` η and function extensionality, universe codes and decoding computation, congruence for all
+  arguments of each type former, and a principled treatment of conversion.  `IsContr` should become
+  a checked definition from `Σ`, `Π`, and `Id`, and the theory still needs equivalences and
+  `IsEquiv` before Segal and Rezk conditions can be stated precisely.
+  -/
   lf_opaque Uni (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ) : Ty Ξ Φ Γ
   lf_opaque El (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
     (A : Tm Ξ Φ Γ (Uni Ξ Φ Γ)) : Ty Ξ Φ Γ
@@ -421,6 +532,11 @@ declare_type_theory SHoTT extends TopeLayer where
     conclusion : eqTerm Ξ Φ Γ (Sigma Ξ Φ Γ A B)
       (pair Ξ Φ Γ A B («fst» Ξ Φ Γ A B p) («snd» Ξ Φ Γ A B p)) p
 
+  /-
+  Coproduct gap: `coprodElim` is non-dependent.  The paper uses disjunction-shaped computation in
+  tope contexts, so the ordinary coproduct layer should eventually include dependent elimination,
+  η/uniqueness, and interaction with tope restriction and `branchTm`.
+  -/
   lf_opaque Coprod (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
     (A : Ty Ξ Φ Γ) (B : Ty Ξ Φ Γ) : Ty Ξ Φ Γ
   lf_opaque inl (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
@@ -456,6 +572,11 @@ declare_type_theory SHoTT extends TopeLayer where
       (convTm Ξ Φ Γ (substTy Ξ Φ Γ B (weakenTy Ξ Φ Γ C B) b) C
         (app Ξ Φ Γ B (weakenTy Ξ Φ Γ C B) g b))
 
+  /-
+  Identity-type gap: `idTransport` is a transport primitive rather than a full dependent identity
+  eliminator.  A complete specification should state the eliminator, β rule, congruence, and the
+  derived path algebra needed for equivalences and Rezk completeness.
+  -/
   lf_opaque Id (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
     (A : Ty Ξ Φ Γ) (a : Tm Ξ Φ Γ A) (b : Tm Ξ Φ Γ A) : Ty Ξ Φ Γ
   lf_opaque reflTm (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
@@ -477,6 +598,11 @@ declare_type_theory SHoTT extends TopeLayer where
     premise right_eq : eqTerm Ξ Φ Γ A b b'
     conclusion : eqType Ξ Φ Γ (Id Ξ Φ Γ A a b) (Id Ξ Φ Γ A a' b')
 
+  /-
+  Contractibility gap: `IsContr` is primitive.  For a full object theory it should be the standard
+  dependent-pair package containing a center and paths from the center to each point.  That change
+  also supplies the projections below by checked definitions.
+  -/
   lf_opaque IsContr (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
     (A : Ty Ξ Φ Γ) : Ty Ξ Φ Γ
   lf_opaque isContrCenter (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
@@ -486,6 +612,19 @@ declare_type_theory SHoTT extends TopeLayer where
     (x : Tm Ξ Φ Γ A) : Tm Ξ Φ Γ (Id Ξ Φ Γ A (isContrCenter Ξ Φ Γ A c) x)
 
   /-- Tope equality, cube weakening/substitution, and tope restriction. -/
+  /-
+  Missing reindexing and restriction laws:
+
+  This region is the main structural bottleneck.  A complete SHoTT specification should present
+  reindexing along arbitrary cube substitutions, restriction to tope assumptions, and substitution
+  of cube points as functorial operations on contexts, types, terms, and evidence.  Required laws
+  include identities, composition, interaction with ordinary substitution, interaction with tope
+  logical connectives, and preservation of every type former above.
+
+  Equality topes also need a replacement principle.  `substTyTopeEq` and `substTmTopeEq` name part
+  of that principle, but the full theory needs replacement through topes, shape presentations,
+  extension boundaries, and evidence terms.
+  -/
   lf_opaque substTyTopeEq (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
     (I : Cube) (i : CubeTm Ξ I) (j : CubeTm Ξ I) (A : Ty Ξ Φ Γ) : Ty Ξ Φ Γ
   lf_opaque substTmTopeEq (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
@@ -524,6 +663,11 @@ declare_type_theory SHoTT extends TopeLayer where
     (A : Ty (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
       (weakenTyCtxCube Ξ Φ Γ I))
     (s : CubeTm Ξ I) : Ty Ξ Φ Γ
+  /-
+  Specification hole: substituting a term defined under the tope `φ` at a point `s` should require
+  evidence for `φ[s]`, or it should return a term in a context extended by `φ[s]`.  The declaration
+  below is permissive because it lacks that membership evidence.
+  -/
   lf_opaque substTmCube (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
     (I : Cube) (φ : Tope (extendCubeCtx Ξ I))
     (A : Ty (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
@@ -540,6 +684,14 @@ declare_type_theory SHoTT extends TopeLayer where
     conclusion : eqType Ξ Φ Γ (substTyCube Ξ Φ Γ I (weakenTyCube Ξ Φ Γ A I) s) A
 
   /-- Disjunctive gluing for topes. -/
+  /-
+  Missing disjunctive computation rules:
+
+  `branchTm` should compute to the left branch under `φ`, to the right branch under `ψ`, and satisfy
+  a uniqueness/η rule over `φ ∨ ψ`.  The overlap data should be tied to actual restrictions of the
+  branches to `φ ∧ ψ`, rather than arbitrary terms supplied by the caller.  The theory also needs a
+  bottom-elimination term former for ordinary terms in an impossible tope context.
+  -/
   lf_opaque branchTm (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
     (φ : Tope Ξ) (ψ : Tope Ξ) (A : Ty Ξ Φ Γ)
     (left : Tm Ξ (extendTopeCtx Ξ Φ φ) (restrictTyCtxTope Ξ Φ Γ φ)
@@ -581,6 +733,19 @@ declare_type_theory SHoTT extends TopeLayer where
 
   The inclusion is first-class evidence, so an extension type can only be formed from a declared
   subshape `{t : I | φ} ⊆ {t : I | ψ}`.
+
+  Missing extension-type specification:
+
+  * The larger-shape section `b` in `extIntro` should restrict to the smaller shape by a canonical
+    restriction operation induced by `incl`; the present `bBoundary` argument is a temporary way to
+    name that restriction.
+  * Point application should have β rules for introduced sections and boundary rules at points
+    satisfying the smaller-shape tope `φ`.
+  * Extension types should be stable under cube substitution, tope restriction, ordinary
+    substitution, and conversion, with stated coherence laws.
+  * Section 4 of the paper requires extension-type equivalences: currying/interchange of extension
+    variables, interaction with `Π`, `Σ`, identity, coproduct/disjunction, and relative function
+    extensionality.  Only a single `relExtFunext` primitive appears below.
   -/
   lf_opaque Ext (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ) (I : Cube)
     (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
@@ -781,6 +946,14 @@ declare_type_theory SHoTT extends TopeLayer where
         (extAppBoundary Ξ Φ Γ I φ ψ incl A a f)
         (extBoundaryEvidence Ξ Φ Γ I φ ψ incl A a f))
 
+  /-
+  Relative extension function extensionality gap:
+
+  The paper proves a family of equivalences showing that extension types preserve contractibility
+  and commute with type formers.  This primitive records the most visible consequence, but a full
+  specification should state the surrounding equivalences and their computation behavior, then make
+  this term a derived construction where possible.
+  -/
   lf_opaque relExtFunext (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ) (I : Cube)
     (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
     (incl : ShapeInclEvidence (shapeOf Ξ I φ) (shapeOf Ξ I ψ))
@@ -803,6 +976,16 @@ declare_type_theory SHoTT extends TopeLayer where
       Tm Ξ Φ Γ (IsContr Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ incl A a))
 
 namespace SHoTT
+
+/-
+Low-dimensional shape library gaps:
+
+The definitions below provide only the shapes needed to name the first hom/Segal/Rezk placeholders.
+A full syntactic specification should include a reusable family of simplices `Δⁿ`, boundaries
+`∂Δⁿ`, horns `Λⁿₖ`, face and degeneracy maps, inclusions between these shapes, and laws relating
+those maps to the tope presentations.  The checked definitions should avoid one-off geometry for
+only `n = 1` and `n = 2`.
+-/
 
 /-- Cube context with one interval coordinate. -/
 internal def intervalCtx : CubeCtx := extendCubeCtx emptyCubeCtx interval
@@ -900,6 +1083,12 @@ internal def BoundaryDelta2 : Shape emptyCubeCtx := boundary2
 /-- Checked standard-library alias for the `(2,1)`-horn shape. -/
 internal def Horn21 : Shape emptyCubeCtx := horn21
 
+/-
+The next three inclusions should be checked evidence constructed from the tope calculus.  They are
+currently admitted because the entailment/evidence layer lacks enough reusable constructors and
+substitution laws to derive the inclusions from the displayed formulas.
+-/
+
 /-- The boundary of Δ¹ is included in Δ¹, as first-class extension-side-condition evidence. -/
 internal def boundary1_in_delta1 : ShapeInclEvidence BoundaryDelta1 Delta1 := sorry
 
@@ -908,6 +1097,21 @@ internal def horn21_in_delta2 : ShapeInclEvidence Horn21 Delta2 := sorry
 
 /-- The boundary of Δ² is included in Δ², as first-class extension-side-condition evidence. -/
 internal def boundary2_in_delta2 : ShapeInclEvidence BoundaryDelta2 Delta2 := sorry
+
+/-
+Hom/Segal/Rezk specification gaps:
+
+These shape constructors are placeholders for a much larger object-theory layer.  The full theory
+should define hom types from extension types over `Δ¹` with prescribed endpoint boundary data,
+define composition and associativity from fillers over `Δ²`, express the Segal condition as
+contractibility or equivalence of composite data, and state Rezk completeness using the internal
+`idtoiso`/equivalence package.  These should be ordinary type-theoretic definitions and judgments,
+not just names for shapes.
+
+The future layer should also include covariant families, the Yoneda lemma, and adjunctions as
+object-theory constructions once the hom and Segal infrastructure exists.  Those topics still
+belong to the specification, even though model semantics is outside this file's immediate scope.
+-/
 
 /-- Admitted hom-shape constructor. -/
 internal def homShape : (S : Shape emptyCubeCtx) → Shape emptyCubeCtx := sorry
