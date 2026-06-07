@@ -727,27 +727,31 @@ internal def simplex2Right :
     CubeTm (extendCubeCtx emptyCubeCtx (prod interval interval)) interval :=
   pi2 (extendCubeCtx emptyCubeCtx (prod interval interval)) interval interval simplex2Var
 
-/-- Tope presentation of the 2-simplex as ordered interval coordinates. -/
+/-- Tope presentation of the 2-simplex as ordered interval coordinates.  Paper
+convention: `Δ² = {⟨t₁, t₂⟩ : 2 × 2 | t₂ ≤ t₁}`.
+-/
 internal def simplex2Tope : Tope (extendCubeCtx emptyCubeCtx (prod interval interval)) :=
-  leq (extendCubeCtx emptyCubeCtx (prod interval interval)) simplex2Left simplex2Right
+  leq (extendCubeCtx emptyCubeCtx (prod interval interval)) simplex2Right simplex2Left
 
-/-- Tope presentation of the boundary of the 2-simplex. -/
+/-- Tope presentation of the boundary of the 2-simplex.  With the paper coordinate convention,
+the three faces are `t₂ = 0`, `t₂ = t₁`, and `t₁ = 1`.
+-/
 internal def boundary2Tope : Tope (extendCubeCtx emptyCubeCtx (prod interval interval)) :=
   topeOr (extendCubeCtx emptyCubeCtx (prod interval interval))
     (topeOr (extendCubeCtx emptyCubeCtx (prod interval interval))
-      (topeEq (extendCubeCtx emptyCubeCtx (prod interval interval)) interval simplex2Left
-        (zero (extendCubeCtx emptyCubeCtx (prod interval interval))))
       (topeEq (extendCubeCtx emptyCubeCtx (prod interval interval)) interval simplex2Right
+        (zero (extendCubeCtx emptyCubeCtx (prod interval interval))))
+      (topeEq (extendCubeCtx emptyCubeCtx (prod interval interval)) interval simplex2Left
         (one (extendCubeCtx emptyCubeCtx (prod interval interval)))))
-    (topeEq (extendCubeCtx emptyCubeCtx (prod interval interval)) interval simplex2Left
-      simplex2Right)
+    (topeEq (extendCubeCtx emptyCubeCtx (prod interval interval)) interval simplex2Right
+      simplex2Left)
 
 /-- Tope presentation of the `(2,1)`-horn, omitting the diagonal face. -/
 internal def horn21Tope : Tope (extendCubeCtx emptyCubeCtx (prod interval interval)) :=
   topeOr (extendCubeCtx emptyCubeCtx (prod interval interval))
-    (topeEq (extendCubeCtx emptyCubeCtx (prod interval interval)) interval simplex2Left
-      (zero (extendCubeCtx emptyCubeCtx (prod interval interval))))
     (topeEq (extendCubeCtx emptyCubeCtx (prod interval interval)) interval simplex2Right
+      (zero (extendCubeCtx emptyCubeCtx (prod interval interval))))
+    (topeEq (extendCubeCtx emptyCubeCtx (prod interval interval)) interval simplex2Left
       (one (extendCubeCtx emptyCubeCtx (prod interval interval))))
 
 /-- Standard-library 2-simplex shape. -/
