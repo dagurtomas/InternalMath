@@ -273,8 +273,6 @@ statement for the composite arrow map out of the category of pairs of composable
 3. compose using `composeComposableMorphism` or the Segal composite;
 4. require the resulting arrow map to factor through `W`.
 
-This may deserve its own small design session. Do not fake it with an unstructured inhabitant.
-
 ## Phase 2: repair the Axiom H package
 
 Package:
