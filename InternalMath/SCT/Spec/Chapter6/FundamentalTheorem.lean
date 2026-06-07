@@ -112,8 +112,8 @@ extend_type_theory SCT where
       NatIso A C F G :=
     fun A C F G α h => ⟨α, h⟩
   /-- Evidence that the induced map on one fiber is an equivalence. -/
-  syntax_abbrev FiberMapEquiv (E : SCat) (B : SCat) (p : Functor E B)
-    (E' : SCat) (p' : Functor E' B) (F : Functor E E')
+  syntax_abbrev FiberMapEquiv {E : SCat} {B : SCat} (p : Functor E B)
+    {E' : SCat} (p' : Functor E' B) (F : Functor E E')
     (hBase : FunctorOverBase E B p E' p' F) (b : Obj B) :=
     Σ e : CatEquiv (fiberCat E B p b) (fiberCat E' B p' b),
       NatIso (fiberCat E B p b) (fiberCat E' B p' b)
@@ -122,8 +122,8 @@ extend_type_theory SCT where
   /-- Evidence that a functor over a base is an equivalence on each fiber.
   Book target: Theorem 6.4.7/6.4.9, the fiberwise criterion for equivalences of cocartesian
   fibrations. -/
-  syntax_abbrev FiberwiseCatEquiv (E : SCat) (B : SCat) (p : Functor E B)
-    (E' : SCat) (p' : Functor E' B) (F : Functor E E')
+  syntax_abbrev FiberwiseCatEquiv {E : SCat} {B : SCat} (p : Functor E B)
+    {E' : SCat} (p' : Functor E' B) (F : Functor E E')
     (hBase : FunctorOverBase E B p E' p' F) :=
     (b : Obj B) → FiberMapEquiv E B p E' p' F hBase b
   /-- The equivalence on a specified fiber. -/

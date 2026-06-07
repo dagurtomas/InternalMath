@@ -43,9 +43,9 @@ extend_type_theory SCT where
 
 
   /-- Isofibration witness for the base condition in Definition 5.6.1. -/
-  syntax_sort IsofibrationWitness (E : SCat) (B : SCat) (p : Functor E B) : Type u
+  syntax_sort IsofibrationWitness {E : SCat} {B : SCat} (p : Functor E B) : Type u
   /-- Chapter 5 fibration vocabulary is the book's isofibration condition. -/
-  syntax_abbrev Fibration (E : SCat) (B : SCat) (p : Functor E B) := IsofibrationWitness E B p
+  syntax_abbrev Fibration {E : SCat} {B : SCat} (p : Functor E B) := IsofibrationWitness E B p
   /-- Adjunction data between two functors; Chapter 5. -/
   syntax_def Adjunction (C : SCat) (D : SCat) (L : Functor C D) (R : Functor D C) : Type u :=
     sorry
@@ -111,19 +111,19 @@ extend_type_theory SCT where
   /-- Cartesian structure on a fibration, represented by a right adjoint section of `directedEval1`.
   Book context: Chapter 5 of the SCT book.
   -/
-  syntax_abbrev CartesianFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
+  syntax_abbrev CartesianFibrationWitness {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) :=
     RightAdjointSection (funCat intervalCat E)
       (directedPullbackCat B E B (idFunctor B) p) (directedEval1 E B p)
   /-- Cocartesian structure on a fibration, represented by a left adjoint section of
   `directedEval0`. Book context: Chapter 5 of the SCT book.
   -/
-  syntax_abbrev CocartesianFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
+  syntax_abbrev CocartesianFibrationWitness {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) :=
     LeftAdjointSection (funCat intervalCat E)
       (directedPullbackCat E B B p (idFunctor B)) (directedEval0 E B p)
   /-- Left-fibration structure; Chapter 5. -/
-  syntax_sort LeftFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
+  syntax_sort LeftFibrationWitness {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) : Type u
 
 extend_type_theory SCT where
@@ -140,7 +140,7 @@ extend_type_theory SCT where
   model_section Chapter5
 
   /-- Right-fibration structure; Chapter 5. -/
-  syntax_sort RightFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
+  syntax_sort RightFibrationWitness {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) : Type u
   /-- Left fibrations are equivalently those with `directedEval0` an equivalence.  Book context:
   Chapter 5 of the SCT book.
@@ -232,7 +232,7 @@ extend_type_theory SCT where
   Book context:Chapter 5 of
   the SCT book.
   -/
-  syntax_sort CocartesianMorphism (E : SCat) (B : SCat) (p : Functor E B)
+  syntax_sort CocartesianMorphism {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (u : Functor intervalCat E) : Type u
 
@@ -258,23 +258,23 @@ extend_type_theory SCT where
   /-- Cartesian morphism evidence for a morphism in the total category.  Book context: Chapter 5 of
   the SCT book.
   -/
-  syntax_sort CartesianMorphism (E : SCat) (B : SCat) (p : Functor E B)
+  syntax_sort CartesianMorphism {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) (cart : CartesianFibrationWitness E B p fib)
     (u : Functor intervalCat E) : Type u
   /-- Locally cocartesian fibration structure; Chapter 5. -/
-  syntax_sort LocallyCocartesianFibrationWitness (E : SCat) (B : SCat)
+  syntax_sort LocallyCocartesianFibrationWitness {E : SCat} {B : SCat}
     (p : Functor E B) (fib : Fibration E B p) : Type u
   /-- Locally cartesian fibration structure; Chapter 5. -/
-  syntax_sort LocallyCartesianFibrationWitness (E : SCat) (B : SCat)
+  syntax_sort LocallyCartesianFibrationWitness {E : SCat} {B : SCat}
     (p : Functor E B) (fib : Fibration E B p) : Type u
   /-- Cartesian functor between cartesian fibrations; Chapter 5 dual to cocartesian functors. -/
-  syntax_sort CartesianFunctorWitness (E : SCat) (B : SCat) (p : Functor E B)
+  syntax_sort CartesianFunctorWitness {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) (cart : CartesianFibrationWitness E B p fib)
-    (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
+    {E' : SCat} (p' : Functor E' B) (fib' : Fibration E' B p')
     (cart' : CartesianFibrationWitness E' B p' fib') (F : Functor E E') : Type u
 
   /-- Fiberwise initial-object evidence; Axiom L. -/
-  syntax_sort FiberwiseInitialWitness (E : SCat) (B : SCat) (p : Functor E B)
+  syntax_sort FiberwiseInitialWitness {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) : Type u
 
 extend_type_theory SCT where
@@ -315,9 +315,9 @@ extend_type_theory SCT where
         (funCat intervalCat E') (cocartesianLiftFunctor E B p fib cocart)
         (postcompFunctor intervalCat E E' F))
   /-- Beck-Chevalley invertibility for the chosen transformation. -/
-  syntax_abbrev CocartesianFunctorBeckChevalley (E : SCat) (B : SCat) (p : Functor E B)
+  syntax_abbrev CocartesianFunctorBeckChevalley {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
-    (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
+    {E' : SCat} (p' : Functor E' B) (fib' : Fibration E' B p')
     (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
     (hBase : FunctorOverBase E B p E' p' F) :=
     ObjectwiseNatIso (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E')
@@ -331,9 +331,9 @@ extend_type_theory SCT where
       (beckChevalleyTransformation E B p fib cocart E' p' fib' cocart' F hBase)
   /-- Cocartesian functor between cocartesian fibrations, as over-base data plus the
   Beck-Chevalley invertibility condition. -/
-  syntax_abbrev CocartesianFunctorWitness (E : SCat) (B : SCat) (p : Functor E B)
+  syntax_abbrev CocartesianFunctorWitness {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
-    (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
+    {E' : SCat} (p' : Functor E' B) (fib' : Fibration E' B p')
     (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E') :=
     Σ hBase : FunctorOverBase E B p E' p' F,
       CocartesianFunctorBeckChevalley E B p fib cocart E' p' fib' cocart' F hBase
@@ -396,7 +396,7 @@ extend_type_theory SCT where
   model_section Chapter5
 
   /-- Fiberwise terminal-object evidence; Axiom L. -/
-  syntax_sort FiberwiseTerminalWitness (E : SCat) (B : SCat) (p : Functor E B)
+  syntax_sort FiberwiseTerminalWitness {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) : Type u
   /-- Cartesian plus fiberwise initial data assembles a left adjoint section; Axiom L. -/
   lf_opaque universal_left_adjoint_section (E : SCat) (B : SCat) (p : Functor E B)
@@ -423,13 +423,13 @@ extend_type_theory SCT where
   /-- Contextual fibration indexed by a contextual functor.
   Book context:Chapter 5 of the SCT book.
   -/
-  syntax_sort ContextFibration (Γ : SCat) (E : ContextCat Γ) (B : ContextCat Γ)
+  syntax_sort ContextFibration {Γ : SCat} {E : ContextCat Γ} {B : ContextCat Γ}
     (p : ContextFunctor Γ E B) : Type u
   /-- Contextual cartesian fibration witness.  Book context: Chapter 5 of the SCT book. -/
-  syntax_sort ContextCartesianFibrationWitness (Γ : SCat) (E : ContextCat Γ) (B : ContextCat Γ)
+  syntax_sort ContextCartesianFibrationWitness {Γ : SCat} {E : ContextCat Γ} {B : ContextCat Γ}
     (p : ContextFunctor Γ E B) (fib : ContextFibration Γ E B p) : Type u
   /-- Contextual cocartesian fibration witness.  Book context: Chapter 5 of the SCT book. -/
-  syntax_sort ContextCocartesianFibrationWitness (Γ : SCat) (E : ContextCat Γ) (B : ContextCat Γ)
+  syntax_sort ContextCocartesianFibrationWitness {Γ : SCat} {E : ContextCat Γ} {B : ContextCat Γ}
     (p : ContextFunctor Γ E B) (fib : ContextFibration Γ E B p) : Type u
   /-- Pullback-indexing shape `⌟ = {0,1} ★ *` for cospans.  Book context: Chapter 5 of the SCT book.
   -/

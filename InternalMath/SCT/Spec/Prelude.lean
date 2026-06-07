@@ -71,20 +71,20 @@ declare_type_theory SCT{u} where
   /-- Functors between synthetic categories; Axiom A.1. -/
   syntax_sort Functor (C : SCat) (D : SCat) : Type u
   /-- Natural transformations between parallel functors; Axioms A.1' and A.2'. -/
-  syntax_sort NatTrans (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D) : Type u
+  syntax_sort NatTrans {C : SCat} {D : SCat} (F : Functor C D) (G : Functor C D) : Type u
   /-- Componentwise invertibility evidence for a natural transformation. -/
   syntax_def ObjectwiseNatIsoData (C : SCat) (D : SCat)
-    (F : Functor C D) (G : Functor C D) (α : NatTrans C D F G) : Type u := sorry
+    (F : Functor C D) (G : Functor C D) (α : NatTrans F G) : Type u := sorry
   syntax_sort_role ObjectwiseNatIsoData : side_structure
   /-- Objectwise natural-isomorphism evidence for a natural transformation. -/
-  syntax_abbrev ObjectwiseNatIso (C : SCat) (D : SCat)
-    (F : Functor C D) (G : Functor C D) (α : NatTrans C D F G) :=
+  syntax_abbrev ObjectwiseNatIso {C : SCat} {D : SCat}
+    (F : Functor C D) (G : Functor C D) (α : NatTrans F G) :=
     ObjectwiseNatIsoData C D F G α
   /-- Natural-isomorphism/coherence data between parallel functors; Axiom A.1.
   The package exposes its underlying natural transformation and objectwise invertibility witness.
   -/
-  syntax_abbrev NatIso (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D) :=
-    Σ natIsoTrans : NatTrans C D F G, ObjectwiseNatIso C D F G natIsoTrans
+  syntax_abbrev NatIso {C : SCat} {D : SCat} (F : Functor C D) (G : Functor C D) :=
+    Σ natIsoTrans : NatTrans F G, ObjectwiseNatIso F G natIsoTrans
   /-- Category equivalence data; definition after Axiom A.3. -/
   syntax_sort CatEquiv (C : SCat) (D : SCat) : Type u
   /-- The mapping anima `Map(C,D)` whose terms are functors `C → D`; Axiom A.1(4). -/
@@ -326,16 +326,16 @@ declare_type_theory SCT{u} where
         (catEquivTransUnit A B C eAB eBC)
         (catEquivTransCounit A B C eAB eBC)
   /-- A section of a functor; Definition 1.1.12.  The displayed natural isomorphism is the data. -/
-  syntax_abbrev SectionWitness (C : SCat) (D : SCat) (F : Functor C D) (S : Functor D C)
+  syntax_abbrev SectionWitness {C : SCat} {D : SCat} (F : Functor C D) (S : Functor D C)
     (σ : NatIso D D (compFunctor D C D S F) (idFunctor D)) :=
     NatIso D D (compFunctor D C D S F) (idFunctor D)
   /-- A retraction of a functor; Definition 1.1.12.  The displayed natural isomorphism is the data.
   -/
-  syntax_abbrev RetractionWitness (C : SCat) (D : SCat) (F : Functor C D) (R : Functor D C)
+  syntax_abbrev RetractionWitness {C : SCat} {D : SCat} (F : Functor C D) (R : Functor D C)
     (ρ : NatIso C C (compFunctor C D C F R) (idFunctor C)) :=
     NatIso C C (compFunctor C D C F R) (idFunctor C)
   /-- Retraction data for a category as a retract of another; Definition 1.1.18. -/
-  syntax_abbrev RetractWitness (C : SCat) (D : SCat)
+  syntax_abbrev RetractWitness {C : SCat} {D : SCat}
     (i : Functor C D) (r : Functor D C)
     (ρ : NatIso C C (compFunctor C D C i r) (idFunctor C)) :=
     NatIso C C (compFunctor C D C i r) (idFunctor C)

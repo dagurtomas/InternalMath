@@ -44,18 +44,18 @@ extend_type_theory SCT where
   /-- Fully faithful functors, represented by the endpoint-pullback arrow criterion.  Book context:
   Chapter 6 of the SCT book.
   -/
-  syntax_abbrev FullyFaithful (C : SCat) (D : SCat) (F : Functor C D) :=
+  syntax_abbrev FullyFaithful {C : SCat} {D : SCat} (F : Functor C D) :=
     CatEquiv (funCat intervalCat C)
       (pullbackCat (prodCat C C) (funCat intervalCat D) (prodCat D D)
         (objectPairFunctor C D F) (arrowEndpointFunctor D))
   /-- Conservative functors, represented by the core-pullback criterion.  Book context: Chapter 6 of
   the SCT book.
   -/
-  syntax_abbrev Conservative (C : SCat) (D : SCat) (F : Functor C D) :=
+  syntax_abbrev Conservative {C : SCat} {D : SCat} (F : Functor C D) :=
     PullbackSquare (coreCat C) C (coreCat D) D (coreIncl C) (coreFunctor C D F) F (coreIncl D)
   /-- Strongly-surjective functors, represented by a section of the induced map on cores;
   Definition 6.3.1. -/
-  syntax_abbrev StronglySurjective (C : SCat) (D : SCat) (F : Functor C D) :=
+  syntax_abbrev StronglySurjective {C : SCat} {D : SCat} (F : Functor C D) :=
     Σ s : Functor (coreCat D) (coreCat C),
       NatIso (coreCat D) (coreCat D)
         (compFunctor (coreCat D) (coreCat C) (coreCat D) s (coreFunctor C D F))

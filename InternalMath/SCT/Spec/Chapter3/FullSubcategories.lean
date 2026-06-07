@@ -35,12 +35,12 @@ extend_type_theory SCT where
   model_section Chapter3
 
   /-- Membership data for an arrow whose endpoints lie in the chosen object collection. -/
-  syntax_abbrev EndpointRestrictedMorphismData (C : SCat) (P : ObjectCollection C)
+  syntax_abbrev EndpointRestrictedMorphismData {C : SCat} (P : ObjectCollection C)
     (f : Functor intervalCat C) :=
     Σ source_mem : ObjectCollectionMember C P (sourceObj C f),
       ObjectCollectionMember C P (targetObj C f)
   /-- Membership of an interval-shaped morphism in a morphism collection. -/
-  syntax_abbrev MorphismCollectionMember (C : SCat) (W : MorphismCollection C)
+  syntax_abbrev MorphismCollectionMember {C : SCat} (W : MorphismCollection C)
     (f : Functor intervalCat C) :=
     PreservesMorphismCollection intervalCat C W f
   /-- Endpoint-restricted morphism package used to build full subcategories from

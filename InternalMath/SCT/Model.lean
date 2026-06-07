@@ -666,7 +666,8 @@ The natural-transformation component is kept from the quasicategory skeleton; th
 is admitted SCT debt. -/
 abbrev ModelObjectwiseNatIsoData (C D : SSet.QCat.{u}) (F G : C ⟶ D)
     (α : NatTrans C D F G) : Type u :=
-  SCTModel_ObjectwiseNatIsoData_syntaxDef SSet.QCat (fun C D => C ⟶ D) NatTrans C D F G α
+  SCTModel_ObjectwiseNatIsoData_syntaxDef SSet.QCat (fun C D => C ⟶ D)
+    (fun {C D} F G => NatTrans C D F G) C D F G α
 
 /-- The generated model type for natural isomorphisms. -/
 abbrev ModelNatIso (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
@@ -689,7 +690,7 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   Anima := SSet.Kan.{u}
   SCat := SSet.QCat.{u}
   Functor C D := C ⟶ D
-  NatTrans := SCTModelHelpers.NatTrans
+  NatTrans := fun {C D} F G => SCTModelHelpers.NatTrans C D F G
   CatEquiv := SCTModelHelpers.CatEquivData
   AnimaIndexedCat := sorry
   GroupoidWitness C := ULift.{u} (PLift (SSet.KanComplex C.obj))

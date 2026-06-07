@@ -41,7 +41,7 @@ extend_type_theory SCT where
   model_section Chapter1
 
   /-- Isomorphisms between absolute objects.  Book context: Chapter 1 of the SCT book. -/
-  syntax_abbrev ObjIso (C : SCat) (x : Obj C) (y : Obj C) := NatIso terminalCat C x y
+  syntax_abbrev ObjIso {C : SCat} (x : Obj C) (y : Obj C) := NatIso terminalCat C x y
   /-- Evidence that every fiber of an anima-indexed family is an anima: each fiber is presented as
   equivalent to the underlying category of a primitive anima.  Book context: Axiom A.1(3). -/
   syntax_abbrev allFibersAnima (Γ : Anima) (C : AnimaIndexedCat Γ) :=
@@ -94,7 +94,7 @@ extend_type_theory SCT where
   -/
   syntax_abbrev ContractibleCat (C : SCat) := CatEquiv C terminalCat
   /-- A contraction of `C` onto an object `x`.  Book context: Chapter 1 of the SCT book. -/
-  syntax_abbrev ContractionAt (C : SCat) (x : Obj C) :=
+  syntax_abbrev ContractionAt {C : SCat} (x : Obj C) :=
     NatIso C C (constantFunctor C C x) (idFunctor C)
 
   /-- Initial category; Axiom B.2. -/
@@ -264,8 +264,8 @@ extend_type_theory SCT where
       (y : Obj D) ⇒ Functor (fiberCat C D F y) terminalCat :=
     fun C D F y => pullbackPr2 C terminalCat D F y
   /-- Evidence that a functor between total categories lies over a fixed base. -/
-  syntax_abbrev FunctorOverBase (E : SCat) (B : SCat) (p : Functor E B)
-    (E' : SCat) (p' : Functor E' B) (F : Functor E E') :=
+  syntax_abbrev FunctorOverBase {E : SCat} {B : SCat} (p : Functor E B)
+    {E' : SCat} (p' : Functor E' B) (F : Functor E E') :=
     NatIso E B (compFunctor E E' B F p') p
   /-- Compatibility isomorphism used to map fibers along a functor over the base. -/
   lf_def fiberMapCompat : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
@@ -303,13 +303,13 @@ extend_type_theory SCT where
   /-- A pullback-square predicate for theorem statements, represented by the comparison to the
   pullback object.  Book context: Chapter 1 of the SCT book.
   -/
-  syntax_abbrev PullbackSquare (A : SCat) (B : SCat) (C : SCat) (D : SCat)
+  syntax_abbrev PullbackSquare {A : SCat} {B : SCat} {C : SCat} {D : SCat}
     (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) :=
     CatEquiv A (pullbackCat B C D right bottom)
   /-- Embedding evidence for a functor, represented by equivalence with the self-pullback.  Book
   context: Chapter 1 of the SCT book.
   -/
-  syntax_abbrev Embedding (C : SCat) (D : SCat) (F : Functor C D) :=
+  syntax_abbrev Embedding {C : SCat} {D : SCat} (F : Functor C D) :=
     CatEquiv C (pullbackCat C C D F F)
   /-- Self-pullback of the identity functor. -/
   lf_def identitySelfPullback : SCat ⇒ SCat :=
@@ -527,7 +527,7 @@ extend_type_theory SCT where
     Functor (funCat B C) (funCat A C)
   /-- Pushout-square witness: a commutative square plus its mapping-out universal property.  Book
   target: pushout squares used throughout Chapter 1, especially Proposition 1.3.3 and Axiom J.1. -/
-  syntax_abbrev PushoutSquare (A : SCat) (B : SCat) (C : SCat) (D : SCat)
+  syntax_abbrev PushoutSquare {A : SCat} {B : SCat} {C : SCat} {D : SCat}
     (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) :=
     Σ comm : NatIso A D (compFunctor A B D top right) (compFunctor A C D left bottom),
       (X : SCat) → CatEquiv (funCat D X)
@@ -738,11 +738,11 @@ extend_type_theory SCT where
       (objectSourceFiberTarget C x) y
   /-- Initial-object witness for an object of a synthetic category.
   Book target: the initial-object characterization used in §1.2 and later in §5.5. -/
-  syntax_abbrev InitialObjectWitness (C : SCat) (x : Obj C) :=
+  syntax_abbrev InitialObjectWitness {C : SCat} (x : Obj C) :=
     (y : Obj C) → CatEquiv (objectHomCat C x y) terminalCat
   /-- Terminal-object witness for an object of a synthetic category.
   Book target: the terminal-object characterization used in §1.2 and later in §5.5. -/
-  syntax_abbrev TerminalObjectWitness (C : SCat) (x : Obj C) :=
+  syntax_abbrev TerminalObjectWitness {C : SCat} (x : Obj C) :=
     (y : Obj C) → CatEquiv (objectHomCat C y x) terminalCat
   /-- Outgoing homs from an initial object are contractible, by projecting its witness. -/
   lf_def initialObjectHomContractible :

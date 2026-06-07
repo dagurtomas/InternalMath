@@ -38,12 +38,12 @@ extend_type_theory SCT where
 
 
   /-- Directed-univalence witness for a cocartesian fibration; Axiom N/Definition 7.3.10. -/
-  syntax_sort DirectedUnivalenceWitness (U : SCat) (Udot : SCat) (p : Functor Udot U)
+  syntax_sort DirectedUnivalenceWitness {U : SCat} {Udot : SCat} (p : Functor Udot U)
     (fib : Fibration Udot U p) (cocart : CocartesianFibrationWitness Udot U p fib) : Type u
   /-- Classifying transformations are natural transformations between classifiers, as in Chapter 7
   of the SCT book.
   -/
-  syntax_abbrev ClassifyingTransformation (B : SCat) (U : SCat)
+  syntax_abbrev ClassifyingTransformation {B : SCat} {U : SCat}
     (f : Functor B U) (g : Functor B U) := NatTrans B U f g
   /-- Universe-of-categories package; Chapter 7 universe structure. -/
   syntax_sort UniverseWitness (U : SCat) : Type u

@@ -45,15 +45,15 @@ extend_type_theory SCT where
   /-- Category in context `Γ`; Axiom K.1. -/
   syntax_sort ContextCat (Γ : SCat) : Type (u+1)
   /-- Functor in a fixed context; Axiom K.1. -/
-  syntax_sort ContextFunctor (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ) : Type u
+  syntax_sort ContextFunctor {Γ : SCat} (C : ContextCat Γ) (D : ContextCat Γ) : Type u
   /-- Natural isomorphism in context; Axiom K.1. -/
-  syntax_sort ContextNatIso (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ)
+  syntax_sort ContextNatIso {Γ : SCat} {C : ContextCat Γ} {D : ContextCat Γ}
     (F : ContextFunctor Γ C D) (G : ContextFunctor Γ C D) : Type u
   /-- Equivalence in context; Axiom K.1. -/
-  syntax_sort ContextCatEquiv (Γ : SCat) (C : ContextCat Γ) (D : ContextCat Γ) : Type u
+  syntax_sort ContextCatEquiv {Γ : SCat} (C : ContextCat Γ) (D : ContextCat Γ) : Type u
   /-- Pullback-square predicate in a fixed context.  Book context: Chapter 4 of the SCT book. -/
-  syntax_sort ContextPullbackSquare (Γ : SCat)
-    (A : ContextCat Γ) (B : ContextCat Γ) (C : ContextCat Γ) (D : ContextCat Γ)
+  syntax_sort ContextPullbackSquare {Γ : SCat}
+    {A : ContextCat Γ} {B : ContextCat Γ} {C : ContextCat Γ} {D : ContextCat Γ}
     (top : ContextFunctor Γ A B) (left : ContextFunctor Γ A C)
     (right : ContextFunctor Γ B D) (bottom : ContextFunctor Γ C D) : Type u
   /-- Identity contextual functor; Axiom K.1. -/
@@ -294,12 +294,12 @@ extend_type_theory SCT where
   /-- Contextual morphism collection in a groupoidal context.  Book context: Chapter 4 of the SCT
   book.
   -/
-  syntax_sort ContextMorphismCollection (Γ : SCat) (gΓ : GroupoidalContext Γ)
+  syntax_sort ContextMorphismCollection {Γ : SCat} (gΓ : GroupoidalContext Γ)
     (C : ContextCat Γ) : Type (u+1)
   /-- Contextual object collection in a groupoidal context.
   Book context:Chapter 4 of the SCT book.
   -/
-  syntax_sort ContextObjectCollection (Γ : SCat) (gΓ : GroupoidalContext Γ)
+  syntax_sort ContextObjectCollection {Γ : SCat} (gΓ : GroupoidalContext Γ)
     (C : ContextCat Γ) : Type (u+1)
   /-- Contextual subcategories in groupoidal contexts; Axiom K.2 applies Axiom H in groupoidal
   context. -/

@@ -34,7 +34,7 @@ extend_type_theory SCT where
   model_section Chapter1
 
   /-- Membership of an arrow object in the object collection of invertible arrows. -/
-  syntax_abbrev InvertibleMorphismObjectMember (C : SCat)
+  syntax_abbrev InvertibleMorphismObjectMember {C : SCat}
     (P : ObjectCollection (funCat intervalCat C)) (f : Functor intervalCat C) :=
     ObjectCollectionMember (funCat intervalCat C) P (functorObject intervalCat C f)
   /-- Comprehension package for invertible arrows in `Fun([1], C)`.

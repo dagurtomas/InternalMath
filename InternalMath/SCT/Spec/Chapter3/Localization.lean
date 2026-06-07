@@ -74,7 +74,7 @@ extend_type_theory SCT where
   model_section Chapter3
 
   /-- Membership of a functor object in the object collection of functors inverting `W`. -/
-  syntax_abbrev InvertingFunctorObjectMember (C : SCat) (D : SCat)
+  syntax_abbrev InvertingFunctorObjectMember {C : SCat} {D : SCat}
     (W : MorphismCollection C) (P : ObjectCollection (funCat C D)) (F : Functor C D) :=
     ObjectCollectionMember (funCat C D) P (functorObject C D F)
   /-- Comprehension package for the full subcategory of functors inverting `W`.
@@ -266,7 +266,7 @@ extend_type_theory SCT where
   /-- A functor over a fixed base, represented by a natural isomorphism over the base.  Book
   context: Chapter 3 of the SCT book.
   -/
-  syntax_abbrev FunctorOver (B : SCat) (E : SCat) (F : SCat)
+  syntax_abbrev FunctorOver {B : SCat} {E : SCat} {F : SCat}
     (p : Functor E B) (q : Functor F B) (u : Functor E F) :=
     NatIso E B (compFunctor E F B u q) p
 

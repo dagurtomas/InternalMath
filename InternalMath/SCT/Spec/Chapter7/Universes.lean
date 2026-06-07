@@ -49,11 +49,11 @@ extend_type_theory SCT where
     (C : SCat) (hC : SmallWitness U C) :
     CatEquiv C (classifiedTotalCat U u terminalCat (smallClassifyingMap U u C hC))
   /-- Small cocartesian fibration relative to a universe; §7.3.1 and §7.4. -/
-  syntax_sort SmallCocartesianFibrationWitness (U : SCat) (E : SCat) (B : SCat)
+  syntax_sort SmallCocartesianFibrationWitness (U : SCat) {E : SCat} {B : SCat}
     (p : Functor E B) (fib : Fibration E B p)
     (cocart : CocartesianFibrationWitness E B p fib) : Type u
   /-- Functor with small fibers relative to a universe; Definition 7.4.6. -/
-  syntax_sort SmallFibersWitness (U : SCat) (E : SCat) (B : SCat) (p : Functor E B) : Type u
+  syntax_sort SmallFibersWitness (U : SCat) {E : SCat} {B : SCat} (p : Functor E B) : Type u
   /-- Classifying map for a small cocartesian fibration; §7.3.1. -/
   lf_opaque smallFibrationClassifyingMap (U : SCat) (u : UniverseWitness U)
     (E : SCat) (B : SCat) (p : Functor E B) (fib : Fibration E B p)
@@ -69,7 +69,7 @@ extend_type_theory SCT where
   /-- A regular universe; Definition 7.4.5 (Cat1). -/
   syntax_sort RegularUniverseWitness (U : SCat) (u : UniverseWitness U) : Type u
   /-- Exponentiability witness for cartesian/cocartesian fibrations; Axiom M. -/
-  syntax_sort ExponentiableFibrationWitness (E : SCat) (B : SCat) (p : Functor E B)
+  syntax_sort ExponentiableFibrationWitness {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) : Type u
   /-- Cartesian fibrations are exponentiable; Axiom M. -/
   lf_opaque cartesianFibrationExponentiable (E : SCat) (B : SCat) (p : Functor E B)

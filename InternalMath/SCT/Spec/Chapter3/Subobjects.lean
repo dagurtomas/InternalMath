@@ -98,11 +98,11 @@ extend_type_theory SCT where
     fun X C => coreFunctor (funCat X C)
       (funCat (funCat intervalCat X) (funCat intervalCat C)) (arrowActionFunctor X C)
   /-- Definition 3.1.2(1): the induced map on arrow-mapping anima is an embedding. -/
-  syntax_abbrev SubcategoryArrowEmbedding (A : SCat) (C : SCat) (i : Functor A C) :=
+  syntax_abbrev SubcategoryArrowEmbedding {A : SCat} {C : SCat} (i : Functor A C) :=
     Embedding (mapCat intervalCat A) (mapCat intervalCat C)
       (mapPostcompFunctor intervalCat A C i)
   /-- Definition 3.1.2(2): the factorization square for a fixed test category. -/
-  syntax_abbrev SubcategoryPullbackSquare (A : SCat) (C : SCat) (i : Functor A C)
+  syntax_abbrev SubcategoryPullbackSquare {A : SCat} {C : SCat} (i : Functor A C)
     (X : SCat) :=
     PullbackSquare (mapCat X A) (mapCat X C)
       (mapCat (funCat intervalCat X) (funCat intervalCat A))
@@ -112,10 +112,10 @@ extend_type_theory SCT where
       (mapPostcompFunctor (funCat intervalCat X) (funCat intervalCat A)
         (funCat intervalCat C) (postcompFunctor intervalCat A C i))
   /-- Definition 3.1.2(2), uniformly in the test category. -/
-  syntax_abbrev SubcategoryPullbackCriterion (A : SCat) (C : SCat) (i : Functor A C) :=
+  syntax_abbrev SubcategoryPullbackCriterion {A : SCat} {C : SCat} (i : Functor A C) :=
     (X : SCat) → SubcategoryPullbackSquare A C i X
   /-- A functor satisfying the book's replete subcategory criterion; Definition 3.1.2. -/
-  syntax_abbrev SubcategoryWitness (A : SCat) (C : SCat) (i : Functor A C) :=
+  syntax_abbrev SubcategoryWitness {A : SCat} {C : SCat} (i : Functor A C) :=
     Σ arrow_emb : SubcategoryArrowEmbedding A C i, SubcategoryPullbackCriterion A C i
   /-- Projection of the arrow-map embedding part of a subcategory witness. -/
   lf_def subcategoryWitnessArrowEmbedding : (A : SCat) ⇒ (C : SCat) ⇒

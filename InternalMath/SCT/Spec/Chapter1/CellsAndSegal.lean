@@ -93,7 +93,7 @@ extend_type_theory SCT where
   /-- Higher isomorphisms between natural isomorphisms, represented in the natural-transformation
   fiber.  Book context: Chapter 1 of the SCT book.
   -/
-  syntax_abbrev NatIsoIso (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D)
+  syntax_abbrev NatIsoIso {C : SCat} {D : SCat} {F : Functor C D} {G : Functor C D}
     (α : NatIso C D F G) (β : NatIso C D F G) :=
     ObjIso (natTransCat C D F G)
       (natTransObject C D F G (natIsoToNatTrans C D F G α))
@@ -411,7 +411,7 @@ extend_type_theory SCT where
   /-- Predicate-like witness that an interval-shaped morphism is invertible.  Book target:
   Definition 1.8.2, before packaging invertible morphisms into `Iso(C)`.
   -/
-  syntax_abbrev InvertibleMorphism (C : SCat) (f : Functor intervalCat C) :=
+  syntax_abbrev InvertibleMorphism {C : SCat} (f : Functor intervalCat C) :=
     InvertibleMorphismData C f
 
 namespace SCT

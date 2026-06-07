@@ -102,7 +102,7 @@ extend_type_theory SCT where
     (P : ObjectCollection C) (F : Functor D C) : Type u := sorry
   syntax_sort_role LandsInObjectCollection : side_structure
   /-- Membership of an absolute object in an object collection. -/
-  syntax_abbrev ObjectCollectionMember (C : SCat) (P : ObjectCollection C) (x : Obj C) :=
+  syntax_abbrev ObjectCollectionMember {C : SCat} (P : ObjectCollection C) (x : Obj C) :=
     LandsInObjectCollection terminalCat C P x
 
   /-- Evidence that a morphism collection contains identities; Axiom H. -/

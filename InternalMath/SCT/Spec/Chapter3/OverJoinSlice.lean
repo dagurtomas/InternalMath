@@ -36,7 +36,7 @@ extend_type_theory SCT where
   model_section Chapter3
 
   /-- Exponentiable functor witness; Definition 3.5.7. -/
-  syntax_sort ExponentiableFunctor (A : SCat) (B : SCat) (u : Functor A B) : Type u
+  syntax_sort ExponentiableFunctor {A : SCat} {B : SCat} (u : Functor A B) : Type u
   /-- Dependent-product package along an exponentiable functor.  It stores the
   dependent product category over the codomain and its projection; the universal property is part
   of the exponentiability data.  Book target: Definition 3.5.4 and Definition 3.5.7. -/
