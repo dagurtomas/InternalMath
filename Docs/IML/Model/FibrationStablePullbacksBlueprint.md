@@ -13,7 +13,8 @@ pullbacks and supplies the comparison data needed by the SCT model.
 - The homotopy-pullback comparison phase depends on
   `Docs/IML/Model/MaximalKanCoreMappingAnimaBlueprint.md`, because the universal property is
   stated using mapping anima.
-- The all-cospans `pullbackCat` closure phase also depends on the invertible-arrow and `NatIso`
+- The all-cospans `pullbackCat` closure phase should use the anticipated Reedy diagram
+  model-structure API when it is available. It also depends on the invertible-arrow and `NatIso`
   bridge from `Docs/IML/Model/IsoRezkModelBlueprint.md`, with Segal-composition support for the
   interval-arrow comparison data.
 - The directed/lax pullback phase also uses the functor-quasicategory and arrow-endpoint APIs shared
@@ -42,9 +43,10 @@ C ×_E D
 
 is a valid model only under hypotheses such as: one leg of the cospan is an inner fibration, or the
 strict pullback has been shown to represent the derived/homotopy pullback.  The workshop project
-starts by building this fibration-stable strict-pullback API.  The full `pullbackCat` plan then
-applies the same API to a path-object replacement of the target category, so arbitrary cospans can
-be modeled by strict pullbacks along a proven fibration.
+starts by building this fibration-stable strict-pullback API.  The full `pullbackCat` plan should
+use a Reedy model structure on cospan diagrams in the Joyal model category of simplicial sets. A
+coherent-isomorphism path object remains the concrete binary formula to compare against, and may
+supply the strict cone data if the first Reedy API exposes only the abstract model structure.
 
 Model note: natural transformations are bicategorical 2-cells in mathlib's strict bicategory of
 quasicategories. The fibration-pullback scaffold uses strict equality for the special strict cone
@@ -59,8 +61,10 @@ This project is human-led because it requires semantic choices:
 - how to relate inner fibrations of simplicial sets to isofibrations of quasicategories;
 - whether the model should choose strict pullbacks only under fibrancy hypotheses or use a general
   path-object or fibrant-replacement construction;
+- which pieces should come from the anticipated Reedy model-category API and which pieces still
+  need local adapters;
 - which coherent-isomorphism object should encode the comparison used in arbitrary homotopy
-  pullbacks;
+  pullbacks when an explicit binary formula is needed;
 - how directed/lax pullbacks in Chapter 5 relate to strict pullbacks and arrow-category pullbacks;
 - which parts belong upstream in mathlib/infinity-cosmos.
 
@@ -197,13 +201,52 @@ how `Cat_∞` limits are usually checked.
 This is the bridge to the general SCT `pullbackCat` fields.  Until this comparison is available,
 strict pullback wrappers should only be used in fibration-specific fields such as base change.
 
-### Target E: arbitrary homotopy pullbacks via a coherent-isomorphism path object
+### Target E: arbitrary homotopy pullbacks via Reedy diagram model structures
 
-The general SCT field `pullbackCat C D E F G` has no fibration hypothesis on `F` or `G`.  The model
-therefore needs a construction that first replaces the ordinary strict pullback problem by a strict
-pullback along a proven fibration.
+The general SCT field `pullbackCat C D E F G` has no fibration hypothesis on `F` or `G`.  The
+preferred general input is the anticipated Reedy API for model structures on diagram categories.
+Let `J` be the walking cospan category
 
-Recommended concrete model:
+```text
+left -> apex <- right.
+```
+
+For homotopy pullbacks, view `J` as an inverse Reedy category: the arrows lower degree toward the
+apex.  In the Reedy model structure on `SSet_Joyal^J`, the fibrant cospan diagrams should
+specialize to the diagrams whose values are quasicategories and whose legs into the apex satisfy
+the chosen fibration/isofibration condition.  For a Reedy fibrant cospan, the ordinary strict limit
+computes the homotopy limit.
+
+For an arbitrary cospan of quasicategories, take a Reedy fibrant replacement of the diagram and use
+the strict limit of that replacement as the model of `pullbackCat`.  The semantic theorem to expose
+is the mapping-anima universal property
+
+```text
+Map(X, holim_J D) ≃ holim_J Map(X, D_j)
+```
+
+for every test quasicategory `X`, with the right-hand side evaluated as the homotopy pullback of
+anima.
+
+Required incoming or local pieces:
+
+- the Joyal model structure on simplicial sets, with fibrant objects identified as quasicategories;
+- the walking-cospan category as an inverse Reedy category;
+- the Reedy model structure on `J -> SSet`;
+- a fibrant-replacement or factorization API in the Reedy diagram model category;
+- a theorem that strict limits of Reedy fibrant diagrams compute homotopy limits;
+- a derived-limit cone over the original cospan, or an equivalent package that can be converted to
+  the SCT projection and comparison fields.
+
+The last item is important for `InternalMath/SCT/Model.lean`: a bare fibrant replacement
+`D -> Dᶠ` gives strict projections to the replacement diagram, while the SCT fields ask for
+functors to the original `C` and `D` and a `NatIso` comparison over the original `E`.  The Reedy
+adapter should therefore provide actual cone data over the original cospan, or enough coherent cone
+data to construct the generated model fields.
+
+### Target F: explicit binary comparison object
+
+Keep the coherent-isomorphism path object as the concrete binary formula and comparison target:
 
 ```text
 EqArr(E)        := Fun(IsoWalking, E)
@@ -213,72 +256,65 @@ P(F,G)          := (C × D) ×_{E × E} EqArr(E)
 
 Here `IsoWalking` is a coherent walking isomorphism, such as the coherent-isomorphism simplicial set
 from the incoming invertible-edge API.  An object of `P(F,G)` is a pair of objects `c : C`, `d : D`,
-together with a coherent equivalence in `E` from `F c` to `G d`.  This is the usual homotopy
-pullback object of ∞-categories.
+together with a coherent equivalence in `E` from `F c` to `G d`.  This is the standard binary
+homotopy-pullback formula in ∞-categories.
 
-The decisive theorem is that `isoEndpoints(E)` is the chosen fibration/isofibration.  Then Target B
-applies to the strict pullback defining `P(F,G)`, giving a bundled quasicategory for every cospan.
-Target D supplies the mapping-anima universal property, either directly for this construction or by
-comparing it with any upstream `Cat_∞` homotopy-pullback object.
+This object has two uses even when the Reedy route is primary:
 
-Alternative route: factor one leg of the cospan, for example
+1. it can be a concrete implementation if the Reedy API does not yet provide derived-limit cone
+   data;
+2. it can be compared with the Reedy homotopy limit, giving a check that the cospan-shaped Reedy
+   construction agrees with the expected path-object formula.
 
-```text
-D -> D^fib -> E
-```
+The decisive theorem for this formula is that `isoEndpoints(E)` is the chosen
+fibration/isofibration.  Then Target B applies to the strict pullback defining `P(F,G)`, giving a
+bundled quasicategory for every cospan.  Target D supplies the mapping-anima universal property,
+either directly for this construction or by comparison with the Reedy homotopy limit.
 
-where the first map is a categorical equivalence over `E` and the second map is the chosen
-fibration.  Then define the homotopy pullback as `C ×_E D^fib`.  This can work if an upstream Joyal
-model-structure factorization API is easier to use.  The coherent-isomorphism path-object route is
-more explicit and gives the comparison data needed by `pullbackComm` and `pullbackLift`.
+### Target G: adapter from the homotopy-pullback object to SCT fields
 
-### Target F: adapter from the homotopy-pullback object to SCT fields
-
-To close the model-structure `pullbackCat` block, package the object `P(F,G)` and its universal
-property into the generated SCT fields.
+To close the model-structure `pullbackCat` block, package the Reedy homotopy limit, or the explicit
+binary object compared with it, into the generated SCT fields.
 
 Field plan:
 
-1. `pullbackCat C D E F G` is the bundled quasicategory `P(F,G)`.
-2. `pullbackPr1` and `pullbackPr2` are the projections through `C × D`.
-3. `pullbackComm` comes from the coherent-isomorphism coordinate of `P(F,G)`, converted to the
-   model's `NatIso` representation.
-4. `pullbackLift X C D E F G A B θ` is induced by the pair `(A,B)` and the map
-   `X -> EqArr(E)` classified by the `NatIso` comparison `θ`.
-5. `pullbackBeta1` and `pullbackBeta2` come from the projection β-rules of the strict pullback and
-   the product cone, rendered as `NatIso`s.
+1. `pullbackCat C D E F G` is the bundled quasicategory supplied by the homotopy-pullback package.
+2. `pullbackPr1` and `pullbackPr2` are the cone projections to the original `C` and `D`.
+3. `pullbackComm` is the coherent cone comparison over `E`, converted to the model's `NatIso`
+   representation.
+4. `pullbackLift X C D E F G A B θ` is induced by the universal property from the cone determined
+   by `(A,B,θ)`.
+5. `pullbackBeta1` and `pullbackBeta2` are the projection comparisons for that induced map.
 6. `pullbackEta` comes from the mapping-anima universal property applied to the cone determined by
-   a functor `H : X -> P(F,G)`.
+   a functor `H : X -> pullbackCat C D E F G`.
 7. `pullbackUniq` comes from the same universal property: componentwise `NatIso`s over `C` and `D`
-   give a path in the homotopy-pullback mapping anima, hence a `NatIso` between maps into
-   `P(F,G)`.
+   give a path in the homotopy-pullback mapping anima, hence a `NatIso` between maps into the
+   pullback object.
 
 Required bridge APIs:
 
-- a coherent-isomorphism quasicategory and endpoint functors;
-- proof that the endpoint map is the chosen fibration/isofibration;
-- conversion between invertible bicategorical 2-cells `NatIso X E U V` and maps
-  `X -> EqArr(E)` with endpoints `U` and `V`;
-- functor-quasicategory compatibility for products, strict pullbacks, and exponentiation by a test
-  quasicategory `X`;
+- Reedy homotopy-limit or path-object cone data over the original cospan;
+- conversion between invertible bicategorical 2-cells `NatIso X E U V` and homotopy-coherent cone
+  comparisons over `E`;
+- functor-quasicategory compatibility for products, strict pullbacks, Reedy diagram categories, and
+  exponentiation by a test quasicategory `X`;
 - maximal-core/mapping-anima equivalences that turn the universal property into `NatIso`, `CatEquiv`,
   and uniqueness fields in the generated model.
 
 Open design decisions before implementation:
 
-- choose `EqArr(E)` as either a coherent-isomorphism functor category or a full subcategory of the
-  arrow category on equivalence arrows;
-- choose the exact fibration notion for `isoEndpoints(E)` and relate it to the book's
+- choose the exact fibration notion for Reedy fibrant cospans and relate it to the book's
   `IsofibrationWitness`;
-- decide whether the primary universal-property package is a mapping-anima equivalence or a
-  `CatEquiv` to an upstream homotopy-pullback object;
+- decide whether the primary universal-property package is a mapping-anima equivalence, a derived
+  limit in the Reedy model structure, or a `CatEquiv` to an upstream homotopy-pullback object;
+- decide how the Reedy fibrant replacement exposes cone maps to the original cospan;
 - decide which low-level results belong upstream in mathlib or infinity-cosmos.
 
-The blueprint can still specify a complete field path while these API choices are being resolved.
-The concrete path-object construction is the recommended route for closing the `pullbackCat`
-sorries.
+The blueprint can specify a complete field path while these API choices are being resolved.  The
+Reedy route should supply the general homotopy-limit theorem; the explicit path-object formula is
+kept as the binary adapter and comparison object.
 
-### Target G: base change of fibrations
+### Target H: base change of fibrations
 
 For a fibration `p : E → B` and any `q : B' → B`, define the pullback fibration
 
@@ -306,7 +342,7 @@ Expected steps:
 This is a better workshop target than the unrestricted `pullbackCat` block because the hypotheses
 make strict simplicial pullbacks semantically justified.
 
-### Target H: directed/lax pullbacks
+### Target I: directed/lax pullbacks
 
 Chapter 5 uses directed pullbacks whose objects are triples `(a,b, f a → g b)`.
 
@@ -331,7 +367,7 @@ This depends on:
 This target is likely too large for a first pass, but the design should be recorded while working on
 base-change pullbacks.
 
-### Target I: compatibility with object/fiber constructions
+### Target J: compatibility with object/fiber constructions
 
 Many Chapter 1 constructions are built from pullbacks:
 
@@ -405,21 +441,38 @@ Deliverables:
 
 Good for: human-interest/upstream work.
 
-### Project 5: coherent-isomorphism path object
+### Project 5: Reedy homotopy-limit adapter
 
-Goal: build the all-cospans replacement used by the general `pullbackCat` model field.
+Goal: adapt the anticipated Reedy diagram model-structure API to cospans of quasicategories.
+
+Deliverables:
+
+- the walking cospan as an inverse Reedy category;
+- connection to the Joyal model structure on simplicial sets;
+- Reedy fibrant replacement for arbitrary cospans of quasicategories;
+- strict-limit construction for Reedy fibrant cospans;
+- mapping-anima universal property for the resulting homotopy pullback;
+- a derived cone package over the original cospan, or a documented gap if the incoming API only
+  exposes replacement diagrams.
+
+Good for: human-led API design, with agents helping on finite-shape and diagram-category
+bookkeeping.
+
+### Project 6: explicit binary comparison object
+
+Goal: keep a concrete path-object model available for the binary pullback case.
 
 Deliverables:
 
 - `EqArr(E)` as either `Fun(IsoWalking,E)` or the equivalent full subcategory of invertible arrows;
 - source and target endpoint functors `EqArr(E) -> E × E`;
 - proof that the endpoint map is the chosen fibration/isofibration;
-- strict-pullback construction
-  `(C × D) ×_{E × E} EqArr(E)` as a bundled quasicategory for arbitrary `F` and `G`.
+- comparison between `(C × D) ×_{E × E} EqArr(E)` and the Reedy homotopy limit, or a decision to
+  use this object as the field implementation until the Reedy cone package is available.
 
 Good for: human-led design with agent support for endpoint bookkeeping.
 
-### Project 6: SCT `pullbackCat` field adapter
+### Project 7: SCT `pullbackCat` field adapter
 
 Goal: turn the homotopy-pullback construction into implementations for the generated SCT model
 fields.
@@ -427,15 +480,15 @@ fields.
 Deliverables:
 
 - candidate implementations for `pullbackCat`, `pullbackPr1`, `pullbackPr2`, and `pullbackComm`;
-- conversion from a generated-model `NatIso` comparison to a map into `EqArr(E)`;
+- conversion between generated-model `NatIso` data and homotopy-coherent cone comparisons;
 - candidate implementation for `pullbackLift`;
 - β, η, and uniqueness comparisons derived from the mapping-anima universal property;
 - a short dependency note for any remaining fields whose proof uses unfinished `NatIso` or
   mapping-anima adapters.
 
-Good for: paired human/agent work after Projects 4 and 5.
+Good for: paired human/agent work after Projects 5 and 6.
 
-### Project 7: base-change fibration package
+### Project 8: base-change fibration package
 
 Goal: build the model package for base-changing fibrations.
 
@@ -449,7 +502,7 @@ Deliverables:
 
 Good for: paired human/agent work.
 
-### Project 8: directed pullback design note
+### Project 9: directed pullback design note
 
 Goal: specify the model of `directedPullbackCat` before implementing it.
 
@@ -493,15 +546,16 @@ the precise homotopy-pullback universal-property type, and the proof that the st
 satisfies that property as human project markers.
 
 The generated model structure in `InternalMath/SCT/Model.lean` also contains a `pullbackCat` block
-of `sorry`s.  Those fields should be closed by the all-cospans path-object plan above; the
-strict-pullback scaffold supplies the fibration-stable ingredient.  A useful implementation order
-is:
+of `sorry`s.  Those fields should be closed by a Reedy homotopy-limit package for cospans, with the
+path-object formula as a concrete binary comparison object.  A useful implementation order is:
 
-1. prove the strict-pullback closure theorem;
-2. define the coherent-isomorphism path object and endpoint fibration;
-3. construct `P(F,G) = (C × D) ×_{E × E} EqArr(E)`;
-4. prove the mapping-anima universal property for `P(F,G)`;
-5. implement `pullbackCat`, projections, comparison, lift, β, η, and uniqueness fields from that
+1. prove the strict-pullback closure theorem for the fibration-specific scaffolds;
+2. wrap the Reedy cospan model-structure API once it is available;
+3. construct a homotopy-pullback package with cone data over the original cospan;
+4. compare the package with `P(F,G) = (C × D) ×_{E × E} EqArr(E)` when the explicit path-object API
+   is available;
+5. prove or import the mapping-anima universal property;
+6. implement `pullbackCat`, projections, comparison, lift, β, η, and uniqueness fields from that
    package.
 
 ## Informal proof or construction for each Lean `sorry`
@@ -560,8 +614,8 @@ hypothesis represents the homotopy pullback in `Cat_∞`.
 
 Do not use any of these as shortcuts:
 
-- arbitrary strict simplicial-set pullbacks as the general SCT pullback without a path-object or
-  homotopy-pullback theorem;
+- arbitrary strict simplicial-set pullbacks as the general SCT pullback without a Reedy,
+  path-object, or homotopy-pullback theorem;
 - strict equality where the SCT field asks for a `NatIso` comparison;
 - `PUnit`/`True` placeholders for fibration witnesses;
 - treating all quasicategory maps as fibrations;
@@ -575,8 +629,9 @@ A completed implementation should provide:
 1. a documented fibration notion and relation to the book's fibration vocabulary;
 2. strict-pullback quasicategory closure under explicit fibration hypotheses;
 3. a cone API with clear projection orientation;
-4. a homotopy-pullback or mapping-anima universal property;
-5. a coherent-isomorphism path-object construction for arbitrary cospans;
-6. generated-model implementations for the `pullbackCat` block in `InternalMath/SCT/Model.lean`;
-7. base-change stability for the chosen fibration witnesses;
-8. a clear statement of any remaining pullback-dependent SCT fields that need later adapters.
+4. a Reedy homotopy-limit package for cospans, including cone data over the original diagram;
+5. a homotopy-pullback or mapping-anima universal property;
+6. a coherent-isomorphism path-object comparison for binary cospans;
+7. generated-model implementations for the `pullbackCat` block in `InternalMath/SCT/Model.lean`;
+8. base-change stability for the chosen fibration witnesses;
+9. a clear statement of any remaining pullback-dependent SCT fields that need later adapters.
