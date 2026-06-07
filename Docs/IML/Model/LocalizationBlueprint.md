@@ -11,6 +11,8 @@ universal property and connects it to the SCT localization fields.
 
 - The upstream/API audit and universal-property design can start independently.
 - Completing the inverting-functor and localization packages depends on
+  `Docs/IML/Model/FunctorQuasicategoryBridgeBlueprint.md` for the bridge from bicategorical
+  2-cells to edges of functor quasicategories, and on
   `Docs/IML/Model/MaximalKanCoreMappingAnimaBlueprint.md` for mapping anima, maximal cores,
   equivalence edges, and the meaning of `Map_W(C,D)`.
 - The project uses the invertible-arrow object collection from

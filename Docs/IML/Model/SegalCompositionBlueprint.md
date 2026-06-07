@@ -190,8 +190,9 @@ Still needed:
 
 - a concrete horn-map construction for `Λ[2,1] -> C` from a `ComposablePair`;
 - adapters from chosen fillers to SCT `NatIso`/comparison fields;
-- the functor-quasicategory bridge if comparisons must be related to objects or edges of internal
-  homs;
+- the functor-quasicategory bridge from
+  `Docs/IML/Model/FunctorQuasicategoryBridgeBlueprint.md` if comparisons must be related to objects
+  or edges of internal homs;
 - PR #35287 or an equivalent inverse-edge API for the invertible-morphism unit fields.
 
 ## Recommended implementation phases

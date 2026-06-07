@@ -14,6 +14,8 @@ showing that it has the expected Rezk behavior.
 - The unit comparison phase depends on `Docs/IML/Model/SegalCompositionBlueprint.md`, because it
   uses the chosen composition operation for invertible arrows.
 - The object collection, `Iso(C)`, and Rezk comparison phases depend on
+  `Docs/IML/Model/FunctorQuasicategoryBridgeBlueprint.md` for the bridge from bicategorical
+  2-cells to edges of functor quasicategories, and on
   `Docs/IML/Model/MaximalKanCoreMappingAnimaBlueprint.md` for equivalence-edge, maximal-core,
   mapping-anima, and groupoid-core adapters.
 

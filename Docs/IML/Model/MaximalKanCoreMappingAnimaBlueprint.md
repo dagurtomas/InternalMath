@@ -9,8 +9,9 @@ model interpret cores and mapping anima in this way.
 
 ## Project dependencies
 
-- Can start independently: maximal cores and mapping anima are foundational for the model
-  blueprints.
+- Can start independently for maximal cores of a single quasicategory; mapping-anima phases depend
+  on `Docs/IML/Model/FunctorQuasicategoryBridgeBlueprint.md` for `Fun(C,D)` and the bicategorical
+  2-cell bridge.
 - The fixed-endpoint hom-anima phase depends on
   `Docs/IML/Model/FibrationStablePullbacksBlueprint.md`, because it uses pullback and fiber APIs for
   endpoint fibers.
@@ -41,7 +42,8 @@ the SCT mapping-anima and core fields.
 Model note: `InternalMath.SCT.Model` interprets `NatTrans` as 2-cells in mathlib's strict
 bicategory of quasicategories, and `NatIso` as invertible 2-cells.  This blueprint and the scaffold
 concern raw equivalence edges inside quasicategories and maximal cores.  The bridge from bicategory
-2-cells to objects or edges of `Fun(C,D)` belongs to the future `natTransObject` API.
+2-cells to objects or edges of `Fun(C,D)` is tracked in
+`Docs/IML/Model/FunctorQuasicategoryBridgeBlueprint.md`.
 
 ## Why this is a human workshop project
 

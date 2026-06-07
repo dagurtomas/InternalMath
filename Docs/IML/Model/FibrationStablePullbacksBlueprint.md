@@ -294,8 +294,9 @@ Field plan:
 Required bridge APIs:
 
 - Reedy homotopy-limit or path-object cone data over the original cospan;
-- conversion between invertible bicategorical 2-cells `NatIso X E U V` and homotopy-coherent cone
-  comparisons over `E`;
+- the functor-quasicategory bridge from
+  `Docs/IML/Model/FunctorQuasicategoryBridgeBlueprint.md`, including conversion between invertible
+  bicategorical 2-cells `NatIso X E U V` and homotopy-coherent cone comparisons over `E`;
 - functor-quasicategory compatibility for products, strict pullbacks, Reedy diagram categories, and
   exponentiation by a test quasicategory `X`;
 - maximal-core/mapping-anima equivalences that turn the universal property into `NatIso`, `CatEquiv`,

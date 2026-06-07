@@ -74,18 +74,31 @@ supporting APIs are stable.
 Model projects work in the quasicategory/Kan-complex interpretation of SCT. They usually require
 human mathematical choices about which mathlib or infinity-cosmos APIs to use.
 
+### Functor quasicategory bridge
+
+- Blueprint: [functor quasicategory bridge blueprint][functor-quasicategory-bridge-model]
+- Suggested role: upstream mathlib API project.
+- Dependencies: mathlib PR #40243 for internal-hom quasicategory closure.
+- Later projects: [Segal composition](#segal-composition),
+  [Maximal Kan cores and mapping anima](#maximal-kan-cores-and-mapping-anima),
+  [Fibration-stable pullbacks](#fibration-stable-pullbacks),
+  [Invertible arrows and Rezk equivalence](#invertible-arrows-and-rezk-equivalence), and
+  [Localization](#localization).
+
 ### Segal composition
 
 - Blueprint: [Segal composition blueprint][segal-composition-model]
 - Suggested role: foundational model project.
-- Dependencies: can start immediately.
+- Dependencies: can start immediately; comparison-data phases use the
+  [functor quasicategory bridge](#functor-quasicategory-bridge).
 - Later projects: [Invertible arrows and Rezk equivalence](#invertible-arrows-and-rezk-equivalence).
 
 ### Maximal Kan cores and mapping anima
 
 - Blueprint: [maximal Kan core and mapping anima blueprint][mapping-anima-model]
 - Suggested role: foundational model project.
-- Dependencies: can start immediately.
+- Dependencies: can start immediately; mapping-anima phases use the
+  [functor quasicategory bridge](#functor-quasicategory-bridge).
 - Later projects: [Fibration-stable pullbacks](#fibration-stable-pullbacks),
   [Invertible arrows and Rezk equivalence](#invertible-arrows-and-rezk-equivalence), and
   [Localization](#localization).
@@ -116,9 +129,10 @@ human mathematical choices about which mathlib or infinity-cosmos APIs to use.
 - Later parts also use
   [Invertible arrows and Rezk equivalence](#invertible-arrows-and-rezk-equivalence).
 
-A good model-project sequence is to start Segal composition and maximal cores/mapping anima first.
-The early phases of fibration-stable pullbacks can run in parallel. Iso/Rezk and localization become
-more productive once the foundational projects provide stable APIs.
+A good model-project sequence is to start the functor-quasicategory bridge, Segal composition, and
+maximal cores/mapping anima first. The early phases of fibration-stable pullbacks can run in
+parallel. Iso/Rezk and localization become more productive once the foundational projects provide
+stable APIs.
 
 ## Choosing a project
 
@@ -134,6 +148,7 @@ more productive once the foundational projects provide stable APIs.
 [core-axiom-g-internal]: Internal/CoreAxiomGInternalBlueprint.md
 [objectwise-nat-iso-internal]: Internal/ObjectwiseNatIsoInternalBlueprint.md
 [fundamental-theorem-internal]: Internal/FundamentalTheoremInternalBlueprint.md
+[functor-quasicategory-bridge-model]: Model/FunctorQuasicategoryBridgeBlueprint.md
 [segal-composition-model]: Model/SegalCompositionBlueprint.md
 [mapping-anima-model]: Model/MaximalKanCoreMappingAnimaBlueprint.md
 [fibration-pullbacks-model]: Model/FibrationStablePullbacksBlueprint.md
