@@ -11,10 +11,10 @@ public import InternalLean.Command
 # Simplicial homotopy type theory
 
 This file declares an intrinsic LF skeleton for Riehl--Shulman simplicial homotopy type
- theory.  Contexts, cubes, topes, ordinary types, and terms are represented by dependent
-syntax sorts, so the former external formation and typing judgments are absent.  The
-remaining judgments record genuine object-theory propositions: cube-term conversion, tope
-entailment, shape inclusion, and ordinary type/term conversion.
+theory.  Contexts, cubes, topes, ordinary types, and terms are represented by dependent
+syntax sorts, so external formation and typing judgments are absent.  Object-theory
+propositions remain as judgments, with first-class evidence sorts where term constructors
+need to consume a side condition.
 
 The declaration is a research skeleton, not a complete encoding of the paper.  It keeps the
 three-layer structure used by sHoTT/Rzk, the strict interval and tope calculus, ordinary HoTT
@@ -106,6 +106,15 @@ declare_type_theory TopeLayer extends CubeLayer where
 
   judgment entails (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (φ : Tope Ξ)
   judgment_role entails : side_judgment
+  /-- First-class evidence for tope entailment, used when a term constructor must consume the
+  entailment as an argument rather than merely produce a judgment.
+  -/
+  syntax_sort EntailsEvidence (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (φ : Tope Ξ)
+  syntax_sort_role EntailsEvidence : side_structure
+
+  rule entails_of_evidence (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (φ : Tope Ξ)
+      (p : EntailsEvidence Ξ Φ φ) where
+    conclusion : entails Ξ Φ φ
 
   lf_opaque emptyTopeCtx (Ξ : CubeCtx) : TopeCtx Ξ
   lf_opaque extendTopeCtx (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (φ : Tope Ξ) : TopeCtx Ξ
@@ -197,6 +206,34 @@ declare_type_theory SHoTT extends TopeLayer where
   judgment_role shapeIncl : side_judgment
   judgment_role eqType : type_conversion
   judgment_role eqTerm : term_conversion
+  /-- First-class evidence for a shape inclusion.  This is used by extension types, whose
+  formation depends on an inclusion `{t : I | φ} ⊆ {t : I | ψ}`.
+  -/
+  syntax_sort ShapeInclEvidence {Ξ : CubeCtx} (S : Shape Ξ) (T : Shape Ξ)
+  syntax_sort_role ShapeInclEvidence : side_structure
+  /-- First-class evidence for ordinary type conversion, for constructors that need a conversion
+  as data.
+  -/
+  syntax_sort EqTypeEvidence (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
+    (A : Ty Ξ Φ Γ) (B : Ty Ξ Φ Γ)
+  syntax_sort_role EqTypeEvidence : side_structure
+  /-- First-class evidence for ordinary term conversion, for constructors that need a conversion
+  as data.
+  -/
+  syntax_sort EqTermEvidence (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
+    (A : Ty Ξ Φ Γ) (a : Tm Ξ Φ Γ A) (b : Tm Ξ Φ Γ A)
+  syntax_sort_role EqTermEvidence : side_structure
+
+  rule shape_incl_of_evidence {Ξ : CubeCtx} (S : Shape Ξ) (T : Shape Ξ)
+      (p : ShapeInclEvidence S T) where
+    conclusion : shapeIncl Ξ S T
+  rule eqType_of_evidence (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
+      (A : Ty Ξ Φ Γ) (B : Ty Ξ Φ Γ) (p : EqTypeEvidence Ξ Φ Γ A B) where
+    conclusion : eqType Ξ Φ Γ A B
+  rule eqTerm_of_evidence (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
+      (A : Ty Ξ Φ Γ) (a : Tm Ξ Φ Γ A) (b : Tm Ξ Φ Γ A)
+      (p : EqTermEvidence Ξ Φ Γ A a b) where
+    conclusion : eqTerm Ξ Φ Γ A a b
 
   conversion_plugin shott_conversion
 
@@ -252,6 +289,17 @@ declare_type_theory SHoTT extends TopeLayer where
     premise incl : entails (extendCubeCtx Ξ I)
       (extendTopeCtx (extendCubeCtx Ξ I) (emptyTopeCtx (extendCubeCtx Ξ I)) φ) ψ
     conclusion : shapeIncl Ξ (shapeOf I φ) (shapeOf I ψ)
+  /-- First-class reflexive shape-inclusion evidence. -/
+  lf_opaque shapeInclReflEvidence {Ξ : CubeCtx} (S : Shape Ξ) : ShapeInclEvidence S S
+  /-- First-class transitive composition of shape-inclusion evidence. -/
+  lf_opaque shapeInclTransEvidence {Ξ : CubeCtx} {R : Shape Ξ} {S : Shape Ξ} {T : Shape Ξ}
+    (left : ShapeInclEvidence R S) (right : ShapeInclEvidence S T) : ShapeInclEvidence R T
+  /-- First-class shape-inclusion evidence induced by an entailment between defining topes. -/
+  lf_opaque shapeInclOfEntailsEvidence (Ξ : CubeCtx) (I : Cube)
+    (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
+    (incl : EntailsEvidence (extendCubeCtx Ξ I)
+      (extendTopeCtx (extendCubeCtx Ξ I) (emptyTopeCtx (extendCubeCtx Ξ I)) φ) ψ) :
+    ShapeInclEvidence (shapeOf I φ) (shapeOf I ψ)
 
   /-- Ordinary dependent type-theory contexts, structural operations, and conversions. -/
   lf_opaque emptyTyCtx (Ξ : CubeCtx) (Φ : TopeCtx Ξ) : TyCtx Ξ Φ
@@ -503,7 +551,10 @@ declare_type_theory SHoTT extends TopeLayer where
       (restrictTyTope Ξ Φ Γ A (topeAnd Ξ φ ψ)))
     (rightOverlap : Tm Ξ (extendTopeCtx Ξ Φ (topeAnd Ξ φ ψ))
       (restrictTyCtxTope Ξ Φ Γ (topeAnd Ξ φ ψ))
-      (restrictTyTope Ξ Φ Γ A (topeAnd Ξ φ ψ))) :
+      (restrictTyTope Ξ Φ Γ A (topeAnd Ξ φ ψ)))
+    (overlap : EqTermEvidence Ξ (extendTopeCtx Ξ Φ (topeAnd Ξ φ ψ))
+      (restrictTyCtxTope Ξ Φ Γ (topeAnd Ξ φ ψ))
+      (restrictTyTope Ξ Φ Γ A (topeAnd Ξ φ ψ)) leftOverlap rightOverlap) :
       Tm Ξ (extendTopeCtx Ξ Φ (topeOr Ξ φ ψ))
         (restrictTyCtxTope Ξ Φ Γ (topeOr Ξ φ ψ))
         (restrictTyTope Ξ Φ Γ A (topeOr Ξ φ ψ))
@@ -526,9 +577,14 @@ declare_type_theory SHoTT extends TopeLayer where
       (restrictTyCtxTope Ξ Φ Γ (topeAnd Ξ φ ψ))
       (restrictTyTope Ξ Φ Γ A (topeAnd Ξ φ ψ)) leftOverlap rightOverlap
 
-  /-- Dependent extension types over a shape inclusion. -/
+  /-- Dependent extension types over a shape inclusion.
+
+  The inclusion is first-class evidence, so an extension type can only be formed from a declared
+  subshape `{t : I | φ} ⊆ {t : I | ψ}`.
+  -/
   lf_opaque Ext (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ) (I : Cube)
     (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
+    (incl : ShapeInclEvidence (shapeOf Ξ I φ) (shapeOf Ξ I ψ))
     (A : Ty (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
       (weakenTyCtxCube Ξ Φ Γ I))
     (a : Tm (extendCubeCtx Ξ I)
@@ -537,8 +593,13 @@ declare_type_theory SHoTT extends TopeLayer where
         (weakenTyCtxCube Ξ Φ Γ I) φ)
       (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
         (weakenTyCtxCube Ξ Φ Γ I) A φ)) : Ty Ξ Φ Γ
+
+  /-- Introduction for extension types from a section over the larger shape and first-class
+  evidence that its boundary restriction agrees with the prescribed partial section.
+  -/
   lf_opaque extIntro (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ) (I : Cube)
     (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
+    (incl : ShapeInclEvidence (shapeOf Ξ I φ) (shapeOf Ξ I ψ))
     (A : Ty (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
       (weakenTyCtxCube Ξ Φ Γ I))
     (a : Tm (extendCubeCtx Ξ I)
@@ -558,10 +619,19 @@ declare_type_theory SHoTT extends TopeLayer where
       (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
         (weakenTyCtxCube Ξ Φ Γ I) φ)
       (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
-        (weakenTyCtxCube Ξ Φ Γ I) A φ)) :
-      Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ A a)
+        (weakenTyCtxCube Ξ Φ Γ I) A φ))
+    (boundary : EqTermEvidence (extendCubeCtx Ξ I)
+      (extendTopeCtx (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) φ)
+      (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+        (weakenTyCtxCube Ξ Φ Γ I) φ)
+      (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+        (weakenTyCtxCube Ξ Φ Γ I) A φ) bBoundary a) :
+      Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ incl A a)
+
+  /-- Elimination exposes the section over the larger shape. -/
   lf_opaque extApp (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ) (I : Cube)
     (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
+    (incl : ShapeInclEvidence (shapeOf Ξ I φ) (shapeOf Ξ I ψ))
     (A : Ty (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
       (weakenTyCtxCube Ξ Φ Γ I))
     (a : Tm (extendCubeCtx Ξ I)
@@ -570,15 +640,18 @@ declare_type_theory SHoTT extends TopeLayer where
         (weakenTyCtxCube Ξ Φ Γ I) φ)
       (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
         (weakenTyCtxCube Ξ Φ Γ I) A φ))
-    (f : Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ A a)) :
+    (f : Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ incl A a)) :
       Tm (extendCubeCtx Ξ I)
         (extendTopeCtx (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) ψ)
         (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
           (weakenTyCtxCube Ξ Φ Γ I) ψ)
         (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
           (weakenTyCtxCube Ξ Φ Γ I) A ψ)
+
+  /-- Boundary projection of an extension term. -/
   lf_opaque extAppBoundary (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ) (I : Cube)
     (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
+    (incl : ShapeInclEvidence (shapeOf Ξ I φ) (shapeOf Ξ I ψ))
     (A : Ty (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
       (weakenTyCtxCube Ξ Φ Γ I))
     (a : Tm (extendCubeCtx Ξ I)
@@ -587,15 +660,18 @@ declare_type_theory SHoTT extends TopeLayer where
         (weakenTyCtxCube Ξ Φ Γ I) φ)
       (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
         (weakenTyCtxCube Ξ Φ Γ I) A φ))
-    (f : Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ A a)) :
+    (f : Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ incl A a)) :
       Tm (extendCubeCtx Ξ I)
         (extendTopeCtx (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) φ)
         (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
           (weakenTyCtxCube Ξ Φ Γ I) φ)
         (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
           (weakenTyCtxCube Ξ Φ Γ I) A φ)
+
+  /-- Point application for an extension term at a point satisfying the larger-shape tope. -/
   lf_opaque extAppPoint (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ) (I : Cube)
     (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
+    (incl : ShapeInclEvidence (shapeOf Ξ I φ) (shapeOf Ξ I ψ))
     (A : Ty (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
       (weakenTyCtxCube Ξ Φ Γ I))
     (a : Tm (extendCubeCtx Ξ I)
@@ -604,10 +680,36 @@ declare_type_theory SHoTT extends TopeLayer where
         (weakenTyCtxCube Ξ Φ Γ I) φ)
       (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
         (weakenTyCtxCube Ξ Φ Γ I) A φ))
-    (s : CubeTm Ξ I) (f : Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ A a)) :
+    (s : CubeTm Ξ I) (point_ok : EntailsEvidence Ξ Φ (substTopeCube Ξ I ψ s))
+    (f : Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ incl A a)) :
       Tm Ξ Φ Γ (substTyCube Ξ Φ Γ I A s)
+
+  /-- First-class evidence that every extension term restricts to the prescribed partial
+  section on the smaller shape.
+  -/
+  lf_opaque extBoundaryEvidence (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ)
+    (I : Cube) (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
+    (incl : ShapeInclEvidence (shapeOf Ξ I φ) (shapeOf Ξ I ψ))
+    (A : Ty (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+      (weakenTyCtxCube Ξ Φ Γ I))
+    (a : Tm (extendCubeCtx Ξ I)
+      (extendTopeCtx (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) φ)
+      (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+        (weakenTyCtxCube Ξ Φ Γ I) φ)
+      (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+        (weakenTyCtxCube Ξ Φ Γ I) A φ))
+    (f : Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ incl A a)) :
+    EqTermEvidence (extendCubeCtx Ξ I)
+      (extendTopeCtx (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) φ)
+      (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+        (weakenTyCtxCube Ξ Φ Γ I) φ)
+      (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+        (weakenTyCtxCube Ξ Φ Γ I) A φ)
+      (extAppBoundary Ξ Φ Γ I φ ψ incl A a f) a
+
   rule ext_boundary (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ) (I : Cube)
       (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
+      (incl : ShapeInclEvidence (shapeOf Ξ I φ) (shapeOf Ξ I ψ))
       (A : Ty (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
         (weakenTyCtxCube Ξ Φ Γ I))
       (a : Tm (extendCubeCtx Ξ I)
@@ -616,55 +718,72 @@ declare_type_theory SHoTT extends TopeLayer where
           (weakenTyCtxCube Ξ Φ Γ I) φ)
         (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
           (weakenTyCtxCube Ξ Φ Γ I) A φ))
-      (f : Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ A a)) where
+      (f : Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ incl A a)) where
     conclusion : eqTerm (extendCubeCtx Ξ I)
       (extendTopeCtx (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) φ)
       (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
         (weakenTyCtxCube Ξ Φ Γ I) φ)
       (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
         (weakenTyCtxCube Ξ Φ Γ I) A φ)
-      (extAppBoundary Ξ Φ Γ I φ ψ A a f) a
+      (extAppBoundary Ξ Φ Γ I φ ψ incl A a f) a
+
   rule ext_beta (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ) (I : Cube)
       (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
+      (incl : ShapeInclEvidence (shapeOf Ξ I φ) (shapeOf Ξ I ψ))
       (A : Ty (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
         (weakenTyCtxCube Ξ Φ Γ I))
       (a : Tm (extendCubeCtx Ξ I)
         (extendTopeCtx (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) φ)
         (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
           (weakenTyCtxCube Ξ Φ Γ I) φ)
-        (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) (weakenTyCtxCube Ξ Φ Γ I) A φ))
+        (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+          (weakenTyCtxCube Ξ Φ Γ I) A φ))
       (b : Tm (extendCubeCtx Ξ I)
         (extendTopeCtx (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) ψ)
         (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
           (weakenTyCtxCube Ξ Φ Γ I) ψ)
-        (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) (weakenTyCtxCube Ξ Φ Γ I) A ψ))
+        (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+          (weakenTyCtxCube Ξ Φ Γ I) A ψ))
       (bBoundary : Tm (extendCubeCtx Ξ I)
         (extendTopeCtx (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) φ)
         (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
           (weakenTyCtxCube Ξ Φ Γ I) φ)
-        (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) (weakenTyCtxCube Ξ Φ Γ I) A φ)) where
+        (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+          (weakenTyCtxCube Ξ Φ Γ I) A φ))
+      (boundary : EqTermEvidence (extendCubeCtx Ξ I)
+        (extendTopeCtx (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) φ)
+        (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+          (weakenTyCtxCube Ξ Φ Γ I) φ)
+        (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+          (weakenTyCtxCube Ξ Φ Γ I) A φ) bBoundary a) where
     conclusion : eqTerm (extendCubeCtx Ξ I)
       (extendTopeCtx (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) ψ)
       (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
         (weakenTyCtxCube Ξ Φ Γ I) ψ)
       (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
         (weakenTyCtxCube Ξ Φ Γ I) A ψ)
-      (extApp Ξ Φ Γ I φ ψ A a (extIntro Ξ Φ Γ I φ ψ A a b bBoundary)) b
+      (extApp Ξ Φ Γ I φ ψ incl A a (extIntro Ξ Φ Γ I φ ψ incl A a b bBoundary boundary)) b
+
   rule ext_eta (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ) (I : Cube)
       (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
+      (incl : ShapeInclEvidence (shapeOf Ξ I φ) (shapeOf Ξ I ψ))
       (A : Ty (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
         (weakenTyCtxCube Ξ Φ Γ I))
       (a : Tm (extendCubeCtx Ξ I)
         (extendTopeCtx (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) φ)
         (restrictTyCtxTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
           (weakenTyCtxCube Ξ Φ Γ I) φ)
-        (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I) (weakenTyCtxCube Ξ Φ Γ I) A φ))
-      (f : Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ A a)) where
-    conclusion : eqTerm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ A a) f
-      (extIntro Ξ Φ Γ I φ ψ A a (extApp Ξ Φ Γ I φ ψ A a f)
-        (extAppBoundary Ξ Φ Γ I φ ψ A a f))
+        (restrictTyTope (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
+          (weakenTyCtxCube Ξ Φ Γ I) A φ))
+      (f : Tm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ incl A a)) where
+    conclusion : eqTerm Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ incl A a) f
+      (extIntro Ξ Φ Γ I φ ψ incl A a (extApp Ξ Φ Γ I φ ψ incl A a f)
+        (extAppBoundary Ξ Φ Γ I φ ψ incl A a f)
+        (extBoundaryEvidence Ξ Φ Γ I φ ψ incl A a f))
+
   lf_opaque relExtFunext (Ξ : CubeCtx) (Φ : TopeCtx Ξ) (Γ : TyCtx Ξ Φ) (I : Cube)
     (φ : Tope (extendCubeCtx Ξ I)) (ψ : Tope (extendCubeCtx Ξ I))
+    (incl : ShapeInclEvidence (shapeOf Ξ I φ) (shapeOf Ξ I ψ))
     (A : Ty (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
       (weakenTyCtxCube Ξ Φ Γ I))
     (a : Tm (extendCubeCtx Ξ I)
@@ -681,7 +800,7 @@ declare_type_theory SHoTT extends TopeLayer where
         (weakenTyCtxCube Ξ Φ Γ I)
         (IsContr (extendCubeCtx Ξ I) (weakenTopeCtxCube Ξ Φ I)
           (weakenTyCtxCube Ξ Φ Γ I) A) ψ)) :
-      Tm Ξ Φ Γ (IsContr Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ A a))
+      Tm Ξ Φ Γ (IsContr Ξ Φ Γ (Ext Ξ Φ Γ I φ ψ incl A a))
 
 namespace SHoTT
 
@@ -781,14 +900,14 @@ internal def BoundaryDelta2 : Shape emptyCubeCtx := boundary2
 /-- Checked standard-library alias for the `(2,1)`-horn shape. -/
 internal def Horn21 : Shape emptyCubeCtx := horn21
 
-/-- The boundary of Δ¹ is included in Δ¹. -/
-internal def boundary1_in_delta1 : shapeIncl emptyCubeCtx BoundaryDelta1 Delta1 := sorry
+/-- The boundary of Δ¹ is included in Δ¹, as first-class extension-side-condition evidence. -/
+internal def boundary1_in_delta1 : ShapeInclEvidence BoundaryDelta1 Delta1 := sorry
 
-/-- The `(2,1)`-horn is included in Δ². -/
-internal def horn21_in_delta2 : shapeIncl emptyCubeCtx Horn21 Delta2 := sorry
+/-- The `(2,1)`-horn is included in Δ², as first-class extension-side-condition evidence. -/
+internal def horn21_in_delta2 : ShapeInclEvidence Horn21 Delta2 := sorry
 
-/-- The boundary of Δ² is included in Δ². -/
-internal def boundary2_in_delta2 : shapeIncl emptyCubeCtx BoundaryDelta2 Delta2 := sorry
+/-- The boundary of Δ² is included in Δ², as first-class extension-side-condition evidence. -/
+internal def boundary2_in_delta2 : ShapeInclEvidence BoundaryDelta2 Delta2 := sorry
 
 /-- Admitted hom-shape constructor. -/
 internal def homShape : (S : Shape emptyCubeCtx) → Shape emptyCubeCtx := sorry
