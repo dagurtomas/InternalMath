@@ -42,8 +42,8 @@ Primitive vocabulary such as `SCat`, `Anima`, `Functor`, and `NatTrans` is decla
 `syntax_sort` or `lf_opaque`. Package-shaped notions use `syntax_abbrev` or `syntax_def` so that
 their data can be projected in internal proofs. Some package bodies are checked, including
 `InvertibleMorphismData`, `LeftAdjointSection`, and `RightAdjointSection`. Other packages are
-admitted design debt, including the Chapter 3 side structures, `ObjectwiseNatIsoData`, `Adjunction`,
-and the general limit/colimit packages.
+admitted design debt, including the Chapter 3 collection evidence packages,
+`ObjectwiseNatIsoData`, `Adjunction`, and the general limit/colimit packages.
 
 Many internal theorem statements are admitted with `sorry`. These admissions are visible to
 `#lint_type_theory_sorries SCT` and are expected to be replaced by checked internal proofs or by

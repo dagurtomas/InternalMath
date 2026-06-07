@@ -87,6 +87,10 @@ So the natural package shape one wants is morally:
 (x : Obj A) → InvertibleMorphism C (natTransComponent A C F G α x)
 ```
 
+Mathematically, a natural isomorphism is a natural transformation whose component arrow is
+invertible at every object. The package exists so later proofs can move back and forth between a
+global `NatIso` and its componentwise invertibility facts.
+
 The difficulty is import and declaration order: this expression mentions declarations from Chapter
 1, while `NatIso` is introduced in the prelude before those declarations are in scope. The project is
 therefore partly a design project: make this objectwise content explicit while keeping the early SCT
@@ -118,7 +122,9 @@ ObjectwiseNatIso A C F G α → NatIso A C F G
 
 If this option is chosen, avoid leaving a hidden `True`-like package under the name
 `ObjectwiseNatIsoData`. The trust boundary should be explicit: either the early primitive is the
-book axiom data, or the objectwise theorem is checked from earlier primitives.
+book axiom data, or the objectwise theorem is checked from earlier primitives. In either case,
+participants should be able to see where the componentwise invertibility information enters the
+system.
 
 ### Option C: introduce a lower-level invertibility notion for components
 

@@ -13,7 +13,7 @@ cores rather than treating them as opaque objects.
 - The needed Chapter 1 prerequisites are already present in the SCT specification: terminal
   categories, interval shapes, functor categories, products, pullbacks, and the basic
   `NatIso`/`CatEquiv` operations.
-- Does not depend on the subcategory blueprint, but it unlocks cleaner proofs in the subcategory,
+- Independent of the subcategory blueprint. It unlocks cleaner proofs in the subcategory,
   strong-surjectivity, Fundamental Theorem, and groupoid-universe projects.
 - Some low-dimensional endpoint equivalences use finite shape facts about `[1]`, `[2]`, products,
   coproducts, and pullbacks. These are good subprojects if the full core universal property is too
@@ -100,8 +100,11 @@ should compare `Map(C,D)` with the core of `Fun(C,D)`:
 animaCat (Map(C,D)) ≃ Fun(C,D)^≃.
 ```
 
-This is the most central result in the cluster. It connects the primitive mapping-anima operation
-from Axiom A with the Chapter 2 core API from Axiom G.
+This is the most central result in the cluster. An object of `Map(C,D)` is a functor `C → D`, while
+an object of `Fun(C,D)^≃` is also a functor `C → D`, viewed inside the core of the functor
+category. The equivalence says these two ways of packaging the same mapping object agree. It
+connects the primitive mapping-anima operation from Axiom A with the Chapter 2 core API from Axiom
+G.
 
 Useful ingredients:
 
@@ -125,7 +128,8 @@ interval characterization of groupoids and functor-category exponential laws:
 Fun([1], Fun(C,D)) ≃ Fun(C, Fun([1],D)).
 ```
 
-Then use the groupoid witness for `D` pointwise.
+Then use the groupoid witness for `D` pointwise. Informally, a path of functors into a groupoid is
+invertible because every component path in the target is invertible.
 
 ### C. Cores commute with finite constructions
 
@@ -148,7 +152,8 @@ The product and pullback comparisons should be equivalences such as:
 ```
 
 These comparisons feed object and morphism collection arguments, because those collections live in
-cores and mapping anima.
+cores and mapping anima. They let later proofs move a finite construction past the core operation
+instead of rebuilding all the universal-property data from scratch.
 
 ### D. Low-dimensional endpoint cores
 
@@ -212,8 +217,8 @@ Expected result:
 ## Pitfalls
 
 - Do not replace core universal properties by strict equalities of categories.
-- Do not make `mapAnimaCoreEquiv` a new primitive model obligation; it is theorem-shaped internal
-  debt.
+- Keep `mapAnimaCoreEquiv` as theorem-shaped internal debt instead of making it a new primitive
+  model obligation.
 - Keep groupoid/anima comparisons explicit. A category equivalent to an anima becomes an anima by
   `equiv_to_anima_is_anima`, but the equivalence data still matters.
 - When a construction is only unique up to equivalence, package the result as `CatEquiv` or

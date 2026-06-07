@@ -106,6 +106,10 @@ directly, or first move those two projection definitions into
 
 ## Recommended helper definitions
 
+The construction has two conceptual steps. First, turn an ordinary object `y : * → D` into an object
+of the core `D^≃`. Second, apply the chosen section `D^≃ → C^≃` from strong surjectivity and include
+back into `C`. The helper definitions below name those two steps.
+
 Add these before the two target admissions, unless the final proof is short enough without them.
 
 ### Terminal groupoid witness
@@ -115,7 +119,8 @@ lf_def terminalGroupoid : GroupoidWitness terminalCat :=
   groupoidOfAnima terminalAnima
 ```
 
-This is just a readable alias.
+This is just a readable alias. It records the fact that the one-object terminal category is a
+groupoid, so core-lift operations can be applied to ordinary objects.
 
 ### Core lift of an ordinary object
 
@@ -145,7 +150,8 @@ lf_def stronglySurjectivePreimageCore :
     compFunctor terminalCat (coreCat D) (coreCat C) (objectCoreLift D y) (fst surj)
 ```
 
-Then the desired preimage is its composite with `coreIncl C`.
+This is the chosen preimage before forgetting that it lies in the core of `C`. The desired ordinary
+object of `C` is its composite with `coreIncl C`.
 
 ## Definition of `stronglySurjectivePreimage`
 

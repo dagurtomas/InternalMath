@@ -105,7 +105,8 @@ target f = source g
 ```
 
 This is the data of a map from the inner horn `Λ[2,1]` to `C`, with `f` on the `0 -> 1` face and
-`g` on the `1 -> 2` face.
+`g` on the `1 -> 2` face. Geometrically, the horn is a triangle whose two short edges are known and
+whose long edge is missing.
 
 The scaffold uses a strict endpoint equality because it describes a strict horn map. This equality
 should not be generalized into strict equality for synthetic comparison fields.
@@ -125,6 +126,10 @@ Then define the composite as:
 ```lean
 f ; g := σ|02
 ```
+
+The chosen `2`-simplex is the witness that the long edge really composes the two short edges. A
+different filler might choose a different long edge, so later fields must provide comparison data
+rather than proving all choices definitionally equal.
 
 The intended proof constructs the horn map into `C` and applies `SSet.Quasicategory.hornFilling`.
 The proof should be noncomputable because it chooses a filler.
@@ -147,8 +152,9 @@ id_source(f) ; f  ≃ f
 f ; id_target(f)  ≃ f
 ```
 
-These comparisons should be bicategorical natural-isomorphism data in the model, not strict equality
-of chosen fillers.
+These comparisons say that composing with a degenerate edge behaves like doing nothing. In a
+quasicategory this is again witnessed by fillers and coherent comparisons, so the model should
+package bicategorical natural-isomorphism data, not strict equality of chosen fillers.
 
 ### Target D: associativity comparison
 

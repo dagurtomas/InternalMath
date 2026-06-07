@@ -128,13 +128,14 @@ source(inverse f) = target(f)
 target(inverse f) = source(f)
 ```
 
-These comparisons are about interval-shaped functors and the SCT source/target operations, not just
-about the raw edge endpoints.
+These comparisons involve interval-shaped functors, the SCT source/target operations, and the raw
+edge endpoints.
 
 ### B. Compatibility with chosen Segal composition
 
 The PR provides two raw `2`-simplices witnessing inverse composites. SCT fields ask for unit
-comparisons involving the model's chosen composition operation:
+comparisons involving the model's chosen composition operation. In other words, the inverse edge
+from the PR must be compared with the composite chosen by the Segal-composition model code:
 
 ```lean
 composeComposableMorphism C f (inverse f) ...
@@ -152,8 +153,11 @@ The field
 invertibleMorphismObjectPackage
 ```
 
-requires an object collection in `Fun([1], C)` whose members are exactly the invertible arrows. This
-needs:
+requires an object collection in `Fun([1], C)` whose members are exactly the invertible arrows. The
+collection is the semantic version of the predicate "this arrow has an inverse". Building it means
+connecting the raw edge-level inverse data to vertices of the functor quasicategory.
+
+This needs:
 
 - the functor-quasicategory/internal-hom API;
 - the bridge between vertices of `Fun([1], C)` and interval-shaped functors;
@@ -171,7 +175,9 @@ isoCat C := fullSubcategory (funCat intervalCat C) (invertibleMorphismObjects C)
 ```
 
 The model must build the corresponding full subquasicategory and its inclusion into `Fun([1], C)`.
-The PR supplies only the low-level predicate/data used to define the object collection.
+Fullness means that once the invertible arrows have been chosen as objects, the morphisms between
+them are inherited from the ambient arrow category. The PR supplies the low-level predicate/data
+used to define the object collection.
 
 ### E. Rezk equivalence
 

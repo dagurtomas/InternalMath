@@ -163,7 +163,8 @@ equivalence-edge API, not from a strict equality or ordinary isomorphism placeho
 ### Target D: inverting-functor category
 
 Define `Fun_W(C,D)` as the full sub-quasicategory of `Fun(C,D)` on vertices satisfying
-`Inverts(W,-)`.
+`Inverts(W,-)`. This category keeps exactly the functors that send the selected arrows to
+equivalences, while leaving natural transformations between such functors unchanged.
 
 Expected API shape:
 
@@ -178,7 +179,12 @@ natural transformations in `Fun(C,D)`, with no extra condition on edges.
 
 ### Target E: localization candidate
 
-A localization candidate consists of:
+A localization candidate is the data that presents `C` after the arrows in `W` have been made
+invertible. The category `L` is the result, `loc : C → L` is the comparison functor, and the
+universal property says that maps out of `L` are the same as maps out of `C` that already invert
+`W`.
+
+The package consists of:
 
 1. a quasicategory `L`;
 2. a functor `loc : C → L`;
@@ -231,8 +237,8 @@ Possible implementations:
 3. construct a simplicial localization and take its coherent nerve;
 4. use a known theorem from the Joyal model structure if it becomes available in mathlib.
 
-The chosen route should expose a quasicategory and a functor out of `C`, not only a homotopy
-category.
+The chosen route should expose a quasicategory and a functor out of `C`. A construction only at the
+homotopy-category level loses the higher mapping data needed by SCT.
 
 ### Target H: geometric realization/groupoid completion
 

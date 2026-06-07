@@ -106,7 +106,9 @@ surj : StronglySurjective C D F
 
 Informally, the inverse sends `y : D` to a chosen preimage object `x : C`. Fully faithfulness then
 lifts the arrows and comparison data needed to make this object assignment functorial and to build
-the unit and counit natural isomorphisms.
+the unit and counit natural isomorphisms. The proof is the synthetic analogue of the ordinary
+category-theory argument that fully faithful plus essentially surjective implies equivalence, with
+"essentially surjective" replaced by a section on cores.
 
 ## Proof families
 
@@ -125,7 +127,9 @@ hom categories:
 Hom_C(x,y) ≃ Hom_D(Fx,Fy).
 ```
 
-This is a key bridge from the global arrow-category pullback criterion to objectwise reasoning.
+This is a key bridge from the global arrow-category pullback criterion to objectwise reasoning. It
+lets later arguments work with arrows between two named objects rather than constantly unfolding the
+large pullback that defines `FullyFaithful`.
 
 ### B. Conservativity
 
@@ -156,8 +160,9 @@ SCT.fundamental_theorem_equiv
 ```
 
 The proof should build a quasi-inverse to `F` from strong-surjectivity data and use full
-faithfulness to define its action on arrows. The unit and counit are natural isomorphisms assembled
-from:
+faithfulness to define its action on arrows. Strong surjectivity chooses the objects of the inverse;
+full faithfulness supplies the unique arrows between those chosen objects. The unit and counit are
+natural isomorphisms assembled from:
 
 1. the strong-surjectivity section comparison on cores;
 2. the fully faithful hom equivalences;

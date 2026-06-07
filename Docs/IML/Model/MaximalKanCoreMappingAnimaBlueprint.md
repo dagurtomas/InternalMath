@@ -84,7 +84,9 @@ primitive data.
 
 ### Target A: equivalence edges
 
-Choose or wrap an upstream notion of equivalence edge in a quasicategory.
+Choose or wrap an upstream notion of equivalence edge in a quasicategory. This is the model-side
+version of saying that an arrow is invertible up to higher coherent data, not necessarily an
+isomorphism in an ordinary category.
 
 Expected API shape:
 
@@ -109,7 +111,9 @@ membership predicate plus a separate structure providing chosen inverse data whe
 
 ### Target B: maximal core subcomplex
 
-For a quasicategory `C`, define a subcomplex `C^≃ ⊆ C`.
+For a quasicategory `C`, define a subcomplex `C^≃ ⊆ C`. It should contain every object of `C`, but
+only those arrows that are equivalences. Higher simplices belong to the core when their edge data is
+compatible with staying inside this invertible part.
 
 Expected API shape:
 
@@ -175,7 +179,8 @@ For a functor of quasicategories `F : C ⟶ D`, define:
 F^≃ : C^≃ ⟶ D^≃
 ```
 
-using preservation of equivalence edges by simplicial maps.
+using preservation of equivalence edges by simplicial maps. Informally, a functor sends invertible
+arrows to invertible arrows, so it restricts to a map between cores.
 
 This supports:
 
@@ -190,6 +195,9 @@ Once `Fun(C,D)` is available as a quasicategory, define:
 ```text
 Map(C,D) := Fun(C,D)^≃.
 ```
+
+This says that the mapping object is the space of functors and invertible transformations between
+them. Passing to the core removes non-invertible directed morphisms and leaves an anima.
 
 For the model, this probably means:
 

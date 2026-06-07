@@ -147,7 +147,11 @@ orientation of horn maps.
 
 ### Target C: strict pullback cone API
 
-Once Target B is available, package the strict pullback as a bundled quasicategory with:
+Once Target B is available, package the strict pullback as a bundled quasicategory. This is the
+ordinary cone picture: the pullback comes with two projections, every other strictly commuting cone
+maps into it, and the projections of that mediating map recover the original cone.
+
+The package should include:
 
 - projections;
 - strict commutativity of the square;
@@ -194,6 +198,10 @@ For a fibration `p : E → B` and any `q : B' → B`, define the pullback fibrat
 ```text
 q^*E := B' ×_B E → B'.
 ```
+
+Informally, this is the family `E` reindexed along the map `q`. The objects over a point of `B'`
+are the objects of `E` over its image in `B`, and the fibration structure should transport along
+that pullback.
 
 Target fields:
 
