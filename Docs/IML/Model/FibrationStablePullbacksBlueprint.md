@@ -536,12 +536,17 @@ SCTFibrationPullbacksSkeleton.StrictPullback.liftOfRightInnerFibration
 SCTFibrationPullbacksSkeleton.StrictPullback.lift_pr1_homOfRightInnerFibration
 SCTFibrationPullbacksSkeleton.StrictPullback.lift_pr2_homOfRightInnerFibration
 SCTFibrationPullbacksSkeleton.StrictPullback.hom_extOfRightInnerFibration
+SCTFibrationPullbacksSkeleton.HomotopyPullback.NatTrans
+SCTFibrationPullbacksSkeleton.HomotopyPullback.NatIso
+SCTFibrationPullbacksSkeleton.HomotopyPullback.ConeComparison
+SCTFibrationPullbacksSkeleton.HomotopyPullback.strictConeComparison
 SCTFibrationPullbacksSkeleton.HomotopyPullback.UniversalProperty
 SCTFibrationPullbacksSkeleton.HomotopyPullback.Candidate
 SCTFibrationPullbacksSkeleton.HomotopyPullback.representedByRightInnerFibration
 ```
 
-The scaffold gives a right-leg strict cone package and leaves the mathematical closure theorem,
+The scaffold gives a right-leg strict cone package, converts strict commutativity to coherent
+comparison data for the homotopy-pullback candidate, and leaves the mathematical closure theorem,
 the precise homotopy-pullback universal-property type, and the proof that the strict pullback
 satisfies that property as human project markers.
 
@@ -599,8 +604,9 @@ available, this can be spelled as fields rather than an abstract placeholder.
 
 The strict cone part is constructed directly: take the candidate object to be
 `StrictPullback.qcatOfRightInnerFibration C D E F G hG`, take the projections to be the strict
-pullback projections, and use `StrictPullback.commOfRightInnerFibration` for the comparison.  The
-main mathematical proof is the universal-property field. For every test quasicategory `X`,
+pullback projections, and convert `StrictPullback.commOfRightInnerFibration` to a coherent cone
+comparison using `HomotopyPullback.strictConeComparison`.  The main mathematical proof is the
+universal-property field. For every test quasicategory `X`,
 postcomposition induces a map from `Map(X, C ×_E D)` to the homotopy pullback
 `Map(X,C) ×^h_{Map(X,E)} Map(X,D)`.  Since `G` is an inner fibration, exponentiation by `X` should
 preserve the relevant fibration/isofibration condition, so `Fun(X,D) → Fun(X,E)` is again a

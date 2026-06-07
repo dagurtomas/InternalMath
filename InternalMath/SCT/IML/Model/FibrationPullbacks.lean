@@ -148,46 +148,78 @@ namespace HomotopyPullback
 
 variable {C D E : SSet.QCat.{u}} {F : C ⟶ E} {G : D ⟶ E}
 
+set_option backward.isDefEq.respectTransparency false in
+/-- Bicategorical 2-cells between functors of quasicategories. -/
+abbrev NatTrans (P E : SSet.QCat.{u}) (H K : P ⟶ E) : Type u :=
+  H ⟶ K
+
+set_option backward.isDefEq.respectTransparency false in
+/-- Invertibility evidence for a bicategorical 2-cell. -/
+abbrev TwoCellIsIso {P E : SSet.QCat.{u}} {H K : P ⟶ E}
+    (α : NatTrans P E H K) : Type u :=
+  ULift.{u} (PLift (IsIso α))
+
+/-- Natural-isomorphism comparison between two functors of quasicategories. -/
+abbrev NatIso (P E : SSet.QCat.{u}) (H K : P ⟶ E) : Type u :=
+  (α : NatTrans P E H K) × TwoCellIsIso α
+
+/-- Coherent comparison in a cone over a cospan.
+
+This is the homotopy-pullback comparison datum between `pr1 ≫ F` and `pr2 ≫ G`.  A strict cone is
+only a special case, converted by `strictConeComparison` below.
+-/
+abbrev ConeComparison {P C D E : SSet.QCat.{u}} (pr1 : P ⟶ C) (pr2 : P ⟶ D)
+    (F : C ⟶ E) (G : D ⟶ E) : Type u :=
+  NatIso P E (pr1 ≫ F) (pr2 ≫ G)
+
+set_option backward.isDefEq.respectTransparency false in
+/-- A strictly commuting cone gives coherent comparison data via the identity 2-cell transport. -/
+noncomputable def strictConeComparison {P C D E : SSet.QCat.{u}} {pr1 : P ⟶ C}
+    {pr2 : P ⟶ D} {F : C ⟶ E} {G : D ⟶ E} (h : pr1 ≫ F = pr2 ≫ G) :
+    ConeComparison pr1 pr2 F G :=
+  ⟨eqToHom h, ULift.up (PLift.up inferInstance)⟩
+
 /-- The homotopy-pullback universal property in `Cat_∞`.
 
 To make this definition correct, replace the placeholder by a structure expressing the
 mapping-anima universal property. For every test quasicategory `X`, postcomposition with `pr1` and
-`pr2`, together with `comparison`, should induce an equivalence
+`pr2`, together with the coherent comparison, should induce an equivalence
 `Map(X,P) ≃ Map(X,C) ×^h_{Map(X,E)} Map(X,D)`, where the right-hand side is the
 homotopy pullback of anima. Once `mapAnima`, coherent natural isomorphisms, and anima pullbacks are
 available, those maps and equivalences should become explicit fields of this structure.
 -/
 def UniversalProperty {P : SSet.QCat.{u}} (pr1 : P ⟶ C) (pr2 : P ⟶ D)
-    (comparison : pr1 ≫ F = pr2 ≫ G) : Type (u + 1) := by
+    (comparison : ConeComparison pr1 pr2 F G) : Type (u + 1) := by
   sorry
 
 /-- A homotopy-pullback candidate: cone data plus the `Cat_∞` universal property.
 
 This structure is correct only when `universal` contains the mapping-anima universal property above.
-The strict cone fields alone are not enough: a final SCT pullback package must prove that maps into
+The projection fields alone are not enough: a final SCT pullback package must prove that maps into
 `obj` classify pairs of maps into `C` and `D` with coherent comparison over `E`.
 -/
 structure Candidate (F : C ⟶ E) (G : D ⟶ E) : Type (u + 1) where
   obj : SSet.QCat.{u}
   pr1 : obj ⟶ C
   pr2 : obj ⟶ D
-  comparison : pr1 ≫ F = pr2 ≫ G
+  comparison : ConeComparison pr1 pr2 F G
   universal : UniversalProperty pr1 pr2 comparison
 
 /-- Under an inner-fibration hypothesis, the strict pullback represents the homotopy pullback.
 
-The cone fields are the ordinary strict pullback projections. The main proof is the real
-homotopy-pullback theorem: strict pullbacks along inner fibrations compute homotopy pullbacks in
-`Cat_∞`, equivalently satisfy the mapping-anima universal property for every test quasicategory.
+The projection fields are the ordinary strict pullback projections, and their strict commutativity
+is converted to coherent comparison data. The main proof is the real homotopy-pullback theorem:
+strict pullbacks along inner fibrations compute homotopy pullbacks in `Cat_∞`, equivalently satisfy
+the mapping-anima universal property for every test quasicategory.
 -/
 noncomputable def representedByRightInnerFibration (F : C ⟶ E) (G : D ⟶ E)
     (hG : InnerFibration G.hom) : Candidate F G where
   obj := StrictPullback.qcatOfRightInnerFibration F G hG
   pr1 := StrictPullback.pr1OfRightInnerFibration F G hG
   pr2 := StrictPullback.pr2OfRightInnerFibration F G hG
-  comparison := by
+  comparison := strictConeComparison (by
     apply ObjectProperty.hom_ext
-    exact StrictPullback.commOfRightInnerFibration F G hG
+    exact StrictPullback.commOfRightInnerFibration F G hG)
   universal := by
     sorry
 
