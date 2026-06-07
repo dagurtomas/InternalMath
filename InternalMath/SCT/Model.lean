@@ -667,7 +667,7 @@ is admitted SCT debt. -/
 abbrev ModelObjectwiseNatIsoData (C D : SSet.QCat.{u}) (F G : C ⟶ D)
     (α : NatTrans C D F G) : Type u :=
   SCTModel_ObjectwiseNatIsoData_syntaxDef SSet.QCat (fun C D => C ⟶ D)
-    (fun {C D} F G => NatTrans C D F G) C D F G α
+    (fun {C D} F G => NatTrans C D F G) F G α
 
 /-- The generated model type for natural isomorphisms. -/
 abbrev ModelNatIso (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
@@ -728,30 +728,30 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   sigmaAnimaIndexed := sorry
   sigmaAnimaIndexedProjection := sorry
   idFunctor C := 𝟙 C
-  compFunctor _ _ _ F G := F ≫ G
-  idNatIso C D F := SCTModelHelpers.toModelNatIso (SCTModelHelpers.idNatIso C D F)
-  compNatIso C D _ _ _ α β := SCTModelHelpers.toModelNatIso
+  compFunctor F G := F ≫ G
+  idNatIso {C} {D} F := SCTModelHelpers.toModelNatIso (SCTModelHelpers.idNatIso C D F)
+  compNatIso {C} {D} {_F} {_G} {_H} α β := SCTModelHelpers.toModelNatIso
     (SCTModelHelpers.compNatIso C D (SCTModelHelpers.ofModelNatIso α)
       (SCTModelHelpers.ofModelNatIso β))
-  invNatIso C D _ _ α := SCTModelHelpers.toModelNatIso
+  invNatIso {C} {D} {_F} {_G} α := SCTModelHelpers.toModelNatIso
     (SCTModelHelpers.invNatIso C D (SCTModelHelpers.ofModelNatIso α))
-  leftUnitor _ _ _ := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq (by simp))
-  rightUnitor _ _ _ := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq (by simp))
-  assocFunctor _ _ _ _ _ _ _ := SCTModelHelpers.toModelNatIso
+  leftUnitor _ := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq (by simp))
+  rightUnitor _ := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq (by simp))
+  assocFunctor _ _ _ := SCTModelHelpers.toModelNatIso
     (SCTModelHelpers.natIsoOfEq (by simp [Category.assoc]))
-  preWhiskerNatIso B C D K _ _ α := SCTModelHelpers.toModelNatIso
+  preWhiskerNatIso {B} {C} {D} K {_F} {_G} α := SCTModelHelpers.toModelNatIso
     (SCTModelHelpers.preWhiskerNatIso B C D K (SCTModelHelpers.ofModelNatIso α))
-  postWhiskerNatIso B C D _ _ K α := SCTModelHelpers.toModelNatIso
+  postWhiskerNatIso {B} {C} {D} {_F} {_G} K α := SCTModelHelpers.toModelNatIso
     (SCTModelHelpers.postWhiskerNatIso B C D K (SCTModelHelpers.ofModelNatIso α))
-  horizCompNatIso B C D _ _ _ _ α β := SCTModelHelpers.toModelNatIso
+  horizCompNatIso {B} {C} {D} {_F} {_G} {_H} {_K} α β := SCTModelHelpers.toModelNatIso
     (SCTModelHelpers.horizCompNatIso B C D (SCTModelHelpers.ofModelNatIso α)
       (SCTModelHelpers.ofModelNatIso β))
-  catEquivOfData _ _ F G η ε :=
+  catEquivOfData F G η ε :=
     ⟨F, G, SCTModelHelpers.ofModelNatIso η, SCTModelHelpers.ofModelNatIso ε⟩
-  catEquivForward _ _ e := e.forward
-  catEquivBackward _ _ e := e.backward
-  catEquivUnit _ _ e := SCTModelHelpers.toModelNatIso e.unitIso
-  catEquivCounit _ _ e := SCTModelHelpers.toModelNatIso e.counitIso
+  catEquivForward e := e.forward
+  catEquivBackward e := e.backward
+  catEquivUnit e := SCTModelHelpers.toModelNatIso e.unitIso
+  catEquivCounit e := SCTModelHelpers.toModelNatIso e.counitIso
   terminalAnima := SCTModelHelpers.terminalAnima
   terminalProjection := SCTModelHelpers.terminalProjection
   terminalUnique _ _ _ := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq (by

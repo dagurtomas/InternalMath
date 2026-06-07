@@ -73,13 +73,13 @@ declare_type_theory SCT{u} where
   /-- Natural transformations between parallel functors; Axioms A.1' and A.2'. -/
   syntax_sort NatTrans {C : SCat} {D : SCat} (F : Functor C D) (G : Functor C D) : Type u
   /-- Componentwise invertibility evidence for a natural transformation. -/
-  syntax_def ObjectwiseNatIsoData (C : SCat) (D : SCat)
+  syntax_def ObjectwiseNatIsoData {C : SCat} {D : SCat}
     (F : Functor C D) (G : Functor C D) (α : NatTrans F G) : Type u := sorry
   syntax_sort_role ObjectwiseNatIsoData : side_structure
   /-- Objectwise natural-isomorphism evidence for a natural transformation. -/
   syntax_abbrev ObjectwiseNatIso {C : SCat} {D : SCat}
     (F : Functor C D) (G : Functor C D) (α : NatTrans F G) :=
-    ObjectwiseNatIsoData C D F G α
+    ObjectwiseNatIsoData F G α
   /-- Natural-isomorphism/coherence data between parallel functors; Axiom A.1.
   The package exposes its underlying natural transformation and objectwise invertibility witness.
   -/
@@ -106,24 +106,24 @@ declare_type_theory SCT{u} where
   /-- Identity functor; Axiom A.3. -/
   lf_opaque idFunctor (C : SCat) : Functor C C
   /-- Composition of functors; Axiom A.3. -/
-  lf_opaque compFunctor (C : SCat) (D : SCat) (E : SCat)
+  lf_opaque compFunctor {C : SCat} {D : SCat} {E : SCat}
     (F : Functor C D) (G : Functor D E) : Functor C E
   /-- Identity natural isomorphism; Axioms A.1' and A.2'. -/
-  lf_opaque idNatIso (C : SCat) (D : SCat) (F : Functor C D) : NatIso C D F F
+  lf_opaque idNatIso {C : SCat} {D : SCat} (F : Functor C D) : NatIso F F
   /-- Vertical composition of natural isomorphisms; Axioms A.1' and A.2'. -/
-  lf_opaque compNatIso (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D)
-    (H : Functor C D) (α : NatIso C D F G) (β : NatIso C D G H) : NatIso C D F H
+  lf_opaque compNatIso {C : SCat} {D : SCat} {F : Functor C D} {G : Functor C D}
+    {H : Functor C D} (α : NatIso F G) (β : NatIso G H) : NatIso F H
   /-- Inverse natural isomorphism; Axiom A.1. -/
-  lf_opaque invNatIso (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D)
-    (α : NatIso C D F G) : NatIso C D G F
+  lf_opaque invNatIso {C : SCat} {D : SCat} {F : Functor C D} {G : Functor C D}
+    (α : NatIso F G) : NatIso G F
   /-- Left unitor for functor composition; Axiom A.3. -/
-  lf_opaque leftUnitor (C : SCat) (D : SCat) (F : Functor C D) :
-    NatIso C D (compFunctor C C D (idFunctor C) F) F
+  lf_opaque leftUnitor {C : SCat} {D : SCat} (F : Functor C D) :
+    NatIso (compFunctor C C D (idFunctor C) F) F
   /-- Right unitor for functor composition; Axiom A.3. -/
-  lf_opaque rightUnitor (C : SCat) (D : SCat) (F : Functor C D) :
-    NatIso C D (compFunctor C D D F (idFunctor D)) F
+  lf_opaque rightUnitor {C : SCat} {D : SCat} (F : Functor C D) :
+    NatIso (compFunctor C D D F (idFunctor D)) F
   /-- Associator for functor composition; Axiom A.3. -/
-  lf_opaque assocFunctor (B : SCat) (C : SCat) (D : SCat) (E : SCat)
+  lf_opaque assocFunctor {B : SCat} {C : SCat} {D : SCat} {E : SCat}
     (F : Functor B C) (G : Functor C D) (H : Functor D E) :
     NatIso B E
       (compFunctor B D E (compFunctor B C D F G) H)
@@ -138,35 +138,35 @@ declare_type_theory SCT{u} where
       (compFunctor B C E F (compFunctor C D E G H))
       (assocFunctor B C D E F G H)
   /-- Pre-whiskering of natural isomorphisms; Axioms A.1' and A.2'. -/
-  lf_opaque preWhiskerNatIso (B : SCat) (C : SCat) (D : SCat)
-    (K : Functor B C) (F : Functor C D) (G : Functor C D)
-    (α : NatIso C D F G) :
-    NatIso B D (compFunctor B C D K F) (compFunctor B C D K G)
+  lf_opaque preWhiskerNatIso {B : SCat} {C : SCat} {D : SCat}
+    (K : Functor B C) {F : Functor C D} {G : Functor C D}
+    (α : NatIso F G) :
+    NatIso (compFunctor B C D K F) (compFunctor B C D K G)
   /-- Post-whiskering of natural isomorphisms; Axioms A.1' and A.2'. -/
-  lf_opaque postWhiskerNatIso (B : SCat) (C : SCat) (D : SCat)
-    (F : Functor B C) (G : Functor B C) (K : Functor C D)
-    (α : NatIso B C F G) :
-    NatIso B D (compFunctor B C D F K) (compFunctor B C D G K)
+  lf_opaque postWhiskerNatIso {B : SCat} {C : SCat} {D : SCat}
+    {F : Functor B C} {G : Functor B C} (K : Functor C D)
+    (α : NatIso F G) :
+    NatIso (compFunctor B C D F K) (compFunctor B C D G K)
   /-- Horizontal composition of natural isomorphisms; Axioms A.1' and A.2'. -/
-  lf_opaque horizCompNatIso (B : SCat) (C : SCat) (D : SCat)
-    (F : Functor B C) (G : Functor B C) (H : Functor C D) (K : Functor C D)
-    (α : NatIso B C F G) (β : NatIso C D H K) :
-    NatIso B D (compFunctor B C D F H) (compFunctor B C D G K)
+  lf_opaque horizCompNatIso {B : SCat} {C : SCat} {D : SCat}
+    {F : Functor B C} {G : Functor B C} {H : Functor C D} {K : Functor C D}
+    (α : NatIso F G) (β : NatIso H K) :
+    NatIso (compFunctor B C D F H) (compFunctor B C D G K)
   /-- Packaging of equivalence data; definition after Axiom A.3. -/
-  lf_opaque catEquivOfData (C : SCat) (D : SCat) (F : Functor C D) (G : Functor D C)
-    (η : NatIso C C (compFunctor C D C F G) (idFunctor C))
-    (ε : NatIso D D (compFunctor D C D G F) (idFunctor D)) : CatEquiv C D
+  lf_opaque catEquivOfData {C : SCat} {D : SCat} (F : Functor C D) (G : Functor D C)
+    (η : NatIso (compFunctor C D C F G) (idFunctor C))
+    (ε : NatIso (compFunctor D C D G F) (idFunctor D)) : CatEquiv C D
   /-- Forward functor of an equivalence; definition after Axiom A.3. -/
-  lf_opaque catEquivForward (C : SCat) (D : SCat) (e : CatEquiv C D) : Functor C D
+  lf_opaque catEquivForward {C : SCat} {D : SCat} (e : CatEquiv C D) : Functor C D
   /-- Backward functor of an equivalence; definition after Axiom A.3. -/
-  lf_opaque catEquivBackward (C : SCat) (D : SCat) (e : CatEquiv C D) : Functor D C
+  lf_opaque catEquivBackward {C : SCat} {D : SCat} (e : CatEquiv C D) : Functor D C
   /-- Unit natural isomorphism of an equivalence; definition after Axiom A.3. -/
-  lf_opaque catEquivUnit (C : SCat) (D : SCat) (e : CatEquiv C D) :
+  lf_opaque catEquivUnit {C : SCat} {D : SCat} (e : CatEquiv C D) :
     NatIso C C
       (compFunctor C D C (catEquivForward C D e) (catEquivBackward C D e))
       (idFunctor C)
   /-- Counit natural isomorphism of an equivalence; definition after Axiom A.3. -/
-  lf_opaque catEquivCounit (C : SCat) (D : SCat) (e : CatEquiv C D) :
+  lf_opaque catEquivCounit {C : SCat} {D : SCat} (e : CatEquiv C D) :
     NatIso D D
       (compFunctor D C D (catEquivBackward C D e) (catEquivForward C D e))
       (idFunctor D)
