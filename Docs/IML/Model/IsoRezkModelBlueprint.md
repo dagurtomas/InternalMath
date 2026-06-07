@@ -259,3 +259,89 @@ This is human-led and should not be attempted by defining `Iso(C)` from the desi
 The companion file should reserve its `sorry` markers for the SCT work in this scaffold. It should
 identify which declarations are local shapes for PR #35287 and which ones are genuine
 InternalMath/SCT obligations.
+
+## Companion Lean scaffold
+
+The companion file `InternalMath/SCT/IML/Model/IsoRezkModel.lean` defines the namespace
+`SCTIsoRezkModelSkeleton`.  The local `IncomingPR35287.EdgeInvStruct`, `id`, and `symm` declarations
+are temporary API shapes for the incoming PR and carry no `sorry`s.  The Lean `sorry` markers in the
+file are exactly these SCT project seams:
+
+```lean
+SCTIsoRezkModelSkeleton.IntervalArrow.inverseEndpointComparisons
+SCTIsoRezkModelSkeleton.SegalInterface.InverseUnitComparisons
+SCTIsoRezkModelSkeleton.IsoCategory.arrowFunctorQCat
+SCTIsoRezkModelSkeleton.IsoCategory.InvertibleArrowObjectCollection
+SCTIsoRezkModelSkeleton.IsoCategory.FullSubcategoryWitness
+SCTIsoRezkModelSkeleton.IsoCategory.candidate
+SCTIsoRezkModelSkeleton.Rezk.EquivalenceData
+SCTIsoRezkModelSkeleton.Rezk.comparison
+```
+
+## Informal proof or construction for each Lean `sorry`
+
+This section tracks every `sorry` present in `InternalMath/SCT/IML/Model/IsoRezkModel.lean`.  If the
+Lean scaffold changes, update this list in the same commit.
+
+### `IntervalArrow.inverseEndpointComparisons`
+
+An interval-shaped arrow `f : [1] → C` classifies a one-simplex whose endpoints are the source and
+target of `f`.  The inverse-edge data from PR #35287 gives an inverse edge with source equal to the
+target of `f` and target equal to the source of `f`.  Turn that inverse edge back into an
+interval-shaped arrow using `ofSimplex`.  The endpoint comparisons then follow by unfolding
+`source`, `target`, `simplex`, `edge`, `inverseFromInvStruct`, and the endpoint equations supplied
+by the incoming edge API, plus the finite-shape vertex orientation lemmas.
+
+### `SegalInterface.InverseUnitComparisons`
+
+This placeholder should become a structure carrying the two unit comparison fields required by SCT:
+`f ; f⁻¹ ≃ id` and `f⁻¹ ; f ≃ id`, packaged as the model's bicategorical `NatIso` data.  The raw
+triangles come from `h.homInvId` and `h.invHomId` in the inverse-edge structure.  The missing work
+compares those raw triangles with the Segal-composition package's chosen composites, then transports
+the result through the interval-arrow endpoint adapter.
+
+### `IsoCategory.arrowFunctorQCat`
+
+Define the arrow functor quasicategory as the simplicial internal hom `Fun([1], C)`, equivalently
+`C.obj ^ Δ[1]` with the bundled quasicategory structure.  The proof obligation is the standard
+internal-hom theorem for quasicategories: if `C` is a quasicategory, then the simplicial internal
+hom from any simplicial set into `C` is a quasicategory.  This should use the same API as the
+Segal-composition and localization scaffolds.
+
+### `IsoCategory.InvertibleArrowObjectCollection`
+
+Use the vertex equivalence between `Fun([1], C)` and interval-shaped arrows `[1] → C`.  The object
+collection consists of those vertices whose corresponding edge has inverse-edge data, endpoint
+comparisons, and Segal unit comparisons.  Equivalently, it is the pullback of the equivalence-edge
+or invertible-arrow predicate along the map from vertices of the arrow functor quasicategory to
+edges of `C`.
+
+### `IsoCategory.FullSubcategoryWitness`
+
+Apply the quasicategorical full-subcategory construction to the object collection from the previous
+item.  The witness should include the inclusion `Iso(C) → Fun([1], C)`, the fact that its vertices
+are exactly invertible arrows, and fullness: mapping spaces between chosen objects are inherited
+from the ambient arrow functor quasicategory.
+
+### `IsoCategory.candidate`
+
+Take `obj` to be the full subquasicategory of `Fun([1], C)` on invertible arrows, `incl` to be the
+full-subcategory inclusion, `objects` to be the invertible-arrow object collection, and
+`fullSubcategory` to be the witness described above.  This construction depends on the functor
+quasicategory, object-collection, and full-subcategory APIs rather than on the Rezk comparison.
+
+### `Rezk.EquivalenceData`
+
+Define the identity-isomorphism functor `C → Iso(C)` by sending an object to its degenerate identity
+arrow.  Define the projection functor `Iso(C) → C` by taking the source, or equivalently the target,
+of an invertible arrow, with the inverse-edge data giving the comparison.  The unit at an object is
+identity data.  The counit at an invertible arrow is the coherent isomorphism connecting the arrow
+to the identity arrow at its source or target.  Package the two functors and their unit/counit as
+the model's `CatEquiv`/bicategorical natural-isomorphism data.
+
+### `Rezk.comparison`
+
+Instantiate `Rezk.EquivalenceData` for the candidate `Iso(C)` built above.  The proof should not
+construct `Iso(C)` from the desired equivalence; it should first build the full subcategory of
+invertible arrows and then apply the Rezk-completeness theorem for quasicategories, using the
+coherent-isomorphism API and maximal-core/mapping-anima adapters.

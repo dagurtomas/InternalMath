@@ -236,7 +236,125 @@ The companion file should reserve its `sorry` markers for the mathematical gaps 
 
 - chosen horn fillers;
 - arrow comparison data;
-- associativity comparison data.
+- associativity comparison data;
+- the generated-model bridge between `[2]` and `Fun([1],[1])`.
 
 Finite shape orientation lemmas belong in `InternalMath/SCT/IML/Model/FiniteShapes.lean`, not as
 new admissions in the Segal file.
+
+## Companion Lean scaffold
+
+The companion file `InternalMath/SCT/IML/Model/SegalComposition.lean` defines the namespace
+`SCTSegalCompositionSkeleton`.  Its checked endpoint lemmas for identities and supplied triangle
+fillers have no `sorry`s.  The Lean `sorry` markers in the file are exactly these SCT project seams:
+
+```lean
+SCTSegalCompositionSkeleton.chosenFiller
+SCTSegalCompositionSkeleton.ArrowComparison
+SCTSegalCompositionSkeleton.AssociativityComparison
+SCTSegalCompositionSkeleton.ModelBridge.quasicategoryInternalHom
+SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01
+SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12
+SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02
+SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01Zero
+SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01One
+SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12Zero
+SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12One
+SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02Zero
+SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02One
+```
+
+## Informal proof or construction for each Lean `sorry`
+
+This section tracks every `sorry` present in
+`InternalMath/SCT/IML/Model/SegalComposition.lean`.  If the Lean scaffold changes, update this list
+in the same commit.
+
+### `chosenFiller`
+
+A `ComposablePair C` is a strict map from the inner horn `Λ[2,1]` to `C`: put `p.first` on the
+`0 → 1` face, `p.second` on the `1 → 2` face, and use `p.matching` for the common vertex.  Since
+`C` is a quasicategory, the inner horn inclusion has a filler.  Choose such a filler
+noncomputably, take its underlying `2`-simplex as `TriangleFiller.simplex`, and record the two face
+restriction equations as `face01` and `face12`.
+
+### `ArrowComparison`
+
+This is an API target rather than a theorem.  Replace it by the model's comparison data between two
+interval-shaped arrows.  The intended implementation is either bicategorical `NatIso` between the
+corresponding functors `[1] → C`, or equivalence-edge data in the functor quasicategory
+`Fun([1], C)` after the internal-hom bridge exists.  This comparison type supplies the unit and
+associativity fields; it should not collapse to strict equality of chosen fillers.
+
+### `AssociativityComparison`
+
+For a composable triple `f,g,h`, build the two composites `(f ; g) ; h` and `f ; (g ; h)` using the
+chosen fillers.  The comparison comes from the standard quasicategory associativity argument: form
+the relevant boundary or inner horn in dimension `3`, use horn filling or pasting to obtain a
+coherent `3`-simplex, and read off an invertible comparison between the two long edges.  Package the
+result using `ArrowComparison`.
+
+### `ModelBridge.quasicategoryInternalHom`
+
+Use the standard theorem that if `D` is a quasicategory, then the simplicial internal hom
+`D.obj ^ C.obj` is a quasicategory.  In mathlib notation this is the quasicategory structure on
+`(ihom C.obj).obj D.obj`.  This theorem should be shared with the mapping-anima and localization
+scaffolds, since all three need the same functor-quasicategory API.
+
+### `ModelBridge.simplex2Face01`
+
+Construct the edge of `Fun([1],[1])` from the constant-zero endomap to the identity endomap by
+currying the monotone map `[1] × [1] → [1]` given by `min`.  Under the internal-hom adjunction, this
+monotone family gives a map `[1] → Fun([1],[1])`, hence a morphism
+`intervalQCat ⟶ funCat intervalQCat intervalQCat`.
+
+### `ModelBridge.simplex2Face12`
+
+Construct the edge from the identity endomap to the constant-one endomap by currying the monotone
+map `[1] × [1] → [1]` given by `max`.  The endpoint at `0` is the identity family and the endpoint
+at `1` is the constant-one family.
+
+### `ModelBridge.simplex2Face02`
+
+Construct the edge from the constant-zero endomap to the constant-one endomap by currying the
+projection family `[1] × [1] → [1]` used by the `[2] ≃ Fun([1],[1])` bridge.  This is the long face
+of the triangle in the generated model's presentation.
+
+### `ModelBridge.simplex2Face01Zero`
+
+After `simplex2Face01` is built from the `min` family, precomposing with the zero endpoint of the
+outer interval gives the constant-zero endomap.  The formal proof should identify the supplied
+`simplex2Id0` with that constant-zero functor and then use the internal-hom β rule to build the
+`NatIso`.  The declaration as written treats `simplex2Id0` as an arbitrary argument, so the final
+API should add the needed identification field or replace the argument by the canonical functor.
+
+### `ModelBridge.simplex2Face01One`
+
+Precomposing the `min` family with the one endpoint gives the identity endomap.  The formal proof
+should identify the supplied `simplex2Can` with the canonical identity endomap and then use the
+internal-hom β rule.  As above, the scaffold type needs the endpoint-identification hypothesis or a
+canonical endpoint term.
+
+### `ModelBridge.simplex2Face12Zero`
+
+Precomposing the `max` family with the zero endpoint gives the identity endomap.  The proof should
+identify `simplex2Can` with the canonical identity endomap and then apply the internal-hom β rule
+for the curried `max` family.
+
+### `ModelBridge.simplex2Face12One`
+
+Precomposing the `max` family with the one endpoint gives the constant-one endomap.  The proof
+should identify `simplex2Id1` with the canonical constant-one functor and then apply the
+internal-hom β rule.
+
+### `ModelBridge.simplex2Face02Zero`
+
+Precomposing the long-face family with the zero endpoint gives the constant-zero endomap.  The proof
+should identify `simplex2Id0` with the canonical constant-zero functor and then use the β rule for
+the curried projection family.
+
+### `ModelBridge.simplex2Face02One`
+
+Precomposing the long-face family with the one endpoint gives the constant-one endomap.  The proof
+should identify `simplex2Id1` with the canonical constant-one functor and then use the β rule for
+the curried projection family.
