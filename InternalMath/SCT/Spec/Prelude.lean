@@ -118,58 +118,48 @@ declare_type_theory SCT{u} where
     (α : NatIso F G) : NatIso G F
   /-- Left unitor for functor composition; Axiom A.3. -/
   lf_opaque leftUnitor {C : SCat} {D : SCat} (F : Functor C D) :
-    NatIso (compFunctor C C D (idFunctor C) F) F
+    NatIso (compFunctor (idFunctor C) F) F
   /-- Right unitor for functor composition; Axiom A.3. -/
   lf_opaque rightUnitor {C : SCat} {D : SCat} (F : Functor C D) :
-    NatIso (compFunctor C D D F (idFunctor D)) F
+    NatIso (compFunctor F (idFunctor D)) F
   /-- Associator for functor composition; Axiom A.3. -/
   lf_opaque assocFunctor {B : SCat} {C : SCat} {D : SCat} {E : SCat}
     (F : Functor B C) (G : Functor C D) (H : Functor D E) :
-    NatIso B E
-      (compFunctor B D E (compFunctor B C D F G) H)
-      (compFunctor B C E F (compFunctor C D E G H))
+    NatIso (compFunctor (compFunctor F G) H) (compFunctor F (compFunctor G H))
   /-- Inverse associator, derived from the associator; Axiom A.3. -/
   lf_def assocFunctorInv : (B : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒ (E : SCat) ⇒
       (F : Functor B C) ⇒ (G : Functor C D) ⇒ (H : Functor D E) ⇒
-        NatIso B E (compFunctor B C E F (compFunctor C D E G H))
-          (compFunctor B D E (compFunctor B C D F G) H) :=
-    fun B C D E F G H => invNatIso B E
-      (compFunctor B D E (compFunctor B C D F G) H)
-      (compFunctor B C E F (compFunctor C D E G H))
-      (assocFunctor B C D E F G H)
+        NatIso (compFunctor F (compFunctor G H)) (compFunctor (compFunctor F G) H) :=
+    fun B C D E F G H => invNatIso (assocFunctor B C D E F G H)
   /-- Pre-whiskering of natural isomorphisms; Axioms A.1' and A.2'. -/
   lf_opaque preWhiskerNatIso {B : SCat} {C : SCat} {D : SCat}
     (K : Functor B C) {F : Functor C D} {G : Functor C D}
     (α : NatIso F G) :
-    NatIso (compFunctor B C D K F) (compFunctor B C D K G)
+    NatIso (compFunctor K F) (compFunctor K G)
   /-- Post-whiskering of natural isomorphisms; Axioms A.1' and A.2'. -/
   lf_opaque postWhiskerNatIso {B : SCat} {C : SCat} {D : SCat}
     {F : Functor B C} {G : Functor B C} (K : Functor C D)
     (α : NatIso F G) :
-    NatIso (compFunctor B C D F K) (compFunctor B C D G K)
+    NatIso (compFunctor F K) (compFunctor G K)
   /-- Horizontal composition of natural isomorphisms; Axioms A.1' and A.2'. -/
   lf_opaque horizCompNatIso {B : SCat} {C : SCat} {D : SCat}
     {F : Functor B C} {G : Functor B C} {H : Functor C D} {K : Functor C D}
     (α : NatIso F G) (β : NatIso H K) :
-    NatIso (compFunctor B C D F H) (compFunctor B C D G K)
+    NatIso (compFunctor F H) (compFunctor G K)
   /-- Packaging of equivalence data; definition after Axiom A.3. -/
   lf_opaque catEquivOfData {C : SCat} {D : SCat} (F : Functor C D) (G : Functor D C)
-    (η : NatIso (compFunctor C D C F G) (idFunctor C))
-    (ε : NatIso (compFunctor D C D G F) (idFunctor D)) : CatEquiv C D
+    (η : NatIso (compFunctor F G) (idFunctor C))
+    (ε : NatIso (compFunctor G F) (idFunctor D)) : CatEquiv C D
   /-- Forward functor of an equivalence; definition after Axiom A.3. -/
   lf_opaque catEquivForward {C : SCat} {D : SCat} (e : CatEquiv C D) : Functor C D
   /-- Backward functor of an equivalence; definition after Axiom A.3. -/
   lf_opaque catEquivBackward {C : SCat} {D : SCat} (e : CatEquiv C D) : Functor D C
   /-- Unit natural isomorphism of an equivalence; definition after Axiom A.3. -/
   lf_opaque catEquivUnit {C : SCat} {D : SCat} (e : CatEquiv C D) :
-    NatIso C C
-      (compFunctor C D C (catEquivForward C D e) (catEquivBackward C D e))
-      (idFunctor C)
+    NatIso (compFunctor (catEquivForward e) (catEquivBackward e)) (idFunctor C)
   /-- Counit natural isomorphism of an equivalence; definition after Axiom A.3. -/
   lf_opaque catEquivCounit {C : SCat} {D : SCat} (e : CatEquiv C D) :
-    NatIso D D
-      (compFunctor D C D (catEquivBackward C D e) (catEquivForward C D e))
-      (idFunctor D)
+    NatIso (compFunctor (catEquivBackward e) (catEquivForward e)) (idFunctor D)
   /-- Reflexivity of category equivalence, packaged from identity functors and unitors.  Book
   context: Chapter 1 of the SCT book.
   -/

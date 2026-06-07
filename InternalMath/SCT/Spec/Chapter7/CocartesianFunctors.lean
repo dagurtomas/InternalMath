@@ -44,7 +44,7 @@ extend_type_theory SCT where
   of the SCT book.
   -/
   syntax_abbrev ClassifyingTransformation {B : SCat} {U : SCat}
-    (f : Functor B U) (g : Functor B U) := NatTrans B U f g
+    (f : Functor B U) (g : Functor B U) := NatTrans f g
   /-- Universe-of-categories package; Chapter 7 universe structure. -/
   syntax_sort UniverseWitness (U : SCat) : Type u
   /-- Category of functors over a fixed base, as the fiber of postcomposition with the target

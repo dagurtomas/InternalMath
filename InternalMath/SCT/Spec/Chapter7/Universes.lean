@@ -142,7 +142,7 @@ extend_type_theory SCT where
   /-- Retracts of small categories are small; Definition 7.4.5 (Cat9). -/
   lf_opaque smallRetract (U : SCat) (C : SCat) (D : SCat)
     (i : Functor C D) (r : Functor D C)
-    (ρ : NatIso C C (compFunctor C D C i r) (idFunctor C))
+    (ρ : NatIso (compFunctor i r) (idFunctor C))
     (ret : RetractWitness C D i r ρ) (hD : SmallWitness U D) : SmallWitness U C
   /-- Cocartesian fibrations with small fibers are small; Definition 7.4.5 (Cat10). -/
   lf_opaque smallFibrationOfSmallFibers (U : SCat)

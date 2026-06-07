@@ -41,10 +41,8 @@ extend_type_theory SCT where
   lf_def subcategoryLiftBeta : (D : SCat) ⇒ (C : SCat) ⇒ (W : MorphismCollection C) ⇒
       (ids : containsIdentities C W) ⇒ (comp : closedUnderComposition C W) ⇒
       (F : Functor D C) ⇒ (h : PreservesMorphismCollection D C W F) ⇒
-        NatIso D C
-          (compFunctor D (subcategory C W ids comp) C
-            (subcategoryLift D C W ids comp F h) (subcategoryIncl C W ids comp))
-          F :=
+        NatIso (compFunctor D (subcategory C W ids comp) C
+            (subcategoryLift D C W ids comp F h) (subcategoryIncl C W ids comp)) F :=
     fun D C W ids comp F h =>
       fst (snd ((snd (snd (snd (subcategoryPackage C W ids comp)))) D F h))
   /-- Uniqueness of subcategory lifts over `C`; Axiom H. -/
@@ -52,8 +50,7 @@ extend_type_theory SCT where
       (ids : containsIdentities C W) ⇒ (comp : closedUnderComposition C W) ⇒
       (F : Functor D C) ⇒ (h : PreservesMorphismCollection D C W F) ⇒
       (K : Functor D (subcategory C W ids comp)) ⇒
-      (β : NatIso D C
-        (compFunctor D (subcategory C W ids comp) C K (subcategoryIncl C W ids comp)) F) ⇒
+      (β : NatIso (compFunctor D (subcategory C W ids comp) C K (subcategoryIncl C W ids comp)) F) ⇒
         NatIso D (subcategory C W ids comp) K (subcategoryLift D C W ids comp F h) :=
     fun D C W ids comp F h K β =>
       snd (snd ((snd (snd (snd (subcategoryPackage C W ids comp)))) D F h)) K β

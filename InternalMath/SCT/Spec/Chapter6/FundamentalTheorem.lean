@@ -53,8 +53,8 @@ internal_defs where
   /-- Componentwise invertibility stored in objectwise natural-isomorphism evidence; the package
   form follows Theorem 6.2.11. -/
   def objectwiseNatIsoComponent (A : SCat) (C : SCat)
-    (F : Functor A C) (G : Functor A C) (α : NatTrans A C F G)
-    (h : ObjectwiseNatIso A C F G α) (x : Obj A) :
+    (F : Functor A C) (G : Functor A C) (α : NatTrans F G)
+    (h : ObjectwiseNatIso F G α) (x : Obj A) :
     InvertibleMorphism C (natTransComponent A C F G α x) := sorry
 
 end SCT
@@ -66,7 +66,7 @@ extend_type_theory SCT where
   /-- Componentwise invertibility of a natural isomorphism, by projecting the public package. -/
   lf_def natIsoObjectwiseComponent :
       (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒ (G : Functor A C) ⇒
-      (α : NatIso A C F G) ⇒ (x : Obj A) ⇒
+      (α : NatIso F G) ⇒ (x : Obj A) ⇒
       InvertibleMorphism C
         (natTransComponent A C F G (natIsoToNatTrans A C F G α) x) :=
     fun A C F G α x => objectwiseNatIsoComponent A C F G
@@ -74,12 +74,12 @@ extend_type_theory SCT where
   /-- Natural isomorphisms give objectwise natural-isomorphism evidence. -/
   lf_def natIsoObjectwise :
       (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒ (G : Functor A C) ⇒
-      (α : NatIso A C F G) ⇒ ObjectwiseNatIso A C F G (natIsoToNatTrans A C F G α) :=
+      (α : NatIso F G) ⇒ ObjectwiseNatIso A C F G (natIsoToNatTrans A C F G α) :=
     fun A C F G α => snd α
   /-- Objectwise evidence says every component morphism is invertible. -/
   lf_def objectwiseNatIsoComponentInvertible :
       (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒ (G : Functor A C) ⇒
-      (α : NatTrans A C F G) ⇒ ObjectwiseNatIso A C F G α ⇒
+      (α : NatTrans F G) ⇒ ObjectwiseNatIso F G α ⇒
       (x : Obj A) ⇒ InvertibleMorphism C (natTransComponent A C F G α x) :=
     fun A C F G α h x => objectwiseNatIsoComponent A C F G α h x
 
@@ -108,8 +108,8 @@ extend_type_theory SCT where
     fun C D F ff surj => fundamental_theorem_equiv C D F ff surj
   /-- Objectwise evidence assembles a natural isomorphism; Theorem 6.2.11. -/
   lf_def natIsoOfObjectwise : (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒
-      (G : Functor A C) ⇒ (α : NatTrans A C F G) ⇒ ObjectwiseNatIso A C F G α ⇒
-      NatIso A C F G :=
+      (G : Functor A C) ⇒ (α : NatTrans F G) ⇒ ObjectwiseNatIso F G α ⇒
+      NatIso F G :=
     fun A C F G α h => ⟨α, h⟩
   /-- Evidence that the induced map on one fiber is an equivalence. -/
   syntax_abbrev FiberMapEquiv {E : SCat} {B : SCat} (p : Functor E B)

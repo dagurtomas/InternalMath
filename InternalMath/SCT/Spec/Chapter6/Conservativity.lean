@@ -40,6 +40,6 @@ internal_defs where
   To finish this declaration: unpack the conservative/core-pullback criterion. -/
   def conservativeReflectsIso (C : SCat) (D : SCat) (F : Functor C D)
     (cons : Conservative C D F) (f : Functor intervalCat C)
-    (hf : InvertibleMorphism D (compFunctor intervalCat C D f F)) : InvertibleMorphism C f := sorry
+    (hf : InvertibleMorphism D (compFunctor f F)) : InvertibleMorphism C f := sorry
 
 end SCT

@@ -53,12 +53,12 @@ extend_type_theory SCT where
   Book context:Chapter 5 of the SCT book. -/
   syntax_def LeftAdjointSection (C : SCat) (D : SCat) (p : Functor C D) : Type u :=
     Σ s : Functor D C,
-      Σ sec : NatIso D D (compFunctor D C D s p) (idFunctor D), Adjunction D C s p
+      Σ sec : NatIso (compFunctor s p) (idFunctor D), Adjunction D C s p
   /-- A section of a functor that is right adjoint to it.  Book context: Chapter 5 of the SCT book.
   -/
   syntax_def RightAdjointSection (C : SCat) (D : SCat) (p : Functor C D) : Type u :=
     Σ s : Functor D C,
-      Σ sec : NatIso D D (compFunctor D C D s p) (idFunctor D), Adjunction C D p s
+      Σ sec : NatIso (compFunctor s p) (idFunctor D), Adjunction C D p s
 
 namespace SCT
 
@@ -199,11 +199,11 @@ namespace SCT
 internal_defs where
   /-- Unit natural transformation of an adjunction.  Book context: Chapter 5 of the SCT book. -/
   def adjunctionUnit (C : SCat) (D : SCat) (L : Functor C D) (R : Functor D C)
-    (adj : Adjunction C D L R) : NatTrans C C (idFunctor C) (compFunctor C D C L R) :=
+    (adj : Adjunction C D L R) : NatTrans C C (idFunctor C) (compFunctor L R) :=
     sorry
   /-- Counit natural transformation of an adjunction.  Book context: Chapter 5 of the SCT book. -/
   def adjunctionCounit (C : SCat) (D : SCat) (L : Functor C D) (R : Functor D C)
-    (adj : Adjunction C D L R) : NatTrans D D (compFunctor D C D R L) (idFunctor D) :=
+    (adj : Adjunction C D L R) : NatTrans D D (compFunctor R L) (idFunctor D) :=
     sorry
 
 end SCT
@@ -389,7 +389,7 @@ extend_type_theory SCT where
     (cocart'' : CocartesianFibrationWitness E'' B p'' fib'') (G : Functor E' E'')
     (hG : CocartesianFunctorWitness E' B p' fib' cocart' E'' p'' fib'' cocart'' G) :
     CocartesianFunctorWitness E B p fib cocart E'' p'' fib'' cocart''
-      (compFunctor E E' E'' F G)
+      (compFunctor F G)
 
 extend_type_theory SCT where
 
@@ -406,9 +406,7 @@ extend_type_theory SCT where
   lf_opaque universalLeftSectionBase (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cart : CartesianFibrationWitness E B p fib)
     (init : FiberwiseInitialWitness E B p fib) :
-    NatIso B B
-      (compFunctor B E B (universal_left_adjoint_section E B p fib cart init) p)
-      (idFunctor B)
+    NatIso (compFunctor (universal_left_adjoint_section E B p fib cart init) p) (idFunctor B)
   /-- Cocartesian plus fiberwise terminal data assembles a right adjoint section; Axiom L. -/
   lf_opaque universal_right_adjoint_section (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
@@ -417,9 +415,7 @@ extend_type_theory SCT where
   lf_opaque universalRightSectionBase (E : SCat) (B : SCat) (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (term : FiberwiseTerminalWitness E B p fib) :
-    NatIso B B
-      (compFunctor B E B (universal_right_adjoint_section E B p fib cocart term) p)
-      (idFunctor B)
+    NatIso (compFunctor (universal_right_adjoint_section E B p fib cocart term) p) (idFunctor B)
   /-- Contextual fibration indexed by a contextual functor.
   Book context:Chapter 5 of the SCT book.
   -/

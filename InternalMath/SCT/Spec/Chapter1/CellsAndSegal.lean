@@ -73,7 +73,7 @@ extend_type_theory SCT where
   category.  This records the Chapter 1 identification of natural transformations with arrows in
   `Fun(C,D)` while `NatTrans` is primitive vocabulary. -/
   lf_opaque natTransObject (C : SCat) (D : SCat) (F : Functor C D) (G : Functor C D)
-    (α : NatTrans C D F G) : Obj (natTransCat C D F G)
+    (α : NatTrans F G) : Obj (natTransCat C D F G)
 
 extend_type_theory SCT where
 
@@ -82,7 +82,7 @@ extend_type_theory SCT where
 
   /-- Regard a natural isomorphism as its underlying natural transformation. -/
   lf_def natIsoToNatTrans : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
-      (G : Functor C D) ⇒ NatIso C D F G ⇒ NatTrans C D F G :=
+      (G : Functor C D) ⇒ NatIso F G ⇒ NatTrans F G :=
     fun C D F G α => fst α
 
 extend_type_theory SCT where
@@ -94,7 +94,7 @@ extend_type_theory SCT where
   fiber.  Book context: Chapter 1 of the SCT book.
   -/
   syntax_abbrev NatIsoIso {C : SCat} {D : SCat} {F : Functor C D} {G : Functor C D}
-    (α : NatIso C D F G) (β : NatIso C D F G) :=
+    (α : NatIso F G) (β : NatIso F G) :=
     ObjIso (natTransCat C D F G)
       (natTransObject C D F G (natIsoToNatTrans C D F G α))
       (natTransObject C D F G (natIsoToNatTrans C D F G β))
@@ -102,7 +102,7 @@ extend_type_theory SCT where
   context: Chapter 1 of the SCT book.
   -/
   lf_def natTransUnderlyingArrow : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
-      (G : Functor C D) ⇒ NatTrans C D F G ⇒ Functor intervalCat (funCat C D) :=
+      (G : Functor C D) ⇒ NatTrans F G ⇒ Functor intervalCat (funCat C D) :=
     fun C D F G α => functorFromObject intervalCat (funCat C D)
       (compFunctor terminalCat (natTransCat C D F G) (funCat intervalCat (funCat C D))
         (natTransObject C D F G α)
@@ -116,7 +116,7 @@ extend_type_theory SCT where
   SCT book.
   -/
   lf_def natTransComponent : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
-      (G : Functor C D) ⇒ NatTrans C D F G ⇒ Obj C ⇒ Functor intervalCat D :=
+      (G : Functor C D) ⇒ NatTrans F G ⇒ Obj C ⇒ Functor intervalCat D :=
     fun C D F G α x => compFunctor intervalCat (prodCat intervalCat C) D
       (prodPair intervalCat intervalCat C (idFunctor intervalCat) (constantFunctor intervalCat C x))
       (uncurryFunctor intervalCat C D (natTransUnderlyingArrow C D F G α))
@@ -124,7 +124,7 @@ extend_type_theory SCT where
   SCT book.
   -/
   lf_def idNatIsoIso : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
-      (G : Functor C D) ⇒ (α : NatIso C D F G) ⇒ NatIsoIso C D F G α α :=
+      (G : Functor C D) ⇒ (α : NatIso F G) ⇒ NatIsoIso α α :=
     fun C D F G α => idNatIso terminalCat (natTransCat C D F G)
       (natTransObject C D F G (natIsoToNatTrans C D F G α))
   /-- Horizontal composition preserves identity natural isomorphisms; finite A.1'/A.2' coherence.

@@ -134,9 +134,9 @@ extend_type_theory SCT where
           (D : SCat) → (F : Functor D C) →
             (h : PreservesMorphismCollection D C W F) →
               Σ K : Functor D S,
-                Σ β : NatIso D C (compFunctor D S C K i) F,
+                Σ β : NatIso (compFunctor K i) F,
                   (L : Functor D S) →
-                    NatIso D C (compFunctor D S C L i) F → NatIso D S L K
+                    NatIso (compFunctor L i) F → NatIso L K
   /-- Subcategory determined by a closed morphism collection; Axiom H. -/
   lf_def subcategory : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
       containsIdentities C W ⇒ closedUnderComposition C W ⇒ SCat :=

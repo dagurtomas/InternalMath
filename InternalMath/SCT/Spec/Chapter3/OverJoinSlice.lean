@@ -111,16 +111,16 @@ extend_type_theory SCT where
   /-- Left β comparison for the join descender; Axiom J.2. -/
   lf_opaque joinBetaLeft (C : SCat) (D : SCat) (E : SCat)
     (L : Functor C E) (R : Functor D E) :
-    NatIso C E (compFunctor C (joinCat C D) E (joinInl C D) (joinDesc C D E L R)) L
+    NatIso (compFunctor C (joinCat C D) E (joinInl C D) (joinDesc C D E L R)) L
   /-- Right β comparison for the join descender; Axiom J.2. -/
   lf_opaque joinBetaRight (C : SCat) (D : SCat) (E : SCat)
     (L : Functor C E) (R : Functor D E) :
-    NatIso D E (compFunctor D (joinCat C D) E (joinInr C D) (joinDesc C D E L R)) R
+    NatIso (compFunctor D (joinCat C D) E (joinInr C D) (joinDesc C D E L R)) R
   /-- Uniqueness of join descenders from endpoint restrictions; Axiom J.2. -/
   lf_opaque joinDescUniq (C : SCat) (D : SCat) (E : SCat)
     (L : Functor C E) (R : Functor D E) (K : Functor (joinCat C D) E)
-    (α : NatIso C E (compFunctor C (joinCat C D) E (joinInl C D) K) L)
-    (β : NatIso D E (compFunctor D (joinCat C D) E (joinInr C D) K) R) :
+    (α : NatIso (compFunctor C (joinCat C D) E (joinInl C D) K) L)
+    (β : NatIso (compFunctor D (joinCat C D) E (joinInr C D) K) R) :
     NatIso (joinCat C D) E K (joinDesc C D E L R)
   /-- Left cone; Axioms J.1 and J.2. -/
   lf_def leftConeCat : SCat ⇒ SCat := fun C => joinCat simplex0Cat C
@@ -132,10 +132,8 @@ extend_type_theory SCT where
   lf_opaque intervalJoinBackward : Functor (joinCat simplex0Cat simplex0Cat) intervalCat
   /-- Unit for the interval/join comparison; Axiom J.1. -/
   lf_opaque intervalJoinUnit :
-    NatIso intervalCat intervalCat
-      (compFunctor intervalCat (joinCat simplex0Cat simplex0Cat) intervalCat
-        intervalJoinForward intervalJoinBackward)
-      (idFunctor intervalCat)
+    NatIso (compFunctor intervalCat (joinCat simplex0Cat simplex0Cat) intervalCat
+        intervalJoinForward intervalJoinBackward) (idFunctor intervalCat)
   /-- Counit for the interval/join comparison; Axiom J.1. -/
   lf_opaque intervalJoinCounit :
     NatIso (joinCat simplex0Cat simplex0Cat) (joinCat simplex0Cat simplex0Cat)

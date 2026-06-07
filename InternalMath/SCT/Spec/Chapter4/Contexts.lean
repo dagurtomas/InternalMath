@@ -139,7 +139,7 @@ extend_type_theory SCT where
     (F : Functor C D) : ContextFunctor Γ (weakenContextCat Γ C) (weakenContextCat Γ D)
   /-- Weakening of an absolute natural isomorphism to a context; Axiom K.3. -/
   lf_opaque weakenContextNatIso (Γ : SCat) (C : SCat) (D : SCat)
-    (F : Functor C D) (G : Functor C D) (α : NatIso C D F G) :
+    (F : Functor C D) (G : Functor C D) (α : NatIso F G) :
     ContextNatIso Γ (weakenContextCat Γ C) (weakenContextCat Γ D)
       (weakenContextFunctor Γ C D F) (weakenContextFunctor Γ C D G)
   /-- Weakening of an absolute equivalence to a context; Axiom K.3. -/
@@ -171,7 +171,7 @@ extend_type_theory SCT where
   lf_opaque reindexContextCatComp (Θ : SCat) (Δ : SCat) (Γ : SCat)
     (v : Functor Θ Δ) (u : Functor Δ Γ) (C : ContextCat Γ) :
     ContextCatEquiv Θ
-      (reindexContextCat Θ Γ (compFunctor Θ Δ Γ v u) C)
+      (reindexContextCat Θ Γ (compFunctor v u) C)
       (reindexContextCat Θ Δ v (reindexContextCat Δ Γ u C))
 
   /-- Contextual terminal category, available in arbitrary contexts; Axiom K.2. -/
@@ -384,11 +384,9 @@ extend_type_theory SCT where
       (idFunctor (sigmaCat Γ (weakenContextCat Γ terminalCat)))
   /-- Counit for `Σ_Γ * → Γ`; Axiom K.5 split equivalence data. -/
   lf_opaque sigmaTerminalCounit (Γ : SCat) :
-    NatIso Γ Γ
-      (compFunctor Γ (sigmaCat Γ (weakenContextCat Γ terminalCat)) Γ
+    NatIso (compFunctor Γ (sigmaCat Γ (weakenContextCat Γ terminalCat)) Γ
         (sigmaLift Γ Γ (idFunctor Γ) (weakenContextCat Γ terminalCat))
-        (sigmaProjection Γ (weakenContextCat Γ terminalCat)))
-      (idFunctor Γ)
+        (sigmaProjection Γ (weakenContextCat Γ terminalCat))) (idFunctor Γ)
 
 extend_type_theory SCT where
 

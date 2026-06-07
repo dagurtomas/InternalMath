@@ -95,7 +95,7 @@ extend_type_theory SCT where
   syntax_abbrev ContractibleCat (C : SCat) := CatEquiv C terminalCat
   /-- A contraction of `C` onto an object `x`.  Book context: Chapter 1 of the SCT book. -/
   syntax_abbrev ContractionAt {C : SCat} (x : Obj C) :=
-    NatIso C C (constantFunctor C C x) (idFunctor C)
+    NatIso (constantFunctor C C x) (idFunctor C)
 
   /-- Initial category; Axiom B.2. -/
   lf_opaque initialCat : SCat
@@ -103,7 +103,7 @@ extend_type_theory SCT where
   lf_opaque initialElim (C : SCat) : Functor initialCat C
   /-- Contractibility of maps out of the initial category; Axiom B.2. -/
   lf_opaque initialUnique (C : SCat) (F : Functor initialCat C)
-    (G : Functor initialCat C) : NatIso initialCat C F G
+    (G : Functor initialCat C) : NatIso F G
   /-- Strictness of the initial category; Axiom B.2'. -/
   lf_opaque initialStrict (C : SCat) (F : Functor C initialCat) : CatEquiv C initialCat
 
@@ -119,11 +119,11 @@ extend_type_theory SCT where
   /-- First product β isomorphism; Axiom B.3. -/
   lf_opaque prodBeta1 (Γ : SCat) (C : SCat) (D : SCat)
     (F : Functor Γ C) (G : Functor Γ D) :
-    NatIso Γ C (compFunctor Γ (prodCat C D) C (prodPair Γ C D F G) (prodPr1 C D)) F
+    NatIso (compFunctor Γ (prodCat C D) C (prodPair Γ C D F G) (prodPr1 C D)) F
   /-- Second product β isomorphism; Axiom B.3. -/
   lf_opaque prodBeta2 (Γ : SCat) (C : SCat) (D : SCat)
     (F : Functor Γ C) (G : Functor Γ D) :
-    NatIso Γ D (compFunctor Γ (prodCat C D) D (prodPair Γ C D F G) (prodPr2 C D)) G
+    NatIso (compFunctor Γ (prodCat C D) D (prodPair Γ C D F G) (prodPr2 C D)) G
   /-- Product η isomorphism; Axiom B.3. -/
   lf_opaque prodEta (Γ : SCat) (C : SCat) (D : SCat)
     (H : Functor Γ (prodCat C D)) :
@@ -135,12 +135,8 @@ extend_type_theory SCT where
   /-- Product natural isomorphisms are specified componentwise; Axiom B.3. -/
   lf_opaque prodUniq (Γ : SCat) (C : SCat) (D : SCat)
     (H : Functor Γ (prodCat C D)) (K : Functor Γ (prodCat C D))
-    (α : NatIso Γ C
-      (compFunctor Γ (prodCat C D) C H (prodPr1 C D))
-      (compFunctor Γ (prodCat C D) C K (prodPr1 C D)))
-    (β : NatIso Γ D
-      (compFunctor Γ (prodCat C D) D H (prodPr2 C D))
-      (compFunctor Γ (prodCat C D) D K (prodPr2 C D))) :
+    (α : NatIso (compFunctor Γ (prodCat C D) C H (prodPr1 C D)) (compFunctor Γ (prodCat C D) C K (prodPr1 C D)))
+    (β : NatIso (compFunctor Γ (prodCat C D) D H (prodPr2 C D)) (compFunctor Γ (prodCat C D) D K (prodPr2 C D))) :
     NatIso Γ (prodCat C D) H K
 
   /-- Binary coproduct of synthetic categories; Axiom B.4. -/
@@ -155,17 +151,13 @@ extend_type_theory SCT where
   /-- First coproduct β isomorphism; Axiom B.4. -/
   lf_opaque coprodBeta1 (C : SCat) (D : SCat) (Γ : SCat)
     (F : Functor C Γ) (G : Functor D Γ) :
-    NatIso C Γ
-      (compFunctor C (coprodCat C D) Γ (coprodIn1 C D)
-        (coprodCase C D Γ F G))
-      F
+    NatIso (compFunctor C (coprodCat C D) Γ (coprodIn1 C D)
+        (coprodCase C D Γ F G)) F
   /-- Second coproduct β isomorphism; Axiom B.4. -/
   lf_opaque coprodBeta2 (C : SCat) (D : SCat) (Γ : SCat)
     (F : Functor C Γ) (G : Functor D Γ) :
-    NatIso D Γ
-      (compFunctor D (coprodCat C D) Γ (coprodIn2 C D)
-        (coprodCase C D Γ F G))
-      G
+    NatIso (compFunctor D (coprodCat C D) Γ (coprodIn2 C D)
+        (coprodCase C D Γ F G)) G
   /-- Coproduct η isomorphism; Axiom B.4. -/
   lf_opaque coprodEta (C : SCat) (D : SCat) (Γ : SCat)
     (H : Functor (coprodCat C D) Γ) :
@@ -177,12 +169,8 @@ extend_type_theory SCT where
   /-- Coproduct natural isomorphisms are specified componentwise; Axiom B.4. -/
   lf_opaque coprodUniq (C : SCat) (D : SCat) (Γ : SCat)
     (H : Functor (coprodCat C D) Γ) (K : Functor (coprodCat C D) Γ)
-    (α : NatIso C Γ
-      (compFunctor C (coprodCat C D) Γ (coprodIn1 C D) H)
-      (compFunctor C (coprodCat C D) Γ (coprodIn1 C D) K))
-    (β : NatIso D Γ
-      (compFunctor D (coprodCat C D) Γ (coprodIn2 C D) H)
-      (compFunctor D (coprodCat C D) Γ (coprodIn2 C D) K)) :
+    (α : NatIso (compFunctor C (coprodCat C D) Γ (coprodIn1 C D) H) (compFunctor C (coprodCat C D) Γ (coprodIn1 C D) K))
+    (β : NatIso (compFunctor D (coprodCat C D) Γ (coprodIn2 C D) H) (compFunctor D (coprodCat C D) Γ (coprodIn2 C D) K)) :
     NatIso (coprodCat C D) Γ H K
 
   /-- Pullback of functors; Axiom B.5. -/
@@ -204,47 +192,35 @@ extend_type_theory SCT where
   lf_opaque pullbackLift (X : SCat) (C : SCat) (D : SCat) (E : SCat)
     (F : Functor C E) (G : Functor D E)
     (A : Functor X C) (B : Functor X D)
-    (θ : NatIso X E (compFunctor X C E A F) (compFunctor X D E B G)) :
+    (θ : NatIso (compFunctor A F) (compFunctor B G)) :
     Functor X (pullbackCat C D E F G)
   /-- First pullback β isomorphism; Axiom B.5. -/
   lf_opaque pullbackBeta1 (X : SCat) (C : SCat) (D : SCat) (E : SCat)
     (F : Functor C E) (G : Functor D E)
     (A : Functor X C) (B : Functor X D)
-    (θ : NatIso X E (compFunctor X C E A F) (compFunctor X D E B G)) :
-    NatIso X C
-      (compFunctor X (pullbackCat C D E F G) C
-        (pullbackLift X C D E F G A B θ) (pullbackPr1 C D E F G))
-      A
+    (θ : NatIso (compFunctor A F) (compFunctor B G)) :
+    NatIso (compFunctor X (pullbackCat C D E F G) C
+        (pullbackLift X C D E F G A B θ) (pullbackPr1 C D E F G)) A
   /-- Second pullback β isomorphism; Axiom B.5. -/
   lf_opaque pullbackBeta2 (X : SCat) (C : SCat) (D : SCat) (E : SCat)
     (F : Functor C E) (G : Functor D E)
     (A : Functor X C) (B : Functor X D)
-    (θ : NatIso X E (compFunctor X C E A F) (compFunctor X D E B G)) :
-    NatIso X D
-      (compFunctor X (pullbackCat C D E F G) D
-        (pullbackLift X C D E F G A B θ) (pullbackPr2 C D E F G))
-      B
+    (θ : NatIso (compFunctor A F) (compFunctor B G)) :
+    NatIso (compFunctor X (pullbackCat C D E F G) D
+        (pullbackLift X C D E F G A B θ) (pullbackPr2 C D E F G)) B
   /-- Pullback natural isomorphisms are specified componentwise; Axiom B.5. -/
   lf_opaque pullbackUniq (X : SCat) (C : SCat) (D : SCat) (E : SCat)
     (F : Functor C E) (G : Functor D E)
     (H : Functor X (pullbackCat C D E F G))
     (K : Functor X (pullbackCat C D E F G))
-    (α : NatIso X C
-      (compFunctor X (pullbackCat C D E F G) C H (pullbackPr1 C D E F G))
-      (compFunctor X (pullbackCat C D E F G) C K (pullbackPr1 C D E F G)))
-    (β : NatIso X D
-      (compFunctor X (pullbackCat C D E F G) D H (pullbackPr2 C D E F G))
-      (compFunctor X (pullbackCat C D E F G) D K (pullbackPr2 C D E F G))) :
+    (α : NatIso (compFunctor X (pullbackCat C D E F G) C H (pullbackPr1 C D E F G)) (compFunctor X (pullbackCat C D E F G) C K (pullbackPr1 C D E F G)))
+    (β : NatIso (compFunctor X (pullbackCat C D E F G) D H (pullbackPr2 C D E F G)) (compFunctor X (pullbackCat C D E F G) D K (pullbackPr2 C D E F G))) :
     NatIso X (pullbackCat C D E F G) H K
   /-- Pullback η comparison from the projections of a cone; Axiom B.5. -/
   lf_opaque pullbackEta (X : SCat) (C : SCat) (D : SCat) (E : SCat)
     (F : Functor C E) (G : Functor D E)
     (H : Functor X (pullbackCat C D E F G))
-    (θ : NatIso X E
-      (compFunctor X C E
-        (compFunctor X (pullbackCat C D E F G) C H (pullbackPr1 C D E F G)) F)
-      (compFunctor X D E
-        (compFunctor X (pullbackCat C D E F G) D H (pullbackPr2 C D E F G)) G)) :
+    (θ : NatIso (compFunctor (compFunctor X (pullbackCat C D E F G) C H (pullbackPr1 C D E F G)) F) (compFunctor (compFunctor X (pullbackCat C D E F G) D H (pullbackPr2 C D E F G)) G)) :
     NatIso X (pullbackCat C D E F G)
       (pullbackLift X C D E F G
         (compFunctor X (pullbackCat C D E F G) C H (pullbackPr1 C D E F G))
@@ -266,7 +242,7 @@ extend_type_theory SCT where
   /-- Evidence that a functor between total categories lies over a fixed base. -/
   syntax_abbrev FunctorOverBase {E : SCat} {B : SCat} (p : Functor E B)
     {E' : SCat} (p' : Functor E' B) (F : Functor E E') :=
-    NatIso E B (compFunctor E E' B F p') p
+    NatIso (compFunctor F p') p
   /-- Compatibility isomorphism used to map fibers along a functor over the base. -/
   lf_def fiberMapCompat : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
       (E' : SCat) ⇒ (p' : Functor E' B) ⇒ (F : Functor E E') ⇒
@@ -324,23 +300,19 @@ extend_type_theory SCT where
   lf_def identitySelfPullbackDiagonal : (C : SCat) ⇒
       Functor C (identitySelfPullback C) :=
     fun C => pullbackLift C C C C (idFunctor C) (idFunctor C) (idFunctor C)
-      (idFunctor C) (idNatIso C C (compFunctor C C C (idFunctor C) (idFunctor C)))
+      (idFunctor C) (idNatIso C C (compFunctor (idFunctor C) (idFunctor C)))
   /-- First projection β comparison for the identity diagonal. -/
   lf_def identityEmbeddingUnit : (C : SCat) ⇒
-      NatIso C C
-        (compFunctor C (identitySelfPullback C) C (identitySelfPullbackDiagonal C)
-          (identitySelfPullbackPr1 C))
-        (idFunctor C) :=
+      NatIso (compFunctor C (identitySelfPullback C) C (identitySelfPullbackDiagonal C)
+          (identitySelfPullbackPr1 C)) (idFunctor C) :=
     fun C => pullbackBeta1 C C C C (idFunctor C) (idFunctor C) (idFunctor C)
-      (idFunctor C) (idNatIso C C (compFunctor C C C (idFunctor C) (idFunctor C)))
+      (idFunctor C) (idNatIso C C (compFunctor (idFunctor C) (idFunctor C)))
   /-- Second projection β comparison for the identity diagonal. -/
   lf_def identityEmbeddingUnitPr2 : (C : SCat) ⇒
-      NatIso C C
-        (compFunctor C (identitySelfPullback C) C (identitySelfPullbackDiagonal C)
-          (identitySelfPullbackPr2 C))
-        (idFunctor C) :=
+      NatIso (compFunctor C (identitySelfPullback C) C (identitySelfPullbackDiagonal C)
+          (identitySelfPullbackPr2 C)) (idFunctor C) :=
     fun C => pullbackBeta2 C C C C (idFunctor C) (idFunctor C) (idFunctor C)
-      (idFunctor C) (idNatIso C C (compFunctor C C C (idFunctor C) (idFunctor C)))
+      (idFunctor C) (idNatIso C C (compFunctor (idFunctor C) (idFunctor C)))
   /-- First projection comparison used in the identity-embedding counit. -/
   lf_def identityEmbeddingCounitPr1 : (C : SCat) ⇒
       NatIso (identitySelfPullback C) C
@@ -480,10 +452,8 @@ extend_type_theory SCT where
   /-- Counit for coproduct base change; Axiom B.4'. -/
   lf_opaque coprodBaseChangeCounit (C : SCat) (D : SCat) (X : SCat)
     (f : Functor X (coprodCat C D)) :
-    NatIso X X
-      (compFunctor X (coprodBaseChangeCat C D X f) X
-        (coprodBaseChangeBackward C D X f) (coprodBaseChangeForward C D X f))
-      (idFunctor X)
+    NatIso (compFunctor X (coprodBaseChangeCat C D X f) X
+        (coprodBaseChangeBackward C D X f) (coprodBaseChangeForward C D X f)) (idFunctor X)
   /-- Coproduct base-change equivalence; Axiom B.4'. -/
   lf_def coprodBaseChangeEquiv : (C : SCat) ⇒ (D : SCat) ⇒ (X : SCat) ⇒
       (f : Functor X (coprodCat C D)) ⇒ CatEquiv (coprodBaseChangeCat C D X f) X :=
@@ -509,10 +479,8 @@ extend_type_theory SCT where
       (idFunctor (coprodDisjointPullback C D))
   /-- Counit for coproduct disjointness; Axiom B.4'. -/
   lf_opaque coprodDisjointCounit (C : SCat) (D : SCat) :
-    NatIso initialCat initialCat
-      (compFunctor initialCat (coprodDisjointPullback C D) initialCat
-        (coprodDisjointBackward C D) (coprodDisjointForward C D))
-      (idFunctor initialCat)
+    NatIso (compFunctor initialCat (coprodDisjointPullback C D) initialCat
+        (coprodDisjointBackward C D) (coprodDisjointForward C D)) (idFunctor initialCat)
   /-- Coproducts are disjoint; Axiom B.4'. -/
   lf_def coprodDisjoint : (C : SCat) ⇒ (D : SCat) ⇒
       CatEquiv (coprodDisjointPullback C D) initialCat :=
@@ -529,7 +497,7 @@ extend_type_theory SCT where
   target: pushout squares used throughout Chapter 1, especially Proposition 1.3.3 and Axiom J.1. -/
   syntax_abbrev PushoutSquare {A : SCat} {B : SCat} {C : SCat} {D : SCat}
     (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) :=
-    Σ comm : NatIso A D (compFunctor A B D top right) (compFunctor A C D left bottom),
+    Σ comm : NatIso (compFunctor top right) (compFunctor left bottom),
       (X : SCat) → CatEquiv (funCat D X)
         (pullbackCat (funCat B X) (funCat C X) (funCat A X)
           (precompFunctor A B X top) (precompFunctor A C X left))
@@ -537,7 +505,7 @@ extend_type_theory SCT where
   lf_def pushoutSquareComm : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒
       (top : Functor A B) ⇒ (left : Functor A C) ⇒ (right : Functor B D) ⇒
       (bottom : Functor C D) ⇒ PushoutSquare A B C D top left right bottom ⇒
-      NatIso A D (compFunctor A B D top right) (compFunctor A C D left bottom) :=
+      NatIso (compFunctor top right) (compFunctor left bottom) :=
     fun A B C D top left right bottom sq => fst sq
   /-- Mapping-out universal property associated to a pushout-square witness. -/
   lf_def pushoutSquareMappingEquiv : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
@@ -681,9 +649,9 @@ extend_type_theory SCT where
       (compFunctor terminalCat intervalCat simplex2Cat intervalOne simplex2Face02)
       simplex2Id1
   /-- Source degeneracy selects `id₀`; Axiom C. -/
-  lf_opaque simplex2Deg0Beta : NatIso simplex0Cat simplex2Cat simplex2Deg0 simplex2Id0
+  lf_opaque simplex2Deg0Beta : NatIso simplex2Deg0 simplex2Id0
   /-- Target degeneracy selects `id₁`; Axiom C. -/
-  lf_opaque simplex2Deg1Beta : NatIso simplex0Cat simplex2Cat simplex2Deg1 simplex2Id1
+  lf_opaque simplex2Deg1Beta : NatIso simplex2Deg1 simplex2Id1
   /-- The walking square `[1] × [1]`; Axiom D. -/
   lf_def squareCat : SCat := prodCat intervalCat intervalCat
 

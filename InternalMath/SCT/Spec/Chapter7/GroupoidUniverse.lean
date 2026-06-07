@@ -42,7 +42,7 @@ extend_type_theory SCT where
         Σ incl : Functor V U,
           Σ smallV : SmallWitness U V,
             Σ regularV : RegularUniverseWitness V v,
-              Σ lift : Functor S V, NatIso S U (compFunctor S V U lift incl) iS
+              Σ lift : Functor S V, NatIso (compFunctor lift incl) iS
   /-- Regular subuniverse generated above a small subcategory; Definition 7.4.5 (Cat8). -/
   lf_def regularSubuniverseCat : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (S : SCat) ⇒ (iS : Functor S U) ⇒ Embedding S U iS ⇒ SmallWitness U S ⇒ SCat :=
@@ -82,11 +82,9 @@ extend_type_theory SCT where
   lf_def regularSubuniverseLiftBeta : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
       (hS : SmallWitness U S) ⇒
-      NatIso S U
-        (compFunctor S (regularSubuniverseCat U u S iS embS hS) U
+      NatIso (compFunctor S (regularSubuniverseCat U u S iS embS hS) U
           (regularSubuniverseLift U u S iS embS hS)
-          (regularSubuniverseIncl U u S iS embS hS))
-        iS :=
+          (regularSubuniverseIncl U u S iS embS hS)) iS :=
     fun U u S iS embS hS =>
       snd (snd (snd (snd (snd (snd (regularSubuniversePackage U u S iS embS hS))))))
 

@@ -33,7 +33,7 @@ internal_defs where
   To finish this declaration: prove by composing the retraction data with the conservative
   criterion. -/
   def conservativeOfRetract (C : SCat) (D : SCat) (F : Functor C D)
-    (R : Functor D C) (ρ : NatIso C C (compFunctor C D C F R) (idFunctor C)) :
+    (R : Functor D C) (ρ : NatIso (compFunctor F R) (idFunctor C)) :
     Conservative C D F := sorry
 
 end SCT

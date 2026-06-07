@@ -44,10 +44,8 @@ extend_type_theory SCT where
   /-- β comparison for the full-subcategory lift. -/
   lf_def fullSubcategoryLiftBeta : (D : SCat) ⇒ (C : SCat) ⇒ (P : ObjectCollection C) ⇒
       (F : Functor D C) ⇒ (h : LandsInObjectCollection D C P F) ⇒
-        NatIso D C
-          (compFunctor D (fullSubcategory C P) C (fullSubcategoryLift D C P F h)
-            (fullSubcategoryIncl C P))
-          F :=
+        NatIso (compFunctor D (fullSubcategory C P) C (fullSubcategoryLift D C P F h)
+            (fullSubcategoryIncl C P)) F :=
     fun D C P F h => subcategoryLiftBeta D C (fullSubcategoryMorphismCollection C P)
       (fullSubcategoryMorphismContainsIdentities C P) (fullSubcategoryMorphismClosed C P) F
       (landsInObjectCollectionPreservesFull D C P F h)
@@ -55,7 +53,7 @@ extend_type_theory SCT where
   lf_def fullSubcategoryLiftUniq : (D : SCat) ⇒ (C : SCat) ⇒ (P : ObjectCollection C) ⇒
       (F : Functor D C) ⇒ (h : LandsInObjectCollection D C P F) ⇒
       (K : Functor D (fullSubcategory C P)) ⇒
-      (β : NatIso D C (compFunctor D (fullSubcategory C P) C K
+      (β : NatIso (compFunctor D (fullSubcategory C P) C K
         (fullSubcategoryIncl C P)) F) ⇒
         NatIso D (fullSubcategory C P) K (fullSubcategoryLift D C P F h) :=
     fun D C P F h K β => subcategoryLiftUniq D C (fullSubcategoryMorphismCollection C P)
@@ -146,10 +144,10 @@ extend_type_theory SCT where
     Σ e : CatEquiv (funCat (localizationCat C W) D) (invertingFunctorCat C D W),
       (F : Functor C D) → (h : InvertsMorphismCollection C D W F) →
         Σ K : Functor (localizationCat C W) D,
-          Σ β : NatIso C D (compFunctor C (localizationCat C W) D
+          Σ β : NatIso (compFunctor C (localizationCat C W) D
             (localizationFunctor C W) K) F,
             (L : Functor (localizationCat C W) D) →
-              NatIso C D (compFunctor C (localizationCat C W) D
+              NatIso (compFunctor C (localizationCat C W) D
                 (localizationFunctor C W) L) F → NatIso (localizationCat C W) D L K
   /-- Descend a functor that inverts the localized morphisms; Axiom I. -/
   lf_def localizationDesc : (C : SCat) ⇒ (W : MorphismCollection C) ⇒ (D : SCat) ⇒
@@ -159,15 +157,14 @@ extend_type_theory SCT where
   /-- β comparison for localization descent; Axiom I. -/
   lf_def localizationDescBeta : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
       (D : SCat) ⇒ (F : Functor C D) ⇒ (h : InvertsMorphismCollection C D W F) ⇒
-      NatIso C D
-        (compFunctor C (localizationCat C W) D
+      NatIso (compFunctor C (localizationCat C W) D
           (localizationFunctor C W) (localizationDesc C W D F h)) F :=
     fun C W D F h => fst (snd (snd (localizationUniversalPackage C W D) F h))
   /-- Uniqueness of localization descents; Axiom I. -/
   lf_def localizationDescUniq : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
       (D : SCat) ⇒ (F : Functor C D) ⇒ (h : InvertsMorphismCollection C D W F) ⇒
       (K : Functor (localizationCat C W) D) ⇒
-      NatIso C D (compFunctor C (localizationCat C W) D
+      NatIso (compFunctor C (localizationCat C W) D
         (localizationFunctor C W) K) F ⇒
       NatIso (localizationCat C W) D K (localizationDesc C W D F h) :=
     fun C W D F h K β => snd (snd (snd (localizationUniversalPackage C W D) F h)) K β
@@ -268,7 +265,7 @@ extend_type_theory SCT where
   -/
   syntax_abbrev FunctorOver {B : SCat} {E : SCat} {F : SCat}
     (p : Functor E B) (q : Functor F B) (u : Functor E F) :=
-    NatIso E B (compFunctor E F B u q) p
+    NatIso (compFunctor u q) p
 
 namespace SCT
 

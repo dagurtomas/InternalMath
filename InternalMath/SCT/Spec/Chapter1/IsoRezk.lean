@@ -85,9 +85,7 @@ extend_type_theory SCT where
   of the SCT book.
   -/
   lf_def rezkUnit : (C : SCat) ⇒
-      NatIso C C
-        (compFunctor C (isoCat C) C (identityIsoFunctor C) (isoProjectionFunctor C))
-        (idFunctor C) :=
+      NatIso (compFunctor C (isoCat C) C (identityIsoFunctor C) (isoProjectionFunctor C)) (idFunctor C) :=
     fun C => catEquivUnit C (isoCat C) (rezkEquiv C)
   /-- Counit for the Rezk equivalence; derived from the packaged equivalence.  Book context:
   Chapter 1 of the SCT book.
