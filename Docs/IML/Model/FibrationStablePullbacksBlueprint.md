@@ -13,6 +13,9 @@ pullbacks and supplies the comparison data needed by the SCT model.
 - The homotopy-pullback comparison phase depends on
   `Docs/IML/Model/MaximalKanCoreMappingAnimaBlueprint.md`, because the universal property is
   stated using mapping anima.
+- The all-cospans `pullbackCat` closure phase also depends on the invertible-arrow and `NatIso`
+  bridge from `Docs/IML/Model/IsoRezkModelBlueprint.md`, with Segal-composition support for the
+  interval-arrow comparison data.
 - The directed/lax pullback phase also uses the functor-quasicategory and arrow-endpoint APIs shared
   with the mapping-anima and Segal-composition projects.
 
@@ -38,9 +41,10 @@ C ×_E D
 ```
 
 is a valid model only under hypotheses such as: one leg of the cospan is an inner fibration, or the
-strict pullback has been shown to represent the derived/homotopy pullback.  The workshop project is
-to build this fibration-stable strict-pullback API and document how it can, and cannot yet, close
-SCT model fields.
+strict pullback has been shown to represent the derived/homotopy pullback.  The workshop project
+starts by building this fibration-stable strict-pullback API.  The full `pullbackCat` plan then
+applies the same API to a path-object replacement of the target category, so arbitrary cospans can
+be modeled by strict pullbacks along a proven fibration.
 
 Model note: natural transformations are bicategorical 2-cells in mathlib's strict bicategory of
 quasicategories. The fibration-pullback scaffold uses strict equality for the special strict cone
@@ -54,7 +58,9 @@ This project is human-led because it requires semantic choices:
 - which notion of fibration should model the book's `IsofibrationWitness`;
 - how to relate inner fibrations of simplicial sets to isofibrations of quasicategories;
 - whether the model should choose strict pullbacks only under fibrancy hypotheses or use a general
-  replacement/fibrant-replacement construction;
+  path-object or fibrant-replacement construction;
+- which coherent-isomorphism object should encode the comparison used in arbitrary homotopy
+  pullbacks;
 - how directed/lax pullbacks in Chapter 5 relate to strict pullbacks and arrow-category pullbacks;
 - which parts belong upstream in mathlib/infinity-cosmos.
 
@@ -188,10 +194,91 @@ Equivalently, one may package a comparison `CatEquiv P H` to a separately constr
 homotopy-pullback object `H`, but the mapping-anima formulation is closer to the SCT fields and to
 how `Cat_∞` limits are usually checked.
 
-This is the bridge to the general SCT `pullbackCat` fields.  Without it, strict pullback wrappers
-should only be used in fibration-specific fields such as base change.
+This is the bridge to the general SCT `pullbackCat` fields.  Until this comparison is available,
+strict pullback wrappers should only be used in fibration-specific fields such as base change.
 
-### Target E: base change of fibrations
+### Target E: arbitrary homotopy pullbacks via a coherent-isomorphism path object
+
+The general SCT field `pullbackCat C D E F G` has no fibration hypothesis on `F` or `G`.  The model
+therefore needs a construction that first replaces the ordinary strict pullback problem by a strict
+pullback along a proven fibration.
+
+Recommended concrete model:
+
+```text
+EqArr(E)        := Fun(IsoWalking, E)
+isoEndpoints(E) : EqArr(E) -> E × E
+P(F,G)          := (C × D) ×_{E × E} EqArr(E)
+```
+
+Here `IsoWalking` is a coherent walking isomorphism, such as the coherent-isomorphism simplicial set
+from the incoming invertible-edge API.  An object of `P(F,G)` is a pair of objects `c : C`, `d : D`,
+together with a coherent equivalence in `E` from `F c` to `G d`.  This is the usual homotopy
+pullback object of ∞-categories.
+
+The decisive theorem is that `isoEndpoints(E)` is the chosen fibration/isofibration.  Then Target B
+applies to the strict pullback defining `P(F,G)`, giving a bundled quasicategory for every cospan.
+Target D supplies the mapping-anima universal property, either directly for this construction or by
+comparing it with any upstream `Cat_∞` homotopy-pullback object.
+
+Alternative route: factor one leg of the cospan, for example
+
+```text
+D -> D^fib -> E
+```
+
+where the first map is a categorical equivalence over `E` and the second map is the chosen
+fibration.  Then define the homotopy pullback as `C ×_E D^fib`.  This can work if an upstream Joyal
+model-structure factorization API is easier to use.  The coherent-isomorphism path-object route is
+more explicit and gives the comparison data needed by `pullbackComm` and `pullbackLift`.
+
+### Target F: adapter from the homotopy-pullback object to SCT fields
+
+To close the model-structure `pullbackCat` block, package the object `P(F,G)` and its universal
+property into the generated SCT fields.
+
+Field plan:
+
+1. `pullbackCat C D E F G` is the bundled quasicategory `P(F,G)`.
+2. `pullbackPr1` and `pullbackPr2` are the projections through `C × D`.
+3. `pullbackComm` comes from the coherent-isomorphism coordinate of `P(F,G)`, converted to the
+   model's `NatIso` representation.
+4. `pullbackLift X C D E F G A B θ` is induced by the pair `(A,B)` and the map
+   `X -> EqArr(E)` classified by the `NatIso` comparison `θ`.
+5. `pullbackBeta1` and `pullbackBeta2` come from the projection β-rules of the strict pullback and
+   the product cone, rendered as `NatIso`s.
+6. `pullbackEta` comes from the mapping-anima universal property applied to the cone determined by
+   a functor `H : X -> P(F,G)`.
+7. `pullbackUniq` comes from the same universal property: componentwise `NatIso`s over `C` and `D`
+   give a path in the homotopy-pullback mapping anima, hence a `NatIso` between maps into
+   `P(F,G)`.
+
+Required bridge APIs:
+
+- a coherent-isomorphism quasicategory and endpoint functors;
+- proof that the endpoint map is the chosen fibration/isofibration;
+- conversion between invertible bicategorical 2-cells `NatIso X E U V` and maps
+  `X -> EqArr(E)` with endpoints `U` and `V`;
+- functor-quasicategory compatibility for products, strict pullbacks, and exponentiation by a test
+  quasicategory `X`;
+- maximal-core/mapping-anima equivalences that turn the universal property into `NatIso`, `CatEquiv`,
+  and uniqueness fields in the generated model.
+
+Open design decisions before implementation:
+
+- choose `EqArr(E)` as either a coherent-isomorphism functor category or a full subcategory of the
+  arrow category on equivalence arrows;
+- choose the exact fibration notion for `isoEndpoints(E)` and relate it to the book's
+  `IsofibrationWitness`;
+- decide whether the primary universal-property package is a mapping-anima equivalence or a
+  `CatEquiv` to an upstream homotopy-pullback object;
+- decide which low-level results belong upstream in mathlib or infinity-cosmos.
+
+The blueprint can still specify a complete field path while these API choices are being resolved.
+The concrete path-object construction is the recommended route for closing the `pullbackCat`
+sorries.
+
+### Target G: base change of fibrations
 
 For a fibration `p : E → B` and any `q : B' → B`, define the pullback fibration
 
@@ -219,7 +306,7 @@ Expected steps:
 This is a better workshop target than the unrestricted `pullbackCat` block because the hypotheses
 make strict simplicial pullbacks semantically justified.
 
-### Target F: directed/lax pullbacks
+### Target H: directed/lax pullbacks
 
 Chapter 5 uses directed pullbacks whose objects are triples `(a,b, f a → g b)`.
 
@@ -244,7 +331,7 @@ This depends on:
 This target is likely too large for a first pass, but the design should be recorded while working on
 base-change pullbacks.
 
-### Target G: compatibility with object/fiber constructions
+### Target I: compatibility with object/fiber constructions
 
 Many Chapter 1 constructions are built from pullbacks:
 
@@ -314,11 +401,41 @@ Deliverables:
 
 - mapping-anima universal property or `CatEquiv` comparison;
 - a clear statement of hypotheses;
-- a note saying whether this can close any general `pullbackCat` model fields.
+- reusable comparison lemmas for strict pullbacks along the chosen fibration class.
 
 Good for: human-interest/upstream work.
 
-### Project 5: base-change fibration package
+### Project 5: coherent-isomorphism path object
+
+Goal: build the all-cospans replacement used by the general `pullbackCat` model field.
+
+Deliverables:
+
+- `EqArr(E)` as either `Fun(IsoWalking,E)` or the equivalent full subcategory of invertible arrows;
+- source and target endpoint functors `EqArr(E) -> E × E`;
+- proof that the endpoint map is the chosen fibration/isofibration;
+- strict-pullback construction
+  `(C × D) ×_{E × E} EqArr(E)` as a bundled quasicategory for arbitrary `F` and `G`.
+
+Good for: human-led design with agent support for endpoint bookkeeping.
+
+### Project 6: SCT `pullbackCat` field adapter
+
+Goal: turn the homotopy-pullback construction into implementations for the generated SCT model
+fields.
+
+Deliverables:
+
+- candidate implementations for `pullbackCat`, `pullbackPr1`, `pullbackPr2`, and `pullbackComm`;
+- conversion from a generated-model `NatIso` comparison to a map into `EqArr(E)`;
+- candidate implementation for `pullbackLift`;
+- β, η, and uniqueness comparisons derived from the mapping-anima universal property;
+- a short dependency note for any remaining fields whose proof uses unfinished `NatIso` or
+  mapping-anima adapters.
+
+Good for: paired human/agent work after Projects 4 and 5.
+
+### Project 7: base-change fibration package
 
 Goal: build the model package for base-changing fibrations.
 
@@ -332,7 +449,7 @@ Deliverables:
 
 Good for: paired human/agent work.
 
-### Project 6: directed pullback design note
+### Project 8: directed pullback design note
 
 Goal: specify the model of `directedPullbackCat` before implementing it.
 
@@ -374,6 +491,18 @@ SCTFibrationPullbacksSkeleton.HomotopyPullback.representedByRightInnerFibration
 The scaffold gives a right-leg strict cone package and leaves the mathematical closure theorem,
 the precise homotopy-pullback universal-property type, and the proof that the strict pullback
 satisfies that property as human project markers.
+
+The generated model structure in `InternalMath/SCT/Model.lean` also contains a `pullbackCat` block
+of `sorry`s.  Those fields should be closed by the all-cospans path-object plan above; the
+strict-pullback scaffold supplies the fibration-stable ingredient.  A useful implementation order
+is:
+
+1. prove the strict-pullback closure theorem;
+2. define the coherent-isomorphism path object and endpoint fibration;
+3. construct `P(F,G) = (C × D) ×_{E × E} EqArr(E)`;
+4. prove the mapping-anima universal property for `P(F,G)`;
+5. implement `pullbackCat`, projections, comparison, lift, β, η, and uniqueness fields from that
+   package.
 
 ## Informal proof or construction for each Lean `sorry`
 
@@ -431,8 +560,8 @@ hypothesis represents the homotopy pullback in `Cat_∞`.
 
 Do not use any of these as shortcuts:
 
-- arbitrary strict simplicial-set pullbacks as the general SCT pullback without a homotopy-pullback
-  theorem;
+- arbitrary strict simplicial-set pullbacks as the general SCT pullback without a path-object or
+  homotopy-pullback theorem;
 - strict equality where the SCT field asks for a `NatIso` comparison;
 - `PUnit`/`True` placeholders for fibration witnesses;
 - treating all quasicategory maps as fibrations;
@@ -447,5 +576,7 @@ A completed implementation should provide:
 2. strict-pullback quasicategory closure under explicit fibration hypotheses;
 3. a cone API with clear projection orientation;
 4. a homotopy-pullback or mapping-anima universal property;
-5. base-change stability for the chosen fibration witnesses;
-6. a clear statement of which general SCT pullback fields remain open.
+5. a coherent-isomorphism path-object construction for arbitrary cospans;
+6. generated-model implementations for the `pullbackCat` block in `InternalMath/SCT/Model.lean`;
+7. base-change stability for the chosen fibration witnesses;
+8. a clear statement of any remaining pullback-dependent SCT fields that need later adapters.

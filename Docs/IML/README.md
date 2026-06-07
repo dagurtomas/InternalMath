@@ -95,7 +95,8 @@ human mathematical choices about which mathlib or infinity-cosmos APIs to use.
 - Blueprint: [fibration-stable pullbacks blueprint][fibration-pullbacks-model]
 - Suggested role: phased model project.
 - Dependencies: can start immediately.
-- Later parts depend on [Maximal Kan cores and mapping anima](#maximal-kan-cores-and-mapping-anima).
+- Later parts depend on [Maximal Kan cores and mapping anima](#maximal-kan-cores-and-mapping-anima)
+  and [Invertible arrows and Rezk equivalence](#invertible-arrows-and-rezk-equivalence).
 
 ### Invertible arrows and Rezk equivalence
 
