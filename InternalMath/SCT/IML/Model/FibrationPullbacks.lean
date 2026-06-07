@@ -225,4 +225,17 @@ noncomputable def representedByRightInnerFibration (F : C ⟶ E) (G : D ⟶ E)
 
 end HomotopyPullback
 
+/-
+Important scope note: closing every `sorry` in this file would justify the fibration-specific case
+where one leg of the cospan is an inner fibration.  That is enough for base-change and other
+fibration-stable strict-pullback arguments.
+
+It would not, by itself, fill the generated SCT model fields `pullbackCat`, `pullbackPr1`,
+`pullbackPr2`, `pullbackComm`, `pullbackLift`, `pullbackBeta1`, `pullbackBeta2`, `pullbackUniq`,
+and `pullbackEta` in `InternalMath/SCT/Model.lean`, because those fields are for arbitrary cospans
+of synthetic categories.  The general fields still need a Reedy/homotopy-limit construction, or an
+equivalent fibrant-replacement theorem for arbitrary cospans, plus adapters extracting the SCT cone,
+lift, β, η, and uniqueness data from that construction.
+-/
+
 end SCTFibrationPullbacksSkeleton
