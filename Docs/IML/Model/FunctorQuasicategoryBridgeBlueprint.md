@@ -51,7 +51,7 @@ It is not enough by itself to fill the SCT bridge.  It does not identify:
 - vertical composition, whiskering, and horizontal composition of bicategorical 2-cells with the
   corresponding edge and simplex operations in the internal hom.
 
-The bridge project should start from PR #40243 rather than re-proving quasicategory closure.
+The bridge project should start from PR #40243.
 
 ## Existing InternalMath declarations involved
 
