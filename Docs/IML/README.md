@@ -94,7 +94,9 @@ composition APIs used by the downstream model blueprints.
 
 - Blueprint: [functor quasicategory bridge blueprint][functor-quasicategory-bridge-model]
 - Suggested role: upstream mathlib API project.
-- Dependencies: mathlib PR #40243 for internal-hom quasicategory closure.
+- Current base: internal-hom quasicategory closure is available from mathlib's
+  `AnodyneExtensions.Inner.PushoutProduct`; the remaining dependency is the vertex/edge/2-cell
+  bridge.
 - Later projects: [Segal composition](#segal-composition),
   [Maximal Kan cores and mapping anima](#maximal-kan-cores-and-mapping-anima),
   [Fibration-stable pullbacks](#fibration-stable-pullbacks),

@@ -253,7 +253,6 @@ fillers have no `sorry`s.  The Lean `sorry` markers in the file are exactly thes
 SCTSegalCompositionSkeleton.chosenFiller
 SCTSegalCompositionSkeleton.ArrowComparison
 SCTSegalCompositionSkeleton.AssociativityComparison
-SCTSegalCompositionSkeleton.ModelBridge.quasicategoryInternalHom
 SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01
 SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12
 SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02
@@ -284,8 +283,8 @@ restriction equations as `face01` and `face12`.
 This is an API target rather than a theorem.  Replace it by the model's comparison data between two
 interval-shaped arrows.  The intended implementation is either bicategorical `NatIso` between the
 corresponding functors `[1] → C`, or equivalence-edge data in the functor quasicategory
-`Fun([1], C)` after the internal-hom bridge exists.  This comparison type supplies the unit and
-associativity fields; it should not collapse to strict equality of chosen fillers.
+`Fun([1], C)` after the vertex/edge/2-cell bridge exists.  This comparison type supplies the unit
+and associativity fields; it should not collapse to strict equality of chosen fillers.
 
 ### `AssociativityComparison`
 
@@ -294,13 +293,6 @@ chosen fillers.  The comparison comes from the standard quasicategory associativ
 the relevant boundary or inner horn in dimension `3`, use horn filling or pasting to obtain a
 coherent `3`-simplex, and read off an invertible comparison between the two long edges.  Package the
 result using `ArrowComparison`.
-
-### `ModelBridge.quasicategoryInternalHom`
-
-Use the standard theorem that if `D` is a quasicategory, then the simplicial internal hom
-`D.obj ^ C.obj` is a quasicategory.  In mathlib notation this is the quasicategory structure on
-`(ihom C.obj).obj D.obj`.  This theorem should be shared with the mapping-anima and localization
-scaffolds, since all three need the same functor-quasicategory API.
 
 ### `ModelBridge.simplex2Face01`
 

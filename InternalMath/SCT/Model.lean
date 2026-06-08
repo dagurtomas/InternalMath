@@ -7,6 +7,7 @@ module
 
 public import InternalMath.SCT.Spec
 public import InternalMath.SCT.IML.Model.FiniteShapes
+public import InternalMath.SCT.IML.Model.FunctorQuasicategory
 public import InternalMath.SCT.IML.Model.MappingAnima
 public import InternalMath.SCT.IML.Model.FibrationPullbacks
 public import InternalMath.SCT.IML.Model.Localization
@@ -35,11 +36,11 @@ objects of functor quasicategories, pullbacks should be homotopy/∞-categorical
 fibration/universe fields require the universal cocartesian fibration and directed-univalence
 machinery.
 
-For functor quasicategories, this file includes a local skeleton for API that is being developed
-in the `emilyriehl/infinity-cosmos` project and mathlib PR #35287. The skeleton uses the existing
-simplicial internal hom and assumes/sorries quasicategory closure. Natural transformations are
-modeled as 2-cells in mathlib's strict bicategory of quasicategories; the bridge from those 2-cells
-to objects of the functor quasicategory is the `natTransObject` field below.
+Functor quasicategories use the simplicial internal hom together with mathlib's
+`SSet.Quasicategory ((ihom A).obj X)` instance from
+`Mathlib.AlgebraicTopology.SimplicialSet.AnodyneExtensions.Inner.PushoutProduct`. Natural
+transformations are modeled as 2-cells in mathlib's strict bicategory of quasicategories; the bridge
+from those 2-cells to objects of the functor quasicategory is the `natTransObject` field below.
 The finite-shape package lives in `InternalMath.SCT.IML.Model.FiniteShapes`; the
 Segal-composition scaffold lives in `InternalMath.SCT.IML.Model.SegalComposition`; the
 invertible-arrow/Rezk scaffold lives in `InternalMath.SCT.IML.Model.IsoRezkModel`; the
@@ -324,22 +325,15 @@ noncomputable def qcatCoprodDesc (C D Γ : SSet.QCat.{u}) (F : C ⟶ Γ) (G : D 
     qcatCoprod C D ⟶ Γ :=
   ObjectProperty.homMk (P := SSet.Quasicategory) (Limits.coprod.desc F.hom G.hom)
 
-section UpstreamFunctorQuasicategorySkeleton
+section FunctorQuasicategoryAdapters
 
 /-!
-## Upstream functor-quasicategory skeleton
+## Functor-quasicategory adapters
 
-This section is a temporary adapter for functor quasicategories, equivalence edges, natural
-isomorphisms, and the associated curry/uncurry API. It follows the route used in
-`emilyriehl/infinity-cosmos` and mathlib PR #35287: functor objects are simplicial internal homs,
-natural transformations are edges in those internal homs, and natural isomorphisms are
-invertible/equivalence edges.
-
-The `sorry`s in this section mark upstream API assumptions, not local project proof obligations.
-Contributors should not spend effort closing these local `sorry`s directly unless they are replacing
-this adapter by the corresponding mathlib/infinity-cosmos definitions and theorems. In particular,
-the cartesian-closedness theorem for quasicategories and the compatibility results for equivalence
-edges should come from upstream once that material lands in mathlib.
+Functor objects are simplicial internal homs, bundled using the mathlib theorem that internal homs
+into quasicategories are quasicategories.  The remaining `sorry`s in this section concern the bridge
+from bicategorical 2-cells/equivalence edges to SCT natural-isomorphism data and are separate from
+internal-hom closure.
 -/
 
 /-- The cartesian symmetry map for the pointwise product of simplicial sets. -/
@@ -348,19 +342,9 @@ def swapTensor (X Y : SSet.{u}) : X ⊗ Y ⟶ Y ⊗ X :=
     (SemiCartesianMonoidalCategory.snd X Y)
     (SemiCartesianMonoidalCategory.fst X Y)
 
-/-- Assumption/API target: the simplicial internal hom `D^C` is a quasicategory when `C` and `D`
-are quasicategories.
-
-This is the cartesian-closedness theorem for quasicategories. It is expected to be replaced by the
-mathlib/infinity-cosmos API once available.
--/
-lemma quasicategoryInternalHom (C D : SSet.QCat.{u}) :
-    SSet.Quasicategory ((ihom C.obj).obj D.obj) := by
-  sorry
-
 /-- The functor quasicategory `Fun(C,D)`, realized as the simplicial internal hom. -/
 def funCat (C D : SSet.QCat.{u}) : SSet.QCat.{u} :=
-  ⟨(ihom C.obj).obj D.obj, quasicategoryInternalHom C D⟩
+  SCTFunctorQuasicategory.obj C D
 
 /-- A strict functor `C ⟶ D` as a vertex of the functor quasicategory `Fun(C,D)`. -/
 def functorVertex (C D : SSet.QCat.{u}) (F : C ⟶ D) : (funCat C D).obj _⦋0⦌ :=
@@ -655,7 +639,7 @@ def intervalFunctorEdge (C : SSet.QCat.{u}) (f : intervalQCat ⟶ C) :
     SSet.Edge (f.hom.app _ intervalZeroSimplex) (f.hom.app _ intervalOneSimplex) :=
   intervalEdge.map f.hom
 
-end UpstreamFunctorQuasicategorySkeleton
+end FunctorQuasicategoryAdapters
 
 end SCTModelHelpers
 

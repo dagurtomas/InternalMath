@@ -161,7 +161,8 @@ connecting the raw edge-level inverse data to vertices of the functor quasicateg
 
 This needs:
 
-- the functor-quasicategory/internal-hom API;
+- the bundled functor quasicategory `Fun([1], C)`; InternalMath currently gets this from
+  `SCTFunctorQuasicategory.obj` and mathlib's internal-hom instance;
 - the bridge between vertices of `Fun([1], C)` and interval-shaped functors;
 - object-collection and full-subcategory semantics;
 - equivalence between object-collection membership and inverse-edge data.
@@ -236,7 +237,8 @@ This phase should wait for the Segal-composition project.
 - Prove the inclusion into `Fun([1], C)` is the intended full-subcategory inclusion.
 - Fill or refine `invertibleMorphismObjectPackage`.
 
-This phase depends on the functor-quasicategory bridge and full-subcategory model scaffold.
+This phase depends on the vertex/edge part of the functor-quasicategory bridge and the
+full-subcategory model scaffold.
 
 ### Phase 5: Rezk comparison
 

@@ -6,6 +6,7 @@ Authors: Dagur Asgeirsson, AI assistant
 module
 
 public import InternalMath.SCT.IML.Model.FiniteShapes
+public import InternalMath.SCT.IML.Model.FunctorQuasicategory
 
 /-!
 # Segal composition and arrow calculus skeleton
@@ -200,14 +201,9 @@ refer to project files rather than carrying local `sorry`s.
 def intervalQCat : SSet.QCat.{u} :=
   SCTFiniteShapes.nerveQCat (ULift.{u} (Fin 2))
 
-/-- API target: the simplicial internal hom of quasicategories is a quasicategory. -/
-lemma quasicategoryInternalHom (C D : SSet.QCat.{u}) :
-    SSet.Quasicategory ((ihom C.obj).obj D.obj) := by
-  sorry
-
 /-- The functor quasicategory, realized as a simplicial internal hom. -/
 def funCat (C D : SSet.QCat.{u}) : SSet.QCat.{u} :=
-  ⟨(ihom C.obj).obj D.obj, quasicategoryInternalHom C D⟩
+  SCTFunctorQuasicategory.obj C D
 
 set_option backward.isDefEq.respectTransparency false in
 /-- Natural transformations are bicategorical 2-cells. -/

@@ -6,6 +6,7 @@ Authors: Dagur Asgeirsson, AI assistant
 module
 
 public import InternalMath.SCT.IML.Model.FiniteShapes
+public import InternalMath.SCT.IML.Model.FunctorQuasicategory
 public import InternalMath.SCT.IML.Model.MappingAnima
 
 /-!
@@ -166,19 +167,15 @@ namespace IsoCategory
 
 open IntervalArrow
 
-/-- The functor quasicategory `Fun([1], C)` used as the arrow category.
-
-This should come from the same internal-hom/functor-quasicategory API used by the SCT model. It is
-not part of PR #35287.
--/
-noncomputable def arrowFunctorQCat (C : SSet.QCat.{u}) : SSet.QCat.{u} := by
-  sorry
+/-- The functor quasicategory `Fun([1], C)` used as the arrow category. -/
+def arrowFunctorQCat (C : SSet.QCat.{u}) : SSet.QCat.{u} :=
+  SCTFunctorQuasicategory.obj SCTFiniteShapes.interval C
 
 /-- Object collection in `Fun([1], C)` spanned by invertible interval arrows.
 
-PR #35287 supplies the raw inverse-edge predicate/data. This object collection requires the
-functor-quasicategory bridge, object collections/full subcategories, and the adapter between
-vertices of `Fun([1], C)` and interval-shaped arrows.
+PR #35287 supplies the raw inverse-edge predicate/data. This object collection still requires
+object collections/full subcategories and the adapter between vertices of `Fun([1], C)` and
+interval-shaped arrows.
 -/
 def InvertibleArrowObjectCollection (C : SSet.QCat.{u}) : Type (u + 1) := by
   sorry

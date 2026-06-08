@@ -5,6 +5,7 @@ Authors: Dagur Asgeirsson, AI assistant
 -/
 module
 
+public import InternalMath.SCT.IML.Model.FunctorQuasicategory
 public import InternalMath.SCT.IML.Model.MappingAnima
 public import Mathlib.AlgebraicTopology.Quasicategory.StrictBicategory
 
@@ -42,14 +43,9 @@ universe u
 
 namespace FunctorQuasicategory
 
-/-- The quasicategory of functors between two quasicategories.
-
-To make this construction correct, use the simplicial internal hom `D.obj ^ C.obj` and prove the
-standard theorem that it is a quasicategory whenever `C` and `D` are quasicategories.  This should
-later be replaced by the same upstream functor-quasicategory/internal-hom API used by the SCT model.
--/
-noncomputable def obj (C D : SSet.QCat.{u}) : SSet.QCat.{u} := by
-  sorry
+/-- The quasicategory of functors between two quasicategories. -/
+def obj (C D : SSet.QCat.{u}) : SSet.QCat.{u} :=
+  SCTFunctorQuasicategory.obj C D
 
 end FunctorQuasicategory
 

@@ -364,14 +364,9 @@ the existence theorem and API choices as project milestones.
 This section tracks every `sorry` present in `InternalMath/SCT/IML/Model/Localization.lean`.  If the
 Lean scaffold changes, update this list in the same commit.
 
-### `FunctorQuasicategory.obj`
-
-Use the simplicial internal hom construction.  For quasicategories `C` and `D`, define the
-underlying simplicial set of `Fun(C,D)` to be `D.obj ^ C.obj`, or the corresponding mathlib
-internal-hom notation.  Vertices are simplicial maps `C.obj → D.obj`, so they agree with morphisms
-`C ⟶ D` in the bundled quasicategory category.  The missing theorem is that the internal hom is a
-quasicategory when the codomain is a quasicategory, in the setting needed by the project.  Once that
-theorem is imported, bundle the internal hom as an `SSet.QCat`.
+`FunctorQuasicategory.obj` is no longer a `sorry`: it delegates to
+`SCTFunctorQuasicategory.obj`, which bundles mathlib's internal-hom quasicategory instance from
+`AnodyneExtensions.Inner.PushoutProduct`.
 
 ### `MorphismCollection`
 

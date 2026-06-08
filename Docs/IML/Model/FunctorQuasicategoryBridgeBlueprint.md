@@ -17,15 +17,15 @@ The model files need these presentations to agree.  A raw edge in the functor qu
 `natTransObject`, `natTransUnderlyingArrow`, mapping anima, localization, and pullback comparison
 objects can be interpreted without local placeholder data.
 
-This is primarily an upstream mathlib project.  It probably does not need a separate Lean scaffold
-file in `InternalMath`; the temporary declarations in `InternalMath/SCT/Model.lean` and the model
-project scaffolds can be replaced once the mathlib API is available.
+Most remaining work is an upstream mathlib project.  InternalMath now has a small local wrapper for
+the upstream internal-hom quasicategory instance; the remaining temporary declarations concern the
+vertex/edge/2-cell bridge.
 
-## Relation to mathlib PR #40243
+## Internal-hom closure in mathlib master
 
-Mathlib PR [#40243](https://github.com/leanprover-community/mathlib4/pull/40243) supplies a crucial
-prerequisite.  The inspected PR branch adds the inner-anodyne pushout-product argument and, in
-particular, instances of the following shape:
+Mathlib now supplies the inner-anodyne pushout-product argument in
+`Mathlib.AlgebraicTopology.SimplicialSet.AnodyneExtensions.Inner.PushoutProduct` and, in particular,
+instances of the following shape:
 
 ```lean
 instance {A X : SSet.{u}} [SSet.Quasicategory X] :
@@ -51,13 +51,13 @@ It is not enough by itself to fill the SCT bridge.  It does not identify:
 - vertical composition, whiskering, and horizontal composition of bicategorical 2-cells with the
   corresponding edge and simplex operations in the internal hom.
 
-The bridge project should start from PR #40243.
+InternalMath exposes this through `InternalMath/SCT/IML/Model/FunctorQuasicategory.lean` as
+`SCTFunctorQuasicategory.obj`.
 
 ## Existing InternalMath declarations involved
 
-Temporary SCT model declarations in `InternalMath/SCT/Model.lean`:
+SCT model declarations in `InternalMath/SCT/Model.lean`:
 
-- `SCTModelHelpers.quasicategoryInternalHom`;
 - `SCTModelHelpers.funCat`;
 - `SCTModelHelpers.functorVertex`;
 - `SCTModelHelpers.NatTrans`;
@@ -87,9 +87,10 @@ Define a reusable bundled functor quasicategory:
 QCat.functorQCat (C D : SSet.QCat) : SSet.QCat
 ```
 
-with underlying simplicial set `(ihom C.obj).obj D.obj`, using PR #40243 for the quasicategory
-instance.  Add aliases or simp lemmas so existing internal-hom notation can be used without
-rewriting through the bundle.
+with underlying simplicial set `(ihom C.obj).obj D.obj`, using the mathlib quasicategory instance
+for internal homs.  InternalMath's current wrapper is `SCTFunctorQuasicategory.obj`; an upstream
+`QCat.functorQCat` API would avoid local naming and add simp lemmas for rewriting through the
+bundle.
 
 ### Target B: vertices are strict functors
 
@@ -210,10 +211,11 @@ The required proof obligations are endpoint compatibility with `F` and `G`, plus
 
 ## Recommended implementation phases
 
-### Phase 1: land and expose PR #40243 API
+### Phase 1: expose the internal-hom instance
 
-Use the quasicategory instance for internal homs from PR #40243.  Add a small `QCat.functorQCat`
-wrapper and simp lemmas if mathlib does not already expose one.
+Done locally for InternalMath: `SCTFunctorQuasicategory.obj` bundles the upstream mathlib instance.
+A future upstream `QCat.functorQCat` wrapper and simp lemmas would let the SCT files drop the local
+adapter.
 
 ### Phase 2: vertex equivalence
 
@@ -244,12 +246,10 @@ prove preservation of equivalence edges under these operations.
 
 ### Phase 7: replace InternalMath placeholders
 
-Use the upstream API to replace:
+Use the bridge API to replace:
 
-- `SCTModelHelpers.quasicategoryInternalHom`;
-- local functor-quasicategory wrappers in the model scaffolds;
 - `sctModel.natTransObject`;
-- mapping-anima and localization bridge placeholders that only need functor-quasicategory data.
+- mapping-anima and localization bridge placeholders that need vertex/edge/2-cell data.
 
 ## Anti-patterns
 
@@ -261,7 +261,8 @@ bicategory's `IsIso` notion.
 Do not assume a chosen edge representative is canonical.  The representative can be noncomputable,
 and later constructions should be invariant under the homotopy relation.
 
-Do not duplicate the internal-hom quasicategory proof after PR #40243; use the upstream instance.
+Do not duplicate the internal-hom quasicategory proof; use the upstream instance from
+`AnodyneExtensions.Inner.PushoutProduct`.
 
 Do not hide this bridge inside `InternalMath/SCT/Model.lean` as local `sorry`s.  The result is a
 reusable mathlib-level interface for quasicategories, functor quasicategories, and the strict
@@ -277,6 +278,6 @@ category of the functor quasicategory Fun(C,D), with objects strict functors, mo
 by edges, and isomorphisms represented by equivalence edges.
 ```
 
-That API would unlock the `natTransObject` field in `InternalMath/SCT/Model.lean`, remove several
-local assumptions about functor quasicategories, and provide the common bridge needed by mapping
-anima, localization, Iso/Rezk, Segal comparison data, and homotopy-pullback cone comparisons.
+That API would unlock the `natTransObject` field in `InternalMath/SCT/Model.lean`, remove the
+remaining vertex/edge bridge assumptions, and provide the common bridge needed by mapping anima,
+localization, Iso/Rezk, Segal comparison data, and homotopy-pullback cone comparisons.
