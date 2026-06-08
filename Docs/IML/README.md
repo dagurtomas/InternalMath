@@ -23,10 +23,20 @@ Hints and worked solutions live in the InternalLean dependency checkout:
 Internal projects work inside the SCT object theory. They replace admitted internal declarations by
 checked InternalLean definitions or proofs, without adding model fields.
 
+Good first internal projects:
+
+- [Subcategories and full subcategories](#subcategories-and-full-subcategories);
+- [Core and Axiom G](#core-and-axiom-g);
+- [Objectwise natural isomorphisms](#objectwise-natural-isomorphisms).
+
+These three projects are good starting points because they expose central package designs and unlock
+several later SCT declarations. Strong surjectivity is a smaller focused project that pairs well with
+Core and Axiom G.
+
 ### Strong surjectivity
 
 - Blueprint: [Strong surjectivity blueprint][strong-surjectivity-internal]
-- Suggested role: focused starter project.
+- Suggested role: focused Chapter 6 project.
 - Dependencies: can start immediately.
 - Later projects: [Fundamental Theorem](#fundamental-theorem).
 
@@ -64,15 +74,21 @@ checked InternalLean definitions or proofs, without adding model fields.
   [Objectwise natural isomorphisms](#objectwise-natural-isomorphisms), and
   [Subcategories and full subcategories](#subcategories-and-full-subcategories).
 
-A good workshop sequence is to offer strong surjectivity as a small guided project, subcategories as
-the main internal unlocker, and the Core/Axiom G or objectwise natural-isomorphism projects for
-participants who want a deeper design problem. The Fundamental Theorem blueprint is best after its
-supporting APIs are stable.
+The Fundamental Theorem blueprint is best after its supporting APIs are stable.
 
 ## Model construction projects
 
 Model projects work in the quasicategory/Kan-complex interpretation of SCT. They usually require
 mathematical choices about which mathlib or infinity-cosmos APIs to use.
+
+Good first model projects:
+
+- [Functor quasicategory bridge](#functor-quasicategory-bridge);
+- [Maximal Kan cores and mapping anima](#maximal-kan-cores-and-mapping-anima);
+- [Segal composition](#segal-composition).
+
+These three projects provide the shared functor-category, maximal-core, mapping-anima, and
+composition APIs used by the downstream model blueprints.
 
 ### Functor quasicategory bridge
 
@@ -129,10 +145,8 @@ mathematical choices about which mathlib or infinity-cosmos APIs to use.
 - Later parts also use
   [Invertible arrows and Rezk equivalence](#invertible-arrows-and-rezk-equivalence).
 
-A good model-project sequence is to start the functor-quasicategory bridge, Segal composition, and
-maximal cores/mapping anima first. The early phases of fibration-stable pullbacks can run in
-parallel. Iso/Rezk and localization become more productive once the foundational projects provide
-stable APIs.
+The early phases of fibration-stable pullbacks can run in parallel. Iso/Rezk and localization become
+more productive once the foundational projects provide stable APIs.
 
 ## Choosing a project
 
