@@ -155,21 +155,21 @@ Expected result:
 - a replacement of the abstract package by a lower-level non-circular package, followed by a checked
   projection to `InvertibleMorphism`.
 
-### Project 2: constructor API
+### Stable constructor API
 
-Goal: make the constructor direction clear and stable.
-
-Target declaration:
+There is no planned design change for the constructor direction. In the implemented design,
+`SCT.natIsoOfObjectwise` is the checked Sigma constructor
 
 ```lean
-SCT.natIsoOfObjectwise
+fun A C F G α h => ⟨α, h⟩
 ```
 
-This declaration is a direct Sigma constructor in the implemented design. If the package design
-changes, preserve the same mathematical behavior: objectwise invertibility evidence should assemble
-into a natural isomorphism.
+This is the desired behavior: objectwise evidence is exactly the second component of `NatIso`. The
+constructor should only be revisited if `ObjectwiseNatIsoData` is replaced by a lower-level
+non-circular package; in that case, preserve the public behavior that objectwise invertibility
+evidence assembles into a natural isomorphism.
 
-### Project 3: downstream adapters
+### Project 2: downstream adapters
 
 Goal: update the Chapter 6 proofs that use objectwise natural isomorphisms.
 
