@@ -13,10 +13,10 @@ invertibility evidence, without turning the statement into a strict equality or 
   invertible-arrow package from `Chapter1/CellsAndSegal.lean`.
 - This dependency is about declaration order and package design, not about starting a separate
   Chapter 1 project.
-- The package design resolves the circularity hazard by keeping early natural-isomorphism evidence
-  as an abstract `ObjectwiseNatIsoData` package in the prelude, defining
-  `NatIso F G := Σ α : NatTrans F G, ObjectwiseNatIsoData F G α`, and adding the componentwise
-  invertibility projection only later, after interval-shaped invertible morphisms are available.
+- The package design keeps early natural-isomorphism evidence as an abstract
+  `ObjectwiseNatIsoData` package in the prelude, defines
+  `NatIso F G := Σ α : NatTrans F G, ObjectwiseNatIsoData F G α`, and adds the componentwise
+  invertibility projection only after interval-shaped invertible morphisms are available.
 - Downstream projects depending on this one include the Fundamental Theorem blueprint,
   postcomposition fully faithfulness, Rezk comparison work, and cocartesian-functor equivalence
   criteria.
@@ -94,11 +94,10 @@ global `NatIso` and its componentwise invertibility facts.
 
 The difficulty is import and declaration order: this expression mentions declarations from Chapter
 1, while `NatIso` is introduced in the prelude before those declarations are in scope. The chosen
-organization breaks the cycle by making `ObjectwiseNatIsoData` an early abstract package and making
-Chapter 6 responsible for the theorem-shaped projection from that package to componentwise
-`InvertibleMorphism` evidence.
+organization makes `ObjectwiseNatIsoData` an early abstract package and makes Chapter 6 responsible
+for the theorem-shaped projection from that package to componentwise `InvertibleMorphism` evidence.
 
-## Chosen non-circular design
+## Chosen package design
 
 The current specification uses the following organization.
 
@@ -125,16 +124,16 @@ The current specification uses the following organization.
 6. The constructor direction `natIsoOfObjectwise` is checked as the Sigma constructor, and the
    projection from a `NatIso` to its objectwise evidence is checked as `snd`.
 
-This is the intended route around the circularity hazard.  A direct checked definition of
-`ObjectwiseNatIsoData` as
+A direct checked definition of `ObjectwiseNatIsoData` as
 
 ```lean
 (x : Obj A) → InvertibleMorphism C (natTransComponent A C F G α x)
 ```
 
-would mention declarations that themselves depend on `NatIso`.  The direct package can only replace
-the abstract package after component invertibility is expressed through a lower-level notion that
-does not depend on `NatIso`, such as an equivalence-edge or interval-invertibility predicate.
+would mention declarations that are introduced later and whose current package shape uses
+`NatIso`. The direct package can only replace the abstract package after component invertibility is
+expressed through a lower-level notion, such as an equivalence-edge or interval-invertibility
+predicate.
 
 ## Recommended work
 
@@ -152,8 +151,8 @@ Expected result:
 
 - a checked proof of the Chapter 6 projection from the abstract `ObjectwiseNatIsoData` package to
   componentwise `InvertibleMorphism` evidence; or
-- a replacement of the abstract package by a lower-level non-circular package, followed by a checked
-  projection to `InvertibleMorphism`.
+- a replacement of the abstract package by a lower-level package, followed by a checked projection
+  to `InvertibleMorphism`.
 
 ### Stable constructor API
 
@@ -166,8 +165,8 @@ fun A C F G α h => ⟨α, h⟩
 
 This is the desired behavior: objectwise evidence is exactly the second component of `NatIso`. The
 constructor should only be revisited if `ObjectwiseNatIsoData` is replaced by a lower-level
-non-circular package; in that case, preserve the public behavior that objectwise invertibility
-evidence assembles into a natural isomorphism.
+package; in that case, preserve the public behavior that objectwise invertibility evidence
+assembles into a natural isomorphism.
 
 ### Project 2: downstream adapters
 
@@ -184,8 +183,6 @@ Expected result:
 
 - Do not define `ObjectwiseNatIsoData` as `True`, `PUnit`, or strict equality of functors.
 - Do not make natural isomorphisms strict equalities of natural transformations.
-- Do not introduce a circular definition where `NatIso` is defined through `InvertibleMorphism` and
-  `InvertibleMorphism` is defined through `NatIso`.
 - Keep the distinction clear between the internal SCT package and the quasicategory model's
   bicategorical natural isomorphisms.
 
