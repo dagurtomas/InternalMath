@@ -35,6 +35,14 @@ even when that requires more InternalLean support or a longer refactor.
 
 ## Admissions and primitives
 
+### No placeholder primitives
+
+Do not add new primitive vocabulary as a placeholder. If a declaration is a definition, theorem, or
+coherence package whose body is not ready, use checked/admitted definition debt (`syntax_def ... :=
+sorry` or `internal def ... := sorry`) so it is visible to lint/model diagnostics. Reserve primitive
+`syntax_sort` declarations and `lf_opaque` fields for vocabulary or axiom data that the book treats
+as primitive.
+
 Classify each SCT gap before changing it:
 
 1. primitive vocabulary;

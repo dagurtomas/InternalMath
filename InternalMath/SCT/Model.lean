@@ -793,6 +793,7 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   pullbackBeta2 := sorry
   pullbackUniq := sorry
   pullbackEta := sorry
+  selfPullbackDiagonal := sorry
   coprodBaseChangeForward := sorry
   coprodBaseChangeBackward := sorry
   coprodBaseChangeUnit := sorry
@@ -802,6 +803,8 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   coprodDisjointUnit := sorry
   coprodDisjointCounit := sorry
   funCat := SCTModelHelpers.funCat
+  pullbackConeCat := sorry
+  pullbackConeEquiv := sorry
   precompFunctor := SCTModelHelpers.precompFunctor
   postcompFunctor := SCTModelHelpers.postcompFunctor
   evalFunctor := SCTModelHelpers.evalFunctor
@@ -855,6 +858,7 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   functorObjectSourceCompat := sorry
   functorObjectTargetCompat := sorry
   natTransObject := sorry
+  pullbackUniqCone := sorry
   horizCompIdId := sorry
   horizCompCompComp := sorry
   horizCompLeftId := sorry

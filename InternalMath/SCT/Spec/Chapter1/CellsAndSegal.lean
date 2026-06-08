@@ -127,6 +127,77 @@ extend_type_theory SCT where
       (G : Functor C D) ⇒ (α : NatIso F G) ⇒ NatIsoIso α α :=
     fun C D F G α => idNatIso terminalCat (natTransCat C D F G)
       (natTransObject C D F G (natIsoToNatTrans C D F G α))
+  /-- Compatibility data for a morphism between pullback cones.  This admitted definition records
+  the `NatIsoIso` coherence between the two paths around the cospan target without introducing new
+  primitive vocabulary. -/
+  syntax_def PullbackConeIsoCompat (X : SCat) (C : SCat) (D : SCat) (E : SCat)
+    (F : Functor C E) (G : Functor D E) (A₀ : Functor X C) (A₁ : Functor X C)
+    (B₀ : Functor X D) (B₁ : Functor X D)
+    (θ₀ : NatIso X E (compFunctor X C E A₀ F) (compFunctor X D E B₀ G))
+    (θ₁ : NatIso X E (compFunctor X C E A₁ F) (compFunctor X D E B₁ G))
+    (α : NatIso X C A₀ A₁) (β : NatIso X D B₀ B₁) : Type u := sorry
+  syntax_sort_role PullbackConeIsoCompat : side_structure
+  /-- Isomorphism between two pullback cones, including projection isomorphisms and cospan
+  compatibility.  This is admitted package debt, not primitive vocabulary. -/
+  syntax_def PullbackConeIso (X : SCat) (C : SCat) (D : SCat) (E : SCat)
+      (F : Functor C E) (G : Functor D E)
+      (u : PullbackCone X C D E F G) (v : PullbackCone X C D E F G) : Type u := sorry
+  syntax_sort_role PullbackConeIso : side_structure
+
+namespace SCT
+
+/- Cone-isomorphism projections are admitted temporarily while the compatibility package is refined
+   to the concrete `NatIsoIso` coherence. -/
+internal_defs where
+  /-- Left projection of a cone isomorphism. -/
+  def pullbackConeIsoLeft (X : SCat) (C : SCat) (D : SCat) (E : SCat)
+      (F : Functor C E) (G : Functor D E)
+      (u : PullbackCone X C D E F G) (v : PullbackCone X C D E F G)
+      (η : PullbackConeIso X C D E F G u v) :
+      NatIso X C (pullbackConeLeft X C D E F G u)
+        (pullbackConeLeft X C D E F G v) := sorry
+  /-- Right projection of a cone isomorphism. -/
+  def pullbackConeIsoRight (X : SCat) (C : SCat) (D : SCat) (E : SCat)
+      (F : Functor C E) (G : Functor D E)
+      (u : PullbackCone X C D E F G) (v : PullbackCone X C D E F G)
+      (η : PullbackConeIso X C D E F G u v) :
+      NatIso X D (pullbackConeRight X C D E F G u)
+        (pullbackConeRight X C D E F G v) := sorry
+  /-- Compatibility projection of a cone isomorphism. -/
+  def pullbackConeIsoCompatibility (X : SCat) (C : SCat) (D : SCat) (E : SCat)
+      (F : Functor C E) (G : Functor D E)
+      (u : PullbackCone X C D E F G) (v : PullbackCone X C D E F G)
+      (η : PullbackConeIso X C D E F G u v) :
+      PullbackConeIsoCompat X C D E F G
+        (pullbackConeLeft X C D E F G u) (pullbackConeLeft X C D E F G v)
+        (pullbackConeRight X C D E F G u) (pullbackConeRight X C D E F G v)
+        (pullbackConeComm X C D E F G u) (pullbackConeComm X C D E F G v)
+        (pullbackConeIsoLeft X C D E F G u v η)
+        (pullbackConeIsoRight X C D E F G u v η) := sorry
+  /-- Natural isomorphisms into the pullback project to compatible cone isomorphisms. -/
+  def pullbackConeIsoOfNatIso (X : SCat) (C : SCat) (D : SCat) (E : SCat)
+      (F : Functor C E) (G : Functor D E)
+      (H : Functor X (pullbackCat C D E F G))
+      (K : Functor X (pullbackCat C D E F G))
+      (γ : NatIso X (pullbackCat C D E F G) H K) :
+      PullbackConeIso X C D E F G (pullbackConeOfMap X C D E F G H)
+        (pullbackConeOfMap X C D E F G K) := sorry
+  /-- Packaged β isomorphism from the lifted cone to the input cone. -/
+  def pullbackLiftConeBeta (X : SCat) (C : SCat) (D : SCat) (E : SCat)
+      (F : Functor C E) (G : Functor D E) (u : PullbackCone X C D E F G) :
+      PullbackConeIso X C D E F G
+        (pullbackConeOfMap X C D E F G (pullbackLiftCone X C D E F G u)) u := sorry
+
+end SCT
+
+extend_type_theory SCT where
+
+  /-- Uniqueness for maps into a pullback from compatible cone isomorphism data; Axiom B.5. -/
+  lf_opaque pullbackUniqCone (X : SCat) (C : SCat) (D : SCat) (E : SCat)
+    (F : Functor C E) (G : Functor D E)
+    (H : Functor X (pullbackCat C D E F G)) (K : Functor X (pullbackCat C D E F G))
+    (η : PullbackConeIso X C D E F G (pullbackConeOfMap X C D E F G H)
+      (pullbackConeOfMap X C D E F G K)) : NatIso X (pullbackCat C D E F G) H K
   /-- Horizontal composition preserves identity natural isomorphisms; finite A.1'/A.2' coherence.
   Book context: Chapter 1 of the SCT book.
   -/
