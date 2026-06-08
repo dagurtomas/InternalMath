@@ -13,9 +13,10 @@ invertibility evidence, without turning the statement into a strict equality or 
   invertible-arrow package from `Chapter1/CellsAndSegal.lean`.
 - This dependency is about declaration order and package design, not about starting a separate
   Chapter 1 project.
-- The package design has a circularity hazard: `NatIso` is used early in the specification, while
-  invertible interval-shaped morphisms are defined later using `NatIso` comparisons. The first task
-  is to choose a non-circular organization for the objectwise criterion.
+- The package design resolves the circularity hazard by keeping early natural-isomorphism evidence
+  as an abstract `ObjectwiseNatIsoData` package in the prelude, defining
+  `NatIso F G := Σ α : NatTrans F G, ObjectwiseNatIsoData F G α`, and adding the componentwise
+  invertibility projection only later, after interval-shaped invertible morphisms are available.
 - Downstream projects depending on this one include the Fundamental Theorem blueprint,
   postcomposition fully faithfulness, Rezk comparison work, and cocartesian-functor equivalence
   criteria.
@@ -92,62 +93,52 @@ invertible at every object. The package exists so later proofs can move back and
 global `NatIso` and its componentwise invertibility facts.
 
 The difficulty is import and declaration order: this expression mentions declarations from Chapter
-1, while `NatIso` is introduced in the prelude before those declarations are in scope. The project is
-therefore partly a design project: make this objectwise content explicit while keeping the early SCT
-vocabulary book-faithful and non-circular.
+1, while `NatIso` is introduced in the prelude before those declarations are in scope. The chosen
+organization breaks the cycle by making `ObjectwiseNatIsoData` an early abstract package and making
+Chapter 6 responsible for the theorem-shaped projection from that package to componentwise
+`InvertibleMorphism` evidence.
 
-## Design options
+## Chosen non-circular design
 
-### Option A: refactor the declaration order
+The current specification uses the following organization.
 
-Move enough component and invertible-arrow vocabulary earlier that `ObjectwiseNatIsoData` can become
-a checked `syntax_def` package directly.
+1. `NatTrans` is primitive early vocabulary.
+2. `ObjectwiseNatIsoData F G α` is an admitted `syntax_def` package in the prelude.  It is abstract
+   objectwise natural-isomorphism evidence, not a vacuous package and not a model-provider field.
+3. `NatIso F G` is the Sigma package
 
-This option is attractive because the package body is transparent and projections become simple. It
-requires care because invertible interval-shaped morphisms use `NatIso` in their endpoint and unit
-comparisons, so a naive move can create a definitional cycle.
+   ```lean
+   Σ natIsoTrans : NatTrans F G, ObjectwiseNatIsoData F G natIsoTrans
+   ```
 
-### Option B: split primitive natural isomorphisms from the objectwise criterion
+   so the underlying natural transformation and objectwise evidence are available immediately.
+4. Chapter 1 can define interval-shaped invertible morphisms using `NatIso` comparisons without
+   referring back to the componentwise criterion.
+5. Chapter 6 adds the theorem-shaped projection
 
-Keep a primitive or axiom-level `NatIso` notion in the early vocabulary, then prove an objectwise
-criterion later in Chapter 6.
+   ```lean
+   objectwiseNatIsoComponent ... :
+     InvertibleMorphism C (natTransComponent A C F G α x)
+   ```
 
-This option may match the book if natural isomorphisms are treated as primitive ambient structure in
-Axiom A and the objectwise criterion is a later theorem. It should still provide checked adapters:
+   after `natTransComponent` and `InvertibleMorphism` are both in scope.
+6. The constructor direction `natIsoOfObjectwise` is checked as the Sigma constructor, and the
+   projection from a `NatIso` to its objectwise evidence is checked as `snd`.
+
+This is the intended route around the circularity hazard.  A direct checked definition of
+`ObjectwiseNatIsoData` as
 
 ```lean
-NatIso A C F G → ObjectwiseNatIso A C F G (natIsoToNatTrans A C F G α)
-ObjectwiseNatIso A C F G α → NatIso A C F G
+(x : Obj A) → InvertibleMorphism C (natTransComponent A C F G α x)
 ```
 
-If this option is chosen, avoid leaving a hidden `True`-like package under the name
-`ObjectwiseNatIsoData`. The trust boundary should be explicit: either the early primitive is the
-book axiom data, or the objectwise theorem is checked from earlier primitives. In either case,
-participants should be able to see where the componentwise invertibility information enters the
-system.
+would mention declarations that themselves depend on `NatIso`.  The direct package can only replace
+the abstract package after component invertibility is expressed through a lower-level notion that
+does not depend on `NatIso`, such as an equivalence-edge or interval-invertibility predicate.
 
-### Option C: introduce a lower-level invertibility notion for components
+## Recommended work
 
-Define component invertibility using a lower-level interval or equivalence-edge package that does
-not itself mention `NatIso`, then relate it to `InvertibleMorphism` after Chapter 1.
-
-This is the cleanest route if the current `InvertibleMorphism` package remains dependent on
-`NatIso` comparisons. It also aligns well with the model blueprint for maximal cores and
-equivalence edges.
-
-## Recommended first pass
-
-### Project 1: dependency audit
-
-Goal: draw the dependency cycle precisely.
-
-Expected result:
-
-- a list of declarations that `ObjectwiseNatIsoData` would need for the direct package body;
-- a list of declarations that already depend on `NatIso`;
-- a proposed non-circular package design.
-
-### Project 2: projection API
+### Project 1: projection API
 
 Goal: make the projection from objectwise evidence to component invertibility checked.
 
@@ -159,11 +150,12 @@ SCT.objectwiseNatIsoComponent
 
 Expected result:
 
-- either a checked projection from a checked `ObjectwiseNatIsoData` package;
-- or a checked projection from a clearly documented objectwise criterion package introduced after
-  the necessary Chapter 1 vocabulary.
+- a checked proof of the Chapter 6 projection from the abstract `ObjectwiseNatIsoData` package to
+  componentwise `InvertibleMorphism` evidence; or
+- a replacement of the abstract package by a lower-level non-circular package, followed by a checked
+  projection to `InvertibleMorphism`.
 
-### Project 3: constructor API
+### Project 2: constructor API
 
 Goal: make the constructor direction clear and stable.
 
@@ -173,11 +165,11 @@ Target declaration:
 SCT.natIsoOfObjectwise
 ```
 
-This declaration is currently a direct Sigma constructor. If the package design changes, preserve
-the same mathematical behavior: objectwise invertibility evidence should assemble into a natural
-isomorphism.
+This declaration is a direct Sigma constructor in the implemented design. If the package design
+changes, preserve the same mathematical behavior: objectwise invertibility evidence should assemble
+into a natural isomorphism.
 
-### Project 4: downstream adapters
+### Project 3: downstream adapters
 
 Goal: update the Chapter 6 proofs that use objectwise natural isomorphisms.
 
