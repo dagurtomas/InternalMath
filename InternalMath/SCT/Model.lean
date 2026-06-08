@@ -822,29 +822,9 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   intervalCat := SCTModelHelpers.intervalQCat
   intervalZero := SCTModelHelpers.intervalVertex 0
   intervalOne := SCTModelHelpers.intervalVertex 1
-  /- Missing: the low-dimensional face and endpoint universal-property data below should be
-  transported from the usual simplex maps. -/
-  simplex2Face01 := SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01
-  simplex2Face12 := SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12
+  /- Missing: the remaining model-facing low-dimensional face data should be transported from the
+  usual simplex maps. -/
   simplex2Face02 := SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02
-  simplex2Face01Zero := SCTModelHelpers.toModelNatIso
-    (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01Zero
-      SCTModelHelpers.simplex2Id0 (SCTModelHelpers.intervalVertex 0))
-  simplex2Face01One := SCTModelHelpers.toModelNatIso
-    (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01One
-      SCTModelHelpers.simplex2Can (SCTModelHelpers.intervalVertex 1))
-  simplex2Face12Zero := SCTModelHelpers.toModelNatIso
-    (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12Zero
-      SCTModelHelpers.simplex2Can (SCTModelHelpers.intervalVertex 0))
-  simplex2Face12One := SCTModelHelpers.toModelNatIso
-    (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12One
-      SCTModelHelpers.simplex2Id1 (SCTModelHelpers.intervalVertex 1))
-  simplex2Face02Zero := SCTModelHelpers.toModelNatIso
-    (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02Zero
-      SCTModelHelpers.simplex2Id0 (SCTModelHelpers.intervalVertex 0))
-  simplex2Face02One := SCTModelHelpers.toModelNatIso
-    (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02One
-      SCTModelHelpers.simplex2Id1 (SCTModelHelpers.intervalVertex 1))
   functorObjectSourceCompat := sorry
   functorObjectTargetCompat := sorry
   natTransObject := sorry

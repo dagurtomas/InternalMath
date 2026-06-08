@@ -828,12 +828,50 @@ extend_type_theory SCT where
   lf_def simplex2Id1 : Obj simplex2Cat :=
     functorObject intervalCat intervalCat
       (constantFunctor intervalCat intervalCat intervalOne)
+
+namespace SCT
+
+/- The low-dimensional `[2]` face maps and endpoint laws are admitted as visible definition debt.
+   They should be constructed from natural transformations between `const 0`, `id`, and `const 1`
+   endofunctors of `[1]`. -/
+internal_defs where
   /-- First edge face map `[1] → [2]`; Axiom C. -/
-  lf_opaque simplex2Face01 : Functor intervalCat simplex2Cat
+  def simplex2Face01 : Functor intervalCat simplex2Cat := sorry
   /-- Second edge face map `[1] → [2]`; Axiom C. -/
-  lf_opaque simplex2Face12 : Functor intervalCat simplex2Cat
+  def simplex2Face12 : Functor intervalCat simplex2Cat := sorry
   /-- Long-edge face map `[1] → [2]`; Axiom C. -/
-  lf_opaque simplex2Face02 : Functor intervalCat simplex2Cat
+  def simplex2Face02 : Functor intervalCat simplex2Cat := sorry
+  /-- The first face starts at `id₀`; Axiom C. -/
+  def simplex2Face01Zero : NatIso terminalCat simplex2Cat
+      (compFunctor terminalCat intervalCat simplex2Cat intervalZero simplex2Face01)
+      simplex2Id0 := sorry
+  /-- The first face ends at `can`; Axiom C. -/
+  def simplex2Face01One : NatIso terminalCat simplex2Cat
+      (compFunctor terminalCat intervalCat simplex2Cat intervalOne simplex2Face01)
+      simplex2Can := sorry
+  /-- The second face starts at `can`; Axiom C. -/
+  def simplex2Face12Zero : NatIso terminalCat simplex2Cat
+      (compFunctor terminalCat intervalCat simplex2Cat intervalZero simplex2Face12)
+      simplex2Can := sorry
+  /-- The second face ends at `id₁`; Axiom C. -/
+  def simplex2Face12One : NatIso terminalCat simplex2Cat
+      (compFunctor terminalCat intervalCat simplex2Cat intervalOne simplex2Face12)
+      simplex2Id1 := sorry
+  /-- The long face starts at `id₀`; Axiom C. -/
+  def simplex2Face02Zero : NatIso terminalCat simplex2Cat
+      (compFunctor terminalCat intervalCat simplex2Cat intervalZero simplex2Face02)
+      simplex2Id0 := sorry
+  /-- The long face ends at `id₁`; Axiom C. -/
+  def simplex2Face02One : NatIso terminalCat simplex2Cat
+      (compFunctor terminalCat intervalCat simplex2Cat intervalOne simplex2Face02)
+      simplex2Id1 := sorry
+
+end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter1
+
   /-- Face `d₀ = max : [1] → [2]`; Convention 1.6.13.  Book context: Chapter 1 of the SCT book. -/
   lf_def simplex2FaceD0 : Functor intervalCat simplex2Cat := simplex2Face12
   /-- Face `d₁ = p_[1]^* : [1] → [2]`; Convention 1.6.13.  Book context: Chapter 1 of the SCT book.
@@ -853,36 +891,6 @@ extend_type_theory SCT where
   lf_def simplex2Deg0 : Functor simplex0Cat simplex2Cat := simplex2Id0
   /-- Target degeneracy `[0] → [2]`, selecting the constant-`1` object. -/
   lf_def simplex2Deg1 : Functor simplex0Cat simplex2Cat := simplex2Id1
-  /-- The first face starts at `id₀`; Axiom C. -/
-  lf_opaque simplex2Face01Zero :
-    NatIso terminalCat simplex2Cat
-      (compFunctor terminalCat intervalCat simplex2Cat intervalZero simplex2Face01)
-      simplex2Id0
-  /-- The first face ends at `can`; Axiom C. -/
-  lf_opaque simplex2Face01One :
-    NatIso terminalCat simplex2Cat
-      (compFunctor terminalCat intervalCat simplex2Cat intervalOne simplex2Face01)
-      simplex2Can
-  /-- The second face starts at `can`; Axiom C. -/
-  lf_opaque simplex2Face12Zero :
-    NatIso terminalCat simplex2Cat
-      (compFunctor terminalCat intervalCat simplex2Cat intervalZero simplex2Face12)
-      simplex2Can
-  /-- The second face ends at `id₁`; Axiom C. -/
-  lf_opaque simplex2Face12One :
-    NatIso terminalCat simplex2Cat
-      (compFunctor terminalCat intervalCat simplex2Cat intervalOne simplex2Face12)
-      simplex2Id1
-  /-- The long face starts at `id₀`; Axiom C. -/
-  lf_opaque simplex2Face02Zero :
-    NatIso terminalCat simplex2Cat
-      (compFunctor terminalCat intervalCat simplex2Cat intervalZero simplex2Face02)
-      simplex2Id0
-  /-- The long face ends at `id₁`; Axiom C. -/
-  lf_opaque simplex2Face02One :
-    NatIso terminalCat simplex2Cat
-      (compFunctor terminalCat intervalCat simplex2Cat intervalOne simplex2Face02)
-      simplex2Id1
   /-- Source degeneracy selects `id₀`. -/
   lf_def simplex2Deg0Beta : NatIso simplex2Deg0 simplex2Id0 :=
     idNatIso terminalCat simplex2Cat simplex2Id0
