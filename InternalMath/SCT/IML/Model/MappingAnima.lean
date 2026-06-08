@@ -29,7 +29,7 @@ quasicategories. This scaffold is about raw equivalence edges inside quasicatego
 cores; the bridge from bicategorical 2-cells to objects/edges of `Fun(C,D)` belongs to the future
 `natTransObject` API.
 
-The `sorry`s here are project markers for human workshop work, not shortcuts for the SCT model.
+The `sorry`s here are project markers for the workshop scaffold, not shortcuts for the SCT model.
 -/
 
 @[expose] public section

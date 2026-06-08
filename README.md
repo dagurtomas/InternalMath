@@ -1,9 +1,8 @@
 # InternalMath
 
 > [!WARNING]
-> Most of the code in this repository was written by AI coding agents. Treat the implementation
-> and documentation as research-prototype material that needs human review before reuse in
-> high-assurance settings.
+> This repository contains research-prototype implementation and documentation. Treat it as
+> experimental material that needs independent review before reuse in high-assurance settings.
 
 InternalMath is an experimental Lean 4 project for trying out
 [InternalLean](https://github.com/dagurtomas/InternalLean) on mathematical type theories and their
