@@ -391,7 +391,7 @@ fullSubcategoryMorphismMemberElim
 to recover endpoint membership in `P`. The endpoint of the identity arrow is the original object, by
 compatibility of identity source and target. This gives `LandsInObjectCollection` for the inclusion.
 
-This proof requires coherence bookkeeping but is suitable for an agent after Phase 1.
+This proof requires coherence bookkeeping and is best handled after Phase 1.
 
 ## Phase 5: close `subcategoryWitnessEmbedding`
 

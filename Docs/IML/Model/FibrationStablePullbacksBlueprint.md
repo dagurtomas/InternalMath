@@ -23,8 +23,8 @@ pullbacks and supplies the comparison data needed by the SCT model.
 Workshop blueprint for the fibration-stable pullback model scaffold.
 
 Scope: this note expands the project around `pullbackCat`, base-change of fibrations, and directed
-pullbacks in `InternalMath/SCT/Model.lean`.  It is written for human workshop participants.  The
-companion Lean scaffold is `InternalMath/SCT/IML/Model/FibrationPullbacks.lean`.
+pullbacks in `InternalMath/SCT/Model.lean`. The companion Lean scaffold is
+`InternalMath/SCT/IML/Model/FibrationPullbacks.lean`.
 
 ## Short version
 
@@ -53,9 +53,9 @@ quasicategories. The fibration-pullback scaffold uses strict equality for the sp
 where a pullback square commutes on the nose; the homotopy-pullback package should expose coherent
 `NatIso` comparison data for general SCT pullbacks.
 
-## Why this is a human workshop project
+## Design choices
 
-This project is human-led because it requires semantic choices:
+This project requires semantic choices:
 
 - which notion of fibration should model the book's `IsofibrationWitness`;
 - how to relate inner fibrations of simplicial sets to isofibrations of quasicategories;
@@ -67,9 +67,6 @@ This project is human-led because it requires semantic choices:
   pullbacks when an explicit binary formula is needed;
 - how directed/lax pullbacks in Chapter 5 relate to strict pullbacks and arrow-category pullbacks;
 - which parts belong upstream in mathlib/infinity-cosmos.
-
-Agents can help with typed wrappers, projection lemmas, and strict β-rules after the semantic target
-is fixed.
 
 ## Existing SCT declarations involved
 
@@ -152,8 +149,7 @@ Proof idea:
   `E`;
 - assemble the pair into a simplex in the strict pullback.
 
-This is a good theorem for humans to work through because the proof is standard but requires careful
-orientation of horn maps.
+The proof is standard but requires careful orientation of horn maps.
 
 ### Target C: strict pullback cone API
 
@@ -169,8 +165,8 @@ The package should include:
 - strict β-rules;
 - strict uniqueness/extensionality.
 
-This part is mostly agent-friendly after the theorem exists.  The companion scaffold already
-contains a right-leg version of these wrappers.
+After the theorem exists, the companion scaffold already contains a right-leg version of these
+wrappers.
 
 ### Target D: strict pullbacks as homotopy pullbacks
 
@@ -401,7 +397,7 @@ Deliverables:
 - a decision on the local wrapper shape for `InnerFibration`;
 - a decision on how it relates to `IsofibrationWitness`.
 
-Good for: human maintainer plus one agent for search/probes.
+Focus: API search and wrapper decisions.
 
 ### Project 2: horn-lifting proof for strict pullback closure
 
@@ -414,7 +410,7 @@ Deliverables:
 - left-leg theorem, either by symmetry or a separate proof;
 - comments explaining the horn orientation.
 
-Good for: human-led formalization.
+Focus: horn-lifting formalization.
 
 ### Project 3: strict cone wrapper
 
@@ -427,7 +423,7 @@ Deliverables:
 - strict commutativity;
 - lift, β-rules, and uniqueness.
 
-Good for: agent-friendly after Project 2.  The companion Lean scaffold already starts this.
+Focus: wrapper implementation after Project 2. The companion Lean scaffold already starts this.
 
 ### Project 4: homotopy-pullback comparison
 
@@ -440,7 +436,7 @@ Deliverables:
 - a clear statement of hypotheses;
 - reusable comparison lemmas for strict pullbacks along the chosen fibration class.
 
-Good for: human-interest/upstream work.
+Focus: upstream comparison theorem.
 
 ### Project 5: Reedy homotopy-limit adapter
 
@@ -456,8 +452,7 @@ Deliverables:
 - a derived cone package over the original cospan, or a documented gap if the incoming API only
   exposes replacement diagrams.
 
-Good for: human-led API design, with agents helping on finite-shape and diagram-category
-bookkeeping.
+Focus: API design plus finite-shape and diagram-category bookkeeping.
 
 ### Project 6: explicit binary comparison object
 
@@ -471,7 +466,7 @@ Deliverables:
 - comparison between `(C × D) ×_{E × E} EqArr(E)` and the Reedy homotopy limit, or a decision to
   use this object as the field implementation until the Reedy cone package is available.
 
-Good for: human-led design with agent support for endpoint bookkeeping.
+Focus: design and endpoint bookkeeping.
 
 ### Project 7: SCT `pullbackCat` field adapter
 
@@ -487,7 +482,7 @@ Deliverables:
 - a short dependency note for any remaining fields whose proof uses unfinished `NatIso` or
   mapping-anima adapters.
 
-Good for: paired human/agent work after Projects 5 and 6.
+Focus: model-field adapters after Projects 5 and 6.
 
 ### Project 8: base-change fibration package
 
@@ -501,7 +496,7 @@ Deliverables:
 - candidate implementations for `baseChangeFibration`, `baseChangeCartesian`, and
   `baseChangeCocartesian`.
 
-Good for: paired human/agent work.
+Focus: base-change wrappers and stability proofs.
 
 ### Project 9: directed pullback design note
 
@@ -514,7 +509,7 @@ Deliverables:
 - names and orientations for `directedPullbackPr1`, `directedPullbackPr2`, and
   `directedPullbackArrow`.
 
-Good for: human design checkpoint.
+Focus: design checkpoint.
 
 ## Lean scaffold
 
@@ -549,7 +544,7 @@ SCTFibrationPullbacksSkeleton.HomotopyPullback.representedByRightInnerFibration
 The scaffold gives a right-leg strict cone package, converts strict commutativity to coherent
 comparison data for the homotopy-pullback candidate, and leaves the mathematical closure theorem,
 the precise homotopy-pullback universal-property type, and the proof that the strict pullback
-satisfies that property as human project markers.
+satisfies that property as project markers.
 
 The generated model structure in `InternalMath/SCT/Model.lean` also contains a `pullbackCat` block
 of `sorry`s.  Those fields should be closed by a Reedy homotopy-limit package for cospans, with the

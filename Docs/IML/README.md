@@ -72,7 +72,7 @@ supporting APIs are stable.
 ## Model construction projects
 
 Model projects work in the quasicategory/Kan-complex interpretation of SCT. They usually require
-human mathematical choices about which mathlib or infinity-cosmos APIs to use.
+mathematical choices about which mathlib or infinity-cosmos APIs to use.
 
 ### Functor quasicategory bridge
 

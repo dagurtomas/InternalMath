@@ -24,8 +24,8 @@ universal property and connects it to the SCT localization fields.
 Workshop blueprint for the localization model scaffold.
 
 Scope: this note expands the project around functors that invert a morphism collection and
-quasicategorical localization in `InternalMath/SCT/Model.lean`.  It is written for human workshop
-participants.  The companion Lean scaffold is `InternalMath/SCT/IML/Model/Localization.lean`.
+quasicategorical localization in `InternalMath/SCT/Model.lean`. The companion Lean scaffold is
+`InternalMath/SCT/IML/Model/Localization.lean`.
 
 ## Short version
 
@@ -56,9 +56,9 @@ This is the generic localization interface needed for future derived ∞-categor
 `Ch(A)[Qis⁻¹]`.  It does not by itself construct chain complexes, quasi-isomorphisms, stable
 ∞-categories, or triangulated homotopy categories.
 
-## Why this is a human workshop project
+## Design choices
 
-This project is human-led because it requires several semantic choices:
+This project requires several semantic choices:
 
 - how to represent morphism collections: as subobjects of `Map([1],C)`, as subcomplexes of the
   arrow quasicategory, or via a future upstream subcategory API;
@@ -69,8 +69,7 @@ This project is human-led because it requires several semantic choices:
 - how the SCT descender/β/uniqueness fields should be extracted from a quasicategorical universal
   equivalence.
 
-Agents can help with wrappers, projection fields, and bookkeeping after these choices are fixed.
-The proof of existence and the universal property should be human-reviewed.
+The proof of existence and the universal property are part of the main mathematical content.
 
 ## Existing SCT declarations involved
 
@@ -357,8 +356,8 @@ SCTLocalizationSkeleton.Localization.inverts
 SCTLocalizationSkeleton.Localization.universal
 ```
 
-The scaffold stops before filling `sctModel` fields.  It names the mathematical seams while leaving
-the existence theorem and API choices for workshop participants.
+The scaffold stops before filling `sctModel` fields. It names the mathematical seams and records
+the existence theorem and API choices as project milestones.
 
 ## Informal proof or construction for each Lean `sorry`
 

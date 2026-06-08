@@ -22,8 +22,8 @@ model interpret cores and mapping anima in this way.
 Workshop blueprint for the maximal-Kan-core and mapping-anima model scaffold.
 
 Scope: this note expands the project around `mapAnima`, groupoid cores, and maximal Kan cores in
-`InternalMath/SCT/Model.lean`.  It is written for human workshop participants.  The companion Lean
-scaffold is `InternalMath/SCT/IML/Model/MappingAnima.lean`.
+`InternalMath/SCT/Model.lean`. The companion Lean scaffold is
+`InternalMath/SCT/IML/Model/MappingAnima.lean`.
 
 ## Short version
 
@@ -45,7 +45,7 @@ concern raw equivalence edges inside quasicategories and maximal cores.  The bri
 2-cells to objects or edges of `Fun(C,D)` is tracked in
 `Docs/IML/Model/FunctorQuasicategoryBridgeBlueprint.md`.
 
-## Why this is a human workshop project
+## Design choices
 
 This is mathematically standard, but the useful Lean API depends on design choices:
 
@@ -53,9 +53,6 @@ This is mathematically standard, but the useful Lean API depends on design choic
 - whether the maximal core is stored as a subcomplex or as a bundled Kan complex with inclusion;
 - how to phrase the universal property so it matches SCT Axiom G;
 - how much to prove locally before replacing the scaffold with mathlib/infinity-cosmos APIs.
-
-Agents can help with endpoint bookkeeping and subcomplex boilerplate after the design is fixed.
-The first pass should be human-led.
 
 ## Existing SCT declarations involved
 
@@ -131,8 +128,8 @@ Properties:
    characterization matching the book;
 4. the inclusion is a monomorphism/subcomplex inclusion.
 
-Human choice: decide whether higher-simplex membership should be defined by all edges, all spine
-edges, or pulled from an upstream maximal-core construction.  The all-edges definition is easy to
+Design choice: decide whether higher-simplex membership should be defined by all edges, all spine
+edges, or pulled from an upstream maximal-core construction. The all-edges definition is easy to
 state and often convenient for subcomplex closure; the upstream API may choose another defeq shape.
 
 ### Target C: the maximal core is Kan
@@ -242,7 +239,7 @@ Deliverables:
 - a decision on Prop-valued vs data-valued local wrappers;
 - a replacement plan for the placeholders in `InternalMath/SCT/IML/Model/MappingAnima.lean`.
 
-Good for: human maintainer plus one agent session for search/probes.
+Focus: API search and wrapper decisions.
 
 ### Project 2: maximal-core subcomplex definition
 
@@ -254,7 +251,7 @@ Deliverables:
 - edge membership iff equivalence-edge lemma;
 - subcomplex closure proof if the definition is local.
 
-Good for: human-led paired implementation.
+Focus: maximal-core subcomplex implementation.
 
 ### Project 3: Kan proof for the core
 
@@ -266,7 +263,7 @@ Deliverables:
 - a bundled `SSet.QCat`/Kan object helper;
 - comments documenting the theorem source.
 
-Good for: human-interest mathlib/infinity-cosmos work.
+Focus: mathlib/infinity-cosmos theorem integration.
 
 ### Project 4: maps from Kan complexes factor through the core
 
@@ -278,7 +275,7 @@ Deliverables:
 - factorization and uniqueness lemmas;
 - adapter notes for `coreUniversalPackage`.
 
-Good for: mixed human/agent work after Projects 2--3.
+Focus: universal-property adapters after Projects 2--3.
 
 ### Project 5: map anima adapter
 
@@ -290,7 +287,7 @@ Deliverables:
 - `core(C) = Map(*,C)` helper;
 - model-field candidates for `mapAnima`, `coreIncl`, and the core package.
 
-Good for: agent-friendly after the previous projects and the functor-quasicategory skeleton land.
+Focus: model-field adapters after the previous projects and the functor-quasicategory skeleton land.
 
 ### Project 6: fixed-endpoint hom anima API
 
@@ -302,7 +299,7 @@ Deliverables:
 - equivalence with the endpoint fiber of `Map([1],C)`;
 - compatibility with existing `objectHomCat` contractibility fields.
 
-Good for: human + agent after mapping anima and pullback/fiber APIs are stable.
+Focus: fixed-endpoint hom-anima API after mapping anima and pullback/fiber APIs are stable.
 
 ## Lean scaffold
 
@@ -325,7 +322,7 @@ SCTMappingAnimaSkeleton.MappingAnima.incl
 ```
 
 The scaffold deliberately stops before filling `sctModel` fields.  It gives names and types for the
-main mathematical seams while leaving the core proof and API choices for workshop participants.
+main mathematical seams and records the core proof and API choices as project milestones.
 
 ## Informal proof or construction for each Lean `sorry`
 

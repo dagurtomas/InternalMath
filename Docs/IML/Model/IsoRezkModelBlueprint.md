@@ -218,7 +218,7 @@ use a shared upstream structure.
 - Connect this adapter to the generated SCT fields `invertibleMorphismInverseSource` and
   `invertibleMorphismInverseTarget`.
 
-This is mostly agent-friendly once the finite-shape endpoint lemmas are stable.
+This phase can begin once the finite-shape endpoint lemmas are stable.
 
 ### Phase 3: Segal unit comparisons
 
@@ -245,7 +245,7 @@ This phase depends on the functor-quasicategory bridge and full-subcategory mode
 - Prove the unit and counit as bicategorical natural isomorphisms.
 - Package the result as `CatEquiv C (isoCat C)`.
 
-This is human-led and should not be attempted by defining `Iso(C)` from the desired equivalence.
+Do not attempt this phase by defining `Iso(C)` from the desired equivalence.
 
 ## Pitfalls
 
