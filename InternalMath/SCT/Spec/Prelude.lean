@@ -160,6 +160,31 @@ declare_type_theory SCT{u} where
   /-- Counit natural isomorphism of an equivalence; definition after Axiom A.3. -/
   lf_opaque catEquivCounit {C : SCat} {D : SCat} (e : CatEquiv C D) :
     NatIso (compFunctor (catEquivBackward e) (catEquivForward e)) (idFunctor D)
+  /-- Equivalence data for a specified forward functor.  This pins later equivalence-shaped axioms
+  to the comparison functor named by the book. -/
+  syntax_abbrev EquivalenceWitness {C : SCat} {D : SCat} (F : Functor C D) :=
+    Σ G : Functor D C,
+      Σ η : NatIso (compFunctor F G) (idFunctor C),
+        NatIso (compFunctor G F) (idFunctor D)
+  /-- Backward functor of pinned equivalence data. -/
+  lf_def equivalenceWitnessBackward : (C : SCat) ⇒ (D : SCat) ⇒
+      (F : Functor C D) ⇒ EquivalenceWitness F ⇒ Functor D C :=
+    fun C D F w => fst w
+  /-- Unit of pinned equivalence data. -/
+  lf_def equivalenceWitnessUnit : (C : SCat) ⇒ (D : SCat) ⇒
+      (F : Functor C D) ⇒ (w : EquivalenceWitness F) ⇒
+      NatIso (compFunctor F (equivalenceWitnessBackward C D F w)) (idFunctor C) :=
+    fun C D F w => fst (snd w)
+  /-- Counit of pinned equivalence data. -/
+  lf_def equivalenceWitnessCounit : (C : SCat) ⇒ (D : SCat) ⇒
+      (F : Functor C D) ⇒ (w : EquivalenceWitness F) ⇒
+      NatIso (compFunctor (equivalenceWitnessBackward C D F w) F) (idFunctor D) :=
+    fun C D F w => snd (snd w)
+  /-- Package pinned equivalence data as an ordinary category equivalence. -/
+  lf_def catEquivOfWitness : (C : SCat) ⇒ (D : SCat) ⇒
+      (F : Functor C D) ⇒ EquivalenceWitness F ⇒ CatEquiv C D :=
+    fun C D F w => catEquivOfData C D F (equivalenceWitnessBackward C D F w)
+      (equivalenceWitnessUnit C D F w) (equivalenceWitnessCounit C D F w)
   /-- Reflexivity of category equivalence, packaged from identity functors and unitors.  Book
   context: Chapter 1 of the SCT book.
   -/

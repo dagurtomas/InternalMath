@@ -91,14 +91,26 @@ extend_type_theory SCT where
           (pullbackCat (prodCat C C) (funCat intervalCat D) (prodCat D D)
             (objectPairFunctor C D F) (arrowEndpointFunctor D)) :=
     fun C D F ff => ff
-  /-- Postcomposition preserves the source/target endpoint map on arrow categories.  This is
-  functor-category endpoint β-data used to construct the Chapter 6 arrow comparison. -/
-  lf_opaque postcompEndpointFunctorCompat (C : SCat) (D : SCat) (F : Functor C D) :
+
+namespace SCT
+
+/- Endpoint compatibility for postcomposition is admitted as visible definition debt.  It should
+   eventually follow from the definitions of postcomposition and arrow endpoints. -/
+internal_defs where
+  /-- Postcomposition preserves the source/target endpoint map on arrow categories. -/
+  def postcompEndpointFunctorCompat (C : SCat) (D : SCat) (F : Functor C D) :
     NatIso (funCat intervalCat C) (prodCat D D)
       (compFunctor (funCat intervalCat C) (prodCat C C) (prodCat D D)
         (arrowEndpointFunctor C) (objectPairFunctor C D F))
       (compFunctor (funCat intervalCat C) (funCat intervalCat D) (prodCat D D)
-        (postcompFunctor intervalCat C D F) (arrowEndpointFunctor D))
+        (postcompFunctor intervalCat C D F) (arrowEndpointFunctor D)) := sorry
+
+end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter6
+
   /-- Arrow-map comparison into the endpoint pullback.  Book target: §6.2, arrow-map
   characterization of fully faithful functors. -/
   lf_def arrowMapFunctor : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒

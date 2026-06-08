@@ -691,44 +691,6 @@ extend_type_theory SCT where
 
   /-- Functor category; Axiom B.6. -/
   lf_opaque funCat (C : SCat) (D : SCat) : SCat
-  /-- Category of cones over a pullback cospan from a test category.  Axiom B.5 universal-property
-  package.
-  -/
-  lf_opaque pullbackConeCat (X : SCat) (C : SCat) (D : SCat) (E : SCat)
-    (F : Functor C E) (G : Functor D E) : SCat
-  /-- Pullback universal property as an equivalence with the cone category; Axiom B.5. -/
-  lf_opaque pullbackConeEquiv (X : SCat) (C : SCat) (D : SCat) (E : SCat)
-    (F : Functor C E) (G : Functor D E) :
-    CatEquiv (funCat X (pullbackCat C D E F G)) (pullbackConeCat X C D E F G)
-  /-- Precomposition functor between functor categories; Axiom B.6. -/
-  lf_opaque precompFunctor (A : SCat) (B : SCat) (C : SCat) (u : Functor A B) :
-    Functor (funCat B C) (funCat A C)
-  /-- Pushout-square witness: a commutative square plus its mapping-out universal property.  Book
-  target: pushout squares used throughout Chapter 1, especially Proposition 1.3.3 and Axiom J.1. -/
-  syntax_abbrev PushoutSquare {A : SCat} {B : SCat} {C : SCat} {D : SCat}
-    (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) :=
-    Σ comm : NatIso (compFunctor top right) (compFunctor left bottom),
-      (X : SCat) → CatEquiv (funCat D X)
-        (pullbackCat (funCat B X) (funCat C X) (funCat A X)
-          (precompFunctor A B X top) (precompFunctor A C X left))
-  /-- Commutativity component of a pushout square. -/
-  lf_def pushoutSquareComm : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒
-      (top : Functor A B) ⇒ (left : Functor A C) ⇒ (right : Functor B D) ⇒
-      (bottom : Functor C D) ⇒ PushoutSquare A B C D top left right bottom ⇒
-      NatIso (compFunctor top right) (compFunctor left bottom) :=
-    fun A B C D top left right bottom sq => fst sq
-  /-- Mapping-out universal property associated to a pushout-square witness. -/
-  lf_def pushoutSquareMappingEquiv : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
-      (D : SCat) ⇒ (top : Functor A B) ⇒ (left : Functor A C) ⇒
-      (right : Functor B D) ⇒ (bottom : Functor C D) ⇒
-      PushoutSquare A B C D top left right bottom ⇒ (X : SCat) ⇒
-      CatEquiv (funCat D X)
-        (pullbackCat (funCat B X) (funCat C X) (funCat A X)
-          (precompFunctor A B X top) (precompFunctor A C X left)) :=
-    fun A B C D top left right bottom sq X => snd sq X
-  /-- Postcomposition functor between functor categories; Axiom B.6. -/
-  lf_opaque postcompFunctor (A : SCat) (B : SCat) (C : SCat) (v : Functor B C) :
-    Functor (funCat A B) (funCat A C)
   /-- Evaluation functor; Axiom B.6. -/
   lf_opaque evalFunctor (C : SCat) (D : SCat) : Functor (prodCat (funCat C D) C) D
   /-- Currying; Axiom B.6. -/
@@ -755,6 +717,58 @@ extend_type_theory SCT where
     (F : Functor Γ (funCat C D)) (G : Functor Γ (funCat C D))
     (α : NatIso Γ (funCat C D) F G) :
     NatIso (prodCat Γ C) D (uncurryFunctor Γ C D F) (uncurryFunctor Γ C D G)
+  /-- Precomposition functor between functor categories, defined by currying evaluation after the
+  input functor. -/
+  lf_def precompFunctor : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒ Functor A B ⇒
+      Functor (funCat B C) (funCat A C) :=
+    fun A B C u =>
+      curryFunctor (funCat B C) A C
+        (compFunctor (prodCat (funCat B C) A) (prodCat (funCat B C) B) C
+          (prodPair (prodCat (funCat B C) A) (funCat B C) B
+            (prodPr1 (funCat B C) A)
+            (compFunctor (prodCat (funCat B C) A) A B
+              (prodPr2 (funCat B C) A) u))
+          (evalFunctor B C))
+  /-- Postcomposition functor between functor categories, defined by postcomposing evaluation. -/
+  lf_def postcompFunctor : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒ Functor B C ⇒
+      Functor (funCat A B) (funCat A C) :=
+    fun A B C v =>
+      curryFunctor (funCat A B) A C
+        (compFunctor (prodCat (funCat A B) A) B C
+          (evalFunctor A B) v)
+  /-- Category of cones over a pullback cospan from a test category. -/
+  lf_def pullbackConeCat : (X : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒ (E : SCat) ⇒
+      (F : Functor C E) ⇒ (G : Functor D E) ⇒ SCat :=
+    fun X C D E F G =>
+      pullbackCat (funCat X C) (funCat X D) (funCat X E)
+        (postcompFunctor X C E F) (postcompFunctor X D E G)
+  /-- Pullback universal property as an equivalence with the cone category; Axiom B.5. -/
+  lf_opaque pullbackConeEquiv (X : SCat) (C : SCat) (D : SCat) (E : SCat)
+    (F : Functor C E) (G : Functor D E) :
+    CatEquiv (funCat X (pullbackCat C D E F G)) (pullbackConeCat X C D E F G)
+  /-- Pushout-square witness: a commutative square plus its mapping-out universal property.  Book
+  target: pushout squares used throughout Chapter 1, especially Proposition 1.3.3 and Axiom J.1. -/
+  syntax_abbrev PushoutSquare {A : SCat} {B : SCat} {C : SCat} {D : SCat}
+    (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) :=
+    Σ comm : NatIso (compFunctor top right) (compFunctor left bottom),
+      (X : SCat) → CatEquiv (funCat D X)
+        (pullbackCat (funCat B X) (funCat C X) (funCat A X)
+          (precompFunctor A B X top) (precompFunctor A C X left))
+  /-- Commutativity component of a pushout square. -/
+  lf_def pushoutSquareComm : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒
+      (top : Functor A B) ⇒ (left : Functor A C) ⇒ (right : Functor B D) ⇒
+      (bottom : Functor C D) ⇒ PushoutSquare A B C D top left right bottom ⇒
+      NatIso (compFunctor top right) (compFunctor left bottom) :=
+    fun A B C D top left right bottom sq => fst sq
+  /-- Mapping-out universal property associated to a pushout-square witness. -/
+  lf_def pushoutSquareMappingEquiv : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
+      (D : SCat) ⇒ (top : Functor A B) ⇒ (left : Functor A C) ⇒
+      (right : Functor B D) ⇒ (bottom : Functor C D) ⇒
+      PushoutSquare A B C D top left right bottom ⇒ (X : SCat) ⇒
+      CatEquiv (funCat D X)
+        (pullbackCat (funCat B X) (funCat C X) (funCat A X)
+          (precompFunctor A B X top) (precompFunctor A C X left)) :=
+    fun A B C D top left right bottom sq X => snd sq X
   /-- Forward functor of the currying equivalence; Axiom B.6. -/
   lf_opaque curryUncurryForward (Γ : SCat) (C : SCat) (D : SCat) :
     Functor (funCat Γ (funCat C D)) (funCat (prodCat Γ C) D)
@@ -797,12 +811,23 @@ extend_type_theory SCT where
   lf_def simplex0Cat : SCat := terminalCat
   /-- `[2]` is defined as `Fun([1],[1])` in this skeleton; Axiom C. -/
   lf_def simplex2Cat : SCat := funCat intervalCat intervalCat
-  /-- The identity-at-0 object of `[2]`; Axiom C. -/
-  lf_opaque simplex2Id0 : Obj simplex2Cat
-  /-- The canonical-arrow object of `[2]`; Axiom C. -/
-  lf_opaque simplex2Can : Obj simplex2Cat
-  /-- The identity-at-1 object of `[2]`; Axiom C. -/
-  lf_opaque simplex2Id1 : Obj simplex2Cat
+  /-- A functor, viewed as an object of the corresponding functor category.  Book context: Chapter 1
+  of the SCT book.
+  -/
+  lf_def functorObject : (C : SCat) ⇒ (D : SCat) ⇒ Functor C D ⇒ Obj (funCat C D) :=
+    fun C D F => curryFunctor terminalCat C D
+      (compFunctor (prodCat terminalCat C) C D (prodPr2 terminalCat C) F)
+  /-- The identity-at-0 object of `[2]`, represented by the constant-`0` endofunctor of `[1]`. -/
+  lf_def simplex2Id0 : Obj simplex2Cat :=
+    functorObject intervalCat intervalCat
+      (constantFunctor intervalCat intervalCat intervalZero)
+  /-- The canonical-arrow object of `[2]`, represented by the identity endofunctor of `[1]`. -/
+  lf_def simplex2Can : Obj simplex2Cat :=
+    functorObject intervalCat intervalCat (idFunctor intervalCat)
+  /-- The identity-at-1 object of `[2]`, represented by the constant-`1` endofunctor of `[1]`. -/
+  lf_def simplex2Id1 : Obj simplex2Cat :=
+    functorObject intervalCat intervalCat
+      (constantFunctor intervalCat intervalCat intervalOne)
   /-- First edge face map `[1] → [2]`; Axiom C. -/
   lf_opaque simplex2Face01 : Functor intervalCat simplex2Cat
   /-- Second edge face map `[1] → [2]`; Axiom C. -/
@@ -824,10 +849,10 @@ extend_type_theory SCT where
   book.
   -/
   lf_def intervalEndpointD0 : Functor simplex0Cat intervalCat := intervalOne
-  /-- Source degeneracy `[0] → [2]`; Axiom C. -/
-  lf_opaque simplex2Deg0 : Functor simplex0Cat simplex2Cat
-  /-- Target degeneracy `[0] → [2]`; Axiom C. -/
-  lf_opaque simplex2Deg1 : Functor simplex0Cat simplex2Cat
+  /-- Source degeneracy `[0] → [2]`, selecting the constant-`0` object. -/
+  lf_def simplex2Deg0 : Functor simplex0Cat simplex2Cat := simplex2Id0
+  /-- Target degeneracy `[0] → [2]`, selecting the constant-`1` object. -/
+  lf_def simplex2Deg1 : Functor simplex0Cat simplex2Cat := simplex2Id1
   /-- The first face starts at `id₀`; Axiom C. -/
   lf_opaque simplex2Face01Zero :
     NatIso terminalCat simplex2Cat
@@ -858,10 +883,12 @@ extend_type_theory SCT where
     NatIso terminalCat simplex2Cat
       (compFunctor terminalCat intervalCat simplex2Cat intervalOne simplex2Face02)
       simplex2Id1
-  /-- Source degeneracy selects `id₀`; Axiom C. -/
-  lf_opaque simplex2Deg0Beta : NatIso simplex2Deg0 simplex2Id0
-  /-- Target degeneracy selects `id₁`; Axiom C. -/
-  lf_opaque simplex2Deg1Beta : NatIso simplex2Deg1 simplex2Id1
+  /-- Source degeneracy selects `id₀`. -/
+  lf_def simplex2Deg0Beta : NatIso simplex2Deg0 simplex2Id0 :=
+    idNatIso terminalCat simplex2Cat simplex2Id0
+  /-- Target degeneracy selects `id₁`. -/
+  lf_def simplex2Deg1Beta : NatIso simplex2Deg1 simplex2Id1 :=
+    idNatIso terminalCat simplex2Cat simplex2Id1
   /-- The walking square `[1] × [1]`; Axiom D. -/
   lf_def squareCat : SCat := prodCat intervalCat intervalCat
 
@@ -944,23 +971,24 @@ extend_type_theory SCT where
   /-- The target endpoint is terminal in `[1]`; Axiom C.2. -/
   lf_def intervalOneTerminal : TerminalObjectWitness intervalCat intervalOne :=
     fun y => intervalOneTerminalHomContractible y
-  /-- A functor, viewed as an object of the corresponding functor category.  Book context: Chapter 1
-  of the SCT book.
-  -/
-  lf_def functorObject : (C : SCat) ⇒ (D : SCat) ⇒ Functor C D ⇒ Obj (funCat C D) :=
-    fun C D F => curryFunctor terminalCat C D
-      (compFunctor (prodCat terminalCat C) C D (prodPr2 terminalCat C) F)
-  /-- The source endpoint of the object classified by an interval-shaped functor.  This is the
-  endpoint β-data of the functor-category object notation used by the Segal pullback. -/
-  lf_opaque functorObjectSourceCompat (C : SCat) (f : Functor intervalCat C) :
+
+namespace SCT
+
+/- Endpoint β-data for objects of functor categories is admitted as visible definition debt.  These
+   declarations should eventually be proved from the functor-category universal property. -/
+internal_defs where
+  /-- The source endpoint of the object classified by an interval-shaped functor. -/
+  def functorObjectSourceCompat (C : SCat) (f : Functor intervalCat C) :
     NatIso terminalCat C
       (compFunctor terminalCat (funCat intervalCat C) C (functorObject intervalCat C f)
         (sourceFunctor C))
-      (sourceObj C f)
-  /-- The target endpoint of the object classified by an interval-shaped functor.  This is the
-  endpoint β-data of the functor-category object notation used by the Segal pullback. -/
-  lf_opaque functorObjectTargetCompat (C : SCat) (f : Functor intervalCat C) :
+      (sourceObj C f) := sorry
+
+  /-- The target endpoint of the object classified by an interval-shaped functor. -/
+  def functorObjectTargetCompat (C : SCat) (f : Functor intervalCat C) :
     NatIso terminalCat C
       (compFunctor terminalCat (funCat intervalCat C) C (functorObject intervalCat C f)
         (targetFunctor C))
-      (targetObj C f)
+      (targetObj C f) := sorry
+
+end SCT

@@ -803,10 +803,7 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   coprodDisjointUnit := sorry
   coprodDisjointCounit := sorry
   funCat := SCTModelHelpers.funCat
-  pullbackConeCat := sorry
   pullbackConeEquiv := sorry
-  precompFunctor := SCTModelHelpers.precompFunctor
-  postcompFunctor := SCTModelHelpers.postcompFunctor
   evalFunctor := SCTModelHelpers.evalFunctor
   curryFunctor := SCTModelHelpers.curryFunctor
   uncurryFunctor := SCTModelHelpers.uncurryFunctor
@@ -825,16 +822,11 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   intervalCat := SCTModelHelpers.intervalQCat
   intervalZero := SCTModelHelpers.intervalVertex 0
   intervalOne := SCTModelHelpers.intervalVertex 1
-  /- Missing: the low-dimensional face, degeneracy, and endpoint universal-property data below
-  should be transported from the usual simplex maps. -/
-  simplex2Id0 := SCTModelHelpers.simplex2Id0
-  simplex2Can := SCTModelHelpers.simplex2Can
-  simplex2Id1 := SCTModelHelpers.simplex2Id1
+  /- Missing: the low-dimensional face and endpoint universal-property data below should be
+  transported from the usual simplex maps. -/
   simplex2Face01 := SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01
   simplex2Face12 := SCTSegalCompositionSkeleton.ModelBridge.simplex2Face12
   simplex2Face02 := SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02
-  simplex2Deg0 := SCTModelHelpers.simplex2Deg0
-  simplex2Deg1 := SCTModelHelpers.simplex2Deg1
   simplex2Face01Zero := SCTModelHelpers.toModelNatIso
     (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face01Zero
       SCTModelHelpers.simplex2Id0 (SCTModelHelpers.intervalVertex 0))
@@ -853,8 +845,6 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   simplex2Face02One := SCTModelHelpers.toModelNatIso
     (SCTSegalCompositionSkeleton.ModelBridge.simplex2Face02One
       SCTModelHelpers.simplex2Id1 (SCTModelHelpers.intervalVertex 1))
-  simplex2Deg0Beta := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq rfl)
-  simplex2Deg1Beta := SCTModelHelpers.toModelNatIso (SCTModelHelpers.natIsoOfEq rfl)
   functorObjectSourceCompat := sorry
   functorObjectTargetCompat := sorry
   natTransObject := sorry
@@ -1010,7 +1000,6 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   locallyCartesianOfCartesian := sorry
   coneCat := sorry
   coconeCat := sorry
-  postcompEndpointFunctorCompat := sorry
   cocartesianFunctorCategoryPackage := sorry
   universeTotalCat := sorry
   universeProjection := sorry
