@@ -51,29 +51,83 @@ extend_type_theory SCT where
     sorry
   /-- A section of a functor that is left adjoint to it.
   Book context:Chapter 5 of the SCT book. -/
-  syntax_def LeftAdjointSection (C : SCat) (D : SCat) (p : Functor C D) : Type u :=
-    Σ s : Functor D C,
+  syntax_abbrev LeftAdjointSection (C : SCat) (D : SCat) (p : Functor C D) := Σ s : Functor D C,
       Σ sec : NatIso (compFunctor s p) (idFunctor D), Adjunction D C s p
   /-- A section of a functor that is right adjoint to it.  Book context: Chapter 5 of the SCT book.
   -/
-  syntax_def RightAdjointSection (C : SCat) (D : SCat) (p : Functor C D) : Type u :=
-    Σ s : Functor D C,
+  syntax_abbrev RightAdjointSection (C : SCat) (D : SCat) (p : Functor C D) := Σ s : Functor D C,
       Σ sec : NatIso (compFunctor s p) (idFunctor D), Adjunction C D p s
 
-namespace SCT
+extend_type_theory SCT where
 
-/- Projection API for the adjoint-section packages. -/
-internal_defs where
+  model_section Chapter5
+
   /-- Underlying section functor of a left-adjoint-section witness.  Book context: Chapter 5 of the
   SCT book.
   -/
-  def leftAdjointSectionFunctor (C : SCat) (D : SCat) (p : Functor C D)
-    (s : LeftAdjointSection C D p) : Functor D C := sorry
+  lf_def leftAdjointSectionFunctor : (C : SCat) ⇒ (D : SCat) ⇒ (p : Functor C D) ⇒
+      LeftAdjointSection C D p ⇒ Functor D C :=
+    fun C D p s => π₁ s
   /-- Underlying section functor of a right-adjoint-section witness.  Book context: Chapter 5 of the
   SCT book.
   -/
-  def rightAdjointSectionFunctor (C : SCat) (D : SCat) (p : Functor C D)
-    (s : RightAdjointSection C D p) : Functor D C := sorry
+  lf_def rightAdjointSectionFunctor : (C : SCat) ⇒ (D : SCat) ⇒ (p : Functor C D) ⇒
+      RightAdjointSection C D p ⇒ Functor D C :=
+    fun C D p s => π₁ s
+
+extend_type_theory SCT where
+
+  model_section Chapter5
+
+  /-- Endpoint-pair functor of the arrow category, placed here for Chapter 5 directed pullbacks. -/
+  lf_def directedArrowEndpointFunctor : (C : SCat) ⇒
+      Functor (funCat intervalCat C) (prodCat C C) :=
+    fun C => prodPair (funCat intervalCat C) C C (sourceFunctor C) (targetFunctor C)
+  /-- Object-pair functor used in the directed/lax pullback of `f` and `g`. -/
+  lf_def directedPullbackBasePairFunctor : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
+      Functor A C ⇒ Functor B C ⇒ Functor (prodCat A B) (prodCat C C) :=
+    fun A B C f g => prodPair (prodCat A B) C C
+      (compFunctor (prodCat A B) A C (prodPr1 A B) f)
+      (compFunctor (prodCat A B) B C (prodPr2 A B) g)
+  /-- Directed/lax pullback of `f : A → C` and `g : B → C`; triples `(a,b,f a → g b)`.  Book
+  context: Chapter 5 of the SCT book.
+  -/
+  lf_def directedPullbackCat : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
+      Functor A C ⇒ Functor B C ⇒ SCat :=
+    fun A B C f g => pullbackCat (prodCat A B) (funCat intervalCat C) (prodCat C C)
+      (directedPullbackBasePairFunctor A B C f g) (directedArrowEndpointFunctor C)
+  /-- First projection from a directed pullback.  Book context: Chapter 5 of the SCT book. -/
+  lf_def directedPullbackPr1 : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
+      (f : Functor A C) ⇒ (g : Functor B C) ⇒ Functor (directedPullbackCat A B C f g) A :=
+    fun A B C f g => compFunctor (directedPullbackCat A B C f g) (prodCat A B) A
+      (pullbackPr1 (prodCat A B) (funCat intervalCat C) (prodCat C C)
+        (directedPullbackBasePairFunctor A B C f g) (directedArrowEndpointFunctor C))
+      (prodPr1 A B)
+  /-- Second projection from a directed pullback.  Book context: Chapter 5 of the SCT book. -/
+  lf_def directedPullbackPr2 : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
+      (f : Functor A C) ⇒ (g : Functor B C) ⇒ Functor (directedPullbackCat A B C f g) B :=
+    fun A B C f g => compFunctor (directedPullbackCat A B C f g) (prodCat A B) B
+      (pullbackPr1 (prodCat A B) (funCat intervalCat C) (prodCat C C)
+        (directedPullbackBasePairFunctor A B C f g) (directedArrowEndpointFunctor C))
+      (prodPr2 A B)
+  /-- Arrow component of a directed pullback.  Book context: Chapter 5 of the SCT book. -/
+  lf_def directedPullbackArrow : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
+      (f : Functor A C) ⇒ (g : Functor B C) ⇒
+      Functor (directedPullbackCat A B C f g) (funCat intervalCat C) :=
+    fun A B C f g => pullbackPr2 (prodCat A B) (funCat intervalCat C) (prodCat C C)
+      (directedPullbackBasePairFunctor A B C f g) (directedArrowEndpointFunctor C)
+
+namespace SCT
+
+/- Directed evaluations are admitted until the endpoint compatibility proof over the base is
+   constructed. -/
+internal_defs where
+  /-- Directed evaluation at sources of arrows in the total category. -/
+  def directedEval0 (E : SCat) (B : SCat) (p : Functor E B) :
+      Functor (funCat intervalCat E) (directedPullbackCat E B B p (idFunctor B)) := sorry
+  /-- Directed evaluation at targets of arrows in the total category. -/
+  def directedEval1 (E : SCat) (B : SCat) (p : Functor E B) :
+      Functor (funCat intervalCat E) (directedPullbackCat B E B (idFunctor B) p) := sorry
 
 end SCT
 
@@ -81,46 +135,17 @@ extend_type_theory SCT where
 
   model_section Chapter5
 
-  /-- Directed/lax pullback of `f : A → C` and `g : B → C`; triples `(a,b,f a → g b)`.  Book
-  context: Chapter 5 of the SCT book.
-  -/
-  lf_opaque directedPullbackCat (A : SCat) (B : SCat) (C : SCat)
-    (f : Functor A C) (g : Functor B C) : SCat
-  /-- First projection from a directed pullback.  Book context: Chapter 5 of the SCT book. -/
-  lf_opaque directedPullbackPr1 (A : SCat) (B : SCat) (C : SCat)
-    (f : Functor A C) (g : Functor B C) : Functor (directedPullbackCat A B C f g) A
-  /-- Second projection from a directed pullback.  Book context: Chapter 5 of the SCT book. -/
-  lf_opaque directedPullbackPr2 (A : SCat) (B : SCat) (C : SCat)
-    (f : Functor A C) (g : Functor B C) : Functor (directedPullbackCat A B C f g) B
-  /-- Arrow component of a directed pullback.  Book context: Chapter 5 of the SCT book. -/
-  lf_opaque directedPullbackArrow (A : SCat) (B : SCat) (C : SCat)
-    (f : Functor A C) (g : Functor B C) :
-    Functor (directedPullbackCat A B C f g) (funCat intervalCat C)
-  /-- Directed evaluation at sources of arrows in the total category.
-  Book context:Chapter 5 of the
-  SCT book.
-  -/
-  lf_opaque directedEval0 (E : SCat) (B : SCat) (p : Functor E B) :
-    Functor (funCat intervalCat E) (directedPullbackCat E B B p (idFunctor B))
-  /-- Directed evaluation at targets of arrows in the total category.
-  Book context:Chapter 5 of the
-  SCT book.
-  -/
-  lf_opaque directedEval1 (E : SCat) (B : SCat) (p : Functor E B) :
-    Functor (funCat intervalCat E) (directedPullbackCat B E B (idFunctor B) p)
   /-- Cartesian structure on a fibration, represented by a right adjoint section of `directedEval1`.
   Book context: Chapter 5 of the SCT book.
   -/
   syntax_abbrev CartesianFibrationWitness {E : SCat} {B : SCat} (p : Functor E B)
-    (fib : Fibration E B p) :=
-    RightAdjointSection (funCat intervalCat E)
+    (fib : Fibration E B p) := RightAdjointSection (funCat intervalCat E)
       (directedPullbackCat B E B (idFunctor B) p) (directedEval1 E B p)
   /-- Cocartesian structure on a fibration, represented by a left adjoint section of
   `directedEval0`. Book context: Chapter 5 of the SCT book.
   -/
   syntax_abbrev CocartesianFibrationWitness {E : SCat} {B : SCat} (p : Functor E B)
-    (fib : Fibration E B p) :=
-    LeftAdjointSection (funCat intervalCat E)
+    (fib : Fibration E B p) := LeftAdjointSection (funCat intervalCat E)
       (directedPullbackCat E B B p (idFunctor B)) (directedEval0 E B p)
   /-- Left-fibration structure; Chapter 5. -/
   syntax_sort LeftFibrationWitness {E : SCat} {B : SCat} (p : Functor E B)
@@ -142,28 +167,46 @@ extend_type_theory SCT where
   /-- Right-fibration structure; Chapter 5. -/
   syntax_sort RightFibrationWitness {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) : Type u
-  /-- Left fibrations are equivalently those with `directedEval0` an equivalence.  Book context:
-  Chapter 5 of the SCT book.
+  /-- Left fibrations are equivalently those with `directedEval0` an equivalence, pinned to
+  the named evaluation functor.  Book context: Chapter 5 of the SCT book.
   -/
-  lf_opaque leftFibrationEvalEquiv (E : SCat) (B : SCat) (p : Functor E B)
+  lf_opaque leftFibrationEvalEquivalenceWitness (E : SCat) (B : SCat) (p : Functor E B)
       (fib : Fibration E B p) (left : LeftFibrationWitness E B p fib) :
-      CatEquiv (funCat intervalCat E) (directedPullbackCat E B B p (idFunctor B))
-  /-- Right fibrations are equivalently those with `directedEval1` an equivalence.  Book context:
-  Chapter 5 of the SCT book.
+      EquivalenceWitness (directedEval0 E B p)
+  /-- Left-fibration evaluation equivalence packaged from the pinned witness. -/
+  lf_def leftFibrationEvalEquiv : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (fib : Fibration E B p) ⇒ LeftFibrationWitness E B p fib ⇒
+      CatEquiv (funCat intervalCat E) (directedPullbackCat E B B p (idFunctor B)) :=
+    fun E B p fib left => catEquivOfWitness (funCat intervalCat E)
+      (directedPullbackCat E B B p (idFunctor B)) (directedEval0 E B p)
+      (leftFibrationEvalEquivalenceWitness E B p fib left)
+  /-- Right fibrations are equivalently those with `directedEval1` an equivalence, pinned to
+  the named evaluation functor.  Book context: Chapter 5 of the SCT book.
   -/
-  lf_opaque rightFibrationEvalEquiv (E : SCat) (B : SCat) (p : Functor E B)
+  lf_opaque rightFibrationEvalEquivalenceWitness (E : SCat) (B : SCat) (p : Functor E B)
       (fib : Fibration E B p) (right : RightFibrationWitness E B p fib) :
-      CatEquiv (funCat intervalCat E) (directedPullbackCat B E B (idFunctor B) p)
+      EquivalenceWitness (directedEval1 E B p)
+  /-- Right-fibration evaluation equivalence packaged from the pinned witness. -/
+  lf_def rightFibrationEvalEquiv : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      (fib : Fibration E B p) ⇒ RightFibrationWitness E B p fib ⇒
+      CatEquiv (funCat intervalCat E) (directedPullbackCat B E B (idFunctor B) p) :=
+    fun E B p fib right => catEquivOfWitness (funCat intervalCat E)
+      (directedPullbackCat B E B (idFunctor B) p) (directedEval1 E B p)
+      (rightFibrationEvalEquivalenceWitness E B p fib right)
   /-- Category of covariant lifts for `directedEval0`, indexed by `(e, α)`.  Book context: Chapter 5
   of the SCT book.
   -/
-  lf_opaque lift0Cat (E : SCat) (B : SCat) (p : Functor E B)
-    (v : Obj (directedPullbackCat E B B p (idFunctor B))) : SCat
+  lf_def lift0Cat : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      Obj (directedPullbackCat E B B p (idFunctor B)) ⇒ SCat :=
+    fun E B p v => pullbackCat (funCat intervalCat E) terminalCat
+      (directedPullbackCat E B B p (idFunctor B)) (directedEval0 E B p) v
   /-- Category of contravariant lifts for `directedEval1`, indexed by `(α, e')`.  Book context:
   Chapter 5 of the SCT book.
   -/
-  lf_opaque lift1Cat (E : SCat) (B : SCat) (p : Functor E B)
-    (v : Obj (directedPullbackCat B E B (idFunctor B) p)) : SCat
+  lf_def lift1Cat : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
+      Obj (directedPullbackCat B E B (idFunctor B) p) ⇒ SCat :=
+    fun E B p v => pullbackCat (funCat intervalCat E) terminalCat
+      (directedPullbackCat B E B (idFunctor B) p) (directedEval1 E B p) v
 
 extend_type_theory SCT where
 
@@ -236,20 +279,23 @@ extend_type_theory SCT where
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     (u : Functor intervalCat E) : Type u
 
-extend_type_theory SCT where
+namespace SCT
 
-  model_section Chapter5
-
+/- The conversions from left/right fibrations to cocartesian/cartesian fibrations are theorem-shaped
+   consequences of the Chapter 5 packages. -/
+internal_defs where
   /-- Every left fibration is cocartesian; projection data for the Chapter 5 left-fibration
   package. -/
-  lf_opaque leftFibrationCocartesian (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (left : LeftFibrationWitness E B p fib) :
-    CocartesianFibrationWitness E B p fib
+  def leftFibrationCocartesian (E : SCat) (B : SCat) (p : Functor E B)
+      (fib : Fibration E B p) (left : LeftFibrationWitness E B p fib) :
+      CocartesianFibrationWitness E B p fib := sorry
   /-- Every right fibration is cartesian; projection data for the Chapter 5 right-fibration
   package. -/
-  lf_opaque rightFibrationCartesian (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (right : RightFibrationWitness E B p fib) :
-    CartesianFibrationWitness E B p fib
+  def rightFibrationCartesian (E : SCat) (B : SCat) (p : Functor E B)
+      (fib : Fibration E B p) (right : RightFibrationWitness E B p fib) :
+      CartesianFibrationWitness E B p fib := sorry
+
+end SCT
 
 extend_type_theory SCT where
 
@@ -290,37 +336,45 @@ extend_type_theory SCT where
     fun E B p fib cocart => leftAdjointSectionFunctor (funCat intervalCat E)
       (directedPullbackCat E B B p (idFunctor B)) (directedEval0 E B p) cocart
 
+namespace SCT
+
+/- Directed-pullback transport and Beck-Chevalley comparison are definition/coherence debt, not
+   independent primitive vocabulary. -/
+internal_defs where
+  /-- Map on directed pullbacks induced by a functor over the base; Chapter 5 transport data. -/
+  def directedPullbackMapOverBase (E : SCat) (B : SCat) (p : Functor E B)
+      (E' : SCat) (p' : Functor E' B) (F : Functor E E')
+      (hBase : FunctorOverBase E B p E' p' F) :
+      Functor (directedPullbackCat E B B p (idFunctor B))
+        (directedPullbackCat E' B B p' (idFunctor B)) := sorry
+  /-- Beck-Chevalley transformation associated to a functor over the base; Chapter 5 data. -/
+  def beckChevalleyTransformation (E : SCat) (B : SCat) (p : Functor E B)
+      (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
+      (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
+      (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
+      (hBase : FunctorOverBase E B p E' p' F) :
+      NatTrans (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E')
+        (compFunctor (directedPullbackCat E B B p (idFunctor B))
+          (directedPullbackCat E' B B p' (idFunctor B)) (funCat intervalCat E')
+          (directedPullbackMapOverBase E B p E' p' F hBase)
+          (cocartesianLiftFunctor E' B p' fib' cocart'))
+        (compFunctor (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E)
+          (funCat intervalCat E') (cocartesianLiftFunctor E B p fib cocart)
+          (postcompFunctor intervalCat E E' F)) := sorry
+
+end SCT
+
 extend_type_theory SCT where
 
   model_section Chapter5
 
-  /-- Map on directed pullbacks induced by a functor over the base; Chapter 5 transport data. -/
-  lf_opaque directedPullbackMapOverBase (E : SCat) (B : SCat) (p : Functor E B)
-    (E' : SCat) (p' : Functor E' B) (F : Functor E E')
-    (hBase : FunctorOverBase E B p E' p' F) :
-    Functor (directedPullbackCat E B B p (idFunctor B))
-      (directedPullbackCat E' B B p' (idFunctor B))
-  /-- Beck-Chevalley transformation associated to a functor over the base; Chapter 5 data. -/
-  lf_opaque beckChevalleyTransformation (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
-    (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
-    (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
-    (hBase : FunctorOverBase E B p E' p' F) :
-    NatTrans (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E')
-      (compFunctor (directedPullbackCat E B B p (idFunctor B))
-        (directedPullbackCat E' B B p' (idFunctor B)) (funCat intervalCat E')
-        (directedPullbackMapOverBase E B p E' p' F hBase)
-        (cocartesianLiftFunctor E' B p' fib' cocart'))
-      (compFunctor (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E)
-        (funCat intervalCat E') (cocartesianLiftFunctor E B p fib cocart)
-        (postcompFunctor intervalCat E E' F))
   /-- Beck-Chevalley invertibility for the chosen transformation. -/
   syntax_abbrev CocartesianFunctorBeckChevalley {E : SCat} {B : SCat} (p : Functor E B)
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     {E' : SCat} (p' : Functor E' B) (fib' : Fibration E' B p')
     (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
     (hBase : FunctorOverBase E B p E' p' F) :=
-    ObjectwiseNatIso (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E')
+      ObjectwiseNatIso (directedPullbackCat E B B p (idFunctor B)) (funCat intervalCat E')
       (compFunctor (directedPullbackCat E B B p (idFunctor B))
         (directedPullbackCat E' B B p' (idFunctor B)) (funCat intervalCat E')
         (directedPullbackMapOverBase E B p E' p' F hBase)
@@ -335,7 +389,7 @@ extend_type_theory SCT where
     (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
     {E' : SCat} (p' : Functor E' B) (fib' : Fibration E' B p')
     (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E') :=
-    Σ hBase : FunctorOverBase E B p E' p' F,
+      Σ hBase : FunctorOverBase E B p E' p' F,
       CocartesianFunctorBeckChevalley E B p fib cocart E' p' fib' cocart' F hBase
   /-- A cocartesian functor lies over the base; source data for the commutative triangle in
   Theorem 6.4.7. -/
@@ -345,7 +399,7 @@ extend_type_theory SCT where
       (cocart' : CocartesianFibrationWitness E' B p' fib') ⇒ (F : Functor E E') ⇒
       CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F ⇒
         FunctorOverBase E B p E' p' F :=
-    fun E B p fib cocart E' p' fib' cocart' F hF => fst hF
+    fun E B p fib cocart E' p' fib' cocart' F hF => π₁ hF
   /-- Cocartesian functor witnesses make the Beck-Chevalley transformation invertible. -/
   lf_def cocartesianFunctorBeckChevalley : (E : SCat) ⇒ (B : SCat) ⇒
       (p : Functor E B) ⇒ (fib : Fibration E B p) ⇒
@@ -364,7 +418,7 @@ extend_type_theory SCT where
             (postcompFunctor intervalCat E E' F)) :=
     fun E B p fib cocart E' p' fib' cocart' F hF =>
       ⟨beckChevalleyTransformation E B p fib cocart E' p' fib' cocart' F
-        (cocartesianFunctorOverBase E B p fib cocart E' p' fib' cocart' F hF), snd hF⟩
+        (cocartesianFunctorOverBase E B p fib cocart E' p' fib' cocart' F hF), π₂ hF⟩
   /-- Fiber map induced by a cocartesian functor over the base. -/
   lf_def cocartesianFunctorFiberMap : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
       (fib : Fibration E B p) ⇒ (cocart : CocartesianFibrationWitness E B p fib) ⇒
@@ -375,21 +429,27 @@ extend_type_theory SCT where
     fun E B p fib cocart E' p' fib' cocart' F hF b =>
       fiberMap E B p E' p' F
         (cocartesianFunctorOverBase E B p fib cocart E' p' fib' cocart' F hF) b
+namespace SCT
+
+/- Closure of cocartesian functors is theorem-shaped debt for the chosen Beck-Chevalley package. -/
+internal_defs where
   /-- Identity cocartesian functor; Chapter 5 closure data. -/
-  lf_opaque idCocartesianFunctor (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
-    CocartesianFunctorWitness E B p fib cocart E p fib cocart (idFunctor E)
+  def idCocartesianFunctor (E : SCat) (B : SCat) (p : Functor E B)
+      (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
+      CocartesianFunctorWitness E B p fib cocart E p fib cocart (idFunctor E) := sorry
   /-- Composition of cocartesian functors; Chapter 5 closure data. -/
-  lf_opaque compCocartesianFunctor (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
-    (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
-    (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
-    (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F)
-    (E'' : SCat) (p'' : Functor E'' B) (fib'' : Fibration E'' B p'')
-    (cocart'' : CocartesianFibrationWitness E'' B p'' fib'') (G : Functor E' E'')
-    (hG : CocartesianFunctorWitness E' B p' fib' cocart' E'' p'' fib'' cocart'' G) :
-    CocartesianFunctorWitness E B p fib cocart E'' p'' fib'' cocart''
-      (compFunctor F G)
+  def compCocartesianFunctor (E : SCat) (B : SCat) (p : Functor E B)
+      (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib)
+      (E' : SCat) (p' : Functor E' B) (fib' : Fibration E' B p')
+      (cocart' : CocartesianFibrationWitness E' B p' fib') (F : Functor E E')
+      (hF : CocartesianFunctorWitness E B p fib cocart E' p' fib' cocart' F)
+      (E'' : SCat) (p'' : Functor E'' B) (fib'' : Fibration E'' B p'')
+      (cocart'' : CocartesianFibrationWitness E'' B p'' fib'') (G : Functor E' E'')
+      (hG : CocartesianFunctorWitness E' B p' fib' cocart' E'' p'' fib'' cocart'' G) :
+      CocartesianFunctorWitness E B p fib cocart E'' p'' fib'' cocart''
+        (compFunctor F G) := sorry
+
+end SCT
 
 extend_type_theory SCT where
 
@@ -429,14 +489,17 @@ extend_type_theory SCT where
     (p : ContextFunctor Γ E B) (fib : ContextFibration Γ E B p) : Type u
   /-- Pullback-indexing shape `⌟ = {0,1} ★ *` for cospans.  Book context: Chapter 5 of the SCT book.
   -/
-  lf_opaque pullbackShapeCat : SCat
+  lf_def pullbackShapeCat : SCat := joinCat (coprodCat simplex0Cat simplex0Cat) simplex0Cat
 
-extend_type_theory SCT where
+namespace SCT
 
-  model_section Chapter5
-
+/- Weakening absolute fibrations to contextual fibrations is definition-shaped debt for the
+   contextual fibration API. -/
+internal_defs where
   /-- Absolute fibrations weaken to contextual fibrations; Chapter 5 contextual-fibration data. -/
-  lf_opaque weakenContextFibration (Γ : SCat) (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) :
-    ContextFibration Γ (weakenContextCat Γ E) (weakenContextCat Γ B)
-      (weakenContextFunctor Γ E B p)
+  def weakenContextFibration (Γ : SCat) (E : SCat) (B : SCat) (p : Functor E B)
+      (fib : Fibration E B p) :
+      ContextFibration Γ (weakenContextCat Γ E) (weakenContextCat Γ B)
+        (weakenContextFunctor Γ E B p) := sorry
+
+end SCT

@@ -83,7 +83,7 @@ extend_type_theory SCT where
   /-- Regard a natural isomorphism as its underlying natural transformation. -/
   lf_def natIsoToNatTrans : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
       (G : Functor C D) ⇒ NatIso F G ⇒ NatTrans F G :=
-    fun C D F G α => fst α
+    fun C D F G α => π₁ α
 
 extend_type_theory SCT where
 
@@ -94,8 +94,7 @@ extend_type_theory SCT where
   fiber.  Book context: Chapter 1 of the SCT book.
   -/
   syntax_abbrev NatIsoIso {C : SCat} {D : SCat} {F : Functor C D} {G : Functor C D}
-    (α : NatIso F G) (β : NatIso F G) :=
-    ObjIso (natTransCat C D F G)
+    (α : NatIso F G) (β : NatIso F G) := ObjIso (natTransCat C D F G)
       (natTransObject C D F G (natIsoToNatTrans C D F G α))
       (natTransObject C D F G (natIsoToNatTrans C D F G β))
   /-- Underlying arrow in the functor category represented by a natural transformation.  Book
@@ -190,82 +189,88 @@ internal_defs where
 
 end SCT
 
+namespace SCT
+
+/- Pullback-cone uniqueness and finite bicategorical coherence are theorem-shaped definition
+   debt. -/
+internal_defs where
+  /-- Uniqueness for maps into a pullback from compatible cone isomorphism data; Axiom B.5. -/
+  def pullbackUniqCone (X : SCat) (C : SCat) (D : SCat) (E : SCat)
+      (F : Functor C E) (G : Functor D E)
+      (H : Functor X (pullbackCat C D E F G)) (K : Functor X (pullbackCat C D E F G))
+      (η : PullbackConeIso X C D E F G (pullbackConeOfMap X C D E F G H)
+        (pullbackConeOfMap X C D E F G K)) : NatIso X (pullbackCat C D E F G) H K :=
+    sorry
+  /-- Horizontal composition preserves identity natural isomorphisms. -/
+  def horizCompIdId (B : SCat) (C : SCat) (D : SCat)
+      (F : Functor B C) (G : Functor C D) :
+      NatIsoIso B D (compFunctor B C D F G) (compFunctor B C D F G)
+        (horizCompNatIso B C D F F G G (idNatIso B C F) (idNatIso C D G))
+        (idNatIso B D (compFunctor B C D F G)) :=
+    sorry
+  /-- Horizontal composition preserves vertical composition. -/
+  def horizCompCompComp (B : SCat) (C : SCat) (D : SCat)
+      (F₀ : Functor B C) (F₁ : Functor B C) (F₂ : Functor B C)
+      (G₀ : Functor C D) (G₁ : Functor C D) (G₂ : Functor C D)
+      (α₀ : NatIso B C F₀ F₁) (α₁ : NatIso B C F₁ F₂)
+      (β₀ : NatIso C D G₀ G₁) (β₁ : NatIso C D G₁ G₂) :
+      NatIsoIso B D (compFunctor B C D F₀ G₀) (compFunctor B C D F₂ G₂)
+        (horizCompNatIso B C D F₀ F₂ G₀ G₂
+          (compNatIso B C F₀ F₁ F₂ α₀ α₁) (compNatIso C D G₀ G₁ G₂ β₀ β₁))
+        (compNatIso B D (compFunctor B C D F₀ G₀) (compFunctor B C D F₁ G₁)
+          (compFunctor B C D F₂ G₂)
+          (horizCompNatIso B C D F₀ F₁ G₀ G₁ α₀ β₀)
+          (horizCompNatIso B C D F₁ F₂ G₁ G₂ α₁ β₁)) :=
+    sorry
+  /-- Horizontal composition by an identity on the left is compatible with unitors. -/
+  def horizCompLeftId (B : SCat) (C : SCat) (D : SCat)
+      (F : Functor B C) (G : Functor B C) (H : Functor C D)
+      (α : NatIso B C F G) :
+      NatIsoIso B D (compFunctor B C D F H) (compFunctor B C D G H)
+        (horizCompNatIso B C D F G H H α (idNatIso C D H))
+        (postWhiskerNatIso B C D F G H α) :=
+    sorry
+  /-- Horizontal composition by an identity on the right is compatible with unitors. -/
+  def horizCompRightId (B : SCat) (C : SCat) (D : SCat)
+      (F : Functor B C) (G : Functor C D) (H : Functor C D)
+      (α : NatIso C D G H) :
+      NatIsoIso B D (compFunctor B C D F G) (compFunctor B C D F H)
+        (horizCompNatIso B C D F F G H (idNatIso B C F) α)
+        (preWhiskerNatIso B C D F G H α) :=
+    sorry
+  /-- Associator naturality for whiskered natural isomorphisms. -/
+  def assocFunctorNaturality (A : SCat) (B : SCat) (C : SCat) (D : SCat)
+      (F₀ : Functor A B) (F₁ : Functor A B)
+      (G₀ : Functor B C) (G₁ : Functor B C)
+      (H₀ : Functor C D) (H₁ : Functor C D)
+      (α : NatIso A B F₀ F₁) (β : NatIso B C G₀ G₁) (γ : NatIso C D H₀ H₁) :
+      NatIsoIso A D
+        (compFunctor A C D (compFunctor A B C F₀ G₀) H₀)
+        (compFunctor A B D F₁ (compFunctor B C D G₁ H₁))
+        (compNatIso A D
+          (compFunctor A C D (compFunctor A B C F₀ G₀) H₀)
+          (compFunctor A C D (compFunctor A B C F₁ G₁) H₁)
+          (compFunctor A B D F₁ (compFunctor B C D G₁ H₁))
+          (horizCompNatIso A C D (compFunctor A B C F₀ G₀)
+            (compFunctor A B C F₁ G₁) H₀ H₁
+            (horizCompNatIso A B C F₀ F₁ G₀ G₁ α β) γ)
+          (assocFunctor A B C D F₁ G₁ H₁))
+        (compNatIso A D
+          (compFunctor A C D (compFunctor A B C F₀ G₀) H₀)
+          (compFunctor A B D F₀ (compFunctor B C D G₀ H₀))
+          (compFunctor A B D F₁ (compFunctor B C D G₁ H₁))
+          (assocFunctor A B C D F₀ G₀ H₀)
+          (horizCompNatIso A B D F₀ F₁ (compFunctor B C D G₀ H₀)
+            (compFunctor B C D G₁ H₁) α
+            (horizCompNatIso B C D G₀ G₁ H₀ H₁ β γ))) :=
+    sorry
+
+end SCT
+
 extend_type_theory SCT where
 
-  /-- Uniqueness for maps into a pullback from compatible cone isomorphism data; Axiom B.5. -/
-  lf_opaque pullbackUniqCone (X : SCat) (C : SCat) (D : SCat) (E : SCat)
-    (F : Functor C E) (G : Functor D E)
-    (H : Functor X (pullbackCat C D E F G)) (K : Functor X (pullbackCat C D E F G))
-    (η : PullbackConeIso X C D E F G (pullbackConeOfMap X C D E F G H)
-      (pullbackConeOfMap X C D E F G K)) : NatIso X (pullbackCat C D E F G) H K
-  /-- Horizontal composition preserves identity natural isomorphisms; finite A.1'/A.2' coherence.
-  Book context: Chapter 1 of the SCT book.
-  -/
-  lf_opaque horizCompIdId (B : SCat) (C : SCat) (D : SCat)
-    (F : Functor B C) (G : Functor C D) :
-    NatIsoIso B D (compFunctor B C D F G) (compFunctor B C D F G)
-      (horizCompNatIso B C D F F G G (idNatIso B C F) (idNatIso C D G))
-      (idNatIso B D (compFunctor B C D F G))
-  /-- Horizontal composition preserves vertical composition; finite A.1'/A.2' coherence.  Book
-  context: Chapter 1 of the SCT book.
-  -/
-  lf_opaque horizCompCompComp (B : SCat) (C : SCat) (D : SCat)
-    (F₀ : Functor B C) (F₁ : Functor B C) (F₂ : Functor B C)
-    (G₀ : Functor C D) (G₁ : Functor C D) (G₂ : Functor C D)
-    (α₀ : NatIso B C F₀ F₁) (α₁ : NatIso B C F₁ F₂)
-    (β₀ : NatIso C D G₀ G₁) (β₁ : NatIso C D G₁ G₂) :
-    NatIsoIso B D (compFunctor B C D F₀ G₀) (compFunctor B C D F₂ G₂)
-      (horizCompNatIso B C D F₀ F₂ G₀ G₂
-        (compNatIso B C F₀ F₁ F₂ α₀ α₁) (compNatIso C D G₀ G₁ G₂ β₀ β₁))
-      (compNatIso B D (compFunctor B C D F₀ G₀) (compFunctor B C D F₁ G₁)
-        (compFunctor B C D F₂ G₂)
-        (horizCompNatIso B C D F₀ F₁ G₀ G₁ α₀ β₀)
-        (horizCompNatIso B C D F₁ F₂ G₁ G₂ α₁ β₁))
-  /-- Horizontal composition by an identity on the left is compatible with unitors.  Book context:
-  Chapter 1 of the SCT book.
-  -/
-  lf_opaque horizCompLeftId (B : SCat) (C : SCat) (D : SCat)
-    (F : Functor B C) (G : Functor B C) (H : Functor C D)
-    (α : NatIso B C F G) :
-    NatIsoIso B D (compFunctor B C D F H) (compFunctor B C D G H)
-      (horizCompNatIso B C D F G H H α (idNatIso C D H))
-      (postWhiskerNatIso B C D F G H α)
-  /-- Horizontal composition by an identity on the right is compatible with unitors.  Book context:
-  Chapter 1 of the SCT book.
-  -/
-  lf_opaque horizCompRightId (B : SCat) (C : SCat) (D : SCat)
-    (F : Functor B C) (G : Functor C D) (H : Functor C D)
-    (α : NatIso C D G H) :
-    NatIsoIso B D (compFunctor B C D F G) (compFunctor B C D F H)
-      (horizCompNatIso B C D F F G H (idNatIso B C F) α)
-      (preWhiskerNatIso B C D F G H α)
-  /-- Associator naturality for whiskered natural isomorphisms; finite A.1'/A.2' coherence.  Book
-  context: Chapter 1 of the SCT book.
-  -/
-  lf_opaque assocFunctorNaturality (A : SCat) (B : SCat) (C : SCat) (D : SCat)
-    (F₀ : Functor A B) (F₁ : Functor A B)
-    (G₀ : Functor B C) (G₁ : Functor B C)
-    (H₀ : Functor C D) (H₁ : Functor C D)
-    (α : NatIso A B F₀ F₁) (β : NatIso B C G₀ G₁) (γ : NatIso C D H₀ H₁) :
-    NatIsoIso A D
-      (compFunctor A C D (compFunctor A B C F₀ G₀) H₀)
-      (compFunctor A B D F₁ (compFunctor B C D G₁ H₁))
-      (compNatIso A D
-        (compFunctor A C D (compFunctor A B C F₀ G₀) H₀)
-        (compFunctor A C D (compFunctor A B C F₁ G₁) H₁)
-        (compFunctor A B D F₁ (compFunctor B C D G₁ H₁))
-        (horizCompNatIso A C D (compFunctor A B C F₀ G₀)
-          (compFunctor A B C F₁ G₁) H₀ H₁
-          (horizCompNatIso A B C F₀ F₁ G₀ G₁ α β) γ)
-        (assocFunctor A B C D F₁ G₁ H₁))
-      (compNatIso A D
-        (compFunctor A C D (compFunctor A B C F₀ G₀) H₀)
-        (compFunctor A B D F₀ (compFunctor B C D G₀ H₀))
-        (compFunctor A B D F₁ (compFunctor B C D G₁ H₁))
-        (assocFunctor A B C D F₀ G₀ H₀)
-        (horizCompNatIso A B D F₀ F₁ (compFunctor B C D G₀ H₀)
-          (compFunctor B C D G₁ H₁) α
-          (horizCompNatIso B C D G₀ G₁ H₀ H₁ β γ)))
+  model_section Chapter1
+
   /-- Identity interval-shaped morphism at an object; Axioms A.3 and C.1. -/
   lf_def identityMorphism : (C : SCat) ⇒ (x : Obj C) ⇒ Functor intervalCat C :=
     fun C x => compFunctor intervalCat terminalCat C (terminalProjection intervalCat) x
@@ -306,29 +311,46 @@ extend_type_theory SCT where
     fun C => pullbackCat (funCat intervalCat C) (funCat intervalCat C) C
       (targetFunctor C) (sourceFunctor C)
 
-  /-- Lower triangular inclusion `[2] → [1] × [1]`; Axiom D. -/
-  lf_opaque squareLowerTriangle : Functor simplex2Cat squareCat
-  /-- Upper triangular inclusion `[2] → [1] × [1]`; Axiom D. -/
-  lf_opaque squareUpperTriangle : Functor simplex2Cat squareCat
   /-- Boundary category of compatible square restrictions; Axiom D. -/
   lf_def compatibleTriangleCat : SCat ⇒ SCat :=
     fun C => pullbackCat (funCat simplex2Cat C) (funCat simplex2Cat C)
       (funCat intervalCat C)
       (precompFunctor intervalCat simplex2Cat C simplex2FaceD1)
       (precompFunctor intervalCat simplex2Cat C simplex2FaceD1)
+
+namespace SCT
+
+/- The named square and Segal restriction functors are definition-shaped debt.  Axiom D and Axiom E
+   are recorded below as split inverse/unit/counit data pinned to these functors. -/
+internal_defs where
+  /-- Lower triangular inclusion `[2] → [1] × [1]`; Axiom D. -/
+  def squareLowerTriangle : Functor simplex2Cat squareCat := sorry
+  /-- Upper triangular inclusion `[2] → [1] × [1]`; Axiom D. -/
+  def squareUpperTriangle : Functor simplex2Cat squareCat := sorry
   /-- Restriction of a square to compatible triangle data; Axiom D. -/
-  lf_opaque squareRestriction (C : SCat) :
-    Functor (funCat squareCat C) (compatibleTriangleCat C)
-  /-- Chosen extension of compatible triangle data to a square; Axiom D. -/
+  def squareRestriction (C : SCat) :
+    Functor (funCat squareCat C) (compatibleTriangleCat C) := sorry
+  /-- Segal restriction from `[2]`-diagrams to composable-pair data; Axiom E. -/
+  def segalRestriction (C : SCat) :
+    Functor (funCat simplex2Cat C) (composableMorphismsCat C) := sorry
+
+end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter1
+
+  /-- Chosen extension of compatible triangle data to a square; Axiom D for the named
+  restriction. -/
   lf_opaque squareExtension (C : SCat) :
     Functor (compatibleTriangleCat C) (funCat squareCat C)
-  /-- Unit for the square-restriction equivalence; Axiom D. -/
+  /-- Unit for the square-restriction equivalence; Axiom D for the named restriction. -/
   lf_opaque squareRestrictionUnit (C : SCat) :
     NatIso (funCat squareCat C) (funCat squareCat C)
       (compFunctor (funCat squareCat C) (compatibleTriangleCat C) (funCat squareCat C)
         (squareRestriction C) (squareExtension C))
       (idFunctor (funCat squareCat C))
-  /-- Counit for the square-restriction equivalence; Axiom D. -/
+  /-- Counit for the square-restriction equivalence; Axiom D for the named restriction. -/
   lf_opaque squareRestrictionCounit (C : SCat) :
     NatIso (compatibleTriangleCat C) (compatibleTriangleCat C)
       (compFunctor (compatibleTriangleCat C) (funCat squareCat C)
@@ -341,19 +363,16 @@ extend_type_theory SCT where
       (squareRestriction C) (squareExtension C)
       (squareRestrictionUnit C) (squareRestrictionCounit C)
 
-  /-- Segal restriction from `[2]`-diagrams to composable-pair data; Axiom E. -/
-  lf_opaque segalRestriction (C : SCat) :
-    Functor (funCat simplex2Cat C) (composableMorphismsCat C)
-  /-- Chosen inverse/extension for the Segal restriction; Axiom E. -/
+  /-- Chosen inverse/extension for the Segal restriction; Axiom E for the named restriction. -/
   lf_opaque segalExtension (C : SCat) :
     Functor (composableMorphismsCat C) (funCat simplex2Cat C)
-  /-- Unit for the Segal equivalence; Axiom E. -/
+  /-- Unit for the Segal equivalence; Axiom E for the named restriction. -/
   lf_opaque segalUnit (C : SCat) :
     NatIso (funCat simplex2Cat C) (funCat simplex2Cat C)
       (compFunctor (funCat simplex2Cat C) (composableMorphismsCat C)
         (funCat simplex2Cat C) (segalRestriction C) (segalExtension C))
       (idFunctor (funCat simplex2Cat C))
-  /-- Counit for the Segal equivalence; Axiom E. -/
+  /-- Counit for the Segal equivalence; Axiom E for the named restriction. -/
   lf_opaque segalCounit (C : SCat) :
     NatIso (composableMorphismsCat C) (composableMorphismsCat C)
       (compFunctor (composableMorphismsCat C) (funCat simplex2Cat C)
@@ -417,29 +436,30 @@ extend_type_theory SCT where
       NatIso terminalCat C (targetObj C f) (sourceObj C g) ⇒ Functor intervalCat C :=
     fun C f g α => compositeOfComposablePair C (composablePair C f g α)
 
-extend_type_theory SCT where
+namespace SCT
 
-  /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
-  model_section Chapter1
+/- Endpoint laws for the chosen Segal composite are visible coherence debt. -/
+internal_defs where
+  /-- Source law for a Segal composite; consequence of Axiom E. -/
+  def compositeSourceCompat (C : SCat) (p : Obj (composableMorphismsCat C)) :
+      NatIso terminalCat C (sourceObj C (compositeOfComposablePair C p))
+        (compFunctor terminalCat (funCat intervalCat C) C
+          (compFunctor terminalCat (composableMorphismsCat C) (funCat intervalCat C) p
+            (pullbackPr1 (funCat intervalCat C) (funCat intervalCat C) C
+              (targetFunctor C) (sourceFunctor C)))
+          (sourceFunctor C)) :=
+    sorry
+  /-- Target law for a Segal composite; consequence of Axiom E. -/
+  def compositeTargetCompat (C : SCat) (p : Obj (composableMorphismsCat C)) :
+      NatIso terminalCat C (targetObj C (compositeOfComposablePair C p))
+        (compFunctor terminalCat (funCat intervalCat C) C
+          (compFunctor terminalCat (composableMorphismsCat C) (funCat intervalCat C) p
+            (pullbackPr2 (funCat intervalCat C) (funCat intervalCat C) C
+              (targetFunctor C) (sourceFunctor C)))
+          (targetFunctor C)) :=
+    sorry
 
-  /-- Source law for a Segal composite; split Axiom E data for the chosen Segal extension. -/
-  lf_opaque compositeSourceCompat (C : SCat)
-    (p : Obj (composableMorphismsCat C)) :
-    NatIso terminalCat C (sourceObj C (compositeOfComposablePair C p))
-      (compFunctor terminalCat (funCat intervalCat C) C
-        (compFunctor terminalCat (composableMorphismsCat C) (funCat intervalCat C) p
-          (pullbackPr1 (funCat intervalCat C) (funCat intervalCat C) C
-            (targetFunctor C) (sourceFunctor C)))
-        (sourceFunctor C))
-  /-- Target law for a Segal composite; split Axiom E data for the chosen Segal extension. -/
-  lf_opaque compositeTargetCompat (C : SCat)
-    (p : Obj (composableMorphismsCat C)) :
-    NatIso terminalCat C (targetObj C (compositeOfComposablePair C p))
-      (compFunctor terminalCat (funCat intervalCat C) C
-        (compFunctor terminalCat (composableMorphismsCat C) (funCat intervalCat C) p
-          (pullbackPr2 (funCat intervalCat C) (funCat intervalCat C) C
-            (targetFunctor C) (sourceFunctor C)))
-        (targetFunctor C))
+end SCT
 
 extend_type_theory SCT where
 
@@ -519,33 +539,37 @@ internal_defs where
 end SCT
 
 
-extend_type_theory SCT where
+namespace SCT
 
-  /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
-  model_section Chapter1
+/- Unit and associativity comparisons for the chosen Segal composition are visible coherence
+   debt. -/
+internal_defs where
+  /-- Left unit for the chosen Segal composition; consequence of Axiom E. -/
+  def composeLeftUnit (C : SCat) (f : Functor intervalCat C) :
+      NatIso intervalCat C
+        (composeComposableMorphism C (identityMorphism C (sourceObj C f)) f
+          (composeLeftUnitCompat C f))
+        f :=
+    sorry
+  /-- Right unit for the chosen Segal composition; consequence of Axiom E. -/
+  def composeRightUnit (C : SCat) (f : Functor intervalCat C) :
+      NatIso intervalCat C
+        (composeComposableMorphism C f (identityMorphism C (targetObj C f))
+          (composeRightUnitCompat C f))
+        f :=
+    sorry
+  /-- Associativity for Segal composition with explicit endpoint coherences. -/
+  def composeAssoc (C : SCat)
+      (f : Functor intervalCat C) (g : Functor intervalCat C) (h : Functor intervalCat C)
+      (α : NatIso terminalCat C (targetObj C f) (sourceObj C g))
+      (β : NatIso terminalCat C (targetObj C g) (sourceObj C h))
+      (γL : NatIso terminalCat C
+        (targetObj C (composeComposableMorphism C f g α)) (sourceObj C h))
+      (γR : NatIso terminalCat C
+        (targetObj C f) (sourceObj C (composeComposableMorphism C g h β))) :
+      NatIso intervalCat C
+        (composeComposableMorphism C (composeComposableMorphism C f g α) h γL)
+        (composeComposableMorphism C f (composeComposableMorphism C g h β) γR) :=
+    sorry
 
-  /-- Left unit for the chosen Segal composition; split Axiom E coherence data. -/
-  lf_opaque composeLeftUnit (C : SCat) (f : Functor intervalCat C) :
-    NatIso intervalCat C
-      (composeComposableMorphism C (identityMorphism C (sourceObj C f)) f
-        (composeLeftUnitCompat C f))
-      f
-  /-- Right unit for the chosen Segal composition; split Axiom E coherence data. -/
-  lf_opaque composeRightUnit (C : SCat) (f : Functor intervalCat C) :
-    NatIso intervalCat C
-      (composeComposableMorphism C f (identityMorphism C (targetObj C f))
-        (composeRightUnitCompat C f))
-      f
-  /-- Associativity for Segal composition with explicit endpoint coherences; split Axiom E
-  coherence data. -/
-  lf_opaque composeAssoc (C : SCat)
-    (f : Functor intervalCat C) (g : Functor intervalCat C) (h : Functor intervalCat C)
-    (α : NatIso terminalCat C (targetObj C f) (sourceObj C g))
-    (β : NatIso terminalCat C (targetObj C g) (sourceObj C h))
-    (γL : NatIso terminalCat C
-      (targetObj C (composeComposableMorphism C f g α)) (sourceObj C h))
-    (γR : NatIso terminalCat C
-      (targetObj C f) (sourceObj C (composeComposableMorphism C g h β))) :
-    NatIso intervalCat C
-      (composeComposableMorphism C (composeComposableMorphism C f g α) h γL)
-      (composeComposableMorphism C f (composeComposableMorphism C g h β) γR)
+end SCT

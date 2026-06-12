@@ -74,7 +74,7 @@ extend_type_theory SCT where
   /-- Membership of a functor object in the object collection of functors inverting `W`. -/
   syntax_abbrev InvertingFunctorObjectMember {C : SCat} {D : SCat}
     (W : MorphismCollection C) (P : ObjectCollection (funCat C D)) (F : Functor C D) :=
-    ObjectCollectionMember (funCat C D) P (functorObject C D F)
+      ObjectCollectionMember (funCat C D) P (functorObject C D F)
   /-- Comprehension package for the full subcategory of functors inverting `W`.
   Book target: Definition 3.3.2. -/
   lf_opaque invertingFunctorObjectPackage (C : SCat) (D : SCat) (W : MorphismCollection C) :
@@ -85,18 +85,18 @@ extend_type_theory SCT where
   /-- Object collection of functors that invert a morphism collection. -/
   lf_def invertingFunctorObjects : (C : SCat) ⇒ (D : SCat) ⇒ MorphismCollection C ⇒
       ObjectCollection (funCat C D) :=
-    fun C D W => fst (invertingFunctorObjectPackage C D W)
+    fun C D W => π₁ (invertingFunctorObjectPackage C D W)
   /-- Inverting evidence gives membership in the inverting-functor object collection. -/
   lf_def invertingFunctorObjectIntro : (C : SCat) ⇒ (D : SCat) ⇒
       (W : MorphismCollection C) ⇒ (F : Functor C D) ⇒ InvertsMorphismCollection C D W F →
         InvertingFunctorObjectMember C D W (invertingFunctorObjects C D W) F :=
-    fun C D W F h => fst (snd (invertingFunctorObjectPackage C D W) F) h
+    fun C D W F h => π₁ (π₂ (invertingFunctorObjectPackage C D W) F) h
   /-- Membership in the inverting-functor object collection gives inverting evidence. -/
   lf_def invertingFunctorObjectElim : (C : SCat) ⇒ (D : SCat) ⇒
       (W : MorphismCollection C) ⇒ (F : Functor C D) ⇒
         InvertingFunctorObjectMember C D W (invertingFunctorObjects C D W) F →
           InvertsMorphismCollection C D W F :=
-    fun C D W F h => snd (snd (invertingFunctorObjectPackage C D W) F) h
+    fun C D W F h => π₂ (π₂ (invertingFunctorObjectPackage C D W) F) h
 
   /-- Full subcategory of functors that invert a morphism collection; Definition 3.3.2. -/
   lf_def invertingFunctorCat : (C : SCat) ⇒ (D : SCat) ⇒ MorphismCollection C ⇒ SCat :=
@@ -153,13 +153,13 @@ extend_type_theory SCT where
   lf_def localizationDesc : (C : SCat) ⇒ (W : MorphismCollection C) ⇒ (D : SCat) ⇒
       (F : Functor C D) ⇒ InvertsMorphismCollection C D W F ⇒
       Functor (localizationCat C W) D :=
-    fun C W D F h => fst (snd (localizationUniversalPackage C W D) F h)
+    fun C W D F h => π₁ (π₂ (localizationUniversalPackage C W D) F h)
   /-- β comparison for localization descent; Axiom I. -/
   lf_def localizationDescBeta : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
       (D : SCat) ⇒ (F : Functor C D) ⇒ (h : InvertsMorphismCollection C D W F) ⇒
       NatIso (compFunctor C (localizationCat C W) D
           (localizationFunctor C W) (localizationDesc C W D F h)) F :=
-    fun C W D F h => fst (snd (snd (localizationUniversalPackage C W D) F h))
+    fun C W D F h => π₁ (π₂ (π₂ (localizationUniversalPackage C W D) F h))
   /-- Uniqueness of localization descents; Axiom I. -/
   lf_def localizationDescUniq : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
       (D : SCat) ⇒ (F : Functor C D) ⇒ (h : InvertsMorphismCollection C D W F) ⇒
@@ -167,13 +167,13 @@ extend_type_theory SCT where
       NatIso (compFunctor C (localizationCat C W) D
         (localizationFunctor C W) K) F ⇒
       NatIso (localizationCat C W) D K (localizationDesc C W D F h) :=
-    fun C W D F h K β => snd (snd (snd (localizationUniversalPackage C W D) F h)) K β
+    fun C W D F h K β => π₂ (π₂ (π₂ (localizationUniversalPackage C W D) F h)) K β
   /-- Universal equivalence `Fun(C[W^{-1}],D) ≃ Fun^W(C,D)` for localizations.  Book context:
   Chapter 3 of the SCT book.
   -/
   lf_def localizationUniversalEquiv : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
       (D : SCat) ⇒ CatEquiv (funCat (localizationCat C W) D) (invertingFunctorCat C D W) :=
-    fun C W D => fst (localizationUniversalPackage C W D)
+    fun C W D => π₁ (localizationUniversalPackage C W D)
   /-- Selected morphisms as interval-shaped arrows in `C`.  Book context: Chapter 3 of the SCT book.
   -/
   lf_def morphismCollectionArrowObject : (C : SCat) ⇒ (W : MorphismCollection C) ⇒
@@ -264,8 +264,7 @@ extend_type_theory SCT where
   context: Chapter 3 of the SCT book.
   -/
   syntax_abbrev FunctorOver {B : SCat} {E : SCat} {F : SCat}
-    (p : Functor E B) (q : Functor F B) (u : Functor E F) :=
-    NatIso (compFunctor u q) p
+    (p : Functor E B) (q : Functor F B) (u : Functor E F) := NatIso (compFunctor u q) p
 
 namespace SCT
 

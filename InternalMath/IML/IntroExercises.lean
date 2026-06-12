@@ -28,6 +28,9 @@ internal terms/proofs checked by InternalLean, even though this file is a Lean f
 
 @[expose] public section
 
+set_option internalLean.preferLeanQuotedFrontend true
+set_option internalLean.preferLeanQuotedTheoryBlocks true
+
 /--
 A toy type theory.
 
@@ -37,12 +40,6 @@ A toy type theory.
 declare_type_theory IntroReach where
   /-- Internal node terms. -/
   syntax_sort Node
-
-  /--
-  Metadata for generic tools: `Node` is the main term sort of this type theory. The role does not
-  add a rule or a model field; it tells diagnostics and future automation how to classify `Node`.
-  -/
-  syntax_sort_role Node : term_sort
 
   /-- Primitive one-step reachability. -/
   judgment Step (src : Node) (tgt : Node)
@@ -99,7 +96,10 @@ Use the reflexivity rule to prove `Reach start start`.
 -/
 
 internal def exercise01_start_reaches_start : Reach start start := by
-  sorry
+  exact reach_refl start
+
+#check_theory IntroReach
+#print_logical_framework_definitions IntroReach
 
 /-!
 ## Exercise 2: using a rule with a premise
@@ -307,3 +307,46 @@ example (x y z : unitModel.Node) (left : unitModel.Reach x y) (right : unitModel
 -/
 
 end IntroReachExercises
+/-
+#print is showing the Lean-visible anchor, not the object-level proof.
+
+ For an internal def, InternalLean creates:
+
+ 1. A Lean anchor
+    ```lean
+      IntroReach.exercise02_mid_reaches_finish : InternalDeclarationAnchor
+    ```
+    This is only for names, navigation, docs, duplicate checking, etc.
+ 2. The real checked internal definition
+    stored in InternalLean’s theory registry for IntroReach, as an LF object definition named
+    exercise02_mid_reaches_finish.
+
+ Inspect it with:
+
+ ```lean
+   #print_logical_framework_definitions IntroReach
+ ```
+
+ or more broadly:
+
+ ```lean
+   #print_type_theory IntroReach
+   #print_checked_type_theory IntroReach
+ ```
+
+ Internally it lives in the checked theory artifact, roughly:
+
+ ```lean
+   CheckedSignature.lfObjectDefs
+ ```
+
+ stored in InternalLean’s persistent environment extensions / .olean data, not as a normal Lean theorem at that name.
+
+ If you want the Lean semantic realization over a model, that appears after transport generation:
+
+ ```lean
+   #check IntroReach.IntroReachModel.exercise02_mid_reaches_finish
+ ```
+
+ So the original name is an anchor; the checked object-theory body lives in the IntroReach registry; the model-level Lean method lives under IntroReachModel once generated.
+-/

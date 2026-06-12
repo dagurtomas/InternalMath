@@ -73,13 +73,12 @@ declare_type_theory SCT{u} where
   /-- Natural transformations between parallel functors; Axioms A.1' and A.2'. -/
   syntax_sort NatTrans {C : SCat} {D : SCat} (F : Functor C D) (G : Functor C D) : Type u
   /-- Componentwise invertibility evidence for a natural transformation. -/
-  syntax_def ObjectwiseNatIsoData {C : SCat} {D : SCat}
-    (F : Functor C D) (G : Functor C D) (α : NatTrans F G) : Type u := sorry
+  syntax_sort ObjectwiseNatIsoData {C : SCat} {D : SCat}
+    (F : Functor C D) (G : Functor C D) (α : NatTrans F G) : Type u
   syntax_sort_role ObjectwiseNatIsoData : side_structure
   /-- Objectwise natural-isomorphism evidence for a natural transformation. -/
   syntax_abbrev ObjectwiseNatIso {C : SCat} {D : SCat}
-    (F : Functor C D) (G : Functor C D) (α : NatTrans F G) :=
-    ObjectwiseNatIsoData F G α
+    (F : Functor C D) (G : Functor C D) (α : NatTrans F G) := ObjectwiseNatIsoData F G α
   /-- Natural-isomorphism/coherence data between parallel functors; Axiom A.1.
   The package exposes its underlying natural transformation and objectwise invertibility witness.
   -/
@@ -162,24 +161,23 @@ declare_type_theory SCT{u} where
     NatIso (compFunctor (catEquivBackward e) (catEquivForward e)) (idFunctor D)
   /-- Equivalence data for a specified forward functor.  This pins later equivalence-shaped axioms
   to the comparison functor named by the book. -/
-  syntax_abbrev EquivalenceWitness {C : SCat} {D : SCat} (F : Functor C D) :=
-    Σ G : Functor D C,
+  syntax_abbrev EquivalenceWitness {C : SCat} {D : SCat} (F : Functor C D) := Σ G : Functor D C,
       Σ η : NatIso (compFunctor F G) (idFunctor C),
         NatIso (compFunctor G F) (idFunctor D)
   /-- Backward functor of pinned equivalence data. -/
   lf_def equivalenceWitnessBackward : (C : SCat) ⇒ (D : SCat) ⇒
       (F : Functor C D) ⇒ EquivalenceWitness F ⇒ Functor D C :=
-    fun C D F w => fst w
+    fun C D F w => Sigma.fst w
   /-- Unit of pinned equivalence data. -/
   lf_def equivalenceWitnessUnit : (C : SCat) ⇒ (D : SCat) ⇒
       (F : Functor C D) ⇒ (w : EquivalenceWitness F) ⇒
       NatIso (compFunctor F (equivalenceWitnessBackward C D F w)) (idFunctor C) :=
-    fun C D F w => fst (snd w)
+    fun C D F w => Sigma.fst (Sigma.snd w)
   /-- Counit of pinned equivalence data. -/
   lf_def equivalenceWitnessCounit : (C : SCat) ⇒ (D : SCat) ⇒
       (F : Functor C D) ⇒ (w : EquivalenceWitness F) ⇒
       NatIso (compFunctor (equivalenceWitnessBackward C D F w) F) (idFunctor D) :=
-    fun C D F w => snd (snd w)
+    fun C D F w => Sigma.snd (Sigma.snd w)
   /-- Package pinned equivalence data as an ordinary category equivalence. -/
   lf_def catEquivOfWitness : (C : SCat) ⇒ (D : SCat) ⇒
       (F : Functor C D) ⇒ EquivalenceWitness F ⇒ CatEquiv C D :=
@@ -343,17 +341,17 @@ declare_type_theory SCT{u} where
   /-- A section of a functor; Definition 1.1.12.  The displayed natural isomorphism is the data. -/
   syntax_abbrev SectionWitness {C : SCat} {D : SCat} (F : Functor C D) (S : Functor D C)
     (σ : NatIso D D (compFunctor D C D S F) (idFunctor D)) :=
-    NatIso D D (compFunctor D C D S F) (idFunctor D)
+      NatIso D D (compFunctor D C D S F) (idFunctor D)
   /-- A retraction of a functor; Definition 1.1.12.  The displayed natural isomorphism is the data.
   -/
   syntax_abbrev RetractionWitness {C : SCat} {D : SCat} (F : Functor C D) (R : Functor D C)
     (ρ : NatIso C C (compFunctor C D C F R) (idFunctor C)) :=
-    NatIso C C (compFunctor C D C F R) (idFunctor C)
+      NatIso C C (compFunctor C D C F R) (idFunctor C)
   /-- Retraction data for a category as a retract of another; Definition 1.1.18. -/
   syntax_abbrev RetractWitness {C : SCat} {D : SCat}
     (i : Functor C D) (r : Functor D C)
     (ρ : NatIso C C (compFunctor C D C i r) (idFunctor C)) :=
-    NatIso C C (compFunctor C D C i r) (idFunctor C)
+      NatIso C C (compFunctor C D C i r) (idFunctor C)
   /-- Comparison between the displayed retraction and section inverses in Lemma 1.1.13. -/
   lf_def sectionRetractionBackwardNatIso :
       (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒

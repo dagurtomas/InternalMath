@@ -645,13 +645,10 @@ end SCTModelHelpers
 
 namespace SCTModelHelpers
 
-/-- Model-side interpretation of `NatIso` using the admitted `ObjectwiseNatIsoData` `syntax_def`.
-The natural-transformation component is kept from the quasicategory skeleton; the objectwise package
-is admitted SCT debt. -/
+/-- Model-side interpretation of `NatIso`: an invertible bicategorical 2-cell. -/
 abbrev ModelObjectwiseNatIsoData (C D : SSet.QCat.{u}) (F G : C ⟶ D)
     (α : NatTrans C D F G) : Type u :=
-  SCTModel_ObjectwiseNatIsoData_syntaxDef SSet.QCat (fun C D => C ⟶ D)
-    (fun {C D} F G => NatTrans C D F G) F G α
+  TwoCellIsIso α
 
 /-- The generated model type for natural isomorphisms. -/
 abbrev ModelNatIso (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
@@ -660,12 +657,12 @@ abbrev ModelNatIso (C D : SSet.QCat.{u}) (F G : C ⟶ D) : Type u :=
 /-- Convert the existing quasicategory natural-isomorphism skeleton to the generated model type. -/
 noncomputable def toModelNatIso {C D : SSet.QCat.{u}} {F G : C ⟶ D}
     (α : NatIso C D F G) : ModelNatIso C D F G :=
-  ⟨α.1, sorry⟩
+  ⟨α.1, α.2⟩
 
 /-- Convert generated model natural-isomorphism data back to the local skeleton type. -/
 noncomputable def ofModelNatIso {C D : SSet.QCat.{u}} {F G : C ⟶ D}
     (α : ModelNatIso C D F G) : NatIso C D F G :=
-  ⟨α.1, sorry⟩
+  ⟨α.1, α.2⟩
 
 end SCTModelHelpers
 
@@ -675,6 +672,8 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   SCat := SSet.QCat.{u}
   Functor C D := C ⟶ D
   NatTrans := fun {C D} F G => SCTModelHelpers.NatTrans C D F G
+  ObjectwiseNatIsoData := fun {C D} F G α =>
+    SCTModelHelpers.ModelObjectwiseNatIsoData C D F G α
   CatEquiv := SCTModelHelpers.CatEquivData
   AnimaIndexedCat := sorry
   GroupoidWitness C := ULift.{u} (PLift (SSet.KanComplex C.obj))
@@ -688,7 +687,6 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   ContextMorphismCollection := sorry
   ContextObjectCollection := sorry
   IsofibrationWitness := sorry
-  leftAdjointSectionFunctor := sorry
   LeftFibrationWitness := sorry
   RightFibrationWitness := sorry
   LocallyCocartesianFibrationWitness := sorry
@@ -777,7 +775,6 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   pullbackBeta2 := sorry
   pullbackUniq := sorry
   pullbackEta := sorry
-  selfPullbackDiagonal := sorry
   coprodBaseChangeForward := sorry
   coprodBaseChangeBackward := sorry
   coprodBaseChangeUnit := sorry
@@ -787,16 +784,13 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   coprodDisjointUnit := sorry
   coprodDisjointCounit := sorry
   funCat := SCTModelHelpers.funCat
-  pullbackConeEquiv := sorry
+  pullbackConeComparison := sorry
+  pullbackConeEquivalenceWitness := sorry
   evalFunctor := SCTModelHelpers.evalFunctor
   curryFunctor := SCTModelHelpers.curryFunctor
   uncurryFunctor := SCTModelHelpers.uncurryFunctor
   curryBeta Γ C D F := SCTModelHelpers.toModelNatIso (SCTModelHelpers.curryBeta Γ C D F)
   curryEta Γ C D F := SCTModelHelpers.toModelNatIso (SCTModelHelpers.curryEta Γ C D F)
-  curryNatIso Γ C D _ _ α := SCTModelHelpers.toModelNatIso
-    (SCTModelHelpers.curryNatIso Γ C D (SCTModelHelpers.ofModelNatIso α))
-  uncurryNatIso Γ C D _ _ α := SCTModelHelpers.toModelNatIso
-    (SCTModelHelpers.uncurryNatIso Γ C D (SCTModelHelpers.ofModelNatIso α))
   curryUncurryForward := SCTModelHelpers.curryUncurryForward
   curryUncurryBackward := SCTModelHelpers.curryUncurryBackward
   curryUncurryUnit Γ C D :=
@@ -812,14 +806,6 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   functorObjectSourceCompat := sorry
   functorObjectTargetCompat := sorry
   natTransObject := sorry
-  pullbackUniqCone := sorry
-  horizCompIdId := sorry
-  horizCompCompComp := sorry
-  horizCompLeftId := sorry
-  horizCompRightId := sorry
-  assocFunctorNaturality := sorry
-  squareLowerTriangle := sorry
-  squareUpperTriangle := sorry
   squareRestriction := sorry
   squareExtension := sorry
   squareRestrictionUnit := sorry
@@ -828,12 +814,8 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   segalExtension := sorry
   segalUnit := sorry
   segalCounit := sorry
-  compositeSourceCompat := sorry
-  compositeTargetCompat := sorry
-  composeLeftUnit := sorry
-  composeRightUnit := sorry
-  composeAssoc := sorry
-  rezkEquiv := sorry
+  identityIsoFunctor := sorry
+  rezkEquivalenceWitness := sorry
   groupoidOfAnima A := ULift.up (PLift.up A.property)
   animaOfGroupoid C g := ⟨C.obj, g.down.down⟩
   groupoidConstArrowFunctor := sorry
@@ -930,40 +912,23 @@ noncomputable def sctModel.{u} : SCTModel.{u} where
   sigmaFunctorPullbackSquare := sorry
   sigmaSecondProjectionPullbackSquare := sorry
   sigmaPreservesPullbackEquiv := sorry
-  directedPullbackCat := sorry
-  directedPullbackPr1 := sorry
-  directedPullbackPr2 := sorry
-  directedPullbackArrow := sorry
   directedEval0 := sorry
   directedEval1 := sorry
   sourceFibration := sorry
   targetFibration := sorry
   sourceCartesian := sorry
   targetCocartesian := sorry
-  leftFibrationEvalEquiv := sorry
-  rightFibrationEvalEquiv := sorry
+  leftFibrationEvalEquivalenceWitness := sorry
+  rightFibrationEvalEquivalenceWitness := sorry
   baseChangeFibration := sorry
   baseChangeCartesian := sorry
   baseChangeCocartesian := sorry
-  lift0Cat := sorry
-  lift1Cat := sorry
   directedPullbackMapOverBase := sorry
   beckChevalleyTransformation := sorry
-  idCocartesianFunctor := sorry
-  compCocartesianFunctor := sorry
-  leftFibrationCocartesian := sorry
-  rightFibrationCartesian := sorry
   universal_left_adjoint_section := sorry
   universalLeftSectionBase := sorry
   universal_right_adjoint_section := sorry
   universalRightSectionBase := sorry
-  weakenContextFibration := sorry
-  pullbackShapeCat := SCTModelHelpers.pullbackShapeQCat
-  pushoutShapeCat := SCTModelHelpers.pushoutShapeQCat
-  locallyCocartesianOfCocartesian := sorry
-  locallyCartesianOfCartesian := sorry
-  coneCat := sorry
-  coconeCat := sorry
   cocartesianFunctorCategoryPackage := sorry
   universeTotalCat := sorry
   universeProjection := sorry

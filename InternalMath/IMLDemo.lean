@@ -12,7 +12,6 @@ declare_type_theory MyTypeTheory where
 
 namespace MyTypeTheory
 
-/--  -/
 internal def myType : Ty := type
 
 internal def myTerm : Tm myType := term
@@ -26,6 +25,7 @@ section Model1
 generate_model_interface MyTypeTheory as MyModel
 
 #check MyModel
+#print MyModel
 
 def model : MyModel where
   Ty := Type
@@ -37,6 +37,8 @@ def model : MyModel where
 #check model.Tm
 
 generate_model_transports MyTypeTheory for MyModel
+
+#check MyModel.myType
 
 end Model1
 

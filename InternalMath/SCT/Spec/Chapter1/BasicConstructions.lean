@@ -49,12 +49,12 @@ extend_type_theory SCT where
   /-- The primitive anima witnessing that a chosen fiber is an anima. -/
   lf_def allFibersAnimaFiberWitness : (Γ : Anima) ⇒ (C : AnimaIndexedCat Γ) ⇒
       allFibersAnima Γ C ⇒ (x : Obj (animaCat Γ)) ⇒ Anima :=
-    fun Γ C h x => fst (h x)
+    fun Γ C h x => π₁ (h x)
   /-- The equivalence from a chosen fiber to its witnessing primitive anima. -/
   lf_def allFibersAnimaFiberEquiv : (Γ : Anima) ⇒ (C : AnimaIndexedCat Γ) ⇒
       (h : allFibersAnima Γ C) ⇒ (x : Obj (animaCat Γ)) ⇒
       CatEquiv (animaIndexedFiber Γ C x) (animaCat (allFibersAnimaFiberWitness Γ C h x)) :=
-    fun Γ C h x => snd (h x)
+    fun Γ C h x => π₂ (h x)
   /-- An anima-indexed sum of anima fibers is an anima; Axiom A.1(3). -/
   rule sigma_anima_indexed_is_anima (Γ : Anima) (C : AnimaIndexedCat Γ)
     (h : allFibersAnima Γ C) where
@@ -94,8 +94,7 @@ extend_type_theory SCT where
   -/
   syntax_abbrev ContractibleCat (C : SCat) := CatEquiv C terminalCat
   /-- A contraction of `C` onto an object `x`.  Book context: Chapter 1 of the SCT book. -/
-  syntax_abbrev ContractionAt {C : SCat} (x : Obj C) :=
-    NatIso (constantFunctor C C x) (idFunctor C)
+  syntax_abbrev ContractionAt {C : SCat} (x : Obj C) := NatIso (constantFunctor C C x) (idFunctor C)
 
   /-- Initial category; Axiom B.2. -/
   lf_opaque initialCat : SCat
@@ -135,8 +134,10 @@ extend_type_theory SCT where
   /-- Product natural isomorphisms are specified componentwise; Axiom B.3. -/
   lf_opaque prodUniq (Γ : SCat) (C : SCat) (D : SCat)
     (H : Functor Γ (prodCat C D)) (K : Functor Γ (prodCat C D))
-    (α : NatIso (compFunctor Γ (prodCat C D) C H (prodPr1 C D)) (compFunctor Γ (prodCat C D) C K (prodPr1 C D)))
-    (β : NatIso (compFunctor Γ (prodCat C D) D H (prodPr2 C D)) (compFunctor Γ (prodCat C D) D K (prodPr2 C D))) :
+    (α : NatIso (compFunctor Γ (prodCat C D) C H (prodPr1 C D))
+      (compFunctor Γ (prodCat C D) C K (prodPr1 C D)))
+    (β : NatIso (compFunctor Γ (prodCat C D) D H (prodPr2 C D))
+      (compFunctor Γ (prodCat C D) D K (prodPr2 C D))) :
     NatIso Γ (prodCat C D) H K
 
   /-- Binary coproduct of synthetic categories; Axiom B.4. -/
@@ -169,8 +170,10 @@ extend_type_theory SCT where
   /-- Coproduct natural isomorphisms are specified componentwise; Axiom B.4. -/
   lf_opaque coprodUniq (C : SCat) (D : SCat) (Γ : SCat)
     (H : Functor (coprodCat C D) Γ) (K : Functor (coprodCat C D) Γ)
-    (α : NatIso (compFunctor C (coprodCat C D) Γ (coprodIn1 C D) H) (compFunctor C (coprodCat C D) Γ (coprodIn1 C D) K))
-    (β : NatIso (compFunctor D (coprodCat C D) Γ (coprodIn2 C D) H) (compFunctor D (coprodCat C D) Γ (coprodIn2 C D) K)) :
+    (α : NatIso (compFunctor C (coprodCat C D) Γ (coprodIn1 C D) H)
+      (compFunctor C (coprodCat C D) Γ (coprodIn1 C D) K))
+    (β : NatIso (compFunctor D (coprodCat C D) Γ (coprodIn2 C D) H)
+      (compFunctor D (coprodCat C D) Γ (coprodIn2 C D) K)) :
     NatIso (coprodCat C D) Γ H K
 
   /-- Pullback of functors; Axiom B.5. -/
@@ -213,14 +216,18 @@ extend_type_theory SCT where
     (F : Functor C E) (G : Functor D E)
     (H : Functor X (pullbackCat C D E F G))
     (K : Functor X (pullbackCat C D E F G))
-    (α : NatIso (compFunctor X (pullbackCat C D E F G) C H (pullbackPr1 C D E F G)) (compFunctor X (pullbackCat C D E F G) C K (pullbackPr1 C D E F G)))
-    (β : NatIso (compFunctor X (pullbackCat C D E F G) D H (pullbackPr2 C D E F G)) (compFunctor X (pullbackCat C D E F G) D K (pullbackPr2 C D E F G))) :
+    (α : NatIso (compFunctor X (pullbackCat C D E F G) C H (pullbackPr1 C D E F G))
+      (compFunctor X (pullbackCat C D E F G) C K (pullbackPr1 C D E F G)))
+    (β : NatIso (compFunctor X (pullbackCat C D E F G) D H (pullbackPr2 C D E F G))
+      (compFunctor X (pullbackCat C D E F G) D K (pullbackPr2 C D E F G))) :
     NatIso X (pullbackCat C D E F G) H K
   /-- Pullback η comparison from the projections of a cone; Axiom B.5. -/
   lf_opaque pullbackEta (X : SCat) (C : SCat) (D : SCat) (E : SCat)
     (F : Functor C E) (G : Functor D E)
     (H : Functor X (pullbackCat C D E F G))
-    (θ : NatIso (compFunctor (compFunctor X (pullbackCat C D E F G) C H (pullbackPr1 C D E F G)) F) (compFunctor (compFunctor X (pullbackCat C D E F G) D H (pullbackPr2 C D E F G)) G)) :
+    (θ : NatIso
+      (compFunctor (compFunctor X (pullbackCat C D E F G) C H (pullbackPr1 C D E F G)) F)
+      (compFunctor (compFunctor X (pullbackCat C D E F G) D H (pullbackPr2 C D E F G)) G)) :
     NatIso X (pullbackCat C D E F G)
       (pullbackLift X C D E F G
         (compFunctor X (pullbackCat C D E F G) C H (pullbackPr1 C D E F G))
@@ -228,25 +235,24 @@ extend_type_theory SCT where
       H
   /-- Cone object data over a pullback cospan, in test context `X`. -/
   syntax_abbrev PullbackCone (X : SCat) (C : SCat) (D : SCat) (E : SCat)
-    (F : Functor C E) (G : Functor D E) :=
-    Σ A : Functor X C, Σ B : Functor X D,
+    (F : Functor C E) (G : Functor D E) := Σ A : Functor X C, Σ B : Functor X D,
       NatIso (compFunctor X C E A F) (compFunctor X D E B G)
   /-- Left leg of a pullback cone. -/
   lf_def pullbackConeLeft : (X : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒ (E : SCat) ⇒
       (F : Functor C E) ⇒ (G : Functor D E) ⇒ PullbackCone X C D E F G ⇒
       Functor X C :=
-    fun X C D E F G u => fst u
+    fun X C D E F G u => π₁ u
   /-- Right leg of a pullback cone. -/
   lf_def pullbackConeRight : (X : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒ (E : SCat) ⇒
       (F : Functor C E) ⇒ (G : Functor D E) ⇒ PullbackCone X C D E F G ⇒
       Functor X D :=
-    fun X C D E F G u => fst (snd u)
+    fun X C D E F G u => π₁ (π₂ u)
   /-- Coherent comparison of a pullback cone over the cospan target. -/
   lf_def pullbackConeComm : (X : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒ (E : SCat) ⇒
       (F : Functor C E) ⇒ (G : Functor D E) ⇒ (u : PullbackCone X C D E F G) ⇒
       NatIso (compFunctor X C E (pullbackConeLeft X C D E F G u) F)
         (compFunctor X D E (pullbackConeRight X C D E F G u) G) :=
-    fun X C D E F G u => snd (snd u)
+    fun X C D E F G u => π₂ (π₂ u)
   /-- Canonical cospan comparison of a map into a pullback. -/
   lf_def pullbackMapComm : (X : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒ (E : SCat) ⇒
       (F : Functor C E) ⇒ (G : Functor D E) ⇒
@@ -334,8 +340,7 @@ extend_type_theory SCT where
     fun C D F y => pullbackPr2 C terminalCat D F y
   /-- Evidence that a functor between total categories lies over a fixed base. -/
   syntax_abbrev FunctorOverBase {E : SCat} {B : SCat} (p : Functor E B)
-    {E' : SCat} (p' : Functor E' B) (F : Functor E E') :=
-    NatIso (compFunctor F p') p
+    {E' : SCat} (p' : Functor E' B) (F : Functor E E') := NatIso (compFunctor F p') p
   /-- Compatibility isomorphism used to map fibers along a functor over the base. -/
   lf_def fiberMapCompat : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
       (E' : SCat) ⇒ (p' : Functor E' B) ⇒ (F : Functor E E') ⇒
@@ -372,7 +377,7 @@ extend_type_theory SCT where
   /-- Commutativity data for an ordinary square of functors. -/
   syntax_abbrev CommutativeSquare {A : SCat} {B : SCat} {C : SCat} {D : SCat}
     (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) :=
-    NatIso (compFunctor A B D top right) (compFunctor A C D left bottom)
+      NatIso (compFunctor A B D top right) (compFunctor A C D left bottom)
   /-- Comparison functor from a commutative square to the chosen pullback of its lower cospan. -/
   lf_def pullbackComparison : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒
       (top : Functor A B) ⇒ (left : Functor A C) ⇒ (right : Functor B D) ⇒
@@ -384,7 +389,7 @@ extend_type_theory SCT where
   -/
   syntax_abbrev PullbackSquare {A : SCat} {B : SCat} {C : SCat} {D : SCat}
     (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) :=
-    Σ sq : CommutativeSquare A B C D top left right bottom,
+      Σ sq : CommutativeSquare A B C D top left right bottom,
       Σ backward : Functor (pullbackCat B C D right bottom) A,
         Σ unit : NatIso (compFunctor A (pullbackCat B C D right bottom) A
             (pullbackComparison A B C D top left right bottom sq) backward) (idFunctor A),
@@ -397,14 +402,14 @@ extend_type_theory SCT where
       (top : Functor A B) ⇒ (left : Functor A C) ⇒ (right : Functor B D) ⇒
       (bottom : Functor C D) ⇒ PullbackSquare A B C D top left right bottom ⇒
       CommutativeSquare A B C D top left right bottom :=
-    fun A B C D top left right bottom sq => fst sq
+    fun A B C D top left right bottom sq => π₁ sq
   /-- Backward functor of the comparison equivalence in a pullback-square package. -/
   lf_def pullbackSquareBackward : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
       (D : SCat) ⇒ (top : Functor A B) ⇒ (left : Functor A C) ⇒
       (right : Functor B D) ⇒ (bottom : Functor C D) ⇒
       (sq : PullbackSquare A B C D top left right bottom) ⇒
       Functor (pullbackCat B C D right bottom) A :=
-    fun A B C D top left right bottom sq => fst (snd sq)
+    fun A B C D top left right bottom sq => π₁ (π₂ sq)
   /-- Unit comparison of the comparison equivalence in a pullback-square package. -/
   lf_def pullbackSquareUnit : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒
       (top : Functor A B) ⇒ (left : Functor A C) ⇒ (right : Functor B D) ⇒
@@ -413,7 +418,7 @@ extend_type_theory SCT where
           (pullbackComparison A B C D top left right bottom (pullbackSquareComm A B C D
             top left right bottom sq))
           (pullbackSquareBackward A B C D top left right bottom sq)) (idFunctor A) :=
-    fun A B C D top left right bottom sq => fst (snd (snd sq))
+    fun A B C D top left right bottom sq => π₁ (π₂ (π₂ sq))
   /-- Counit comparison of the comparison equivalence in a pullback-square package. -/
   lf_def pullbackSquareCounit : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
       (D : SCat) ⇒ (top : Functor A B) ⇒ (left : Functor A C) ⇒
@@ -425,7 +430,7 @@ extend_type_theory SCT where
           (pullbackComparison A B C D top left right bottom (pullbackSquareComm A B C D
             top left right bottom sq)))
         (idFunctor (pullbackCat B C D right bottom)) :=
-    fun A B C D top left right bottom sq => snd (snd (snd sq))
+    fun A B C D top left right bottom sq => π₂ (π₂ (π₂ sq))
   /-- Equivalence associated to a pullback-square package. -/
   lf_def pullbackSquareEquiv : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒
       (top : Functor A B) ⇒ (left : Functor A C) ⇒ (right : Functor B D) ⇒
@@ -437,16 +442,15 @@ extend_type_theory SCT where
       (pullbackSquareBackward A B C D top left right bottom sq)
       (pullbackSquareUnit A B C D top left right bottom sq)
       (pullbackSquareCounit A B C D top left right bottom sq)
-namespace SCT
+extend_type_theory SCT where
 
-/- The diagonal comparison is admitted temporarily while the coherent pullback API is
-   strengthened. -/
-internal_defs where
+  model_section Chapter1
+
   /-- Diagonal comparison into the self-pullback of a functor. -/
-  def selfPullbackDiagonal (C : SCat) (D : SCat) (F : Functor C D) :
-      Functor C (pullbackCat C C D F F) := sorry
-
-end SCT
+  lf_def selfPullbackDiagonal : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
+      Functor C (pullbackCat C C D F F) :=
+    fun C D F => pullbackLift C C C D F F (idFunctor C) (idFunctor C)
+      (idNatIso C D (compFunctor C C D (idFunctor C) F))
 
 extend_type_theory SCT where
 
@@ -462,20 +466,20 @@ extend_type_theory SCT where
   /-- Backward map of an embedding witness. -/
   lf_def embeddingBackward : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
       Embedding C D F ⇒ Functor (pullbackCat C C D F F) C :=
-    fun C D F e => fst e
+    fun C D F e => π₁ e
   /-- Unit comparison of an embedding witness. -/
   lf_def embeddingUnit : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
       (e : Embedding C D F) ⇒
       NatIso (compFunctor C (pullbackCat C C D F F) C (selfPullbackDiagonal C D F)
         (embeddingBackward C D F e)) (idFunctor C) :=
-    fun C D F e => fst (snd e)
+    fun C D F e => π₁ (π₂ e)
   /-- Counit comparison of an embedding witness. -/
   lf_def embeddingCounit : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
       (e : Embedding C D F) ⇒
       NatIso (compFunctor (pullbackCat C C D F F) C (pullbackCat C C D F F)
         (embeddingBackward C D F e) (selfPullbackDiagonal C D F))
         (idFunctor (pullbackCat C C D F F)) :=
-    fun C D F e => snd (snd e)
+    fun C D F e => π₂ (π₂ e)
   /-- Category equivalence associated to an embedding witness. -/
   lf_def embeddingCatEquiv : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
       Embedding C D F ⇒ CatEquiv C (pullbackCat C C D F F) :=
@@ -707,16 +711,6 @@ extend_type_theory SCT where
   lf_opaque curryEta (Γ : SCat) (C : SCat) (D : SCat)
     (F : Functor Γ (funCat C D)) :
     NatIso Γ (funCat C D) (curryFunctor Γ C D (uncurryFunctor Γ C D F)) F
-  /-- Currying of natural isomorphisms; Axiom B.6. -/
-  lf_opaque curryNatIso (Γ : SCat) (C : SCat) (D : SCat)
-    (F : Functor (prodCat Γ C) D) (G : Functor (prodCat Γ C) D)
-    (α : NatIso (prodCat Γ C) D F G) :
-    NatIso Γ (funCat C D) (curryFunctor Γ C D F) (curryFunctor Γ C D G)
-  /-- Uncurrying of natural isomorphisms; Axiom B.6. -/
-  lf_opaque uncurryNatIso (Γ : SCat) (C : SCat) (D : SCat)
-    (F : Functor Γ (funCat C D)) (G : Functor Γ (funCat C D))
-    (α : NatIso Γ (funCat C D) F G) :
-    NatIso (prodCat Γ C) D (uncurryFunctor Γ C D F) (uncurryFunctor Γ C D G)
   /-- Precomposition functor between functor categories, defined by currying evaluation after the
   input functor. -/
   lf_def precompFunctor : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒ Functor A B ⇒
@@ -742,15 +736,11 @@ extend_type_theory SCT where
     fun X C D E F G =>
       pullbackCat (funCat X C) (funCat X D) (funCat X E)
         (postcompFunctor X C E F) (postcompFunctor X D E G)
-  /-- Pullback universal property as an equivalence with the cone category; Axiom B.5. -/
-  lf_opaque pullbackConeEquiv (X : SCat) (C : SCat) (D : SCat) (E : SCat)
-    (F : Functor C E) (G : Functor D E) :
-    CatEquiv (funCat X (pullbackCat C D E F G)) (pullbackConeCat X C D E F G)
   /-- Pushout-square witness: a commutative square plus its mapping-out universal property.  Book
   target: pushout squares used throughout Chapter 1, especially Proposition 1.3.3 and Axiom J.1. -/
   syntax_abbrev PushoutSquare {A : SCat} {B : SCat} {C : SCat} {D : SCat}
     (top : Functor A B) (left : Functor A C) (right : Functor B D) (bottom : Functor C D) :=
-    Σ comm : NatIso (compFunctor top right) (compFunctor left bottom),
+      Σ comm : NatIso (compFunctor top right) (compFunctor left bottom),
       (X : SCat) → CatEquiv (funCat D X)
         (pullbackCat (funCat B X) (funCat C X) (funCat A X)
           (precompFunctor A B X top) (precompFunctor A C X left))
@@ -759,7 +749,7 @@ extend_type_theory SCT where
       (top : Functor A B) ⇒ (left : Functor A C) ⇒ (right : Functor B D) ⇒
       (bottom : Functor C D) ⇒ PushoutSquare A B C D top left right bottom ⇒
       NatIso (compFunctor top right) (compFunctor left bottom) :=
-    fun A B C D top left right bottom sq => fst sq
+    fun A B C D top left right bottom sq => π₁ sq
   /-- Mapping-out universal property associated to a pushout-square witness. -/
   lf_def pushoutSquareMappingEquiv : (A : SCat) ⇒ (B : SCat) ⇒ (C : SCat) ⇒
       (D : SCat) ⇒ (top : Functor A B) ⇒ (left : Functor A C) ⇒
@@ -768,7 +758,7 @@ extend_type_theory SCT where
       CatEquiv (funCat D X)
         (pullbackCat (funCat B X) (funCat C X) (funCat A X)
           (precompFunctor A B X top) (precompFunctor A C X left)) :=
-    fun A B C D top left right bottom sq X => snd sq X
+    fun A B C D top left right bottom sq X => π₂ sq X
   /-- Forward functor of the currying equivalence; Axiom B.6. -/
   lf_opaque curryUncurryForward (Γ : SCat) (C : SCat) (D : SCat) :
     Functor (funCat Γ (funCat C D)) (funCat (prodCat Γ C) D)
@@ -867,6 +857,44 @@ internal_defs where
       simplex2Id1 := sorry
 
 end SCT
+
+namespace SCT
+
+/- Functor-category coherence and the canonical pullback-cone comparison are visible definition
+   debt, not independent primitive fields. -/
+internal_defs where
+  /-- Currying of natural isomorphisms; Axiom B.6 coherence debt. -/
+  def curryNatIso (Γ : SCat) (C : SCat) (D : SCat)
+      (F : Functor (prodCat Γ C) D) (G : Functor (prodCat Γ C) D)
+      (α : NatIso (prodCat Γ C) D F G) :
+      NatIso Γ (funCat C D) (curryFunctor Γ C D F) (curryFunctor Γ C D G) := sorry
+  /-- Uncurrying of natural isomorphisms; Axiom B.6 coherence debt. -/
+  def uncurryNatIso (Γ : SCat) (C : SCat) (D : SCat)
+      (F : Functor Γ (funCat C D)) (G : Functor Γ (funCat C D))
+      (α : NatIso Γ (funCat C D) F G) :
+      NatIso (prodCat Γ C) D (uncurryFunctor Γ C D F) (uncurryFunctor Γ C D G) := sorry
+  /-- Canonical comparison from maps into the chosen pullback to coherent cone data. -/
+  def pullbackConeComparison (X : SCat) (C : SCat) (D : SCat) (E : SCat)
+      (F : Functor C E) (G : Functor D E) :
+      Functor (funCat X (pullbackCat C D E F G)) (pullbackConeCat X C D E F G) := sorry
+
+end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter1
+
+  /-- Pullback universal property, pinned to the canonical cone-comparison functor; Axiom B.5. -/
+  lf_opaque pullbackConeEquivalenceWitness (X : SCat) (C : SCat) (D : SCat) (E : SCat)
+    (F : Functor C E) (G : Functor D E) :
+    EquivalenceWitness (pullbackConeComparison X C D E F G)
+  /-- Pullback universal property as an equivalence with the cone category; Axiom B.5. -/
+  lf_def pullbackConeEquiv : (X : SCat) ⇒ (C : SCat) ⇒ (D : SCat) ⇒ (E : SCat) ⇒
+      (F : Functor C E) ⇒ (G : Functor D E) ⇒
+      CatEquiv (funCat X (pullbackCat C D E F G)) (pullbackConeCat X C D E F G) :=
+    fun X C D E F G => catEquivOfWitness
+      (funCat X (pullbackCat C D E F G)) (pullbackConeCat X C D E F G)
+      (pullbackConeComparison X C D E F G) (pullbackConeEquivalenceWitness X C D E F G)
 
 extend_type_theory SCT where
 

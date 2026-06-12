@@ -46,24 +46,24 @@ extend_type_theory SCT where
   /-- Regular subuniverse generated above a small subcategory; Definition 7.4.5 (Cat8). -/
   lf_def regularSubuniverseCat : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (S : SCat) ⇒ (iS : Functor S U) ⇒ Embedding S U iS ⇒ SmallWitness U S ⇒ SCat :=
-    fun U u S iS embS hS => fst (regularSubuniversePackage U u S iS embS hS)
+    fun U u S iS embS hS => π₁ (regularSubuniversePackage U u S iS embS hS)
   /-- Universe witness for a regular subuniverse; Definition 7.4.5 (Cat8). -/
   lf_def regularSubuniverseWitness : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
       (hS : SmallWitness U S) ⇒ UniverseWitness (regularSubuniverseCat U u S iS embS hS) :=
-    fun U u S iS embS hS => fst (snd (regularSubuniversePackage U u S iS embS hS))
+    fun U u S iS embS hS => π₁ (π₂ (regularSubuniversePackage U u S iS embS hS))
   /-- Inclusion of a regular subuniverse into the ambient universe; Definition 7.4.5 (Cat8). -/
   lf_def regularSubuniverseIncl : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
       (hS : SmallWitness U S) ⇒ Functor (regularSubuniverseCat U u S iS embS hS) U :=
     fun U u S iS embS hS =>
-      fst (snd (snd (regularSubuniversePackage U u S iS embS hS)))
+      π₁ (π₂ (π₂ (regularSubuniversePackage U u S iS embS hS)))
   /-- The regular subuniverse is small in the ambient universe; Definition 7.4.5 (Cat8). -/
   lf_def regularSubuniverseSmall : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
       (hS : SmallWitness U S) ⇒ SmallWitness U (regularSubuniverseCat U u S iS embS hS) :=
     fun U u S iS embS hS =>
-      fst (snd (snd (snd (regularSubuniversePackage U u S iS embS hS))))
+      π₁ (π₂ (π₂ (π₂ (regularSubuniversePackage U u S iS embS hS))))
   /-- The regular subuniverse is regular; Definition 7.4.5 (Cat8). -/
   lf_def regularSubuniverseRegular : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
@@ -71,13 +71,13 @@ extend_type_theory SCT where
       RegularUniverseWitness (regularSubuniverseCat U u S iS embS hS)
         (regularSubuniverseWitness U u S iS embS hS) :=
     fun U u S iS embS hS =>
-      fst (snd (snd (snd (snd (regularSubuniversePackage U u S iS embS hS)))))
+      π₁ (π₂ (π₂ (π₂ (π₂ (regularSubuniversePackage U u S iS embS hS)))))
   /-- The seed subcategory maps into the regular subuniverse; Definition 7.4.5 (Cat8). -/
   lf_def regularSubuniverseLift : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
       (hS : SmallWitness U S) ⇒ Functor S (regularSubuniverseCat U u S iS embS hS) :=
     fun U u S iS embS hS =>
-      fst (snd (snd (snd (snd (snd (regularSubuniversePackage U u S iS embS hS))))))
+      π₁ (π₂ (π₂ (π₂ (π₂ (π₂ (regularSubuniversePackage U u S iS embS hS))))))
   /-- The seed inclusion factors through the regular subuniverse; Definition 7.4.5 (Cat8). -/
   lf_def regularSubuniverseLiftBeta : (U : SCat) ⇒ (u : UniverseWitness U) ⇒
       (S : SCat) ⇒ (iS : Functor S U) ⇒ (embS : Embedding S U iS) ⇒
@@ -86,7 +86,7 @@ extend_type_theory SCT where
           (regularSubuniverseLift U u S iS embS hS)
           (regularSubuniverseIncl U u S iS embS hS)) iS :=
     fun U u S iS embS hS =>
-      snd (snd (snd (snd (snd (snd (regularSubuniversePackage U u S iS embS hS))))))
+      π₂ (π₂ (π₂ (π₂ (π₂ (π₂ (regularSubuniversePackage U u S iS embS hS))))))
 
 extend_type_theory SCT where
 
@@ -106,34 +106,34 @@ extend_type_theory SCT where
                     (universeProjection G g) (universeFibration G g),
                   (A : Anima) → SmallWitness G (animaCat A)
   /-- Universe of groupoids inside the universe of categories; §7.6. -/
-  lf_def groupoidUniverse : SCat := fst groupoidUniversePackage
+  lf_def groupoidUniverse : SCat := π₁ groupoidUniversePackage
   /-- Universe package for groupoids; §7.6. -/
   lf_def groupoidUniverseWitness : UniverseWitness groupoidUniverse :=
-    fst (snd groupoidUniversePackage)
+    π₁ (π₂ groupoidUniversePackage)
   /-- Cores of small categories are small groupoids; §7.6. -/
   lf_def coreSmall : (C : SCat) ⇒ SmallWitness categoryUniverse C ⇒
       SmallWitness groupoidUniverse (coreCat C) :=
-    fun C hC => fst (snd (snd groupoidUniversePackage)) C hC
+    fun C hC => π₁ (π₂ (π₂ groupoidUniversePackage)) C hC
   /-- Inclusion of the groupoid universe into `Cat`; §7.6. -/
   lf_def groupoidUniverseIncl : Functor groupoidUniverse categoryUniverse :=
-    fst (snd (snd (snd groupoidUniversePackage)))
+    π₁ (π₂ (π₂ (π₂ groupoidUniversePackage)))
   /-- The groupoid universe inclusion is an embedding; §7.6. -/
   lf_def groupoidUniverseEmbedding :
       Embedding groupoidUniverse categoryUniverse groupoidUniverseIncl :=
-    fst (snd (snd (snd (snd groupoidUniversePackage))))
+    π₁ (π₂ (π₂ (π₂ (π₂ groupoidUniversePackage))))
   /-- The groupoid universe is regular; §7.6. -/
   lf_def groupoidUniverseRegular :
       RegularUniverseWitness groupoidUniverse groupoidUniverseWitness :=
-    fst (snd (snd (snd (snd (snd groupoidUniversePackage)))))
+    π₁ (π₂ (π₂ (π₂ (π₂ (π₂ groupoidUniversePackage)))))
   /-- The universal family over `Grpd` is a left fibration; §7.6. -/
   lf_def groupoidUniverseLeftFibration :
       LeftFibrationWitness (universeTotalCat groupoidUniverse groupoidUniverseWitness)
         groupoidUniverse (universeProjection groupoidUniverse groupoidUniverseWitness)
         (universeFibration groupoidUniverse groupoidUniverseWitness) :=
-    fst (snd (snd (snd (snd (snd (snd groupoidUniversePackage))))))
+    π₁ (π₂ (π₂ (π₂ (π₂ (π₂ (π₂ groupoidUniversePackage))))))
   /-- Primitive anima are small in the groupoid universe; §7.6. -/
   lf_def animaSmall : (A : Anima) ⇒ SmallWitness groupoidUniverse (animaCat A) :=
-    fun A => snd (snd (snd (snd (snd (snd (snd groupoidUniversePackage)))))) A
+    fun A => π₂ (π₂ (π₂ (π₂ (π₂ (π₂ (π₂ groupoidUniversePackage)))))) A
 
 extend_type_theory SCT where
 

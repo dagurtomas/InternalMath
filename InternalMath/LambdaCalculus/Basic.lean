@@ -383,3 +383,63 @@ declare_type_theory LambdaCalculus where
   /-- Any two unit terms are definitionally equal. -/
   rule unit_eta (Γ : Ctx) (t : Tm Γ unitTy) where
     conclusion : EqTm Γ unitTy t (unitIntro Γ)
+
+namespace LambdaCalculus
+
+-- internal def prodTwist (X : Ty) (Y : Ty) : Tm (extendCtx emptyCtx (prodTy X Y)) (prodTy Y X) :=
+--   pairTm (extendCtx emptyCtx (prodTy X Y)) Y X
+--     (sndTm (extendCtx emptyCtx (prodTy X Y)) X Y (varZero emptyCtx (prodTy X Y)))
+--     (fstTm (extendCtx emptyCtx (prodTy X Y)) X Y (varZero emptyCtx (prodTy X Y)))
+
+-- internal def prod_symmetric (X : Ty) (Y : Ty) :
+--     EqTm (extendCtx emptyCtx (prodTy X Y)) (prodTy X Y)
+--       (homComp (prodTy X Y) (prodTy Y X) (prodTy X Y)
+--         (prodTwist X Y) (prodTwist Y X))
+--       (varZero emptyCtx (prodTy X Y)) := by
+--   simp
+--   apply eq_trans
+--   · exact pairTm (extendCtx emptyCtx (prodTy X Y)) X Y
+--       (substTm (extendCtx emptyCtx (prodTy X Y)) (extendCtx emptyCtx (prodTy Y X)) X
+--         (extendSub (extendCtx emptyCtx (prodTy X Y)) emptyCtx (prodTy Y X)
+--           (emptySub (extendCtx emptyCtx (prodTy X Y))) (prodTwist X Y))
+--         (sndTm (extendCtx emptyCtx (prodTy Y X)) Y X (varZero emptyCtx (prodTy Y X))))
+--       (substTm (extendCtx emptyCtx (prodTy X Y)) (extendCtx emptyCtx (prodTy Y X)) Y
+--         (extendSub (extendCtx emptyCtx (prodTy X Y)) emptyCtx (prodTy Y X)
+--           (emptySub (extendCtx emptyCtx (prodTy X Y))) (prodTwist X Y))
+--         (fstTm (extendCtx emptyCtx (prodTy Y X)) Y X (varZero emptyCtx (prodTy Y X))))
+--   · apply subst_pair
+--   · apply eq_trans
+--     · exact pairTm (extendCtx emptyCtx (prodTy X Y)) X Y
+--         (fstTm (extendCtx emptyCtx (prodTy X Y)) X Y (varZero emptyCtx (prodTy X Y)))
+--         (sndTm (extendCtx emptyCtx (prodTy X Y)) X Y (varZero emptyCtx (prodTy X Y)))
+--     · apply pair_congr
+--       · apply eq_trans
+--         · exact sndTm (extendCtx emptyCtx (prodTy X Y)) Y X
+--             (substTm (extendCtx emptyCtx (prodTy X Y)) (extendCtx emptyCtx (prodTy Y X))
+--               (prodTy Y X)
+--               (extendSub (extendCtx emptyCtx (prodTy X Y)) emptyCtx (prodTy Y X)
+--                 (emptySub (extendCtx emptyCtx (prodTy X Y))) (prodTwist X Y))
+--               (varZero emptyCtx (prodTy Y X)))
+--         · apply subst_snd
+--         · apply eq_trans
+--           · exact sndTm (extendCtx emptyCtx (prodTy X Y)) Y X (prodTwist X Y)
+--           · apply snd_congr
+--             apply extendSub_varZero
+--           · apply prod_beta_snd
+--       · apply eq_trans
+--         · exact fstTm (extendCtx emptyCtx (prodTy X Y)) Y X
+--             (substTm (extendCtx emptyCtx (prodTy X Y)) (extendCtx emptyCtx (prodTy Y X))
+--               (prodTy Y X)
+--               (extendSub (extendCtx emptyCtx (prodTy X Y)) emptyCtx (prodTy Y X)
+--                 (emptySub (extendCtx emptyCtx (prodTy X Y))) (prodTwist X Y))
+--               (varZero emptyCtx (prodTy Y X)))
+--         · apply subst_fst
+--         · apply eq_trans
+--           · exact fstTm (extendCtx emptyCtx (prodTy X Y)) Y X (prodTwist X Y)
+--           · apply fst_congr
+--             apply extendSub_varZero
+--           · apply prod_beta_fst
+--     · apply eq_symm
+--       apply prod_eta
+
+end LambdaCalculus

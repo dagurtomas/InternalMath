@@ -33,13 +33,26 @@ extend_type_theory SCT where
   model_section Chapter5
 
   /-- Pushout-indexing shape `⌜ = * ★ {0,1}` for spans.  Book context: Chapter 5 of the SCT book. -/
-  lf_opaque pushoutShapeCat : SCat
+  lf_def pushoutShapeCat : SCat := joinCat simplex0Cat (coprodCat simplex0Cat simplex0Cat)
   /-- A diagram of shape `J` in `C`.  Book context: Chapter 5 of the SCT book. -/
   syntax_abbrev Diagram (J : SCat) (C : SCat) := Functor J C
+
+namespace SCT
+
+/- Cone and cocone categories are finite-shape definitions, admitted until the general
+   limit-shape API lands. -/
+internal_defs where
   /-- Cone category over a diagram.  Book context: Chapter 5 of the SCT book. -/
-  lf_opaque coneCat (J : SCat) (C : SCat) (D : Diagram J C) : SCat
+  def coneCat (J : SCat) (C : SCat) (D : Diagram J C) : SCat := sorry
   /-- Cocone category under a diagram.  Book context: Chapter 5 of the SCT book. -/
-  lf_opaque coconeCat (J : SCat) (C : SCat) (D : Diagram J C) : SCat
+  def coconeCat (J : SCat) (C : SCat) (D : Diagram J C) : SCat := sorry
+
+end SCT
+
+extend_type_theory SCT where
+
+  model_section Chapter5
+
   /-- Limit-cone witness.  Book context: Chapter 5 of the SCT book. -/
   syntax_def LimitCone (J : SCat) (C : SCat) (D : Diagram J C) : Type u := sorry
   /-- Colimit-cocone witness.  Book context: Chapter 5 of the SCT book. -/
@@ -64,16 +77,19 @@ internal_defs where
 end SCT
 
 
-extend_type_theory SCT where
+namespace SCT
 
-  model_section Chapter5
-
+/- Absolute-to-local fibration comparison is theorem-shaped debt for the contextual fibration
+   API. -/
+internal_defs where
   /-- Absolute cocartesian fibrations are locally cocartesian in context; Chapter 5 structure data.
   -/
-  lf_opaque locallyCocartesianOfCocartesian (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
-    LocallyCocartesianFibrationWitness E B p fib
+  def locallyCocartesianOfCocartesian (E : SCat) (B : SCat) (p : Functor E B)
+      (fib : Fibration E B p) (cocart : CocartesianFibrationWitness E B p fib) :
+      LocallyCocartesianFibrationWitness E B p fib := sorry
   /-- Absolute cartesian fibrations are locally cartesian in context; Chapter 5 structure data. -/
-  lf_opaque locallyCartesianOfCartesian (E : SCat) (B : SCat) (p : Functor E B)
-    (fib : Fibration E B p) (cart : CartesianFibrationWitness E B p fib) :
-    LocallyCartesianFibrationWitness E B p fib
+  def locallyCartesianOfCartesian (E : SCat) (B : SCat) (p : Functor E B)
+      (fib : Fibration E B p) (cart : CartesianFibrationWitness E B p fib) :
+      LocallyCartesianFibrationWitness E B p fib := sorry
+
+end SCT

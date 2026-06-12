@@ -36,7 +36,7 @@ extend_type_theory SCT where
   /-- Membership of an arrow object in the object collection of invertible arrows. -/
   syntax_abbrev InvertibleMorphismObjectMember {C : SCat}
     (P : ObjectCollection (funCat intervalCat C)) (f : Functor intervalCat C) :=
-    ObjectCollectionMember (funCat intervalCat C) P (functorObject intervalCat C f)
+      ObjectCollectionMember (funCat intervalCat C) P (functorObject intervalCat C f)
   /-- Comprehension package for invertible arrows in `Fun([1], C)`.
   Book target: Definition 1.8.2, building `Iso(C)` from explicit invertible-arrow data. -/
   lf_opaque invertibleMorphismObjectPackage (C : SCat) :
@@ -46,15 +46,15 @@ extend_type_theory SCT where
           InvertibleMorphismObjectMember C P f → InvertibleMorphism C f
   /-- Object collection of invertible arrows in `Fun([1], C)`. -/
   lf_def invertibleMorphismObjects : (C : SCat) ⇒ ObjectCollection (funCat intervalCat C) :=
-    fun C => fst (invertibleMorphismObjectPackage C)
+    fun C => π₁ (invertibleMorphismObjectPackage C)
   /-- Invertible-arrow data gives membership in the invertible-arrow object collection. -/
   lf_def invertibleMorphismObjectIntro : (C : SCat) ⇒ (f : Functor intervalCat C) ⇒
       InvertibleMorphism C f → InvertibleMorphismObjectMember C (invertibleMorphismObjects C) f :=
-    fun C f h => fst (snd (invertibleMorphismObjectPackage C) f) h
+    fun C f h => π₁ (π₂ (invertibleMorphismObjectPackage C) f) h
   /-- Membership in the invertible-arrow object collection gives invertible-arrow data. -/
   lf_def invertibleMorphismObjectElim : (C : SCat) ⇒ (f : Functor intervalCat C) ⇒
       InvertibleMorphismObjectMember C (invertibleMorphismObjects C) f → InvertibleMorphism C f :=
-    fun C f h => snd (snd (invertibleMorphismObjectPackage C) f) h
+    fun C f h => π₂ (π₂ (invertibleMorphismObjectPackage C) f) h
 
   /-- Category of isomorphisms in `C`, constructed as the full subcategory of the arrow category
   spanned by invertible arrows.  Book target: Definition 1.8.2.
@@ -69,30 +69,47 @@ extend_type_theory SCT where
       Embedding (isoCat C) (funCat intervalCat C) (isoProjection C) :=
     fun C => subcategoryWitnessEmbedding (isoCat C) (funCat intervalCat C) (isoProjection C)
       (fullSubcategoryInclWitness (funCat intervalCat C) (invertibleMorphismObjects C))
-  /-- Packaged Rezk completeness equivalence; Axiom F. -/
-  lf_opaque rezkEquiv (C : SCat) : CatEquiv C (isoCat C)
-  /-- Identity-isomorphism functor into the isomorphism category; derived from Rezk completeness.
-  Book context: Chapter 1 of the SCT book.
-  -/
-  lf_def identityIsoFunctor : (C : SCat) ⇒ Functor C (isoCat C) :=
-    fun C => catEquivForward C (isoCat C) (rezkEquiv C)
-  /-- Projection from isomorphisms back to objects; derived from Rezk completeness.  Book context:
-  Chapter 1 of the SCT book.
-  -/
+namespace SCT
+
+/- The canonical identity-isomorphism functor is admitted as visible construction debt until the
+   full-subcategory lift from identity arrows is available. -/
+internal_defs where
+  /-- Identity-isomorphism functor into the isomorphism category. -/
+  def identityIsoFunctor (C : SCat) : Functor C (isoCat C) := sorry
+
+end SCT
+
+extend_type_theory SCT where
+
+  /-- Chapter 1: the language of naive category theory; Axioms A--F. -/
+  model_section Chapter1
+
+  /-- Projection from isomorphisms back to their source objects. -/
   lf_def isoProjectionFunctor : (C : SCat) ⇒ Functor (isoCat C) C :=
-    fun C => catEquivBackward C (isoCat C) (rezkEquiv C)
-  /-- Unit for the Rezk equivalence; derived from the packaged equivalence.  Book context: Chapter 1
-  of the SCT book.
-  -/
+    fun C => compFunctor (isoCat C) (funCat intervalCat C) C (isoProjection C) (sourceFunctor C)
+  /-- Rezk completeness data pinned to the canonical identity-isomorphism functor. -/
+  syntax_abbrev RezkEquivalenceWitness (C : SCat) := Σ unit : NatIso C C
+        (compFunctor C (isoCat C) C (identityIsoFunctor C) (isoProjectionFunctor C))
+        (idFunctor C),
+      NatIso (isoCat C) (isoCat C)
+        (compFunctor (isoCat C) C (isoCat C)
+          (isoProjectionFunctor C) (identityIsoFunctor C))
+        (idFunctor (isoCat C))
+  /-- Axiom F as equivalence data for the named Rezk comparison functor. -/
+  lf_opaque rezkEquivalenceWitness (C : SCat) : RezkEquivalenceWitness C
+  /-- Packaged Rezk completeness equivalence; Axiom F. -/
+  lf_def rezkEquiv : (C : SCat) ⇒ CatEquiv C (isoCat C) :=
+    fun C => catEquivOfData C (isoCat C) (identityIsoFunctor C) (isoProjectionFunctor C)
+      (π₁ (rezkEquivalenceWitness C)) (π₂ (rezkEquivalenceWitness C))
+  /-- Unit for the Rezk equivalence; projection from the pinned Axiom F package. -/
   lf_def rezkUnit : (C : SCat) ⇒
-      NatIso (compFunctor C (isoCat C) C (identityIsoFunctor C) (isoProjectionFunctor C)) (idFunctor C) :=
-    fun C => catEquivUnit C (isoCat C) (rezkEquiv C)
-  /-- Counit for the Rezk equivalence; derived from the packaged equivalence.  Book context:
-  Chapter 1 of the SCT book.
-  -/
+      NatIso (compFunctor C (isoCat C) C (identityIsoFunctor C) (isoProjectionFunctor C))
+        (idFunctor C) :=
+    fun C => π₁ (rezkEquivalenceWitness C)
+  /-- Counit for the Rezk equivalence; projection from the pinned Axiom F package. -/
   lf_def rezkCounit : (C : SCat) ⇒
       NatIso (isoCat C) (isoCat C)
         (compFunctor (isoCat C) C (isoCat C)
           (isoProjectionFunctor C) (identityIsoFunctor C))
         (idFunctor (isoCat C)) :=
-    fun C => catEquivCounit C (isoCat C) (rezkEquiv C)
+    fun C => π₂ (rezkEquivalenceWitness C)

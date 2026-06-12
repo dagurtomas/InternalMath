@@ -298,9 +298,9 @@ declare_type_theory SHoTT extends TopeLayer where
   The bridge rules above let first-class evidence produce judgments.  The reverse direction is not
   available in general, and none of the equivalence/congruence rules below produces first-class
   evidence.  For a complete specification, each theorem that term constructors need as data should
-  either produce evidence directly or have a checked internal definition converting the corresponding
-  judgment proof into evidence.  This matters for extension boundaries, branch overlaps, point
-  membership, and future hom/Segal/Rezk side conditions.
+  either produce evidence directly or have a checked internal definition converting the
+  corresponding judgment proof into evidence.  This matters for extension boundaries, branch
+  overlaps, point membership, and future hom/Segal/Rezk side conditions.
   -/
 
   conversion_plugin shott_conversion

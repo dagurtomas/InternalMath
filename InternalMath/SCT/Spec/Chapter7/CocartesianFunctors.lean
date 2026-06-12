@@ -100,7 +100,7 @@ extend_type_theory SCT where
       (q : Functor F B) ⇒ (fibq : Fibration F B q) ⇒
       (cocartq : CocartesianFibrationWitness F B q fibq) ⇒ SCat :=
     fun B E F p fibp cocartp q fibq cocartq =>
-      fst (cocartesianFunctorCategoryPackage B E F p fibp cocartp q fibq cocartq)
+      π₁ (cocartesianFunctorCategoryPackage B E F p fibp cocartp q fibq cocartq)
   /-- Inclusion `CoCart_B(E,F) → Fun_B(E,F)`; Definition 7.1.10. -/
   lf_def cocartesianFunctorCatIncl : (B : SCat) ⇒ (E : SCat) ⇒ (F : SCat) ⇒
       (p : Functor E B) ⇒ (fibp : Fibration E B p) ⇒
@@ -110,7 +110,7 @@ extend_type_theory SCT where
       Functor (cocartesianFunctorCat B E F p fibp cocartp q fibq cocartq)
         (functorOverBaseCat B E F p q) :=
     fun B E F p fibp cocartp q fibq cocartq =>
-      snd (cocartesianFunctorCategoryPackage B E F p fibp cocartp q fibq cocartq)
+      π₂ (cocartesianFunctorCategoryPackage B E F p fibp cocartp q fibq cocartq)
 
 namespace SCT
 

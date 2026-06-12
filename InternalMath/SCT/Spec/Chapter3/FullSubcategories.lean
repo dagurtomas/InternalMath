@@ -36,13 +36,11 @@ extend_type_theory SCT where
 
   /-- Membership data for an arrow whose endpoints lie in the chosen object collection. -/
   syntax_abbrev EndpointRestrictedMorphismData {C : SCat} (P : ObjectCollection C)
-    (f : Functor intervalCat C) :=
-    Σ source_mem : ObjectCollectionMember C P (sourceObj C f),
+    (f : Functor intervalCat C) := Σ source_mem : ObjectCollectionMember C P (sourceObj C f),
       ObjectCollectionMember C P (targetObj C f)
   /-- Membership of an interval-shaped morphism in a morphism collection. -/
   syntax_abbrev MorphismCollectionMember {C : SCat} (W : MorphismCollection C)
-    (f : Functor intervalCat C) :=
-    PreservesMorphismCollection intervalCat C W f
+    (f : Functor intervalCat C) := PreservesMorphismCollection intervalCat C W f
   /-- Endpoint-restricted morphism package used to build full subcategories from
   Axiom H.  It contains the collection of arrows whose source and target lie in the chosen object
   collection, identity and composition closure evidence, and the two directions of the endpoint
@@ -58,27 +56,27 @@ extend_type_theory SCT where
   /-- Endpoint data determines membership in the endpoint-restricted morphism collection. -/
   lf_def fullSubcategoryMorphismMemberIntro : (C : SCat) ⇒ (P : ObjectCollection C) ⇒
       (f : Functor intervalCat C) ⇒ EndpointRestrictedMorphismData C P f →
-        MorphismCollectionMember C (fst (fullSubcategoryMorphismComprehensionPackage C P)) f :=
-    fun C P f h => fst (snd (snd (snd (fullSubcategoryMorphismComprehensionPackage C P))) f) h
+        MorphismCollectionMember C (π₁ (fullSubcategoryMorphismComprehensionPackage C P)) f :=
+    fun C P f h => π₁ (π₂ (π₂ (π₂ (fullSubcategoryMorphismComprehensionPackage C P))) f) h
   /-- Membership in the endpoint-restricted collection recovers endpoint data. -/
   lf_def fullSubcategoryMorphismMemberElim : (C : SCat) ⇒ (P : ObjectCollection C) ⇒
       (f : Functor intervalCat C) ⇒
-        MorphismCollectionMember C (fst (fullSubcategoryMorphismComprehensionPackage C P)) f →
+        MorphismCollectionMember C (π₁ (fullSubcategoryMorphismComprehensionPackage C P)) f →
           EndpointRestrictedMorphismData C P f :=
-    fun C P f h => snd (snd (snd (snd (fullSubcategoryMorphismComprehensionPackage C P))) f) h
+    fun C P f h => π₂ (π₂ (π₂ (π₂ (fullSubcategoryMorphismComprehensionPackage C P))) f) h
 
   /-- Morphism collection of arrows whose endpoints lie in the chosen object collection. -/
   lf_def fullSubcategoryMorphismCollection : (C : SCat) ⇒ ObjectCollection C ⇒
       MorphismCollection C :=
-    fun C P => fst (fullSubcategoryMorphismComprehensionPackage C P)
+    fun C P => π₁ (fullSubcategoryMorphismComprehensionPackage C P)
   /-- Endpoint-restricted morphisms contain identities. -/
   lf_def fullSubcategoryMorphismContainsIdentities : (C : SCat) ⇒ (P : ObjectCollection C) ⇒
       containsIdentities C (fullSubcategoryMorphismCollection C P) :=
-    fun C P => fst (snd (fullSubcategoryMorphismComprehensionPackage C P))
+    fun C P => π₁ (π₂ (fullSubcategoryMorphismComprehensionPackage C P))
   /-- Endpoint-restricted morphisms are closed under composition. -/
   lf_def fullSubcategoryMorphismClosed : (C : SCat) ⇒ (P : ObjectCollection C) ⇒
       closedUnderComposition C (fullSubcategoryMorphismCollection C P) :=
-    fun C P => fst (snd (snd (fullSubcategoryMorphismComprehensionPackage C P)))
+    fun C P => π₁ (π₂ (π₂ (fullSubcategoryMorphismComprehensionPackage C P)))
   /-- Full subcategory determined by an object collection; Definition 3.1.6. -/
   lf_def fullSubcategory : (C : SCat) ⇒ ObjectCollection C ⇒ SCat :=
     fun C P => subcategory C (fullSubcategoryMorphismCollection C P)

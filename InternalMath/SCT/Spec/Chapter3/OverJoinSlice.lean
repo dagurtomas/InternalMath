@@ -46,12 +46,12 @@ extend_type_theory SCT where
   /-- Dependent product along an exponentiable map over a base. -/
   lf_def dependentProductOverCat : (A : SCat) ⇒ (B : SCat) ⇒ (E : SCat) ⇒
       (u : Functor A B) ⇒ (p : Functor E A) ⇒ ExponentiableFunctor A B u ⇒ SCat :=
-    fun A B E u p exp => fst (dependentProductOverPackage A B E u p exp)
+    fun A B E u p exp => π₁ (dependentProductOverPackage A B E u p exp)
   /-- Projection of a dependent product over the codomain. -/
   lf_def dependentProductOverProjection : (A : SCat) ⇒ (B : SCat) ⇒ (E : SCat) ⇒
       (u : Functor A B) ⇒ (p : Functor E A) ⇒ (exp : ExponentiableFunctor A B u) ⇒
         Functor (dependentProductOverCat A B E u p exp) B :=
-    fun A B E u p exp => snd (dependentProductOverPackage A B E u p exp)
+    fun A B E u p exp => π₂ (dependentProductOverPackage A B E u p exp)
 
   /-- Join of synthetic categories; Axioms J.1 and J.2. -/
   lf_opaque joinCat (C : SCat) (D : SCat) : SCat
@@ -149,11 +149,11 @@ extend_type_theory SCT where
     Σ J : SCat, CatEquiv (funCat E (joinCat C D)) J
   /-- Category for the mapping-in dependent-product side of Axiom J.2. -/
   lf_def joinDependentProductCat : (C : SCat) ⇒ (D : SCat) ⇒ (E : SCat) ⇒ SCat :=
-    fun C D E => fst (joinDependentProductPackage C D E)
+    fun C D E => π₁ (joinDependentProductPackage C D E)
   /-- Join-dependent-product universal property; Axiom J.2. -/
   lf_def joinDependentProductEquiv : (C : SCat) ⇒ (D : SCat) ⇒ (E : SCat) ⇒
       CatEquiv (funCat E (joinCat C D)) (joinDependentProductCat C D E) :=
-    fun C D E => snd (joinDependentProductPackage C D E)
+    fun C D E => π₂ (joinDependentProductPackage C D E)
 
   /-- The 3-simplex, defined as the join of a point and `[2]`.  Book context: Chapter 3 of the SCT
   book.

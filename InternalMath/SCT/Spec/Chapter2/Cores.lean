@@ -92,7 +92,7 @@ extend_type_theory SCT where
                 (coreIncl C)) F → NatIso (animaCat A) (coreCat C) L K
   /-- The core inclusion is an embedding; projection from the Axiom G core package. -/
   lf_def coreInclEmbedding : (C : SCat) ⇒ Embedding (coreCat C) C (coreIncl C) :=
-    fun C => fst (coreUniversalPackage C)
+    fun C => π₁ (coreUniversalPackage C)
 
 extend_type_theory SCT where
 
@@ -107,11 +107,11 @@ extend_type_theory SCT where
           (L : Functor (animaCat A) (coreCat C)) →
             NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C L
               (coreIncl C)) F → NatIso (animaCat A) (coreCat C) L K :=
-    fun A C F => snd (coreUniversalPackage C) A F
+    fun A C F => π₂ (coreUniversalPackage C) A F
   /-- Lift an anima-parametrized object through the groupoid core; Axiom G. -/
   lf_def coreLift : (A : Anima) ⇒ (C : SCat) ⇒ Functor (animaCat A) C ⇒
       Functor (animaCat A) (coreCat C) :=
-    fun A C F => fst (coreLiftPackage A C F)
+    fun A C F => π₁ (coreLiftPackage A C F)
 
 extend_type_theory SCT where
 
@@ -137,13 +137,13 @@ extend_type_theory SCT where
   lf_def coreLiftBeta : (A : Anima) ⇒ (C : SCat) ⇒ (F : Functor (animaCat A) C) ⇒
       NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C
         (coreLift A C F) (coreIncl C)) F :=
-    fun A C F => fst (snd (coreLiftPackage A C F))
+    fun A C F => π₁ (π₂ (coreLiftPackage A C F))
   /-- Uniqueness of core lifts from anima-parametrized objects; Axiom G. -/
   lf_def coreLiftUniq : (A : Anima) ⇒ (C : SCat) ⇒ (F : Functor (animaCat A) C) ⇒
       (K : Functor (animaCat A) (coreCat C)) ⇒
       NatIso (animaCat A) C (compFunctor (animaCat A) (coreCat C) C K
         (coreIncl C)) F ⇒ NatIso (animaCat A) (coreCat C) K (coreLift A C F) :=
-    fun A C F K β => snd (snd (coreLiftPackage A C F)) K β
+    fun A C F K β => π₂ (π₂ (coreLiftPackage A C F)) K β
   /-- β comparison for a groupoid-source core lift, derived from the anima-source β rule and the
   groupoid/anima equivalence.  Book target: Axiom G specialized to groupoid sources. -/
   lf_def coreLiftFromGroupoidBeta : (G : SCat) ⇒ (C : SCat) ⇒
@@ -365,7 +365,8 @@ extend_type_theory SCT where
   Book target: Axiom G specialized to groupoid sources. -/
   lf_def coreLiftNatIsoFromGroupoid : (G : SCat) ⇒ (C : SCat) ⇒
       GroupoidWitness G ⇒ (L : Functor G (coreCat C)) ⇒ (M : Functor G (coreCat C)) ⇒
-      NatIso (compFunctor G (coreCat C) C L (coreIncl C)) (compFunctor G (coreCat C) C M (coreIncl C)) ⇒ NatIso G (coreCat C) L M :=
+      NatIso (compFunctor G (coreCat C) C L (coreIncl C))
+        (compFunctor G (coreCat C) C M (coreIncl C)) ⇒ NatIso G (coreCat C) L M :=
     fun G C gG L M α =>
       compNatIso G (coreCat C) L
         (coreLiftFromGroupoid G C gG (compFunctor G (coreCat C) C M (coreIncl C))) M
@@ -385,7 +386,8 @@ extend_type_theory SCT where
   Axiom G specialized to groupoid sources. -/
   lf_opaque coreLiftNatIsoFromGroupoidCoherencePackage (G : SCat) (C : SCat)
     (gG : GroupoidWitness G) (L : Functor G (coreCat C)) (M : Functor G (coreCat C))
-    (α : NatIso (compFunctor G (coreCat C) C L (coreIncl C)) (compFunctor G (coreCat C) C M (coreIncl C))) :
+    (α : NatIso (compFunctor G (coreCat C) C L (coreIncl C))
+      (compFunctor G (coreCat C) C M (coreIncl C))) :
     Σ β : NatIsoIso G C (compFunctor G (coreCat C) C L (coreIncl C))
       (compFunctor G (coreCat C) C M (coreIncl C))
       (postWhiskerNatIso G (coreCat C) C L M (coreIncl C)
@@ -400,12 +402,13 @@ extend_type_theory SCT where
   lf_def coreLiftNatIsoFromGroupoidBeta : (G : SCat) ⇒ (C : SCat) ⇒
       (gG : GroupoidWitness G) ⇒ (L : Functor G (coreCat C)) ⇒
       (M : Functor G (coreCat C)) ⇒
-      (α : NatIso (compFunctor G (coreCat C) C L (coreIncl C)) (compFunctor G (coreCat C) C M (coreIncl C))) ⇒
+      (α : NatIso (compFunctor G (coreCat C) C L (coreIncl C))
+        (compFunctor G (coreCat C) C M (coreIncl C))) ⇒
       NatIsoIso G C (compFunctor G (coreCat C) C L (coreIncl C))
         (compFunctor G (coreCat C) C M (coreIncl C))
         (postWhiskerNatIso G (coreCat C) C L M (coreIncl C)
           (coreLiftNatIsoFromGroupoid G C gG L M α)) α :=
-    fun G C gG L M α => fst (coreLiftNatIsoFromGroupoidCoherencePackage G C gG L M α)
+    fun G C gG L M α => π₁ (coreLiftNatIsoFromGroupoidCoherencePackage G C gG L M α)
 
 extend_type_theory SCT where
 
@@ -445,7 +448,8 @@ extend_type_theory SCT where
     fun C gC => coreLiftFromGroupoid C C gC (idFunctor C)
   /-- Section comparison for the core inclusion of a groupoid. -/
   lf_def coreOfGroupoidSection : (C : SCat) ⇒ (gC : GroupoidWitness C) ⇒
-      NatIso (compFunctor C (coreCat C) C (coreOfGroupoidBackward C gC) (coreIncl C)) (idFunctor C) :=
+      NatIso (compFunctor C (coreCat C) C (coreOfGroupoidBackward C gC) (coreIncl C))
+        (idFunctor C) :=
     fun C gC => coreLiftFromGroupoidBeta C C gC (idFunctor C)
   /-- Comparison showing that the retraction candidate composes with the core inclusion as
   required to invoke core-lift uniqueness. -/

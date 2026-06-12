@@ -98,12 +98,12 @@ extend_type_theory SCT where
     fun X C => coreFunctor (funCat X C)
       (funCat (funCat intervalCat X) (funCat intervalCat C)) (arrowActionFunctor X C)
   /-- Definition 3.1.2(1): the induced map on arrow-mapping anima is an embedding. -/
-  syntax_abbrev SubcategoryArrowEmbedding {A : SCat} {C : SCat} (i : Functor A C) :=
+  syntax_def SubcategoryArrowEmbedding {A : SCat} {C : SCat} (i : Functor A C) : Type u :=
     Embedding (mapCat intervalCat A) (mapCat intervalCat C)
       (mapPostcompFunctor intervalCat A C i)
   /-- Definition 3.1.2(2): the factorization square for a fixed test category. -/
-  syntax_abbrev SubcategoryPullbackSquare {A : SCat} {C : SCat} (i : Functor A C)
-    (X : SCat) :=
+  syntax_def SubcategoryPullbackSquare {A : SCat} {C : SCat} (i : Functor A C)
+    (X : SCat) : Type u :=
     PullbackSquare (mapCat X A) (mapCat X C)
       (mapCat (funCat intervalCat X) (funCat intervalCat A))
       (mapCat (funCat intervalCat X) (funCat intervalCat C))
@@ -112,7 +112,7 @@ extend_type_theory SCT where
       (mapPostcompFunctor (funCat intervalCat X) (funCat intervalCat A)
         (funCat intervalCat C) (postcompFunctor intervalCat A C i))
   /-- Definition 3.1.2(2), uniformly in the test category. -/
-  syntax_abbrev SubcategoryPullbackCriterion {A : SCat} {C : SCat} (i : Functor A C) :=
+  syntax_def SubcategoryPullbackCriterion {A : SCat} {C : SCat} (i : Functor A C) : Type (u+1) :=
     (X : SCat) → SubcategoryPullbackSquare A C i X
   /-- A functor satisfying the book's replete subcategory criterion; Definition 3.1.2. -/
   syntax_abbrev SubcategoryWitness {A : SCat} {C : SCat} (i : Functor A C) :=
@@ -120,12 +120,11 @@ extend_type_theory SCT where
   /-- Projection of the arrow-map embedding part of a subcategory witness. -/
   lf_def subcategoryWitnessArrowEmbedding : (A : SCat) ⇒ (C : SCat) ⇒
       (i : Functor A C) ⇒ SubcategoryWitness A C i ⇒ SubcategoryArrowEmbedding A C i :=
-    fun A C i h => fst h
+    fun A C i h => π₁ h
 
   /-- Subobjects of an anima, represented by a domain anima, an inclusion, and embedding evidence;
   Definition 3.1.6. -/
-  syntax_abbrev AnimaSubobject (A : Anima) :=
-    Σ B : Anima, Σ i : Functor (animaCat B) (animaCat A),
+  syntax_abbrev AnimaSubobject (A : Anima) := Σ B : Anima, Σ i : Functor (animaCat B) (animaCat A),
       Embedding (animaCat B) (animaCat A) i
 
 namespace SCT

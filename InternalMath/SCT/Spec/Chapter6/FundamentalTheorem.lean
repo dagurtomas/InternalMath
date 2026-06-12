@@ -36,7 +36,7 @@ extend_type_theory SCT where
   /-- Strong surjectivity as a section of the induced map on cores; Definition 6.3.1. -/
   lf_def stronglySurjectiveSection : (C : SCat) ⇒ (D : SCat) ⇒ (F : Functor C D) ⇒
       StronglySurjective C D F ⇒ Functor (coreCat D) (coreCat C) :=
-    fun C D F surj => fst surj
+    fun C D F surj => π₁ surj
   /-- The chosen section of `F^≃` is a section up to natural isomorphism; Definition 6.3.1. -/
   lf_def stronglySurjectiveSectionBeta : (C : SCat) ⇒ (D : SCat) ⇒
       (F : Functor C D) ⇒ (surj : StronglySurjective C D F) ⇒
@@ -44,7 +44,7 @@ extend_type_theory SCT where
           (compFunctor (coreCat D) (coreCat C) (coreCat D)
             (stronglySurjectiveSection C D F surj) (coreFunctor C D F))
           (idFunctor (coreCat D)) :=
-    fun C D F surj => snd surj
+    fun C D F surj => π₂ surj
 
 namespace SCT
 
@@ -70,12 +70,12 @@ extend_type_theory SCT where
       InvertibleMorphism C
         (natTransComponent A C F G (natIsoToNatTrans A C F G α) x) :=
     fun A C F G α x => objectwiseNatIsoComponent A C F G
-      (natIsoToNatTrans A C F G α) (snd α) x
+      (natIsoToNatTrans A C F G α) (π₂ α) x
   /-- Natural isomorphisms give objectwise natural-isomorphism evidence. -/
   lf_def natIsoObjectwise :
       (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒ (G : Functor A C) ⇒
       (α : NatIso F G) ⇒ ObjectwiseNatIso A C F G (natIsoToNatTrans A C F G α) :=
-    fun A C F G α => snd α
+    fun A C F G α => π₂ α
   /-- Objectwise evidence says every component morphism is invertible. -/
   lf_def objectwiseNatIsoComponentInvertible :
       (A : SCat) ⇒ (C : SCat) ⇒ (F : Functor A C) ⇒ (G : Functor A C) ⇒
@@ -115,7 +115,7 @@ extend_type_theory SCT where
   syntax_abbrev FiberMapEquiv {E : SCat} {B : SCat} (p : Functor E B)
     {E' : SCat} (p' : Functor E' B) (F : Functor E E')
     (hBase : FunctorOverBase E B p E' p' F) (b : Obj B) :=
-    Σ e : CatEquiv (fiberCat E B p b) (fiberCat E' B p' b),
+      Σ e : CatEquiv (fiberCat E B p b) (fiberCat E' B p' b),
       NatIso (fiberCat E B p b) (fiberCat E' B p' b)
         (catEquivForward (fiberCat E B p b) (fiberCat E' B p' b) e)
         (fiberMap E B p E' p' F hBase b)
@@ -124,15 +124,14 @@ extend_type_theory SCT where
   fibrations. -/
   syntax_abbrev FiberwiseCatEquiv {E : SCat} {B : SCat} (p : Functor E B)
     {E' : SCat} (p' : Functor E' B) (F : Functor E E')
-    (hBase : FunctorOverBase E B p E' p' F) :=
-    (b : Obj B) → FiberMapEquiv E B p E' p' F hBase b
+    (hBase : FunctorOverBase E B p E' p' F) := (b : Obj B) → FiberMapEquiv E B p E' p' F hBase b
   /-- The equivalence on a specified fiber. -/
   lf_def fiberwiseCatEquivAt : (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
       (E' : SCat) ⇒ (p' : Functor E' B) ⇒ (F : Functor E E') ⇒
       (hBase : FunctorOverBase E B p E' p' F) ⇒
       FiberwiseCatEquiv E B p E' p' F hBase ⇒ (b : Obj B) ⇒
         CatEquiv (fiberCat E B p b) (fiberCat E' B p' b) :=
-    fun E B p E' p' F hBase h b => fst (h b)
+    fun E B p E' p' F hBase h b => π₁ (h b)
   /-- The chosen fiber equivalence has forward functor the induced fiber map. -/
   lf_def fiberwiseCatEquivForwardBeta :
       (E : SCat) ⇒ (B : SCat) ⇒ (p : Functor E B) ⇒
@@ -143,7 +142,7 @@ extend_type_theory SCT where
           (catEquivForward (fiberCat E B p b) (fiberCat E' B p' b)
             (fiberwiseCatEquivAt E B p E' p' F hBase h b))
           (fiberMap E B p E' p' F hBase b) :=
-    fun E B p E' p' F hBase h b => snd (h b)
+    fun E B p E' p' F hBase h b => π₂ (h b)
 
 namespace SCT
 
