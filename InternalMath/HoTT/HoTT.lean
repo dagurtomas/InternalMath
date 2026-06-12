@@ -36,13 +36,15 @@ declare_type_theory HoTT extends MLTT where
       (isequiv Γ (idTy Γ (piTy Γ A B) f g) (happlyCodTy Γ A B f g)
         (happly Γ A B f g))
 
-  /-- `univalence(A,B) : isequiv(idtoeqv_{A,B})` for types represented at universe level `i`. -/
-  lf_opaque univalence (Γ : Ctx) (i : UnivLevel) (A : Ty Γ) (B : Ty Γ) : Tm Γ
+  /-- `univalence(A,B) : isequiv(idtoeqv_{A,B})` for universe codes at level `i`. -/
+  lf_opaque univalence (Γ : Ctx) (i : UnivLevel) (A : Tm Γ) (B : Tm Γ) : Tm Γ
 
-  rule univ_univ {Γ : Ctx} (i : UnivLevel) (A : Ty Γ) (B : Ty Γ) where
-    premise ctx : IsCtx Γ
+  rule univ_univ {Γ : Ctx} (i : UnivLevel) (A : Tm Γ) (B : Tm Γ) where
+    premise A_code : IsTm A (univ Γ i)
+    premise B_code : IsTm B (univ Γ i)
     conclusion : IsTm (univalence Γ i A B)
-      (isequiv Γ (universePathTy Γ i A B) (equivTy Γ A B) (idtoeqv Γ i A B))
+      (isequiv Γ (universePathTy Γ i A B) (equivTy Γ (elTy Γ i A) (elTy Γ i B))
+        (idtoeqv Γ i A B))
 
   /-- The circle higher inductive type. -/
   model_section Circle

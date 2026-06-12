@@ -11,8 +11,8 @@ public import InternalMath.HoTT.MLTT.Equivalences
 # MLTT prerequisites for function extensionality and univalence
 
 Prerequisite constructions for the HoTT layer, stated against the separated `Ty`/`Tm` MLTT
-presentation.  Universe-code details for univalence are left as explicit internal debt while the
-core refactor settles.
+presentation.  Univalence uses Tarski-style universe codes: code terms are raw `Tm Γ` terms of
+`univ Γ i`, and `elTy Γ i A` decodes a code to an ordinary type.
 -/
 
 @[expose] public section
@@ -60,19 +60,39 @@ internal def idEquiv : (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ Tm Γ :=
         (varTop Γ (arrowTy Γ A A)))
       (idFun Γ A) (idIsEquiv Γ A)
 
-/-- The identity type between two types regarded as elements of universe `i`.
-
-In the separated `Ty`/`Tm` presentation this records the book's `A =_{𝒰ᵢ} B` type without adding a
-separate type-equality judgment.  It is admitted until universe coding for separated type syntax is
-made explicit. -/
+/-- The identity type between two universe codes. -/
 internal def universePathTy :
-    (Γ : Ctx) ⇒ (i : UnivLevel) ⇒ (A : Ty Γ) ⇒ (B : Ty Γ) ⇒ Ty Γ :=
-  sorry
+    (Γ : Ctx) ⇒ (i : UnivLevel) ⇒ (A : Tm Γ) ⇒ (B : Tm Γ) ⇒ Ty Γ :=
+  fun Γ i A B => idTy Γ (univ Γ i) A B
+
+/-- Motive for `idtoeqv`: path induction in a universe decodes endpoints to types. -/
+internal def idtoeqvMotive : (Γ : Ctx) ⇒ (i : UnivLevel) ⇒ Ty (idMotiveCtx Γ (univ Γ i)) :=
+  fun Γ i =>
+    equivTy (idMotiveCtx Γ (univ Γ i))
+      (elTy (idMotiveCtx Γ (univ Γ i)) i (idMotiveLeft Γ (univ Γ i)))
+      (elTy (idMotiveCtx Γ (univ Γ i)) i (idMotiveRight Γ (univ Γ i)))
+
+/-- Refl branch for `idtoeqv`, the identity equivalence on the decoded code. -/
+internal def idtoeqvRefl : (Γ : Ctx) ⇒ (i : UnivLevel) ⇒ Tm (extendCtx Γ (univ Γ i)) :=
+  fun Γ i =>
+    idEquiv (extendCtx Γ (univ Γ i))
+      (elTy (extendCtx Γ (univ Γ i)) i (varTop Γ (univ Γ i)))
+
+/-- `idtoeqv` applied to one universe-equality proof. -/
+internal def idtoeqvAt :
+    (Γ : Ctx) ⇒ (i : UnivLevel) ⇒ (A : Tm Γ) ⇒ (B : Tm Γ) ⇒ (p : Tm Γ) ⇒ Tm Γ :=
+  fun Γ i A B p => idInd Γ (univ Γ i) (idtoeqvMotive Γ i) (idtoeqvRefl Γ i) A B p
 
 /-- The map from equality in the universe to equivalence, constructible by path induction. -/
 internal def idtoeqv :
-    (Γ : Ctx) ⇒ (i : UnivLevel) ⇒ (A : Ty Γ) ⇒ (B : Ty Γ) ⇒ Tm Γ :=
-  sorry
+    (Γ : Ctx) ⇒ (i : UnivLevel) ⇒ (A : Tm Γ) ⇒ (B : Tm Γ) ⇒ Tm Γ :=
+  fun Γ i A B =>
+    lam Γ (universePathTy Γ i A B)
+      (weakenTy Γ (universePathTy Γ i A B) (equivTy Γ (elTy Γ i A) (elTy Γ i B)))
+      (idtoeqvAt (extendCtx Γ (universePathTy Γ i A B)) i
+        (weakenTm Γ (universePathTy Γ i A B) A)
+        (weakenTm Γ (universePathTy Γ i A B) B)
+        (varTop Γ (universePathTy Γ i A B)))
 
 /-- The equality type between dependent functions, used as the source of `happly`. -/
 internal def happlySource :

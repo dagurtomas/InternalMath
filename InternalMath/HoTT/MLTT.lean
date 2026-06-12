@@ -16,10 +16,9 @@ public import InternalMath.HoTT.MLTT.Unit
 /-!
 # Martin-Löf type theory, HoTT book Appendix A.2
 
-This module assembles the reusable MLTT layers from `InternalMath.HoTT.MLTT.*` and adds the
-currently provisional universe-level scaffolding.  The base layer `MLTT.Basic` contains the three
-syntax families `Ctx`, `Ty`, and `Tm`, together with the four basic judgments `IsCtx`, `IsTy`,
-`IsTm`, and `EqTm`.
+This module assembles the reusable MLTT layers from `InternalMath.HoTT.MLTT.*` and adds a
+Tarski-style universe-code layer.  The base layer `MLTT.Basic` contains the three syntax families
+`Ctx`, `Ty`, and `Tm`, together with the four basic judgments `IsCtx`, `IsTy`, `IsTm`, and `EqTm`.
 
 The intended design is a diamond-shaped collection of independent mixin theories over shared
 prerequisites such as `MLTT.Basic` and `MLTT.Substitution`, with full MLTT extending all selected
@@ -35,7 +34,7 @@ The plan for true mixin composition is recorded in
 
 @[expose] public section
 
-/-- Full MLTT assembled from the reusable layers, plus provisional universe syntax. -/
+/-- Full MLTT assembled from the reusable layers, plus Tarski-style universe syntax. -/
 declare_type_theory MLTT extends MLTT.Coproduct, MLTT.Empty, MLTT.Identity, MLTT.Nat, MLTT.Pi,
     MLTT.Sigma, MLTT.Unit where
 
@@ -50,6 +49,13 @@ declare_type_theory MLTT extends MLTT.Coproduct, MLTT.Empty, MLTT.Identity, MLTT
   /-- Universe type `𝒰ᵢ` in a context. -/
   lf_opaque univ (Γ : Ctx) (i : UnivLevel) : Ty Γ
 
+  /-- Decode a universe element/code as an ordinary type. -/
+  lf_opaque elTy (Γ : Ctx) (i : UnivLevel) (A : Tm Γ) : Ty Γ
+
   rule univ_form {Γ : Ctx} (i : UnivLevel) where
     premise ctx : IsCtx Γ
     conclusion : IsTy (univ Γ i)
+
+  rule el_form {Γ : Ctx} (i : UnivLevel) (A : Tm Γ) where
+    premise code : IsTm A (univ Γ i)
+    conclusion : IsTy (elTy Γ i A)

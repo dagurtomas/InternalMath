@@ -62,8 +62,8 @@ def sorryModel : HoTTModel where
   levelZero := sorry
   levelSucc := sorry
   univ := sorry
-  universePathTy := sorry
-  idtoeqv := sorry
+  elTy := sorry
+  idFiberContr := sorry
   funext := sorry
   univalence := sorry
   circleTy := sorry
@@ -121,6 +121,7 @@ def sorryModel : HoTTModel where
   id_elim := sorry
   id_comp := sorry
   univ_form := sorry
+  el_form := sorry
   pi_ext := sorry
   univ_univ := sorry
   circle_form := sorry
