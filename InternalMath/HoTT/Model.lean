@@ -63,7 +63,6 @@ def sorryModel : HoTTModel where
   levelSucc := sorry
   univ := sorry
   elTy := sorry
-  idFiberContr := sorry
   funext := sorry
   univalence := sorry
   circleTy := sorry

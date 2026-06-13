@@ -37,10 +37,110 @@ internal def happlyCodTy :
           (weakenTy (extendCtx Γ A) (weakenTy Γ A A) B)
           (weakenTm Γ A g) (varTop Γ A)))
 
+/-- The path component of the fiber of the identity function over `y`. -/
+internal def idFiberPathTy :
+    (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (y : Tm Γ) ⇒ Ty (extendCtx Γ A) :=
+  fun Γ A y =>
+    idTy (extendCtx Γ A) (weakenTy Γ A A)
+      (app (extendCtx Γ A) (weakenTy Γ A A)
+        (weakenTy (extendCtx Γ A) (weakenTy Γ A A) (weakenTy Γ A A))
+        (weakenTm Γ A (idFun Γ A)) (varTop Γ A))
+      (weakenTm Γ A y)
+
+/-- The fiber type of the identity function over `y`. -/
+internal def idFiberTy : (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (y : Tm Γ) ⇒ Ty Γ :=
+  fun Γ A y => fiber Γ A A (idFun Γ A) y
+
+/-- The center `(y, refl y)` of the identity-function fiber over `y`. -/
+internal def idFiberCenter : (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (y : Tm Γ) ⇒ Tm Γ :=
+  fun Γ A y => sigmaPair Γ A (idFiberPathTy Γ A y) y (refl Γ y)
+
+/-- The path component of a reindexed identity-function fiber in context `Γ, p : fiber`. -/
+internal def idFiberElimPathTy :
+    (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (y : Tm Γ) ⇒
+    Ty (extendCtx (extendCtx Γ (idFiberTy Γ A y)) (weakenTy Γ (idFiberTy Γ A y) A)) :=
+  fun Γ A y =>
+    idTy (extendCtx (extendCtx Γ (idFiberTy Γ A y))
+        (weakenTy Γ (idFiberTy Γ A y) A))
+      (weakenTy (extendCtx Γ (idFiberTy Γ A y))
+        (weakenTy Γ (idFiberTy Γ A y) A) (weakenTy Γ (idFiberTy Γ A y) A))
+      (app (extendCtx (extendCtx Γ (idFiberTy Γ A y))
+          (weakenTy Γ (idFiberTy Γ A y) A))
+        (weakenTy (extendCtx Γ (idFiberTy Γ A y))
+          (weakenTy Γ (idFiberTy Γ A y) A) (weakenTy Γ (idFiberTy Γ A y) A))
+        (weakenTy (extendCtx (extendCtx Γ (idFiberTy Γ A y))
+            (weakenTy Γ (idFiberTy Γ A y) A))
+          (weakenTy (extendCtx Γ (idFiberTy Γ A y))
+            (weakenTy Γ (idFiberTy Γ A y) A) (weakenTy Γ (idFiberTy Γ A y) A))
+          (weakenTy (extendCtx Γ (idFiberTy Γ A y))
+            (weakenTy Γ (idFiberTy Γ A y) A) (weakenTy Γ (idFiberTy Γ A y) A)))
+        (weakenTm (extendCtx Γ (idFiberTy Γ A y))
+          (weakenTy Γ (idFiberTy Γ A y) A) (weakenTm Γ (idFiberTy Γ A y) (idFun Γ A)))
+        (varTop (extendCtx Γ (idFiberTy Γ A y)) (weakenTy Γ (idFiberTy Γ A y) A)))
+      (weakenTm (extendCtx Γ (idFiberTy Γ A y))
+        (weakenTy Γ (idFiberTy Γ A y) A) (weakenTm Γ (idFiberTy Γ A y) y))
+
+/-- Motive for eliminating an arbitrary point of the identity-function fiber. -/
+internal def idFiberElimMotive :
+    (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (y : Tm Γ) ⇒
+    Ty (extendCtx (extendCtx Γ (idFiberTy Γ A y))
+      (sigmaTy (extendCtx Γ (idFiberTy Γ A y)) (weakenTy Γ (idFiberTy Γ A y) A)
+        (idFiberElimPathTy Γ A y))) :=
+  fun Γ A y =>
+    idTy (extendCtx (extendCtx Γ (idFiberTy Γ A y))
+      (sigmaTy (extendCtx Γ (idFiberTy Γ A y)) (weakenTy Γ (idFiberTy Γ A y) A)
+        (idFiberElimPathTy Γ A y)))
+      (weakenTy (extendCtx Γ (idFiberTy Γ A y))
+        (sigmaTy (extendCtx Γ (idFiberTy Γ A y)) (weakenTy Γ (idFiberTy Γ A y) A)
+          (idFiberElimPathTy Γ A y))
+        (weakenTy Γ (idFiberTy Γ A y) (idFiberTy Γ A y)))
+      (weakenTm (extendCtx Γ (idFiberTy Γ A y))
+        (sigmaTy (extendCtx Γ (idFiberTy Γ A y)) (weakenTy Γ (idFiberTy Γ A y) A)
+          (idFiberElimPathTy Γ A y))
+        (weakenTm Γ (idFiberTy Γ A y) (idFiberCenter Γ A y)))
+      (varTop (extendCtx Γ (idFiberTy Γ A y))
+        (sigmaTy (extendCtx Γ (idFiberTy Γ A y)) (weakenTy Γ (idFiberTy Γ A y) A)
+          (idFiberElimPathTy Γ A y)))
+
+/-- Branch for the Σ-induction contraction of the identity-function fiber. -/
+internal def idFiberElimBranch :
+    (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (y : Tm Γ) ⇒
+    Tm (extendCtx (extendCtx (extendCtx Γ (idFiberTy Γ A y))
+      (weakenTy Γ (idFiberTy Γ A y) A)) (idFiberElimPathTy Γ A y)) :=
+  fun Γ A y =>
+    refl (extendCtx (extendCtx (extendCtx Γ (idFiberTy Γ A y))
+      (weakenTy Γ (idFiberTy Γ A y) A)) (idFiberElimPathTy Γ A y))
+      (varTop (extendCtx (extendCtx Γ (idFiberTy Γ A y))
+        (weakenTy Γ (idFiberTy Γ A y) A)) (idFiberElimPathTy Γ A y))
+
+/-- The contraction term for an arbitrary identity-function fiber element. -/
+internal def idFiberContractionBody :
+    (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (y : Tm Γ) ⇒ Tm (extendCtx Γ (idFiberTy Γ A y)) :=
+  fun Γ A y =>
+    sigmaInd (extendCtx Γ (idFiberTy Γ A y))
+      (weakenTy Γ (idFiberTy Γ A y) A) (idFiberElimPathTy Γ A y)
+      (idFiberElimMotive Γ A y) (idFiberElimBranch Γ A y) (varTop Γ (idFiberTy Γ A y))
+
+/-- The contraction family centered at `(y, refl y)`. -/
+internal def idFiberContraction :
+    (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (y : Tm Γ) ⇒ Tm Γ :=
+  fun Γ A y =>
+    lam Γ (idFiberTy Γ A y)
+      (idTy (extendCtx Γ (idFiberTy Γ A y))
+        (weakenTy Γ (idFiberTy Γ A y) (idFiberTy Γ A y))
+        (weakenTm Γ (idFiberTy Γ A y) (idFiberCenter Γ A y))
+        (varTop Γ (idFiberTy Γ A y)))
+      (idFiberContractionBody Γ A y)
+
 /-- Contractibility of identity-function fibers, constructible by path induction. -/
 internal def idFiberContr :
     (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (y : Tm Γ) ⇒ Tm Γ :=
-  sorry
+  fun Γ A y =>
+    sigmaPair Γ (idFiberTy Γ A y)
+      (piTy (extendCtx Γ (idFiberTy Γ A y))
+        (weakenTy Γ (idFiberTy Γ A y) (idFiberTy Γ A y))
+        (idMotivePathTy Γ (idFiberTy Γ A y)))
+      (idFiberCenter Γ A y) (idFiberContraction Γ A y)
 
 /-- The identity function is an equivalence, constructible from `idFiberContr`. -/
 internal def idIsEquiv : (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ Tm Γ :=
