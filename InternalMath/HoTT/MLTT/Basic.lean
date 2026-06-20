@@ -11,10 +11,11 @@ public import InternalLean.Command
 # Basic MLTT syntax and judgments
 
 The reusable base signature for the HoTT-book MLTT development.  It contains only the three core
-syntax families and the four basic judgments:
+syntax families and the basic judgments:
 
 * context well-formedness, `IsCtx Γ`;
 * type formation, `IsTy A`, read `Γ ⊢ A type`;
+* judgmental equality of types, `EqTy A B`, read `Γ ⊢ A ≡ B type`;
 * term typing, `IsTm a A`, read `Γ ⊢ a : A`;
 * judgmental equality of terms, `EqTm a b A`, read `Γ ⊢ a ≡ b : A`.
 
@@ -47,6 +48,11 @@ declare_type_theory MLTT.Basic where
   /-- Type formation: `Γ ⊢ A type`. -/
   judgment IsTy {Γ : Ctx} (A : Ty Γ)
   judgment_role IsTy : type_formation
+
+  /-- Judgmental equality of types: `Γ ⊢ A ≡ B type`. -/
+  judgment EqTy {Γ : Ctx} (A : Ty Γ) (B : Ty Γ)
+  judgment_role EqTy : type_conversion
+  rewrite_relation EqTy [A, B]
 
   /-- Term typing: `Γ ⊢ a : A`. -/
   judgment IsTm {Γ : Ctx} (a : Tm Γ) (A : Ty Γ)

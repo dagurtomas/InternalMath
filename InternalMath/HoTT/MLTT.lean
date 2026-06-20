@@ -59,3 +59,7 @@ declare_type_theory MLTT extends MLTT.Coproduct, MLTT.Empty, MLTT.Identity, MLTT
   rule el_form {Γ : Ctx} (i : UnivLevel) (A : Tm Γ) where
     premise code : IsTm A (univ Γ i)
     conclusion : IsTy (elTy Γ i A)
+
+  rule univ_wkg {Γ : Ctx} (A : Ty Γ) (i : UnivLevel) where
+    conclusion : EqTy (weakenTy Γ A (univ Γ i)) (univ (extendCtx Γ A) i)
+  rule_role univ_wkg : computation

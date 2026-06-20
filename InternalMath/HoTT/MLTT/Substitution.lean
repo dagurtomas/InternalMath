@@ -155,6 +155,56 @@ declare_type_theory MLTT.Substitution extends MLTT.Basic where
     premise h : EqTm b c B
     conclusion : EqTm (weakenTm Γ A b) (weakenTm Γ A c) (weakenTy Γ A B)
 
+  model_section TypeEquality
+
+  rule ty_eq_refl {Γ : Ctx} (A : Ty Γ) where
+    premise typed : IsTy A
+    conclusion : EqTy A A
+
+  rule ty_eq_symm {Γ : Ctx} (A : Ty Γ) (B : Ty Γ) where
+    premise h : EqTy A B
+    conclusion : EqTy B A
+  rewrite_symmetry ty_eq_symm for EqTy [h]
+
+  rule ty_eq_trans {Γ : Ctx} (A : Ty Γ) (B : Ty Γ) (C : Ty Γ) where
+    premise left : EqTy A B
+    premise right : EqTy B C
+    conclusion : EqTy A C
+
+  rule ty_conv {Γ : Ctx} (A : Ty Γ) (B : Ty Γ) where
+    premise h : EqTy A B
+    premise source : IsTy B
+    conclusion : IsTy A
+  rule_role ty_conv : elimination
+  transport_rule ty_conv for EqTy [h, source]
+  transport_position ty_conv : IsTy [1]
+
+  rule tm_conv {Γ : Ctx} (a : Tm Γ) (A : Ty Γ) (B : Ty Γ) where
+    premise h : EqTy A B
+    premise source : IsTm a B
+    conclusion : IsTm a A
+  rule_role tm_conv : elimination
+  transport_rule tm_conv for EqTy [h, source]
+  transport_position tm_conv : IsTm [2]
+
+  rule subst_wkgTy_comp {Γ : Ctx} {A : Ty Γ} (a : Tm Γ) (B : Ty Γ) where
+    premise a_ty : IsTm a A
+    premise B_ty : IsTy B
+    conclusion : EqTy (substTopTy Γ A (weakenTy Γ A B) a) B
+  rule_role subst_wkgTy_comp : computation
+
+  rule substTy_comp {Γ : Ctx} {Δ : Ctx} {Θ : Ctx} (σ : Sub Γ Δ) (τ : Sub Δ Θ)
+      (A : Ty Θ) where
+    conclusion : EqTy (substTy Γ Θ (compSub Γ Δ Θ σ τ) A)
+      (substTy Γ Δ σ (substTy Δ Θ τ A))
+  rule_role substTy_comp : computation
+
+  rule substTy_extend_weaken {Γ : Ctx} {Δ : Ctx} (σ : Sub Γ Δ) (A : Ty Δ) (a : Tm Γ)
+      (B : Ty Δ) where
+    conclusion : EqTy (substTy Γ (extendCtx Δ A) (extendSub Γ Δ σ A a) (weakenTy Δ A B))
+      (substTy Γ Δ σ B)
+  rule_role substTy_extend_weaken : computation
+
   model_section Equality
 
   rule eq_refl {Γ : Ctx} (a : Tm Γ) (A : Ty Γ) where

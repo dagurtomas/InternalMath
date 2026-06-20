@@ -20,17 +20,6 @@ final carrier-equivalence-to-carrier-path map.
 
 namespace HoTT
 
-/-- First projection from a dependent pair, encoded with the Σ-eliminator. -/
-internal def sigmaFst :
-    (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (B : Ty (extendCtx Γ A)) ⇒ Tm Γ ⇒ Tm Γ :=
-  fun Γ A B p =>
-    sigmaInd Γ A B (weakenTy Γ (sigmaTy Γ A B) A) (prevVar Γ A B) p
-
-/-- Center projection from a contractibility witness. -/
-internal def contrCenter : (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ Tm Γ ⇒ Tm Γ :=
-  fun Γ A c =>
-    sigmaFst Γ A (piTy (extendCtx Γ A) (weakenTy Γ A A) (idMotivePathTy Γ A)) c
-
 /-- Source of the univalence map. -/
 internal def uaSource : (Γ : Ctx) ⇒ (i : UnivLevel) ⇒ Tm Γ ⇒ Tm Γ ⇒ Ty Γ :=
   fun Γ i A B => universePathTy Γ i A B
@@ -173,6 +162,55 @@ internal def pointedTypeCarrierEq' :
     (Γ : Ctx) ⇒ (i : UnivLevel) ⇒ (M : Tm Γ) ⇒ (N : Tm Γ) ⇒ Tm Γ ⇒ Tm Γ :=
   fun Γ i M N e => pointedTypeCarrierEq Γ i M N e
 
+/--
+Typing for the univalence fiber contraction at the fiber selected by `e`.
+This is admitted pending explicit-substitution computation for substituting the `isequiv` fiber
+family at the newest variable.
+-/
+internal theorem uaFiberContr_isContr_ty
+    (Γ : Ctx) (i : UnivLevel) (A : Tm Γ) (B : Tm Γ) (e : Tm Γ)
+    (A_code : IsTm A (univ Γ i))
+    (B_code : IsTm B (univ Γ i))
+    (e_ty : IsTm e (uaTarget Γ i A B)) :
+    IsTm (uaFiberContr Γ i A B e) (isContr Γ (uaFiber Γ i A B e)) := sorry
+
+/-- The center selected from the univalence fiber contraction is a point of the fiber. -/
+internal theorem uaFiberCenter_ty
+    (Γ : Ctx) (i : UnivLevel) (A : Tm Γ) (B : Tm Γ) (e : Tm Γ)
+    (A_code : IsTm A (univ Γ i))
+    (B_code : IsTm B (univ Γ i))
+    (e_ty : IsTm e (uaTarget Γ i A B)) :
+    IsTm (uaFiberCenter Γ i A B e) (uaFiber Γ i A B e) := sorry
+
+/-- The equivalence-to-path map produced from univalence is typed at the universe path type. -/
+internal theorem ua_ty
+    (Γ : Ctx) (i : UnivLevel) (A : Tm Γ) (B : Tm Γ) (e : Tm Γ)
+    (A_code : IsTm A (univ Γ i))
+    (B_code : IsTm B (univ Γ i))
+    (e_ty : IsTm e (uaTarget Γ i A B)) :
+    IsTm (ua Γ i A B e) (universePathTy Γ i A B) := sorry
+
+/-- Carrier projection of a pointed type is a universe code. -/
+internal theorem pointedTypeCarrier_ty
+    (Γ : Ctx) (i : UnivLevel) (M : Tm Γ)
+    (M_ty : IsTm M (pointedType Γ i)) :
+    IsTm (pointedTypeCarrier Γ i M) (univ Γ i) := sorry
+
+/-- Carrier-equivalence projection from a pointed equivalence is typed as a carrier equivalence. -/
+internal theorem pointedTypeEquivCarrierEquiv_ty
+    (Γ : Ctx) (i : UnivLevel) (M : Tm Γ) (N : Tm Γ) (e : Tm Γ)
+    (e_ty : IsTm e (pointedTypeEquiv Γ i M N)) :
+    IsTm (pointedTypeEquivCarrierEquiv Γ i M N e) (pointedTypeCarrierEquivTy Γ i M N) := sorry
+
+/-- A point-preserving equivalence identifies the carrier universe codes. -/
+internal theorem pointedTypeCarrierEq'_ty
+    (Γ : Ctx) (i : UnivLevel) (M : Tm Γ) (N : Tm Γ) (e : Tm Γ)
+    (M_ty : IsTm M (pointedType Γ i))
+    (N_ty : IsTm N (pointedType Γ i))
+    (e_ty : IsTm e (pointedTypeEquiv Γ i M N)) :
+    IsTm (pointedTypeCarrierEq' Γ i M N e)
+      (universePathTy Γ i (pointedTypeCarrier Γ i M) (pointedTypeCarrier Γ i N)) := sorry
+
 end HoTT
 
 /-!
@@ -180,7 +218,8 @@ end HoTT
 
 The listed roots are the public definitions of this test.  Fragment extraction pulls in exactly
 the HoTT declarations needed by these roots and their checked internal dependencies; the fragment is
-not manually redeclared.
+not manually redeclared.  The typing theorem above is explicit admitted debt for now, so it is not
+an extraction root.
 -/
 
 extract_theory_fragment PointedTypeHoTT from HoTT for pointedType pointedTypeCarrier

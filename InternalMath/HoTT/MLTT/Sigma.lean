@@ -31,6 +31,12 @@ declare_type_theory MLTT.Sigma extends MLTT.Substitution where
   lf_def prodTy : (Γ : Ctx) ⇒ Ty Γ ⇒ Ty Γ ⇒ Ty Γ :=
     fun Γ A B => sigmaTy Γ A (weakenTy Γ A B)
 
+  /-- First projection from a dependent pair, encoded with the Σ-eliminator. -/
+  lf_def sigmaFst :
+      (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (B : Ty (extendCtx Γ A)) ⇒ Tm Γ ⇒ Tm Γ :=
+    fun Γ A B p =>
+      sigmaInd Γ A B (weakenTy Γ (sigmaTy Γ A B) A) (prevVar Γ A B) p
+
   /-- The branch target `C[(x,y)/z]` for Σ-elimination. -/
   lf_def sigmaBranchTy : (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (B : Ty (extendCtx Γ A)) ⇒
       Ty (extendCtx Γ (sigmaTy Γ A B)) ⇒ Ty (extendCtx (extendCtx Γ A) B) :=

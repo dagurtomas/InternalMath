@@ -21,6 +21,24 @@ namespace MLTT
 internal def isContr : (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ Ty Γ :=
   fun Γ A => sigmaTy Γ A (piTy (extendCtx Γ A) (weakenTy Γ A A) (idMotivePathTy Γ A))
 
+/-- Center projection from a contractibility witness. -/
+internal def contrCenter : (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ Tm Γ ⇒ Tm Γ :=
+  fun Γ A c =>
+    sigmaFst Γ A (piTy (extendCtx Γ A) (weakenTy Γ A A) (idMotivePathTy Γ A)) c
+
+/-- Typing for the center projection from a contractibility witness. -/
+internal theorem contrCenter_ty
+    (Γ : Ctx) (A : Ty Γ) (c : Tm Γ)
+    (ctx : IsCtx Γ) (A_ty : IsTy A)
+    (paths_ty : IsTy (piTy (extendCtx Γ A) (weakenTy Γ A A) (idMotivePathTy Γ A)))
+    (c_ty : IsTm c (isContr Γ A)) :
+    IsTm (contrCenter Γ A c) A := by
+  change IsTm
+    (sigmaFst Γ A (piTy (extendCtx Γ A) (weakenTy Γ A A) (idMotivePathTy Γ A)) c) A
+  exact sigmaFst_ty Γ A
+    (piTy (extendCtx Γ A) (weakenTy Γ A A) (idMotivePathTy Γ A)) c
+    ctx A_ty paths_ty c_ty
+
 /-- The fiber of `f : A → B` over `y : B`. -/
 internal def fiber :
     (Γ : Ctx) ⇒ (A : Ty Γ) ⇒ (B : Ty Γ) ⇒ (f : Tm Γ) ⇒ (y : Tm Γ) ⇒ Ty Γ :=
